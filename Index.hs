@@ -16,7 +16,8 @@
 
 
 module Index (
-    Ind 
+    Ind, mkInd, getRangeList, Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
+     indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex 
 
 ) where
 
@@ -31,7 +32,7 @@ module Index (
 
     --length indexed sequence data type
 
-    data Ind (n::Nat) a = UnsafemkInd (S.Seq a) deriving Show
+    data Ind (n::Nat) a = UnsafemkInd (S.Seq a) deriving (Show,Ord,Eq)
 
     --we need a smart (value-) constructor (fromList ?)
 
@@ -43,6 +44,14 @@ module Index (
                     nat = fromIntegral $ natVal (Proxy @n)
 
     --now we can write all the functions we need for the indices
+
+    --(for the tensor construction) construct all possible indices with i entries (for Ord a, between 0 and r)
+
+    getRangeList :: Int -> Int -> [[Int]]
+    getRangeList i r
+            | i == 0 = [[]]
+            | i == 1 = [[a]| a <- [0..r]]
+            | otherwise = [ a++b | a <- [[a]| a <- [0..r]], b <- getRangeList (i-1) r]  
 
     --start with the symmetrizers 
 
@@ -153,7 +162,7 @@ module Index (
     --now the general Index data types
 
     type Index (n1::Nat) (n2::Nat) (n3::Nat) (n4::Nat) (n5::Nat) (n6::Nat) (n7::Nat) (n8::Nat) =  
-        (Uinds_3 n1, Linds_3 n2, Uinds_9 n3, Linds_9 n4, Uinds_19 n5, Linds_19 n6, Uinds_20 n7, Linds_20 n8) 
+        (Uinds_20 n1, Linds_20 n2, Uinds_19 n3, Linds_19 n4, Uinds_9 n5, Linds_9 n6, Uinds_3 n7, Linds_3 n8) 
 
     --we need constructors for Index
 

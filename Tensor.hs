@@ -38,8 +38,7 @@ module Tensor (
 
     --higher rank tensors can be built from these by tensor products and contractions
 
-    mkTensorfromList :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8, Num a) =>
-        [((Index n1 n2 n3 n4 n5 n6 n7 n8), a)] -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    mkTensorfromList :: [((Index n1 n2 n3 n4 n5 n6 n7 n8), a)] -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     mkTensorfromList l =  Tensor $ M.fromList l 
 
     --for constructing tensors from functions we need a function that takes a tensor and constructs (from its rank the list of all possible indices of the tensor)
@@ -76,4 +75,182 @@ module Tensor (
                     i7 = fromIntegral $ natVal (Proxy @n7)
                     i8 = fromIntegral $ natVal (Proxy @n8)
 
+    --now start with the tensor algebra functions
+
+    tensorSMult :: Num a => a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a 
+    tensorSMult a = fmap ( (*) a)
+
+    tensorAdd :: Num a => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorAdd (Tensor map1) (Tensor map2) = Tensor $ M.unionWith (+) map1 map2 
+    
+    tensorSub :: Num a => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorSub (Tensor map1) (Tensor map2) = Tensor $ M.unionWith (-) map1 map2
+
+    tensorTranspose :: Int -> (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTranspose i pair (Tensor map1) = Tensor $ M.mapKeys (swapPosIndex i pair) map1 
+
+    tensorBlockTranspose :: Int -> ([Int],[Int]) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorBlockTranspose i pair (Tensor map1) = Tensor $ M.mapKeys (swapBlockPosIndex i pair) map1 
+
+    --symmetrizer
+
+    symTensor :: (Fractional a) =>
+         Int -> (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a 
+    symTensor i pair t = tensorSMult (1/2) $ tensorAdd t $ tensorTranspose i pair t
+
+    aSymTensor :: (Fractional a) =>
+        Int -> (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a 
+    aSymTensor i pair t = tensorSMult (1/2) $ tensorSub t $ tensorTranspose i pair t
+
+    blockSymTensor :: (Fractional a) =>
+         Int -> ([Int],[Int]) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a 
+    blockSymTensor i pair t = tensorSMult (1/2) $ tensorAdd t $ tensorBlockTranspose i pair t
+
+    --for the cyclic symmetrization we need some extra stuff
+
+    factorial :: (Num a, Eq a) => a -> a 
+    factorial 0 = 1
+    factorial n = n * factorial (n-1)
+
+    cyclicSymTensor :: (Fractional a) =>
+         Int -> [Int] -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a 
+    cyclicSymTensor i list (Tensor map1) = tensorSMult (1/fac) (Tensor map2)
+                    where
+                        fac = fromIntegral $ factorial $ length list 
+                        cIndsF = cyclicSwapIndex i list 
+                        g = \k a -> (foldl (+) 0  (map ((M.!) map1)  (cIndsF k)) )
+                        map2 = M.mapWithKey g map1  
+
+    --now tensor products and constractions
+
+    tensorProductF :: (a -> b -> c) ->  M.Map (Index n1 n2 n3 n4 n5 n6 n7 n8) a -> M.Map (Index m1 m2 m3 m4 m5 m6 m7 m8) b -> Index m1 m2 m3 m4 m5 m6 m7 m8 
+        -> M.Map (Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8)) c
+    tensorProductF f map1 map2 index =  map3
+                    where 
+                        val = (M.!) map2 index 
+                        map3 = M.map (\y -> f y val) $ M.mapKeys (\x -> combineIndex x index) map1
+
+    
+    tensorProductWith :: (a -> b -> c) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 b -> 
+        Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) c
+    tensorProductWith f (Tensor map1) (Tensor map2) = Tensor newMap
+                    where 
+                        indList = M.keys map2 
+                        mapList = map (tensorProductF f map1 map2) indList
+                        newMap = M.unions mapList
+
+    --see if this implementation of the tensor product is fast enough ??
+
+    --the problem is that we need to change both keys and values completely (maybe working with lists intermediatly is better ?)
+
+    --now the contraction of a given Tensor
+
+    tensorContractWith_20 :: (KnownNat n1, KnownNat n2) =>
+        (Int,Int) -> (a -> a -> a) -> Tensor (n1+1) (n2+1) n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorContractWith_20 pair f (Tensor map1) = Tensor map2 
+                    where 
+                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 1 pair k) map1 
+                        map2 = M.mapKeysWith f (delContractionIndex_20 pair) mapFilt
+
+    tensorContractWith_19 :: (KnownNat n3, KnownNat n4) =>
+        (Int,Int) -> (a -> a -> a) -> Tensor n1 n2 (n3+1) (n4+1) n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorContractWith_19 pair f (Tensor map1) = Tensor map2 
+                    where 
+                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 1 pair k) map1 
+                        map2 = M.mapKeysWith f (delContractionIndex_19 pair) mapFilt
+                    
+    tensorContractWith_9 :: (KnownNat n5, KnownNat n6) =>
+        (Int,Int) -> (a -> a -> a) -> Tensor n1 n2 n3 n4 (n5+1) (n6+1) n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorContractWith_9 pair f (Tensor map1) = Tensor map2 
+                    where 
+                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 1 pair k) map1 
+                        map2 = M.mapKeysWith f (delContractionIndex_9 pair) mapFilt
+                    
+    tensorContractWith_3 :: (KnownNat n7, KnownNat n8) =>
+        (Int,Int) -> (a -> a -> a) -> Tensor n1 n2 n3 n4 n5 n6 (n7+1) (n8+1) a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorContractWith_3 pair f (Tensor map1) = Tensor map2 
+                    where 
+                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 1 pair k) map1 
+                        map2 = M.mapKeysWith f (delContractionIndex_3 pair) mapFilt
+
+    --for evaluating tensors we can use functions that evaluate the tensors for one specific index (i.e replacing one index with a number)
+    --the result ist then a tensor of lower rank
+
+    --it is however not suggested to use these functions if we are interested in all values stored in a tensor as it is usually slow (a lot of inds must be created peice by piece)
+
+    --eval first indices at pos i with value j
+
+    evalTensor_20_1 :: KnownNat n1 => Tensor (n1+1) n2 n3 n4 n5 n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    evalTensor_20_1 (Tensor map1) i j = Tensor map3
+                    where 
+                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd a i $ toEnum j 
+                        redKey = \(a,b,c,d,e,f,g,h) -> (delInd i a,b,c,d,e,f,g,h)
+                        map2 = M.filterWithKey (checkKey) map1 
+                        map3 = M.mapKeys redKey map2 
+
+    evalTensor_20_2 :: KnownNat n2 => Tensor n1 (n2+1) n3 n4 n5 n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    evalTensor_20_2 (Tensor map1) i j = Tensor map3
+                    where 
+                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd b i $ toEnum j 
+                        redKey = \(a,b,c,d,e,f,g,h) -> (a,delInd i b,c,d,e,f,g,h)
+                        map2 = M.filterWithKey (checkKey) map1 
+                        map3 = M.mapKeys redKey map2
+                        
+    evalTensor_19_1 :: KnownNat n3 => Tensor n1 n2 (n3+1) n4 n5 n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    evalTensor_19_1 (Tensor map1) i j = Tensor map3
+                    where 
+                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd c i $ toEnum j 
+                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,delInd i c,d,e,f,g,h)
+                        map2 = M.filterWithKey (checkKey) map1 
+                        map3 = M.mapKeys redKey map2
+
+    evalTensor_19_2 :: KnownNat n4 => Tensor n1 n2 n3 (n4+1) n5 n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    evalTensor_19_2 (Tensor map1) i j = Tensor map3
+                    where 
+                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd d i $ toEnum j 
+                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,delInd i d,e,f,g,h)
+                        map2 = M.filterWithKey (checkKey) map1 
+                        map3 = M.mapKeys redKey map2
+
+    evalTensor_9_1 :: KnownNat n5 => Tensor n1 n2 n3 n4 (n5+1) n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    evalTensor_9_1 (Tensor map1) i j = Tensor map3
+                    where 
+                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd e i $ toEnum j 
+                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,d,delInd i e,f,g,h)
+                        map2 = M.filterWithKey (checkKey) map1 
+                        map3 = M.mapKeys redKey map2
+
+    evalTensor_9_2 :: KnownNat n6 => Tensor n1 n2 n3 n4 n5 (n6+1) n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    evalTensor_9_2 (Tensor map1) i j = Tensor map3
+                    where 
+                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd f i $ toEnum j 
+                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,d,e,delInd i f,g,h)
+                        map2 = M.filterWithKey (checkKey) map1 
+                        map3 = M.mapKeys redKey map2
+
+    evalTensor_3_1 :: KnownNat n7 => Tensor n1 n2 n3 n4 n5 n6 (n7+1) n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    evalTensor_3_1 (Tensor map1) i j = Tensor map3
+                    where 
+                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd g i $ toEnum j 
+                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,d,e,f,delInd i g,h)
+                        map2 = M.filterWithKey (checkKey) map1 
+                        map3 = M.mapKeys redKey map2
+
+    evalTensor_3_2 :: KnownNat n8 => Tensor n1 n2 n3 n4 n5 n6 n7 (n8+1) a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    evalTensor_3_2 (Tensor map1) i j = Tensor map3
+                    where 
+                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd h i $ toEnum j 
+                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,d,e,f,g,delInd i h)
+                        map2 = M.filterWithKey (checkKey) map1 
+                        map3 = M.mapKeys redKey map2
+
+    --full evaluation of a tensor can be achieved by simply extracting all the values in the map
+
+    evalFullTensor :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> [a]
+    evalFullTensor (Tensor m) = M.elems m  
+
+    --we need to think about how we can write the components of the tensor in a matrix efficiently ??
+
+       
+    
 

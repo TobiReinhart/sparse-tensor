@@ -17,7 +17,8 @@
 
 module Index (
     Ind, mkInd, getRangeList, Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
-     indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex 
+     indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
+     delContractionIndex_20, delContractionIndex_19, delContractionIndex_9, delContractionIndex_3, checkInd, delInd
 
 ) where
 
@@ -70,10 +71,10 @@ module Index (
 
     --now the same for Inds (no need for safe constructors as the length is always unchanged)
 
-    swapPosInd :: KnownNat n => (Int, Int) -> Ind n a -> Ind n a 
+    swapPosInd :: (Int, Int) -> Ind n a -> Ind n a 
     swapPosInd pair (UnsafemkInd s) = UnsafemkInd $ swapPosSeq pair s 
     
-    swapBlockPosInd :: KnownNat n => ([Int],[Int]) -> Ind n a -> Ind n a
+    swapBlockPosInd :: ([Int],[Int]) -> Ind n a -> Ind n a
     swapBlockPosInd pair (UnsafemkInd s) = UnsafemkInd $ swapBlockPosSeq pair s 
 
     --now the cyclic symmetries
@@ -91,7 +92,7 @@ module Index (
                 perm = tail $ permutations l 
                 cList = zip (repeat l) perm 
 
-    cyclicSwapInd :: KnownNat n => [Int] -> Ind n a -> [Ind n a]
+    cyclicSwapInd :: [Int] -> Ind n a -> [Ind n a]
     cyclicSwapInd l (UnsafemkInd s) = map UnsafemkInd $ cyclicSwapSeq l s
 
     --these are all symmetrizers that we need!
@@ -103,11 +104,14 @@ module Index (
 
     --if the insert position is to high the elem is inserted at the end
 
-    insInd :: KnownNat n => Int -> a -> Ind n a -> Ind (n+1) a
+    insInd :: Int -> a -> Ind n a -> Ind (n+1) a
     insInd i x (UnsafemkInd s) = UnsafemkInd $ S.insertAt i x s 
 
-    repInd :: KnownNat n => Int -> a -> Ind n a -> Ind n a 
+    repInd ::Int -> a -> Ind n a -> Ind n a 
     repInd i x (UnsafemkInd s) = UnsafemkInd $ S.update i x s 
+
+    combineInd :: Ind n a -> Ind m a -> Ind (n+m) a
+    combineInd (UnsafemkInd s1) (UnsafemkInd s2) = UnsafemkInd $ (S.><) s1 s2
 
     --now the contraction Index (Index after contraction)
 
@@ -181,8 +185,7 @@ module Index (
 
     --we need to push all functions for Ind to the IndexLevel (must do all cases individually)
 
-    swapPosIndex :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
-               Int -> (Int,Int) -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> Index n1 n2 n3 n4 n5 n6 n7 n8
+    swapPosIndex :: Int -> (Int,Int) -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> Index n1 n2 n3 n4 n5 n6 n7 n8
     swapPosIndex i j (a,b,c,d,e,f,g,h) 
                 | i == 1 = (swapPosInd j a, b, c, d, e, f, g, h)
                 | i == 2 = (a, swapPosInd j b, c, d, e, f, g, h)
@@ -195,8 +198,7 @@ module Index (
                 | otherwise = error "specified index position must be an int between 1 and 8"
 
                 
-    swapBlockPosIndex :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
-               Int -> ([Int],[Int]) -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> Index n1 n2 n3 n4 n5 n6 n7 n8
+    swapBlockPosIndex :: Int -> ([Int],[Int]) -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> Index n1 n2 n3 n4 n5 n6 n7 n8
     swapBlockPosIndex i j (a,b,c,d,e,f,g,h) 
                 | i == 1 = (swapBlockPosInd j a, b, c, d, e, f, g, h)
                 | i == 2 = (a, swapBlockPosInd j b, c, d, e, f, g, h)
@@ -209,8 +211,7 @@ module Index (
                 | otherwise = error "specified index position must be an int between 1 and 8"
 
     
-    cyclicSwapIndex :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
-                Int -> [Int] -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> [Index n1 n2 n3 n4 n5 n6 n7 n8]
+    cyclicSwapIndex :: Int -> [Int] -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> [Index n1 n2 n3 n4 n5 n6 n7 n8]
     cyclicSwapIndex i j (a,b,c,d,e,f,g,h) 
                  | i == 1 = map (\x -> (x,b,c,d,e,f,g,h)) (cyclicSwapInd j a)
                  | i == 2 = map (\x -> (a,x,c,d,e,f,g,h)) (cyclicSwapInd j b)
@@ -222,8 +223,55 @@ module Index (
                  | i == 8 = map (\x -> (a,b,c,d,e,f,g,x)) (cyclicSwapInd j h)
                  | otherwise = error "specified index position must be an int between 1 and 8"
 
---there are several other functions we might need to add later
+    --there are several other functions we might need to add later
 
+    --we need to be able to construct all possible combiantions of indices for the tensor product
+
+    combineIndex :: Index n1 n2 n3 n4 n5 n6 n7 n8 -> Index m1 m2 m3 m4 m5 m6 m7 m8 -> Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8)
+    combineIndex (a1,b1,c1,d1,e1,f1,g1,h1) (a2,b2,c2,d2,e2,f2,g2,h2) = 
+        (combineInd a1 a2, combineInd b1 b2, combineInd c1 c2, combineInd d1 d2, combineInd e1 e2, combineInd f1 f2, combineInd g1 g2, combineInd h1 h2)
+
+    
+    --we need the function for the contraction list
+
+    isContractionInd :: (Enum a, Enum b) => (Int,Int) -> Ind n a -> Ind m b -> Bool
+    isContractionInd (i,k) (UnsafemkInd s1) (UnsafemkInd s2) = val1 == val2
+                where 
+                    val1 = fromEnum $ fromJust $ S.lookup i s1
+                    val2 = fromEnum $ fromJust $ S.lookup k s2
+
+    --first Int determines which indices are to be contracted (1=Area, 2=3Der, 3=2Der, 4=ST)
+
+    --returns true if the Index contributes to the contraction
+
+    isContractionIndex :: Int -> (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> Bool
+    isContractionIndex i pair (a,b,c,d,e,f,g,h)
+                    | i == 1 = isContractionInd pair a b
+                    | i == 2 = isContractionInd pair c d
+                    | i == 3 = isContractionInd pair e f
+                    | i == 4 = isContractionInd pair g h
+                    | otherwise = error "wrong index type to contract" 
+
+    delContractionIndex_20 :: (KnownNat n1, KnownNat n2) =>
+        (Int,Int) -> Index (n1+1) (n2+1) n3 n4 n5 n6 n7 n8 -> Index n1 n2 n3 n4 n5 n6 n7 n8
+    delContractionIndex_20 (i,j) (a,b,c,d,e,f,g,h) = (delInd i a, delInd j b, c, d, e, f, g, h)
+
+    delContractionIndex_19 :: (KnownNat n3, KnownNat n4) =>
+        (Int,Int) -> Index n1 n2 (n3+1) (n4+1) n5 n6 n7 n8 -> Index n1 n2 n3 n4 n5 n6 n7 n8
+    delContractionIndex_19 (i,j) (a,b,c,d,e,f,g,h) = (a, b, delInd i c, delInd j d, e, f, g, h)
+
+    delContractionIndex_9 :: (KnownNat n5, KnownNat n6) =>
+        (Int,Int) -> Index n1 n2 n3 n4 (n5+1) (n6+1) n7 n8 -> Index n1 n2 n3 n4 n5 n6 n7 n8
+    delContractionIndex_9 (i,j) (a,b,c,d,e,f,g,h) = (a, b, c, d, delInd i e, delInd j f, g, h)
+
+    delContractionIndex_3 :: (KnownNat n7, KnownNat n8) =>
+        (Int,Int) -> Index n1 n2 n3 n4 n5 n6 (n7+1) (n8+1) -> Index n1 n2 n3 n4 n5 n6 n7 n8
+    delContractionIndex_3 (i,j) (a,b,c,d,e,f,g,h) = (a, b, c, d, e, f, delInd i g, delInd j h)
+
+    --for the partial evaluation of tensor we need functions that check if a given Ind has a given value
+
+    checkInd :: Eq a => Ind n a -> Int -> a -> Bool
+    checkInd (UnsafemkInd s) i val = (fromJust $ S.lookup i s) == val  
 
 
 

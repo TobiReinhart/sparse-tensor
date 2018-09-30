@@ -14,7 +14,7 @@
 {-# LANGUAGE TypeApplications #-}
 
 module Tensor (
-    Tensor(..), mkTensorfromList, mkTensorfromF, getVal
+    Tensor(..), mkTensorfromList, mkTensorfromF, mkTensorfromList, getVal
 ) where
 
     import Index

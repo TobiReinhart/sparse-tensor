@@ -16,7 +16,9 @@
 
 
 module Index (
-    Ind, mkInd, getValInd, getRangeList, Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
+    Ind, mkInd, getValInd, getRangeList, sortInd, 
+    Uind_3, Lind_3, Uind_9, Lind_9, Uind_19, Lind_19, Uind_20, Lind_20,
+    Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
      indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
      delContractionIndex_20, delContractionIndex_19, delContractionIndex_9, delContractionIndex_3, checkInd, delInd
 
@@ -48,6 +50,9 @@ module Index (
 
     getValInd :: Ind n a -> Int -> a
     getValInd (UnsafemkInd s) i = fromJust $ S.lookup i s
+
+    sortInd :: Ord a => Ind n a -> Ind n a
+    sortInd (UnsafemkInd s) = UnsafemkInd $ S.sort s 
 
     --(for the tensor construction) construct all possible indices with i entries (for Ord a, between 0 and r)
 

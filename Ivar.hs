@@ -3,6 +3,7 @@
 --ivars must be added, multiplied by a factor end derived (vector like)
 
 module Ivar (
+    Ivar(..), showIvar, sMultIvar, addIvar, subIvar, constrAllIvars
 
 ) where
 
@@ -13,10 +14,17 @@ module Ivar (
 
     --store the scalar and the vector information in Ivar
 
-    data Ivar a = Ivar a (I.IntMap a)
+    data Ivar a = Ivar a (I.IntMap a) deriving (Eq, Show)
 
     instance Functor Ivar where
         fmap f (Ivar a map) = Ivar (f a) (I.map f map)
+
+    showIvar :: (Show a) => Ivar a -> String 
+    showIvar (Ivar a map1) = (show a) ++ (concat ivarString)
+                where 
+                    pairList = I.assocs map1
+                    ivarString = map (\(x,y) -> (show y) ++ "*" ++ "V" ++ (show x)) pairList
+
 
     sMultIvar :: Num a => a -> Ivar a -> Ivar a
     sMultIvar x ivar = fmap ((*) x) ivar
@@ -35,3 +43,5 @@ module Ivar (
                     ivarList = [[(a,1)] | a <- [1..i]]
 
     --we need a derivative function for ivars
+
+    --defined in Pde

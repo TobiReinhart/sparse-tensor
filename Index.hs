@@ -16,7 +16,7 @@
 
 
 module Index (
-    Ind, mkInd, getRangeList, Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
+    Ind, mkInd, getValInd, getRangeList, Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
      indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
      delContractionIndex_20, delContractionIndex_19, delContractionIndex_9, delContractionIndex_3, checkInd, delInd
 
@@ -45,6 +45,9 @@ module Index (
                     nat = fromIntegral $ natVal (Proxy @n)
 
     --now we can write all the functions we need for the indices
+
+    getValInd :: Ind n a -> Int -> a
+    getValInd (UnsafemkInd s) i = fromJust $ S.lookup i s
 
     --(for the tensor construction) construct all possible indices with i entries (for Ord a, between 0 and r)
 

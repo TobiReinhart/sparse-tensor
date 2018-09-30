@@ -14,7 +14,7 @@
 {-# LANGUAGE TypeApplications #-}
 
 module Tensor (
-
+    Tensor(..), mkTensorfromList, mkTensorfromF, getVal
 ) where
 
     import Index
@@ -61,6 +61,9 @@ module Tensor (
             where 
                 indList = tensorIndList rank 
                 valueList = map f indList
+
+    getVal :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> a
+    getVal (Tensor map1) ind = (M.!) map1 ind  
 
     getRank :: forall n1 n2 n3 n4 n5 n6 n7 n8 a. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
         Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Rank
@@ -246,10 +249,19 @@ module Tensor (
 
     --full evaluation of a tensor can be achieved by simply extracting all the values in the map
 
-    evalFullTensor :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> [a]
-    evalFullTensor (Tensor m) = M.elems m  
+    evalFullTensor :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> [(Index n1 n2 n3 n4 n5 n6 n7 n8,a)]
+    evalFullTensor (Tensor m) = M.assocs m  
 
-    --we need to think about how we can write the components of the tensor in a matrix efficiently ??
+    --this is all information we need to extract from the tensor
+
+    --the only thing missing is mapping the keys (Index n1 .. n8) to sparse matrix indices (Int,Int) -> in BasicTensor
+
+   
+    
+
+   
+
+
 
        
     

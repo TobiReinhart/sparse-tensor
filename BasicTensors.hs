@@ -15,6 +15,7 @@
 {-# LANGUAGE TypeApplications #-}
 
 module BasicTensors (
+    triangleMap2, triangleMap3, interI_2, interJ_2, symI_2, interI_3, interJ_3, symI_3
 
 ) where
 
@@ -63,18 +64,24 @@ module BasicTensors (
 
     --the next step is defining the intertwiners
 
-    symIndList :: Enum a => Int -> Int -> [[a]]
+    getLastSeq :: S.Seq a -> a
+    getLastSeq (S.Empty) = error "empty seq has no last elem"
+    getLastSeq ((S.:|>) xs x) = x
+    
+
+    symIndList :: Enum a => Int -> Int -> [S.Seq a]
     symIndList n j 
             | n <= toEnum 0 = error "wrong number of indices"
-            | n == 1 = [ [a] | a <- [toEnum 0.. toEnum j] ]
-            | otherwise = [ a ++ [b] | a <- (symIndList (n-1) j), b <- [(last a)..toEnum j] ] 
+            | n == 1 = [ S.singleton a | a <- [toEnum 0.. toEnum j] ]
+            | otherwise = [ (S.|>) a b | a <- (symIndList (n-1) j), b <- [(getLastSeq a)..toEnum j] ] 
 
-    --first define the functions for building the intertwiners as maps
+    --first define the functions for building the intertwiners as maps -> must be adapted in the datatype s.t. [a] is the right Ind data type
+    --probably already in symIndList
 
-    triangleMap2 :: (Enum a, Enum b, Ord a) =>  M.Map [a] b
+    triangleMap2 :: (Enum a, Enum b, Ord a) =>  M.Map (S.Seq a) b
     triangleMap2 = M.fromList $ zip (symIndList 2 3) [toEnum 1..]
 
-    triangleMap3 :: (Enum a, Enum b, Ord a) =>  M.Map [a] b
+    triangleMap3 :: (Enum a, Enum b, Ord a) =>  M.Map (S.Seq a) b
     triangleMap3 = M.fromList $ zip (symIndList 3 3) [toEnum 1..]
 
     --construct from these functions the functions for the intertwiners

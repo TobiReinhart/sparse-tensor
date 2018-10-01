@@ -47,11 +47,12 @@ module Tensor (
 
     tensorIndList :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
         Rank -> [Index n1 n2 n3 n4 n5 n6 n7 n8] 
-    tensorIndList (r1,r2,r3,r4,r5,r6,r7,r8) =  map (\(x1,x2,x3,x4,x5,x6,x7,x8) -> indexList x1 x2 x3 x4 x5 x6 x7 x8) list
+    tensorIndList (r1,r2,r3,r4,r5,r6,r7,r8) =  map (\(x1,x2,x3,x4,x5,x6,x7,x8) -> ((mkInd x1), (mkInd x2), (mkInd x3), (mkInd x4), (mkInd x5), (mkInd x6), (mkInd x7), (mkInd x8))) list
             where 
                 list = [ (y1,y2,y3,y4,y5,y6,y7,y8) | y1 <- (getRangeList r1 20), y2 <- (getRangeList r2 20), y3 <- (getRangeList r3 19), y4 <- (getRangeList r4 19),
                  y5 <- (getRangeList r5 9), y6 <- (getRangeList r6 9), y7 <- (getRangeList r7 3), y8 <- (getRangeList r8 3)]
 
+    --we need to use at least S.Seq for this and for getRangeList
     --this function works by producing a list of all possible indices for a given rank (as Ints) and then translating it to Inds
     --if this is to slow we need to directly construct the Inds 
 

@@ -56,11 +56,11 @@ module Index (
 
     --(for the tensor construction) construct all possible indices with i entries (for Ord a, between 0 and r)
 
-    getRangeList :: Int -> Int -> [[Int]]
+    getRangeList :: Enum a => Int -> Int -> [S.Seq a]
     getRangeList i r
-            | i == 0 = [[]]
-            | i == 1 = [[a]| a <- [0..r]]
-            | otherwise = [ a++b | a <- [[a]| a <- [0..r]], b <- getRangeList (i-1) r]  
+            | i == 0 = [S.Empty]
+            | i == 1 = [S.singleton a| a <- [ toEnum 0.. toEnum r]]
+            | otherwise = [ (S.<|) a b | a <- [ toEnum 0.. toEnum r], b <- getRangeList (i-1) r]  
 
     --start with the symmetrizers 
 

@@ -48,3 +48,5 @@ module Ivar (
     --we need a derivative function for ivars
 
     --defined in Pde
+
+    --we also need a function for inserting random values for the ivars (probably best at tensor level)

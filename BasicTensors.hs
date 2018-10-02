@@ -15,7 +15,9 @@
 {-# LANGUAGE TypeApplications #-}
 
 module BasicTensors (
-    triangleMap2, triangleMap3, interI_2, interJ_2, symI_2, interI_3, interJ_3, symI_3, areaDofList
+    triangleMap2, triangleMap3, interI_2, interJ_2, symI_2, interI_3, interJ_3, symI_3, areaDofList, interMetric, interArea,
+    ivar1, ivar2, ivar3, delta_3, delta_9, delta_19, delta_20, triangleMapArea, interI_Area, interJ_Area,
+    interF_IArea, canonicalizeArea, isZeroArea
 
 ) where
 
@@ -80,10 +82,10 @@ module BasicTensors (
     --probably already in symIndList
 
     triangleMap2 :: (Enum a, Enum b, Ord a) =>  M.Map (S.Seq a) b
-    triangleMap2 = M.fromList $ zip (symIndList 2 3) [toEnum 1..]
+    triangleMap2 = M.fromList $ zip (symIndList 2 3) [toEnum 0..]
 
     triangleMap3 :: (Enum a, Enum b, Ord a) =>  M.Map (S.Seq a) b
-    triangleMap3 = M.fromList $ zip (symIndList 3 3) [toEnum 1..]
+    triangleMap3 = M.fromList $ zip (symIndList 3 3) [toEnum 0..]
 
     --construct from these functions the functions for the intertwiners
 
@@ -106,7 +108,7 @@ module BasicTensors (
     jMult2 :: Eq a => Ind 2 a -> Rational
     jMult2 ind 
                 | i == j = 1
-                | otherwise = 2
+                | otherwise = 1/2
                  where 
                     i = getValInd ind 0
                     j = getValInd ind 1
@@ -147,8 +149,8 @@ module BasicTensors (
     jMult3 :: Eq a => Ind 3 a -> Rational
     jMult3 ind 
                 | i == j && j == k = 1
-                | i == j || j == k || i == k = 3
-                | otherwise = 6
+                | i == j || j == k || i == k = 1/3
+                | otherwise = 1/6
                  where 
                     i = getValInd ind 0
                     j = getValInd ind 1
@@ -202,12 +204,12 @@ module BasicTensors (
     areaDofList = [ S.fromList [a,b,c,d] | a <- [toEnum 0..toEnum 2], b <- [succ a .. toEnum 3], c <- [a..toEnum 2], d <- [succ c.. toEnum 3], not $ a == c && b > d  ]
 
     triangleMapArea :: (Enum a, Enum b, Ord a) =>  M.Map (S.Seq a) b
-    triangleMapArea = M.fromList $ zip (areaDofList) [toEnum 1..]
+    triangleMapArea = M.fromList $ zip (areaDofList) [toEnum 0..]
 
     jMultArea :: Eq a => Ind 4 a -> Rational
     jMultArea ind 
-                | a == c && b == d = 4
-                | otherwise = 8
+                | a == c && b == d = 1/4
+                | otherwise = 1/8
                  where 
                     a = getValInd ind 0
                     b = getValInd ind 1
@@ -250,9 +252,13 @@ module BasicTensors (
 
 
     canonicalizeArea :: (Eq a, Ord a, Enum a) => Ind 4 a -> (Ind 4 a,Rational)
-    canonicalizeArea = aPairSortArea.blockSortArea
+    canonicalizeArea ind = (blockSortArea p1,p2)
+                where 
+                    pSort = aPairSortArea ind 
+                    p1 = fst pSort
+                    p2 = snd pSort
 
-    --now define the intertwiner functions for the area metric
+    --now define the intertwiner functions for the area metric 
 
     interF_IArea :: M.Map (Linds_3 4) Uind_20 -> Index 1 0 0 0 0 0 0 4 -> Rational
     interF_IArea map1 (x,_,_,_,_,_,_,y) 
@@ -313,13 +319,13 @@ module BasicTensors (
     --define the tensors
 
     ivar1 :: Tensor 0 1 0 0 0 0 0 0 (Ivar Rational)
-    ivar1 = mkTensorfromF (0,1,0,0,0,0,0,0) ivar1F
+    ivar1 = mkTensorfromFZeros (0,1,0,0,0,0,0,0) ivar1F
 
     ivar2 :: Tensor 0 1 0 0 0 0 0 1 (Ivar Rational)
-    ivar2 = mkTensorfromF (0,1,0,0,0,0,0,1) ivar2F
+    ivar2 = mkTensorfromFZeros (0,1,0,0,0,0,0,1) ivar2F
 
     ivar3 :: Tensor 0 1 0 0 0 1 0 0 (Ivar Rational)
-    ivar3 = mkTensorfromF (0,1,0,0,0,1,0,0) ivar3F
+    ivar3 = mkTensorfromFZeros (0,1,0,0,0,1,0,0) ivar3F
 
 
 

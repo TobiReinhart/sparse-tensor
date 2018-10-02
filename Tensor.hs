@@ -15,7 +15,8 @@
 
 module Tensor (
     Tensor(..), mkTensorfromList, mkTensorfromF, getVal, tensorProductWith, tensorContractWith_3, tensorContractWith_9, tensorContractWith_19,
-    tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor
+    tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor, tensorTranspose,
+    tensorIndList, mkTensorfromFZeros
 ) where
 
     import Index
@@ -30,7 +31,7 @@ module Tensor (
     --start by defining the tensor data type (try using Map instead of functions)
 
     data Tensor (n1::Nat) (n2::Nat) (n3::Nat) (n4::Nat) (n5::Nat) (n6::Nat) (n7::Nat) (n8::Nat) a =
-        Tensor (M.Map (Index n1 n2 n3 n4 n5 n6 n7 n8) a)
+        Tensor (M.Map (Index n1 n2 n3 n4 n5 n6 n7 n8) a) deriving Show
 
     instance Functor (Tensor n1 n2 n3 n4 n5 n6 n7 n8) where
         fmap f (Tensor tMap) = Tensor (M.map f tMap)
@@ -57,15 +58,26 @@ module Tensor (
     --this function works by producing a list of all possible indices for a given rank (as Ints) and then translating it to Inds
     --if this is to slow we need to directly construct the Inds 
 
-    mkTensorfromF :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
+    mkTensorfromF :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8, Num a, Eq a) =>
         Rank -> ((Index n1 n2 n3 n4 n5 n6 n7 n8) -> a) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
-    mkTensorfromF rank f = Tensor $ M.fromList (zip indList valueList)
+    mkTensorfromF rank f = Tensor $ M.filter ( /= 0) $ M.fromList (zip indList valueList)
             where 
                 indList = tensorIndList rank 
                 valueList = map f indList
 
-    getVal :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> a
-    getVal (Tensor map1) ind = (M.!) map1 ind  
+    mkTensorfromFZeros :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
+        Rank -> ((Index n1 n2 n3 n4 n5 n6 n7 n8) -> a) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    mkTensorfromFZeros rank f = Tensor $ M.fromList (zip indList valueList)
+            where 
+                indList = tensorIndList rank 
+                valueList = map f indList    
+                
+    --mkTensorfromF stores only non zero values, mkTensorfromFZeros stores all values
+
+    getVal :: Num a => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> a
+    getVal (Tensor map1) ind 
+            | M.member ind map1 = (M.!) map1 ind
+            | otherwise = 0  
 
     getRank :: forall n1 n2 n3 n4 n5 n6 n7 n8 a. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
         Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Rank
@@ -161,21 +173,21 @@ module Tensor (
         (Int,Int) -> (a -> a -> a) -> Tensor n1 n2 (n3+1) (n4+1) n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorContractWith_19 pair f (Tensor map1) = Tensor map2 
                     where 
-                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 1 pair k) map1 
+                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 2 pair k) map1 
                         map2 = M.mapKeysWith f (delContractionIndex_19 pair) mapFilt
                     
     tensorContractWith_9 :: (KnownNat n5, KnownNat n6) =>
         (Int,Int) -> (a -> a -> a) -> Tensor n1 n2 n3 n4 (n5+1) (n6+1) n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorContractWith_9 pair f (Tensor map1) = Tensor map2 
                     where 
-                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 1 pair k) map1 
+                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 3 pair k) map1 
                         map2 = M.mapKeysWith f (delContractionIndex_9 pair) mapFilt
                     
     tensorContractWith_3 :: (KnownNat n7, KnownNat n8) =>
         (Int,Int) -> (a -> a -> a) -> Tensor n1 n2 n3 n4 n5 n6 (n7+1) (n8+1) a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorContractWith_3 pair f (Tensor map1) = Tensor map2 
                     where 
-                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 1 pair k) map1 
+                        mapFilt = M.filterWithKey (\k _ -> isContractionIndex 4 pair k) map1 
                         map2 = M.mapKeysWith f (delContractionIndex_3 pair) mapFilt
 
     --for evaluating tensors we can use functions that evaluate the tensors for one specific index (i.e replacing one index with a number)

@@ -15,7 +15,10 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
-module EquivarinaceEqns (
+module EquivarianceEqns (
+    eqn1_1, eqn1_2, eqn1_3, eqn2_2, eqn2_3, eqn3_3,
+    index2Sparse1, index2Sparse2, index2Sparse3, index2Sparse4, index2Sparse5, index2Sparse6,
+    mkEqn1Sparse, mkEqn2Sparse, mkEqn3Sparse, mkEqn4Sparse, mkEqn5Sparse, mkEqn6Sparse
 
 ) where
 
@@ -24,10 +27,60 @@ module EquivarinaceEqns (
     import BasicTensors
     import Ivar
     import Pde
+    import qualified Data.Map as M 
+
+    --the first step is writing functions for constructing the 6 equation blocks that we need
+
+    eqn1_1 ::  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 0 1 1 (Ivar Rational)
+    eqn1_1 map1Area map2Area = tensorContractWith_20 (0,1) addIvar prod 
+                    where
+                        prod = tensorProductWith sMultIvar (interArea map1Area map2Area) ivar1
+
+    eqn1_2 ::  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 0 1 2 (Ivar Rational)
+    eqn1_2 map1Area map2Area =  tensorContractWith_20 (0,1) addIvar $ tensorContractWith_3 (1,2) addIvar prod
+                    where
+                        int1 = tensorProductWith (*) (interArea map1Area map2Area) delta_3 
+                        int2 = tensorProductWith (*) ( tensorTranspose 8 (0,1) $ tensorProductWith (*) delta_3 delta_3 ) delta_20
+                        intTotal = tensorSub int1 int2 
+                        prod = tensorProductWith sMultIvar intTotal ivar2
+
+    eqn1_3 :: M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 1 1 1 (Ivar Rational)
+    eqn1_3 map1Metric map2Metric map1Area map2Area = tensorContractWith_20 (0,1) addIvar $ tensorContractWith_9 (0,0) addIvar prod
+                    where
+                        int1 = tensorProductWith (*) (interArea map1Area map2Area) delta_9
+                        int2 = tensorProductWith (*) (interMetric map1Metric map2Metric) delta_20
+                        intTotal = tensorAdd int1 int2
+                        prod = tensorProductWith sMultIvar intTotal ivar3
+
+    eqn2_2 :: M.Map (Linds_3 2) Uind_9 ->  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 1 0 0 2 (Ivar Rational)
+    eqn2_2 mapInterI2 map1Area map2Area = tensorContractWith_20 (0,1) addIvar prod 
+                    where
+                        int1 = tensorProductWith (*) (interArea map1Area map2Area) (interI_2 mapInterI2)
+                        interTotal = tensorContractWith_3 (0,1) (+) int1
+                        prod = tensorProductWith sMultIvar interTotal ivar1
+                    
+    eqn2_3 :: M.Map (Linds_3 2) Uind_9 -> M.Map (Uinds_3 2) Lind_9 -> M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 1 1 0 1 (Ivar Rational)
+    eqn2_3 mapInterI2 mapInterJ2 map1Area map2Area = tensorContractWith_3 (0,1) addIvar $ tensorContractWith_20 (0,1) addIvar prod 
+                    where
+                        int1_1 = tensorProductWith (*) (interArea map1Area map2Area) (interI_2 mapInterI2)
+                        int1_2 = tensorContractWith_3 (0,1) (+) int1_1
+                        int1_3 = tensorProductWith (*) (interJ_2 mapInterJ2) int1_2
+                        int1 = tensorContractWith_3 (1,1) (+) int1_3
+                        int2 = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_9 delta_3
+                        interTotal = tensorSub int1 int2
+                        prod = tensorProductWith sMultIvar interTotal ivar2
+
+    eqn3_3 :: M.Map (Linds_3 3) Uind_19 -> M.Map (Uinds_3 2) Lind_9 -> M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 1 0 0 1 0 1 (Ivar Rational)
+    eqn3_3 mapInterI3 mapInterJ2 map1Area map2Area = tensorContractWith_20 (0,1) addIvar prod
+                    where
+                        int1 = tensorProductWith (*) (interJ_2 mapInterJ2) (interArea map1Area map2Area)
+                        intTotal = tensorContractWith_3 (0,1) (+) $ tensorContractWith_3 (1,2) (+) $ tensorContractWith_3 (2,3) (+) $ tensorProductWith (*) int1 (interI_3 mapInterI3)
+                        prod = tensorProductWith sMultIvar intTotal ivar1
 
 
 
-    --these functions are specified for are metric (21 dofs)
+
+    --these functions are specified for area metric (21 dofs) -> can be used to make a sparse matrix map from the 6 tensor maps
 
     index2Sparse1 :: Index 0 1 0 0 0 0 1 1 -> (Int,Int) 
     index2Sparse1 (_, x2, _, _, _, _, x7, x8) = ((m-1)*4+n,a)
@@ -69,7 +122,7 @@ module EquivarinaceEqns (
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              j = 1 + (fromEnum $ getValInd x5 0)
-                             i = 1 + (fromEnum $ getValInd x6 1)
+                             i = 1 + (fromEnum $ getValInd x6 0)
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse6 :: Index 0 1 1 0 0 1 0 1 -> (Int,Int) 
@@ -77,5 +130,25 @@ module EquivarinaceEqns (
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              j = 1 + (fromEnum $ getValInd x3 0)
-                             i = 1 + (fromEnum $ getValInd x6 1)
+                             i = 1 + (fromEnum $ getValInd x6 0)
                              n = 1 + (fromEnum $ getValInd x8 0)
+
+    mkEqn1Sparse :: Tensor 0 1 0 0 0 0 1 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn1Sparse (Tensor map1) = M.mapKeys index2Sparse1 map1 
+
+    mkEqn2Sparse :: Tensor 0 1 0 0 0 0 1 2 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn2Sparse (Tensor map1) = M.mapKeys index2Sparse2 map1
+    
+    mkEqn3Sparse :: Tensor 0 1 0 0 0 1 1 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn3Sparse (Tensor map1) = M.mapKeys index2Sparse3 map1 
+
+    mkEqn4Sparse :: Tensor 0 1 0 0 1 0 0 2 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn4Sparse (Tensor map1) = M.mapKeys index2Sparse4 map1
+    
+    mkEqn5Sparse :: Tensor 0 1 0 0 1 1 0 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn5Sparse (Tensor map1) = M.mapKeys index2Sparse5 map1 
+
+    mkEqn6Sparse :: Tensor 0 1 1 0 0 1 0 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn6Sparse (Tensor map1) = M.mapKeys index2Sparse6 map1 
+
+    

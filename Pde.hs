@@ -86,7 +86,9 @@ module Pde (
                         z = zip sys [1..]
                         l = map (print2Maple nopsIvar triangle) z
 
-    --we need functions to construct pdes out of the tensor output
+    --we need functions to construct pdes out of the tensor output and for prolonging the whole system
+
+    
 
 
 

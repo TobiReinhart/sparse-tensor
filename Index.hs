@@ -17,7 +17,7 @@
 
 module Index (
     Ind, mkInd, getValInd, getRangeList, sortInd, 
-    Uind_3, Lind_3, Uind_9, Lind_9, Uind_19, Lind_19, Uind_20, Lind_20,
+    Uind_3(..), Lind_3(..), Uind_9(..), Lind_9(..), Uind_19(..), Lind_19(..), Uind_20(..), Lind_20(..),
     Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
      indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
      delContractionIndex_20, delContractionIndex_19, delContractionIndex_9, delContractionIndex_3, checkInd, delInd

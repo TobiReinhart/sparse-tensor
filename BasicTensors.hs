@@ -15,12 +15,13 @@
 {-# LANGUAGE TypeApplications #-}
 
 module BasicTensors (
-    triangleMap2, triangleMap3, interI_2, interJ_2, symI_2, interI_3, interJ_3, symI_3
+    triangleMap2, triangleMap3, interI_2, interJ_2, symI_2, interI_3, interJ_3, symI_3, areaDofList
 
 ) where
 
     import Index
     import Tensor
+    import Ivar 
     import qualified Data.Sequence as S
     import Numeric.Natural 
     import GHC.TypeNats
@@ -86,7 +87,7 @@ module BasicTensors (
 
     --construct from these functions the functions for the intertwiners
 
-    --or implement the intertwiners in some other way ?? 
+    --or implement the intertwiners in some other way ??  -> maybe directly as map or from a list ??
 
     --maybe directly construct the tensor from a list ?
 
@@ -195,61 +196,135 @@ module BasicTensors (
 
     --the only simple tensor that is missing is the area metric intertwiner
 
+    --we try it  this way if it is fast enough
+
+    areaDofList :: (Enum a, Eq a, Ord a) => [S.Seq a]
+    areaDofList = [ S.fromList [a,b,c,d] | a <- [toEnum 0..toEnum 2], b <- [succ a .. toEnum 3], c <- [a..toEnum 2], d <- [succ c.. toEnum 3], not $ a == c && b > d  ]
+
+    triangleMapArea :: (Enum a, Enum b, Ord a) =>  M.Map (S.Seq a) b
+    triangleMapArea = M.fromList $ zip (areaDofList) [toEnum 1..]
+
+    jMultArea :: Eq a => Ind 4 a -> Rational
+    jMultArea ind 
+                | a == c && b == d = 4
+                | otherwise = 8
+                 where 
+                    a = getValInd ind 0
+                    b = getValInd ind 1
+                    c = getValInd ind 2
+                    d = getValInd ind 3
+
+    --de need to canonicalize the are indices
+
+    isZeroArea :: (Eq a, Ord a, Enum a) => Ind 4 a -> Bool
+    isZeroArea ind 
+                | a == b || c == d = True
+                | otherwise = False 
+                 where 
+                    a = getValInd ind 0
+                    b = getValInd ind 1
+                    c = getValInd ind 2
+                    d = getValInd ind 3
+
+    blockSortArea :: (Eq a, Ord a, Enum a) => Ind 4 a -> Ind 4 a
+    blockSortArea ind
+                | a < c || (a == c && b <= d) = ind
+                | otherwise = mkInd $ S.fromList [c,d,a,b] 
+                 where 
+                    a = getValInd ind 0
+                    b = getValInd ind 1
+                    c = getValInd ind 2
+                    d = getValInd ind 3
+
+    aPairSortArea :: (Eq a, Ord a, Enum a) => Ind 4 a -> (Ind 4 a, Rational)
+    aPairSortArea ind
+                | a < b && c < d = (ind, 1)
+                | a < b && c > d = (mkInd $ S.fromList [a,b,d,c], -1)
+                | a > b && c < d = (mkInd $ S.fromList [b,a,c,d], -1)
+                | otherwise = (mkInd $ S.fromList [b,a,d,c], 1)
+                 where 
+                    a = getValInd ind 0
+                    b = getValInd ind 1
+                    c = getValInd ind 2
+                    d = getValInd ind 3
+
+
+    canonicalizeArea :: (Eq a, Ord a, Enum a) => Ind 4 a -> (Ind 4 a,Rational)
+    canonicalizeArea = aPairSortArea.blockSortArea
+
+    --now define the intertwiner functions for the area metric
+
+    interF_IArea :: M.Map (Linds_3 4) Uind_20 -> Index 1 0 0 0 0 0 0 4 -> Rational
+    interF_IArea map1 (x,_,_,_,_,_,_,y) 
+                | isZeroArea y = 0
+                | indI == xVal = snd sortY
+                | otherwise = 0
+                 where 
+                    sortY = canonicalizeArea y
+                    indI = (M.!) map1 $ fst sortY
+                    xVal = getValInd x 0
+
+    interF_JArea :: M.Map (Uinds_3 4) Lind_20 -> Index 0 1 0 0 0 0 4 0 -> Rational
+    interF_JArea map1 (_,x,_,_,_,_,y,_) 
+                | isZeroArea y = 0
+                | indI == xVal = snd sortY * (jMultArea y)
+                | otherwise = 0
+                 where 
+                    sortY = canonicalizeArea y
+                    indI = (M.!) map1 $ fst sortY
+                    xVal = getValInd x 0
+
+    --now deifne the tensors
+
+    interI_Area :: M.Map (Linds_3 4) Uind_20 -> Tensor 1 0 0 0 0 0 0 4 Rational
+    interI_Area map1 = mkTensorfromF (1,0,0,0,0,0,0,4) (interF_IArea map1) 
+
+    interJ_Area :: M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 0 4 0 Rational
+    interJ_Area map1 = mkTensorfromF (0,1,0,0,0,0,4,0) (interF_JArea map1) 
+
+    --the last step is defining the metric and area metric intertwiner, they booth need the appropriate maps
+
+    interMetric ::  M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9  -> Tensor 0 0 0 0 1 1 1 1 Rational 
+    interMetric iMap jMap = tensorSMult (-2) $ tensorContractWith_3 (0,0) (+) prod 
+            where 
+                i = interI_2 iMap
+                j = interJ_2 jMap
+                prod = tensorProductWith (*) i j 
+
+    interArea ::  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20  -> Tensor 1 1 0 0 0 0 1 1 Rational 
+    interArea iMap jMap = tensorSMult (-4) $ tensorContractWith_3 (1,1) (+) 
+        $ tensorContractWith_3 (2,2) (+) $ tensorContractWith_3 (3,3) (+) prod 
+            where 
+                i = interI_Area iMap
+                j = interJ_Area jMap
+                prod = tensorProductWith (*) i j 
+
+    --we also need the ivar Tensors (careful where we start with Enums!!)
+
+    ivar1F :: Index 0 1 0 0 0 0 0 0 -> Ivar Rational 
+    ivar1F (_,a,_,_,_,_,_,_) = number2Ivar $ 1 + (fromEnum $ getValInd a 0)
+
+    ivar2F :: Index 0 1 0 0 0 0 0 1 -> Ivar Rational 
+    ivar2F (_,a,_,_,_,_,_,b) = number2Ivar $ (21+1) + (fromEnum $ getValInd a 0)*4 + (fromEnum $ getValInd b 0)
+    
+    ivar3F :: Index 0 1 0 0 0 1 0 0 -> Ivar Rational 
+    ivar3F (_,a,_,_,_,b,_,_) = number2Ivar $ (21*5+1) + (fromEnum $ getValInd a 0)*10 + (fromEnum $ getValInd b 0)
+
+    --define the tensors
+
+    ivar1 :: Tensor 0 1 0 0 0 0 0 0 (Ivar Rational)
+    ivar1 = mkTensorfromF (0,1,0,0,0,0,0,0) ivar1F
+
+    ivar2 :: Tensor 0 1 0 0 0 0 0 1 (Ivar Rational)
+    ivar2 = mkTensorfromF (0,1,0,0,0,0,0,1) ivar2F
+
+    ivar3 :: Tensor 0 1 0 0 0 1 0 0 (Ivar Rational)
+    ivar3 = mkTensorfromF (0,1,0,0,0,1,0,0) ivar3F
 
 
 
+    --these are all tensors we need
 
+    --the last step is constructionf the equivariance equations
 
-    --these functions are specified for are metric (21 dofs)
-
-    index2Sparse1 :: Index 0 1 0 0 0 0 1 1 -> (Int,Int) 
-    index2Sparse1 (_, x2, _, _, _, _, x7, x8) = ((m-1)*4+n,a)
-                             where 
-                                 a = 1 + (fromEnum $ getValInd x2 0)
-                                 m = 1 + (fromEnum $ getValInd x7 0)
-                                 n = 1 + (fromEnum $ getValInd x8 0)
- 
-    --the V_Ai i index always comes after the delta_mn n index (order of indices is important !)
-
-    --check this later on when we have extracted the equations
- 
-    index2Sparse2 :: Index 0 1 0 0 0 0 1 2 -> (Int,Int) 
-    index2Sparse2 (_, x2, _, _, _, _, x7, x8) = ((m-1)*4+n,21+(a-1)*4+i)
-                             where 
-                                 a = 1 + (fromEnum $ getValInd x2 0)
-                                 i = 1 + (fromEnum $ getValInd x8 1)
-                                 m = 1 + (fromEnum $ getValInd x7 0)
-                                 n = 1 + (fromEnum $ getValInd x8 0)
- 
-    index2Sparse3 :: Index 0 1 0 0 0 1 1 1 -> (Int,Int) 
-    index2Sparse3 (_, x2, _, _, _, x6, x7, x8) = ((m-1)*4+n,21*5+(a-1)*10+i)
-                             where 
-                                 a = 1 + (fromEnum $ getValInd x2 0)
-                                 i = 1 + (fromEnum $ getValInd x6 0)
-                                 m = 1 + (fromEnum $ getValInd x7 0)
-                                 n = 1 + (fromEnum $ getValInd x8 0)
- 
-    index2Sparse4 :: Index 0 1 0 0 1 0 0 2 -> (Int,Int) 
-    index2Sparse4 (_, x2, _, _, x5, _, _, x8) = ((j-1)*4+n,21+(a-1)*4+i)
-                             where 
-                                 a = 1 + (fromEnum $ getValInd x2 0)
-                                 j = 1 + (fromEnum $ getValInd x5 0)
-                                 i = 1 + (fromEnum $ getValInd x8 1)
-                                 n = 1 + (fromEnum $ getValInd x8 0)
-
-    index2Sparse5 :: Index 0 1 0 0 1 1 0 1 -> (Int,Int) 
-    index2Sparse5 (_, x2, _, _, x5, x6, _, x8) = ((j-1)*4+n,21*5+(a-1)*10+i)
-                             where 
-                                 a = 1 + (fromEnum $ getValInd x2 0)
-                                 j = 1 + (fromEnum $ getValInd x5 0)
-                                 i = 1 + (fromEnum $ getValInd x6 1)
-                                 n = 1 + (fromEnum $ getValInd x8 0)
-
-    index2Sparse6 :: Index 0 1 1 0 0 1 0 1 -> (Int,Int) 
-    index2Sparse6 (_, x2, x3, _, _, x6, _, x8) = ((j-1)*4+n,21*5+(a-1)*10+i)
-                             where 
-                                 a = 1 + (fromEnum $ getValInd x2 0)
-                                 j = 1 + (fromEnum $ getValInd x3 0)
-                                 i = 1 + (fromEnum $ getValInd x6 1)
-                                 n = 1 + (fromEnum $ getValInd x8 0)
- 
+                

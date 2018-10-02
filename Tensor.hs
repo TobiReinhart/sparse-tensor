@@ -14,7 +14,8 @@
 {-# LANGUAGE TypeApplications #-}
 
 module Tensor (
-    Tensor(..), mkTensorfromList, mkTensorfromF, mkTensorfromList, getVal
+    Tensor(..), mkTensorfromList, mkTensorfromF, getVal, tensorProductWith, tensorContractWith_3, tensorContractWith_9, tensorContractWith_19,
+    tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor
 ) where
 
     import Index
@@ -56,7 +57,7 @@ module Tensor (
     --this function works by producing a list of all possible indices for a given rank (as Ints) and then translating it to Inds
     --if this is to slow we need to directly construct the Inds 
 
-    mkTensorfromF :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8, Num a) =>
+    mkTensorfromF :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
         Rank -> ((Index n1 n2 n3 n4 n5 n6 n7 n8) -> a) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     mkTensorfromF rank f = Tensor $ M.fromList (zip indList valueList)
             where 
@@ -147,7 +148,7 @@ module Tensor (
 
     --the problem is that we need to change both keys and values completely (maybe working with lists intermediatly is better ?)
 
-    --now the contraction of a given Tensor
+    --now the contraction of a given Tensor -> add folds of these functions?
 
     tensorContractWith_20 :: (KnownNat n1, KnownNat n2) =>
         (Int,Int) -> (a -> a -> a) -> Tensor (n1+1) (n2+1) n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a

@@ -3,7 +3,7 @@
 --ivars must be added, multiplied by a factor end derived (vector like)
 
 module Ivar (
-    Ivar(..), showIvar, sMultIvar, addIvar, subIvar, constrAllIvars
+    Ivar(..), showIvar, sMultIvar, addIvar, subIvar, constrAllIvars, number2Ivar
 
 ) where
 
@@ -41,6 +41,9 @@ module Ivar (
     constrAllIvars i = map (\x ->(Ivar 0 (I.fromList x))) ivarList 
                 where
                     ivarList = [[(a,1)] | a <- [1..i]]
+
+    number2Ivar :: (Num a) => Int -> Ivar a
+    number2Ivar i = Ivar 0 $ I.singleton i 1
 
     --we need a derivative function for ivars
 

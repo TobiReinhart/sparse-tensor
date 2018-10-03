@@ -57,7 +57,7 @@ module Main (
 
         let totalEqn = M.unions [eqn1Sparse, eqn2Sparse, eqn3Sparse, eqn4Sparse, eqn5Sparse, eqn6Sparse]
 
-        writeFile "PdeHaskell1.txt" $ show $ M.assocs totalEqn 
+        writeFile "PdeHaskell1.txt" $ showEqns totalEqn 
 
         --print $ evalFullTensor (interMetric map1Metric map2Metric)
 

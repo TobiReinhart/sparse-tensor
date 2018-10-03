@@ -18,7 +18,7 @@
 module EquivarianceEqns (
     eqn1_1, eqn1_2, eqn1_3, eqn2_2, eqn2_3, eqn3_3,
     index2Sparse1, index2Sparse2, index2Sparse3, index2Sparse4, index2Sparse5, index2Sparse6,
-    mkEqn1Sparse, mkEqn2Sparse, mkEqn3Sparse, mkEqn4Sparse, mkEqn5Sparse, mkEqn6Sparse
+    mkEqn1Sparse, mkEqn2Sparse, mkEqn3Sparse, mkEqn4Sparse, mkEqn5Sparse, mkEqn6Sparse, showEqns
 
 ) where
 
@@ -151,5 +151,12 @@ module EquivarianceEqns (
 
     mkEqn6Sparse :: Tensor 0 1 1 0 0 1 0 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
     mkEqn6Sparse (Tensor map1) = M.mapKeys index2Sparse6 map1 
+
+    showEqns :: M.Map (Int,Int) (Ivar Rational) -> String
+    showEqns map1 = "{" ++ (tail (concat list2)) ++ "}"
+                        where
+                            map2 = M.map showIvarRational map1 
+                            list1 = M.assocs map2
+                            list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y) list1
 
     

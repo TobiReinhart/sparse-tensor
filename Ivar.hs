@@ -3,7 +3,7 @@
 --ivars must be added, multiplied by a factor end derived (vector like)
 
 module Ivar (
-    Ivar(..), showIvar, sMultIvar, addIvar, subIvar, constrAllIvars, number2Ivar
+    Ivar(..), showIvar, showIvarRational, sMultIvar, addIvar, subIvar, constrAllIvars, number2Ivar
 
 ) where
 
@@ -24,6 +24,12 @@ module Ivar (
                 where 
                     pairList = I.assocs map1
                     ivarString = map (\(x,y) -> (show y) ++ "*" ++ "V" ++ (show x)) pairList
+
+    showIvarRational :: Ivar Rational -> String
+    showIvarRational (Ivar a map1) = (show $ truncate a) ++ (concat ivarString)
+                where 
+                    pairList = I.assocs map1
+                    ivarString = map (\(x,y) -> (show $ truncate y) ++ "*" ++ "V" ++ (show x)) pairList
 
 
     sMultIvar :: Num a => a -> Ivar a -> Ivar a

@@ -45,7 +45,7 @@ module EquivarianceEqns (
                         prod = tensorProductWith sMultIvar intTotal ivar2
 
     eqn1_3 :: M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 1 1 1 (Ivar Rational)
-    eqn1_3 map1Metric map2Metric map1Area map2Area = tensorContractWith_20 (0,1) addIvar $ tensorContractWith_9 (0,0) addIvar prod
+    eqn1_3 map1Metric map2Metric map1Area map2Area = tensorContractWith_20 (0,1) addIvar $ tensorContractWith_9 (0,1) addIvar prod
                     where
                         int1 = tensorProductWith (*) (interArea map1Area map2Area) delta_9
                         int2 = tensorProductWith (*) (interMetric map1Metric map2Metric) delta_20
@@ -65,7 +65,8 @@ module EquivarianceEqns (
                         int1_1 = tensorProductWith (*) (interArea map1Area map2Area) (interI_2 mapInterI2)
                         int1_2 = tensorContractWith_3 (0,1) (+) int1_1
                         int1_3 = tensorProductWith (*) (interJ_2 mapInterJ2) int1_2
-                        int1 = tensorContractWith_3 (1,1) (+) int1_3
+                        int1_4 = tensorContractWith_3 (1,1) (+) int1_3
+                        int1 = tensorSMult 2 int1_4 
                         int2 = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_9 delta_3
                         interTotal = tensorSub int1 int2
                         prod = tensorProductWith sMultIvar interTotal ivar2

@@ -273,7 +273,7 @@ module BasicTensors (
     interF_JArea :: M.Map (Uinds_3 4) Lind_20 -> Index 0 1 0 0 0 0 4 0 -> Rational
     interF_JArea map1 (_,x,_,_,_,_,y,_) 
                 | isZeroArea y = 0
-                | indI == xVal = snd sortY * (jMultArea y)
+                | indI == xVal = snd sortY * (jMultArea (fst sortY))
                 | otherwise = 0
                  where 
                     sortY = canonicalizeArea y

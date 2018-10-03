@@ -16,7 +16,7 @@
 module Tensor (
     Tensor(..), mkTensorfromList, mkTensorfromF, getVal, tensorProductWith, tensorContractWith_3, tensorContractWith_9, tensorContractWith_19,
     tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor, tensorTranspose,
-    tensorIndList, mkTensorfromFZeros
+    tensorIndList, mkTensorfromFZeros, evalFullTensor
 ) where
 
     import Index

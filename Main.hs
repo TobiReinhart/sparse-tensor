@@ -59,6 +59,8 @@ module Main (
 
         writeFile "PdeHaskell1.txt" $ show $ M.assocs totalEqn 
 
+        --print $ evalFullTensor (interMetric map1Metric map2Metric)
+
 
         
 

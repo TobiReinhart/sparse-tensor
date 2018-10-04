@@ -16,9 +16,9 @@
 {-# LANGUAGE TypeApplications #-}
 
 module EquivarianceEqns (
-    eqn1_1, eqn1_2, eqn1_3, eqn2_2, eqn2_3, eqn3_3,
-    index2Sparse1, index2Sparse2, index2Sparse3, index2Sparse4, index2Sparse5, index2Sparse6,
-    mkEqn1Sparse, mkEqn2Sparse, mkEqn3Sparse, mkEqn4Sparse, mkEqn5Sparse, mkEqn6Sparse, showEqns
+    eqn1_1, eqn1_2, eqn1_3, eqn1_4, eqn2_2, eqn2_3, eqn3_3,
+    index2Sparse1, index2Sparse2, index2Sparse3, index2Sparse4, index2Sparse5, index2Sparse6,index2SparseConst,
+    mkEqn1Sparse, mkEqn2Sparse, mkEqn3Sparse, mkEqn4Sparse, mkEqn5Sparse, mkEqn6Sparse, mkEqnConstSparse, showEqns
 
 ) where
 
@@ -52,6 +52,9 @@ module EquivarianceEqns (
                         intTotal = tensorAdd int1 int2
                         prod = tensorProductWith sMultIvar intTotal ivar3
 
+    eqn1_4 :: Tensor 0 0 0 0 0 0 1 1 Rational
+    eqn1_4 = delta_3
+
     eqn2_2 :: M.Map (Linds_3 2) Uind_9 ->  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 1 0 0 2 (Ivar Rational)
     eqn2_2 mapInterI2 map1Area map2Area = tensorContractWith_20 (0,1) addIvar prod 
                     where
@@ -84,7 +87,7 @@ module EquivarianceEqns (
     --these functions are specified for area metric (21 dofs) -> can be used to make a sparse matrix map from the 6 tensor maps
 
     index2Sparse1 :: Index 0 1 0 0 0 0 1 1 -> (Int,Int) 
-    index2Sparse1 (_, x2, _, _, _, _, x7, x8) = ((m-1)*4+n,a)
+    index2Sparse1 (_, x2, _, _, _, _, x7, x8) = ((m-1)*4+n,a+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              m = 1 + (fromEnum $ getValInd x7 0)
@@ -95,7 +98,7 @@ module EquivarianceEqns (
     --check this later on when we have extracted the equations
 
     index2Sparse2 :: Index 0 1 0 0 0 0 1 2 -> (Int,Int) 
-    index2Sparse2 (_, x2, _, _, _, _, x7, x8) = ((m-1)*4+n,21+(a-1)*4+i)
+    index2Sparse2 (_, x2, _, _, _, _, x7, x8) = ((m-1)*4+n,21+(a-1)*4+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              i = 1 + (fromEnum $ getValInd x8 1)
@@ -103,7 +106,7 @@ module EquivarianceEqns (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse3 :: Index 0 1 0 0 0 1 1 1 -> (Int,Int) 
-    index2Sparse3 (_, x2, _, _, _, x6, x7, x8) = ((m-1)*4+n,21*5+(a-1)*10+i)
+    index2Sparse3 (_, x2, _, _, _, x6, x7, x8) = ((m-1)*4+n,21*5+(a-1)*10+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              i = 1 + (fromEnum $ getValInd x6 0)
@@ -111,7 +114,7 @@ module EquivarianceEqns (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse4 :: Index 0 1 0 0 1 0 0 2 -> (Int,Int) 
-    index2Sparse4 (_, x2, _, _, x5, _, _, x8) = ((j-1)*4+n,21+(a-1)*4+i)
+    index2Sparse4 (_, x2, _, _, x5, _, _, x8) = ((j-1)*4+n,21+(a-1)*4+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              j = 1 + (fromEnum $ getValInd x5 0)
@@ -119,7 +122,7 @@ module EquivarianceEqns (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse5 :: Index 0 1 0 0 1 1 0 1 -> (Int,Int) 
-    index2Sparse5 (_, x2, _, _, x5, x6, _, x8) = ((j-1)*4+n,21*5+(a-1)*10+i)
+    index2Sparse5 (_, x2, _, _, x5, x6, _, x8) = ((j-1)*4+n,21*5+(a-1)*10+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              j = 1 + (fromEnum $ getValInd x5 0)
@@ -127,12 +130,18 @@ module EquivarianceEqns (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse6 :: Index 0 1 1 0 0 1 0 1 -> (Int,Int) 
-    index2Sparse6 (_, x2, x3, _, _, x6, _, x8) = ((j-1)*4+n,21*5+(a-1)*10+i)
+    index2Sparse6 (_, x2, x3, _, _, x6, _, x8) = ((j-1)*4+n,21*5+(a-1)*10+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              j = 1 + (fromEnum $ getValInd x3 0)
                              i = 1 + (fromEnum $ getValInd x6 0)
                              n = 1 + (fromEnum $ getValInd x8 0)
+
+    index2SparseConst :: Index 0 0 0 0 0 0 1 1 -> (Int,Int)
+    index2SparseConst (_,_,_,_,_,_,x7,x8) = ((m-1)*4+n,1)
+                        where 
+                            m = 1 + (fromEnum $ getValInd x7 0)
+                            n = 1 + (fromEnum $ getValInd x8 0)
 
     mkEqn1Sparse :: Tensor 0 1 0 0 0 0 1 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
     mkEqn1Sparse (Tensor map1) = M.mapKeys index2Sparse1 map1 
@@ -152,11 +161,14 @@ module EquivarianceEqns (
     mkEqn6Sparse :: Tensor 0 1 1 0 0 1 0 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
     mkEqn6Sparse (Tensor map1) = M.mapKeys index2Sparse6 map1 
 
+    mkEqnConstSparse :: Tensor 0 0 0 0 0 0 1 1 a -> M.Map (Int,Int) (Ivar a)
+    mkEqnConstSparse (Tensor map1) = M.map mkConstIvar $ M.mapKeys index2SparseConst map1 
+
     showEqns :: M.Map (Int,Int) (Ivar Rational) -> String
     showEqns map1 = "{" ++ (tail (concat list2)) ++ "}"
                         where
                             map2 = M.map showIvarRational map1 
                             list1 = M.assocs map2
-                            list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y) list1
+                            list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y ++ "\n") list1
 
     

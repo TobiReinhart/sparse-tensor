@@ -3,7 +3,7 @@
 --ivars must be added, multiplied by a factor end derived (vector like)
 
 module Ivar (
-    Ivar(..), showIvar, showIvarRational, sMultIvar, addIvar, subIvar, constrAllIvars, number2Ivar
+    Ivar(..), showIvar, showIvarRational, sMultIvar, addIvar, subIvar, constrAllIvars, number2Ivar, mkConstIvar
 
 ) where
 
@@ -18,6 +18,9 @@ module Ivar (
 
     instance Functor Ivar where
         fmap f (Ivar a map) = Ivar (f a) (I.map f map)
+
+    mkConstIvar :: a -> Ivar a 
+    mkConstIvar a = Ivar a (I.empty)
 
     showIvar :: (Show a) => Ivar a -> String 
     showIvar (Ivar a map1) = (show a) ++ (concat ivarString)

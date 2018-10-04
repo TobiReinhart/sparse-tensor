@@ -77,6 +77,7 @@ module Pde (
 
 
     number2MultInd :: Int -> MultiIndex
+    number2MultInd 0 = MultiIndex $ I.empty 
     number2MultInd i = MultiIndex $ I.singleton i 1
 
     --store the order of the snd derivatives in a map
@@ -107,7 +108,7 @@ module Pde (
     mkPdefromTens :: Show a => M.Map (Int,Int) (Ivar a) -> Pde (Ivar a)
     mkPdefromTens map1 = Pde map2 
                 where 
-                    map2 = M.mapKeys (\(x,y) -> (x,number2MultInd y)) map1
+                    map2 = M.mapKeys (\(x,y) -> (x,number2MultInd (y-1))) map1
 
     
 

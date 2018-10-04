@@ -48,16 +48,19 @@ module Main (
 
         let eqn6 = eqn3_3 mapInter3 map2Metric map1Area map2Area :: Tensor 0 1 1 0 0 1 0 1 (Ivar Rational)
 
+        let eqnConst = eqn1_4
+
         let eqn1Sparse = mkEqn1Sparse eqn1 
         let eqn2Sparse = mkEqn2Sparse eqn2
         let eqn3Sparse = mkEqn3Sparse eqn3
         let eqn4Sparse = mkEqn4Sparse eqn4
         let eqn5Sparse = mkEqn5Sparse eqn5
         let eqn6Sparse = mkEqn6Sparse eqn6
+        let eqnConstSparse = mkEqnConstSparse eqnConst
 
-        let totalEqn = M.unions [eqn1Sparse, eqn2Sparse, eqn3Sparse, eqn4Sparse, eqn5Sparse, eqn6Sparse]
+        let totalEqn = M.unions [eqn1Sparse, eqn2Sparse, eqn3Sparse, eqn4Sparse, eqn5Sparse, eqn6Sparse, eqnConstSparse]
 
-        writeFile "PdeHaskell1.txt" $ showEqns totalEqn 
+        writeFile "PdeHaskell3.txt" $ showEqns totalEqn 
 
         --print $ evalFullTensor (interMetric map1Metric map2Metric)
 

@@ -114,7 +114,7 @@ module EquivarianceEqns (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse4 :: Index 0 1 0 0 1 0 0 2 -> (Int,Int) 
-    index2Sparse4 (_, x2, _, _, x5, _, _, x8) = ((j-1)*4+n,21+(a-1)*4+i+1)
+    index2Sparse4 (_, x2, _, _, x5, _, _, x8) = (16+(j-1)*4+n,21+(a-1)*4+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              j = 1 + (fromEnum $ getValInd x5 0)
@@ -122,7 +122,7 @@ module EquivarianceEqns (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse5 :: Index 0 1 0 0 1 1 0 1 -> (Int,Int) 
-    index2Sparse5 (_, x2, _, _, x5, x6, _, x8) = ((j-1)*4+n,21*5+(a-1)*10+i+1)
+    index2Sparse5 (_, x2, _, _, x5, x6, _, x8) = (16+(j-1)*4+n,21*5+(a-1)*10+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              j = 1 + (fromEnum $ getValInd x5 0)
@@ -130,7 +130,7 @@ module EquivarianceEqns (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse6 :: Index 0 1 1 0 0 1 0 1 -> (Int,Int) 
-    index2Sparse6 (_, x2, x3, _, _, x6, _, x8) = ((j-1)*4+n,21*5+(a-1)*10+i+1)
+    index2Sparse6 (_, x2, x3, _, _, x6, _, x8) = (56+(j-1)*4+n,21*5+(a-1)*10+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              j = 1 + (fromEnum $ getValInd x3 0)

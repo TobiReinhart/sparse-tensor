@@ -32,7 +32,7 @@ module Ivar (
     showIvarRational (Ivar a map1) = (show $ truncate a) ++ (concat ivarString)
                 where 
                     pairList = I.assocs map1
-                    ivarString = map (\(x,y) -> (show $ truncate y) ++ "*" ++ "V" ++ (show x)) pairList
+                    ivarString = map (\(x,y) -> "+" ++ "(" ++ (show $ truncate y) ++ "*" ++ "V" ++ (show x) ++ ")") pairList
 
 
     sMultIvar :: Num a => a -> Ivar a -> Ivar a
@@ -42,7 +42,7 @@ module Ivar (
     addIvar (Ivar x1 map1) (Ivar x2 map2) = Ivar (x1+x2) (I.unionWith (+) map1 map2)
 
     subIvar :: Num a => Ivar a -> Ivar a -> Ivar a
-    subIvar (Ivar x1 map1) (Ivar x2 map2) = Ivar (x1+x2) (I.unionWith (-) map1 map2)
+    subIvar ivar1 ivar2 = addIvar ivar1 (sMultIvar (-1) ivar2) 
 
     --construct all purely variable Ivars (for i variables)
 

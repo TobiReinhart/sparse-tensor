@@ -101,7 +101,7 @@ module Tensor (
     tensorAdd (Tensor map1) (Tensor map2) = Tensor $ M.unionWith (+) map1 map2 
     
     tensorSub :: Num a => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
-    tensorSub (Tensor map1) (Tensor map2) = Tensor $ M.unionWith (-) map1 map2
+    tensorSub t1 t2 = tensorAdd t1 (tensorSMult (-1) t2)
 
     tensorTranspose :: Int -> (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTranspose i pair (Tensor map1) = Tensor $ M.mapKeys (swapPosIndex i pair) map1 

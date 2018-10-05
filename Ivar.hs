@@ -3,7 +3,8 @@
 --ivars must be added, multiplied by a factor end derived (vector like)
 
 module Ivar (
-    Ivar(..), showIvar, showIvarRational, sMultIvar, addIvar, subIvar, constrAllIvars, number2Ivar, mkConstIvar
+    Ivar(..), showIvar, showIvarRational, sMultIvar, addIvar, subIvar, constrAllIvars, number2Ivar, mkConstIvar,
+    mkIvarRandom
 
 ) where
 
@@ -11,6 +12,7 @@ module Ivar (
 
     import Data.List
     import qualified Data.IntMap.Strict as I
+    import Control.Monad
 
     --store the scalar and the vector information in Ivar
 
@@ -59,3 +61,13 @@ module Ivar (
     --defined in Pde
 
     --we also need a function for inserting random values for the ivars (probably best at tensor level)
+
+    --later on the random numbers are stored in a map from keys = ivar number to values = random Ints (use random integers)
+
+    mkIvarRandom :: Num a => Ivar a -> I.IntMap Int -> a 
+    mkIvarRandom (Ivar a map1) ranMap = a + (fromIntegral $ sum ranList)
+                    where
+                        ranList = I.elems $ I.mapWithKey (\k v -> (I.!) ranMap k) map1
+
+    
+

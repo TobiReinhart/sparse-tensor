@@ -17,7 +17,8 @@
 module BasicTensors (
     triangleMap2, triangleMap3, interI_2, interJ_2, symI_2, interI_3, interJ_3, symI_3, areaDofList, interMetric, interArea,
     ivar1, ivar2, ivar3, delta_3, delta_9, delta_19, delta_20, triangleMapArea, interI_Area, interJ_Area,
-    interF_IArea, canonicalizeArea, isZeroArea
+    interF_IArea, canonicalizeArea, isZeroArea, eta, epsilon, flatAreaST, flatArea,
+    ivar1FM, ivar2FM, ivar3FM, ivar1M, ivar2M, ivar3M
 
 ) where
 
@@ -328,9 +329,70 @@ module BasicTensors (
     ivar3 = mkTensorfromFZeros (0,1,0,0,0,1,0,0) ivar3F
 
 
+    eta_F :: Index 0 0 0 0 0 0 0 2 -> Rational
+    eta_F (_,_,_,_,_,_,_,a) 
+                | x == y && x == 0 = 1
+                | x == y = -1
+                | otherwise = 0
+                 where 
+                         x = fromEnum $ getValInd a 0
+                         y = fromEnum $ getValInd a 1
 
-    --these are all tensors we need
+    eta :: Tensor 0 0 0 0 0 0 0 2 Rational
+    eta = mkTensorfromF (0,0,0,0,0,0,0,2) eta_F
 
-    --the last step is constructionf the equivariance equations
+    permSignN :: Ord a => [a] -> Int
+    permSignN [] = 0
+    permSignN [a] = 0
+    permSignN (x:xs) = (permSignN xs)  + (length $ filter (>x) xs)
+    
+    permSign :: Ord a => [a] -> Int
+    permSign l = (-1)^(permSignN l)
 
-                
+    
+    epsilon_F :: Index 0 0 0 0 0 0 0 4 -> Rational
+    epsilon_F (_,_,_,_,_,_,_,x)
+                | a == b || a == c || a == d || b == c || b == d || c == d = 0
+                | otherwise = fromIntegral $ permSign [a,b,c,d]
+                 where
+                        a = fromEnum $ getValInd x 0
+                        b = fromEnum $ getValInd x 1
+                        c = fromEnum $ getValInd x 2
+                        d = fromEnum $ getValInd x 3
+
+    epsilon :: Tensor 0 0 0 0 0 0 0 4 Rational
+    epsilon = mkTensorfromF (0,0,0,0,0,0,0,4) epsilon_F
+
+    flatAreaST :: Tensor 0 0 0 0 0 0 0 4 Rational
+    flatAreaST = tensorSub (tensorSub etaProd1 etaProd2) epsilon 
+                where
+                        etaProd = tensorProductWith (*) eta eta
+                        etaProd1 = tensorTranspose 8 (1,2) etaProd
+                        etaProd2 = tensorTranspose 8 (1,3) $ tensorTranspose 8 (2,3) etaProd
+
+    flatArea :: M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 0 0 0 Rational
+    flatArea map1 = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) $ tensorContractWith_3 (2,2) (+) $ tensorContractWith_3 (3,3) (+) prod
+                where
+                        prod = tensorProductWith (*) flatAreaST $ interJ_Area map1
+    
+    --there is a problem (solved tesnorTranspose works reverse direction when applied multiple times, from now order to old order)
+   
+    ivar1FM :: Index 0 0 0 0 0 1 0 0 -> Ivar Rational 
+    ivar1FM (_,_,_,_,_,a,_,_) = number2Ivar $ 1 + (fromEnum $ getValInd a 0)
+
+    ivar2FM :: Index 0 0 0 0 0 1 0 1 -> Ivar Rational 
+    ivar2FM (_,_,_,_,_,a,_,b) = number2Ivar $ (10+1) + (fromEnum $ getValInd a 0)*4 + (fromEnum $ getValInd b 0)
+    
+    ivar3FM :: Index 0 0 0 0 0 2 0 0 -> Ivar Rational 
+    ivar3FM (_,_,_,_,_,a,_,_) = number2Ivar $ (10*5+1) + (fromEnum $ getValInd a 0)*10 + (fromEnum $ getValInd a 1)
+
+    --define the tensors
+
+    ivar1M :: Tensor 0 0 0 0 0 1 0 0 (Ivar Rational)
+    ivar1M = mkTensorfromFZeros (0,0,0,0,0,1,0,0) ivar1FM
+
+    ivar2M :: Tensor 0 0 0 0 0 1 0 1 (Ivar Rational)
+    ivar2M = mkTensorfromFZeros (0,0,0,0,0,1,0,1) ivar2FM
+
+    ivar3M :: Tensor 0 0 0 0 0 2 0 0 (Ivar Rational)
+    ivar3M = mkTensorfromFZeros (0,0,0,0,0,2,0,0) ivar3FM

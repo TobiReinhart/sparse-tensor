@@ -16,7 +16,7 @@
 module Tensor (
     Tensor(..), mkTensorfromList, mkTensorfromF, getVal, tensorProductWith, tensorContractWith_3, tensorContractWith_9, tensorContractWith_19,
     tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor, tensorTranspose,
-    tensorIndList, mkTensorfromFZeros, evalFullTensor
+    tensorIndList, mkTensorfromFZeros, evalFullTensor, evalTensorVals
 ) where
 
     import Index
@@ -265,6 +265,9 @@ module Tensor (
 
     evalFullTensor :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> [(Index n1 n2 n3 n4 n5 n6 n7 n8,a)]
     evalFullTensor (Tensor m) = M.assocs m  
+
+    evalTensorVals :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> [a]
+    evalTensorVals (Tensor m) = M.elems m
 
     --this is all information we need to extract from the tensor
 

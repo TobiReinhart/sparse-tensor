@@ -27,6 +27,8 @@ module Main (
     import qualified Data.Sequence as S
     import Numeric.Natural 
     import GHC.TypeNats
+    import EquivarianceMetric
+     
 
     main = do
 
@@ -60,4 +62,44 @@ module Main (
 
         let totalEqn = M.unions [eqn1Sparse, eqn2Sparse, eqn3Sparse, eqn4Sparse, eqn5Sparse, eqn6Sparse, eqnConstSparse]
 
-        writeFile "PdeHaskell3.txt" $ showEqns totalEqn 
+        --writeFile "PdeHaskell3.txt" $ showEqns totalEqn 
+
+        let eqn1Flat = mkEqn1Sparse $ eqn1_1Flat map1Area map2Area
+
+        let eqn2Flat = mkEqn4Sparse $ eqn2_2Flat map1Metric map1Area map2Area
+
+        let eqn3Flat = mkEqn6Sparse $ eqn3_3Flat mapInter3 map2Metric map1Area map2Area 
+
+        let eqnConstFlat = mkEqnConstSparseFlat eqnConst 
+
+        let totalFlatEqn = M.unions [eqn1Flat,eqn2Flat,eqn3Flat,eqnConstFlat] 
+
+        --writeFile "PdeHaskellFlat.txt" $ showEqnsFlat totalFlatEqn 
+
+        --construct the metric eqns
+
+        let eqn1M = eqn1_1M map1Metric map2Metric :: Tensor 0 0 0 0 0 1 1 1 (Ivar Rational)
+        let eqn2M = eqn1_2M map1Metric map2Metric :: Tensor 0 0 0 0 0 1 1 2 (Ivar Rational)
+        let eqn3M = eqn1_3M map1Metric map2Metric :: Tensor 0 0 0 0 0 2 1 1 (Ivar Rational)
+
+        let eqn4M = eqn2_2M map1Metric map2Metric :: Tensor 0 0 0 0 1 1 0 2 (Ivar Rational)
+        let eqn5M = eqn2_3M map1Metric map2Metric :: Tensor 0 0 0 0 1 2 0 1 (Ivar Rational)
+
+        let eqn6M = eqn3_3M mapInter3 map1Metric map2Metric :: Tensor 0 0 1 0 0 2 0 1 (Ivar Rational)
+
+        let eqnConst = eqn1_4
+
+        let eqn1SparseM = mkEqn1SparseM eqn1M 
+        let eqn2SparseM = mkEqn2SparseM eqn2M
+        let eqn3SparseM = mkEqn3SparseM eqn3M
+        let eqn4SparseM = mkEqn4SparseM eqn4M
+        let eqn5SparseM = mkEqn5SparseM eqn5M
+        let eqn6SparseM = mkEqn6SparseM eqn6M
+        let eqnConstSparse = mkEqnConstSparse eqnConst
+
+        let totalEqnM = M.unions [eqn1SparseM, eqn2SparseM, eqn3SparseM, eqn4SparseM, eqn5SparseM, eqn6SparseM, eqnConstSparse]
+
+
+        writeFile "HaskellMetricPde.txt" $ showEqns totalEqnM
+        
+

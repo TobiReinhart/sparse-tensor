@@ -18,7 +18,8 @@
 module EquivarianceEqns (
     eqn1_1, eqn1_2, eqn1_3, eqn1_4, eqn2_2, eqn2_3, eqn3_3,
     index2Sparse1, index2Sparse2, index2Sparse3, index2Sparse4, index2Sparse5, index2Sparse6,index2SparseConst,
-    mkEqn1Sparse, mkEqn2Sparse, mkEqn3Sparse, mkEqn4Sparse, mkEqn5Sparse, mkEqn6Sparse, mkEqnConstSparse, showEqns
+    mkEqn1Sparse, mkEqn2Sparse, mkEqn3Sparse, mkEqn4Sparse, mkEqn5Sparse, mkEqn6Sparse, mkEqnConstSparse, showEqns,
+    eqn1_1Flat, eqn2_2Flat, eqn3_3Flat, mkEqnConstSparseFlat, showEqnsFlat
 
 ) where
 
@@ -143,22 +144,22 @@ module EquivarianceEqns (
                             m = 1 + (fromEnum $ getValInd x7 0)
                             n = 1 + (fromEnum $ getValInd x8 0)
 
-    mkEqn1Sparse :: Tensor 0 1 0 0 0 0 1 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn1Sparse :: Tensor 0 1 0 0 0 0 1 1 a -> M.Map (Int,Int) a
     mkEqn1Sparse (Tensor map1) = M.mapKeys index2Sparse1 map1 
 
-    mkEqn2Sparse :: Tensor 0 1 0 0 0 0 1 2 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn2Sparse :: Tensor 0 1 0 0 0 0 1 2 a -> M.Map (Int,Int) a
     mkEqn2Sparse (Tensor map1) = M.mapKeys index2Sparse2 map1
     
-    mkEqn3Sparse :: Tensor 0 1 0 0 0 1 1 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn3Sparse :: Tensor 0 1 0 0 0 1 1 1 a -> M.Map (Int,Int) a
     mkEqn3Sparse (Tensor map1) = M.mapKeys index2Sparse3 map1 
 
-    mkEqn4Sparse :: Tensor 0 1 0 0 1 0 0 2 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn4Sparse :: Tensor 0 1 0 0 1 0 0 2 a -> M.Map (Int,Int) a
     mkEqn4Sparse (Tensor map1) = M.mapKeys index2Sparse4 map1
     
-    mkEqn5Sparse :: Tensor 0 1 0 0 1 1 0 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn5Sparse :: Tensor 0 1 0 0 1 1 0 1 a -> M.Map (Int,Int) a
     mkEqn5Sparse (Tensor map1) = M.mapKeys index2Sparse5 map1 
 
-    mkEqn6Sparse :: Tensor 0 1 1 0 0 1 0 1 (Ivar a) -> M.Map (Int,Int) (Ivar a)
+    mkEqn6Sparse :: Tensor 0 1 1 0 0 1 0 1 a -> M.Map (Int,Int) a
     mkEqn6Sparse (Tensor map1) = M.mapKeys index2Sparse6 map1 
 
     mkEqnConstSparse :: Tensor 0 0 0 0 0 0 1 1 a -> M.Map (Int,Int) (Ivar a)
@@ -170,5 +171,41 @@ module EquivarianceEqns (
                             map2 = M.map showIvarRational map1 
                             list1 = M.assocs map2
                             list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y ++ "\n") list1
+
+    
+    --the flat equations
+
+    eqn1_1Flat ::  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 0 1 1 Rational
+    eqn1_1Flat map1Area map2Area = tensorContractWith_20 (0,1) (+) prod 
+                    where
+                        prod = tensorProductWith (*) (interArea map1Area map2Area) (flatArea map2Area)
+
+                
+    eqn2_2Flat :: M.Map (Linds_3 2) Uind_9 ->  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 1 0 0 2 Rational
+    eqn2_2Flat mapInterI2 map1Area map2Area = tensorContractWith_20 (0,1) (+) prod 
+                    where
+                        int1 = tensorProductWith (*) (interArea map1Area map2Area) (interI_2 mapInterI2)
+                        interTotal = tensorContractWith_3 (0,1) (+) int1
+                        prod = tensorProductWith (*) interTotal (flatArea map2Area)
+
+    
+    eqn3_3Flat :: M.Map (Linds_3 3) Uind_19 -> M.Map (Uinds_3 2) Lind_9 -> M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 1 0 0 1 0 1 Rational
+    eqn3_3Flat mapInterI3 mapInterJ2 map1Area map2Area = tensorContractWith_20 (0,1) (+) prod
+                    where
+                        int1 = tensorProductWith (*) (interJ_2 mapInterJ2) (interArea map1Area map2Area)
+                        intTotal = tensorContractWith_3 (0,1) (+) $ tensorContractWith_3 (1,2) (+) $ tensorContractWith_3 (2,3) (+) $ tensorProductWith (*) int1 (interI_3 mapInterI3)
+                        prod = tensorProductWith (*) intTotal (flatArea map2Area)
+
+   
+    mkEqnConstSparseFlat :: Tensor 0 0 0 0 0 0 1 1 a -> M.Map (Int,Int) a
+    mkEqnConstSparseFlat (Tensor map1) = M.mapKeys index2SparseConst map1 
+
+    showEqnsFlat :: M.Map (Int,Int) Rational -> String
+    showEqnsFlat map1 = "{" ++ (tail (concat list2)) ++ "}"
+                        where
+                            map2 = M.map (show.truncate) map1 
+                            list1 = M.assocs map2
+                            list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y ++ "\n") list1
+
 
     

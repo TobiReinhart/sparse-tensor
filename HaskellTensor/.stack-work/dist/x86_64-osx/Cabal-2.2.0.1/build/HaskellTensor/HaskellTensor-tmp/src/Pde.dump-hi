@@ -1,0 +1,680 @@
+
+==================== FINAL INTERFACE ====================
+2018-10-05 20:45:21.71511 UTC
+
+interface main:Pde 8043
+  interface hash: 2e60cd55b5bb1e41f4374a498b7fa7b7
+  ABI hash: ba83861ffd7a2a1f0568a32fff4e2555
+  export-list hash: fbf38b12116183a99c3d3304cd90a0ec
+  orphan hash: 3d1cb500faf97cdd32ad5ee44b80de74
+  flag hash: 707c86cfbee6a9c65f08462953a21ad8
+  opt_hash: 14e536840aca4e889cad654e6f9b79c1
+  hpc_hash: 93b885adfe0da089cdf634904fd59f71
+  sig of: Nothing
+  used TH splices: False
+  where
+exports:
+module dependencies: Ivar
+package dependencies: array-0.5.2.0 base-4.11.1.0*
+                      containers-0.5.11.0* deepseq-1.4.3.0 ghc-prim-0.5.2.0
+                      integer-gmp-1.0.2.0
+orphans: base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
+family instance modules: base-4.11.1.0:Control.Applicative
+                         base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
+                         base-4.11.1.0:Data.Functor.Const
+                         base-4.11.1.0:Data.Functor.Identity
+                         base-4.11.1.0:Data.Functor.Product base-4.11.1.0:Data.Functor.Sum
+                         base-4.11.1.0:Data.Monoid base-4.11.1.0:Data.Semigroup
+                         base-4.11.1.0:Data.Semigroup.Internal base-4.11.1.0:Data.Version
+                         base-4.11.1.0:Data.Void base-4.11.1.0:GHC.Exts
+                         base-4.11.1.0:GHC.Generics base-4.11.1.0:GHC.IO.Exception
+                         containers-0.5.11.0:Data.IntMap.Internal
+                         containers-0.5.11.0:Data.IntSet.Internal
+                         containers-0.5.11.0:Data.Map.Internal
+                         containers-0.5.11.0:Data.Set.Internal
+import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
+import  -/  base-4.11.1.0:Data.List 83dc843e47bfc0c5af51e19c6f3476d5
+import  -/  base-4.11.1.0:GHC.Base 604111500e81281298777e721c75643b
+import  -/  base-4.11.1.0:GHC.Err 5e26aa744981f14e0f1e4d29c44ac52e
+import  -/  base-4.11.1.0:GHC.List 1e4357702d8d00cded0703bd293e50e8
+import  -/  base-4.11.1.0:GHC.Natural 8647cd09d4aefcb1ec93a2d9a92f1f1a
+import  -/  base-4.11.1.0:GHC.Num 8e54b26dce4495382dc4b50cf36ab754
+import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
+import  -/  base-4.11.1.0:GHC.Show 73be67392447c974f19c3befd83c46c0
+import  -/  base-4.11.1.0:Numeric.Natural da273ddb373e0510fde98e17e4aa338f
+import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
+import  -/  containers-0.5.11.0:Data.IntMap.Internal ef73a09d9589b16c95e337bc0715aa57
+import  -/  containers-0.5.11.0:Data.IntMap.Strict 79a3c61ca2c76eb71c4304029717e288
+import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
+import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
+import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
+import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
+import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
+import  -/  Ivar c1750b764f1dd330bd88e26981136ebc
+  exports: bf23971c144b225f9046452a3f6bdb8a
+  Ivar 4ecbaf682cffce8cfc04b6bf4cdca2dd
+  Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
+  addIvar 05c03b458f32d9cc7a5d25e2e9ea4e41
+6f598f8bafc2144bc3f64abb7e3051bc
+  $fEqMultiIndex :: GHC.Classes.Eq Pde.MultiIndex
+  DFunId
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ Pde.MultiIndex
+                  Pde.$fEqMultiIndex2
+                    `cast`
+                  (Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])
+                   ->_R <GHC.Types.Bool>_R)
+                  Pde.$fEqMultiIndex1
+                    `cast`
+                  (Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])
+                   ->_R <GHC.Types.Bool>_R) -}
+02c1ccf12ec7b4b5d9af42e4d4986981
+  $fEqMultiIndex1 ::
+    Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><S,1*U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (t1 :: Data.IntMap.Internal.IntMap GHC.Natural.Natural)
+                   (t2 :: Data.IntMap.Internal.IntMap GHC.Natural.Natural) ->
+                 Data.IntMap.Internal.nequal
+                   @ GHC.Natural.Natural
+                   GHC.Natural.$fEqNatural
+                   t1
+                   t2) -}
+45a51ba2d112c9c6d6e6a9c1439e9f7c
+  $fEqMultiIndex2 ::
+    Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><S,1*U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (t1 :: Data.IntMap.Internal.IntMap GHC.Natural.Natural)
+                   (t2 :: Data.IntMap.Internal.IntMap GHC.Natural.Natural) ->
+                 Data.IntMap.Internal.equal
+                   @ GHC.Natural.Natural
+                   GHC.Natural.$fEqNatural
+                   t1
+                   t2) -}
+6f598f8bafc2144bc3f64abb7e3051bc
+  $fOrdMultiIndex :: GHC.Classes.Ord Pde.MultiIndex
+  DFunId
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ Pde.MultiIndex
+                  Pde.$fEqMultiIndex
+                  Pde.$fOrdMultiIndex7
+                    `cast`
+                  (Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])
+                   ->_R <GHC.Types.Ordering>_R)
+                  Pde.$fOrdMultiIndex6
+                    `cast`
+                  (Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])
+                   ->_R <GHC.Types.Bool>_R)
+                  Pde.$fOrdMultiIndex5
+                    `cast`
+                  (Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])
+                   ->_R <GHC.Types.Bool>_R)
+                  Pde.$fOrdMultiIndex4
+                    `cast`
+                  (Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])
+                   ->_R <GHC.Types.Bool>_R)
+                  Pde.$fOrdMultiIndex3
+                    `cast`
+                  (Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])
+                   ->_R <GHC.Types.Bool>_R)
+                  Pde.$fOrdMultiIndex2
+                    `cast`
+                  (Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0]))
+                  Pde.$fOrdMultiIndex1
+                    `cast`
+                  (Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])
+                   ->_R Sym (Pde.N:MultiIndex[0])) -}
+0aa8d43a0d3ab2e385727fc2195d6cd9
+  $fOrdMultiIndex1 ::
+    Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+  {- Arity: 2, HasNoCafRefs,
+     Unfolding: (Data.IntMap.Internal.$fOrdIntMap_$cmin
+                   @ GHC.Natural.Natural
+                   GHC.Natural.$fOrdNatural) -}
+8f1117eac090a93ad2ae07c5e8383a71
+  $fOrdMultiIndex2 ::
+    Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+  {- Arity: 2, HasNoCafRefs,
+     Unfolding: (Data.IntMap.Internal.$fOrdIntMap_$cmax
+                   @ GHC.Natural.Natural
+                   GHC.Natural.$fOrdNatural) -}
+e231b7fb8e330a88230ddf993c768e93
+  $fOrdMultiIndex3 ::
+    Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Unfolding: (Data.IntMap.Internal.$fOrdIntMap_$c>=
+                   @ GHC.Natural.Natural
+                   GHC.Natural.$fOrdNatural) -}
+4ef0b41611cbfdf34f1da8392bb12f0e
+  $fOrdMultiIndex4 ::
+    Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Unfolding: (Data.IntMap.Internal.$fOrdIntMap_$c>
+                   @ GHC.Natural.Natural
+                   GHC.Natural.$fOrdNatural) -}
+6b7bba1f583f56d67887142d533bb061
+  $fOrdMultiIndex5 ::
+    Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Unfolding: (Data.IntMap.Internal.$fOrdIntMap_$c<=
+                   @ GHC.Natural.Natural
+                   GHC.Natural.$fOrdNatural) -}
+51cdcdc20a274ec3911f7e6fab25ad56
+  $fOrdMultiIndex6 ::
+    Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Unfolding: (Data.IntMap.Internal.$fOrdIntMap_$c<
+                   @ GHC.Natural.Natural
+                   GHC.Natural.$fOrdNatural) -}
+47c5046980dd97006eb31c36dde6c5a6
+  $fOrdMultiIndex7 ::
+    Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> GHC.Types.Ordering
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><S,1*U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (m1 :: Data.IntMap.Internal.IntMap GHC.Natural.Natural)
+                   (m2 :: Data.IntMap.Internal.IntMap GHC.Natural.Natural) ->
+                 GHC.Classes.$fOrd[]_$ccompare
+                   @ (Data.IntSet.Internal.Key, GHC.Natural.Natural)
+                   Pde.$fOrdMultiIndex_$s$fOrd(,)
+                   (GHC.Base.build
+                      @ (Data.IntSet.Internal.Key, GHC.Natural.Natural)
+                      (\ @ b
+                         (c :: (Data.IntSet.Internal.Key, GHC.Natural.Natural)
+                               -> b -> b)[OneShot]
+                         (n :: b)[OneShot] ->
+                       Data.IntMap.Internal.foldrFB
+                         @ GHC.Natural.Natural
+                         @ b
+                         (\ (k :: Data.IntSet.Internal.Key)
+                            (x :: GHC.Natural.Natural)[OneShot]
+                            (xs :: b)[OneShot] ->
+                          c (k, x) xs)
+                         n
+                         m1))
+                   (GHC.Base.build
+                      @ (Data.IntSet.Internal.Key, GHC.Natural.Natural)
+                      (\ @ b
+                         (c :: (Data.IntSet.Internal.Key, GHC.Natural.Natural)
+                               -> b -> b)[OneShot]
+                         (n :: b)[OneShot] ->
+                       Data.IntMap.Internal.foldrFB
+                         @ GHC.Natural.Natural
+                         @ b
+                         (\ (k :: Data.IntSet.Internal.Key)
+                            (x :: GHC.Natural.Natural)[OneShot]
+                            (xs :: b)[OneShot] ->
+                          c (k, x) xs)
+                         n
+                         m2))) -}
+d89e17be6be531fd4be1ee9fc4562d04
+  $fOrdMultiIndex_$s$fEq(,) ::
+    GHC.Classes.Eq (GHC.Types.Int, GHC.Natural.Natural)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (GHC.Types.Int, GHC.Natural.Natural)
+                  (GHC.Classes.$fEq(,)_$c==
+                     @ GHC.Types.Int
+                     @ GHC.Natural.Natural
+                     GHC.Classes.$fEqInt
+                     GHC.Natural.$fEqNatural)
+                  Pde.$fOrdMultiIndex_$s$fEq(,)_$c/= -}
+1dc73c880f96eab02af0bce5df50b904
+  $fOrdMultiIndex_$s$fEq(,)_$c/= ::
+    (GHC.Types.Int, GHC.Natural.Natural)
+    -> (GHC.Types.Int, GHC.Natural.Natural) -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S(S)L),1*U(1*U(U),1*U)><S(S(S)L),1*U(1*U(U),1*U)>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ (x :: (GHC.Types.Int, GHC.Natural.Natural))
+                   (y :: (GHC.Types.Int, GHC.Natural.Natural)) ->
+                 case x of wild { (,) a1 a2 ->
+                 case y of wild1 { (,) b1 b2 ->
+                 case GHC.Classes.eqInt a1 b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True
+                   -> case a2 of wild4 {
+                        GHC.Natural.NatS# a4
+                        -> case b2 of wild5 {
+                             GHC.Natural.NatS# b4
+                             -> case GHC.Prim.eqWord# a4 b4 of lwild {
+                                  DEFAULT -> GHC.Types.True 1# -> GHC.Types.False }
+                             GHC.Natural.NatJ# ipv -> GHC.Types.True }
+                        GHC.Natural.NatJ# dt
+                        -> case b2 of wild5 {
+                             GHC.Natural.NatS# ipv -> GHC.Types.True
+                             GHC.Natural.NatJ# dt1
+                             -> let {
+                                  nx# :: GHC.Integer.Type.GmpSize#
+                                  = GHC.Prim.uncheckedIShiftRL# (GHC.Prim.sizeofByteArray# dt) 3#
+                                } in
+                                case GHC.Prim.==#
+                                       nx#
+                                       (GHC.Prim.uncheckedIShiftRL#
+                                          (GHC.Prim.sizeofByteArray# dt1)
+                                          3#) of lwild {
+                                  DEFAULT -> GHC.Types.True
+                                  1#
+                                  -> case {__pkg_ccall integer-gmp-1.0.2.0 GHC.Prim.ByteArray#
+                                                                           -> GHC.Prim.ByteArray#
+                                                                           -> GHC.Prim.Int#
+                                                                           -> GHC.Prim.State#
+                                                                                GHC.Prim.RealWorld
+                                                                           -> (# GHC.Prim.State#
+                                                                                   GHC.Prim.RealWorld,
+                                                                                 GHC.Prim.Int# #)}
+                                            dt
+                                            dt1
+                                            nx#
+                                            GHC.Prim.realWorld# of wild6 { (#,#) ds3 ds4 ->
+                                     case ds4 of wild3 {
+                                       DEFAULT -> GHC.Types.True
+                                       0# -> GHC.Types.False } } } } } } } }) -}
+aa09a37d0c99c5e8f63d74aebd56fadb
+  $fOrdMultiIndex_$s$fOrd(,) ::
+    GHC.Classes.Ord (GHC.Types.Int, GHC.Natural.Natural)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (GHC.Types.Int, GHC.Natural.Natural)
+                  Pde.$fOrdMultiIndex_$s$fEq(,)
+                  (GHC.Classes.$fOrd(,)_$ccompare
+                     @ GHC.Types.Int
+                     @ GHC.Natural.Natural
+                     GHC.Classes.$fOrdInt
+                     GHC.Natural.$fOrdNatural)
+                  (GHC.Classes.$fOrd(,)_$c<
+                     @ GHC.Types.Int
+                     @ GHC.Natural.Natural
+                     GHC.Classes.$fOrdInt
+                     GHC.Natural.$fOrdNatural)
+                  (GHC.Classes.$fOrd(,)_$c<=
+                     @ GHC.Types.Int
+                     @ GHC.Natural.Natural
+                     GHC.Classes.$fOrdInt
+                     GHC.Natural.$fOrdNatural)
+                  (\ (a1 :: (GHC.Types.Int, GHC.Natural.Natural))
+                     (b1 :: (GHC.Types.Int, GHC.Natural.Natural)) ->
+                   GHC.Classes.$fOrd(,)_$c<
+                     @ GHC.Types.Int
+                     @ GHC.Natural.Natural
+                     GHC.Classes.$fOrdInt
+                     GHC.Natural.$fOrdNatural
+                     b1
+                     a1)
+                  (GHC.Classes.$fOrd(,)_$c>=
+                     @ GHC.Types.Int
+                     @ GHC.Natural.Natural
+                     GHC.Classes.$fOrdInt
+                     GHC.Natural.$fOrdNatural)
+                  (GHC.Classes.$fOrd(,)_$cmax
+                     @ GHC.Types.Int
+                     @ GHC.Natural.Natural
+                     GHC.Classes.$fOrdInt
+                     GHC.Natural.$fOrdNatural)
+                  (GHC.Classes.$fOrd(,)_$cmin
+                     @ GHC.Types.Int
+                     @ GHC.Natural.Natural
+                     GHC.Classes.$fOrdInt
+                     GHC.Natural.$fOrdNatural) -}
+6f598f8bafc2144bc3f64abb7e3051bc
+  $fShowMultiIndex :: GHC.Show.Show Pde.MultiIndex
+  DFunId
+  {- Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ Pde.MultiIndex
+                  Pde.$fShowMultiIndex_$cshowsPrec
+                  Pde.$fShowMultiIndex_$cshow
+                  Pde.$fShowMultiIndex_$cshowList -}
+6f598f8bafc2144bc3f64abb7e3051bc
+  $fShowMultiIndex1 :: Pde.MultiIndex -> GHC.Show.ShowS
+  {- Arity: 1, Strictness: <L,1*U>,
+     Unfolding: (\ (w :: Pde.MultiIndex) -> Pde.$w$cshowsPrec 0# w) -}
+1f1cb05dc322fd59f35240d33fa594f1
+  $fShowMultiIndex2 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString# Pde.$fShowMultiIndex3) -}
+54f3ce15a4ac6c27473c23173657a3eb
+  $fShowMultiIndex3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("MultiIndex "#) -}
+6f598f8bafc2144bc3f64abb7e3051bc
+  $fShowMultiIndex_$cshow :: Pde.MultiIndex -> GHC.Base.String
+  {- Arity: 1, Strictness: <L,1*U>,
+     Unfolding: InlineRule (1, True, False)
+                (\ (x :: Pde.MultiIndex) ->
+                 GHC.Base.augment
+                   @ GHC.Types.Char
+                   (\ @ b
+                      (c :: GHC.Types.Char -> b -> b)[OneShot]
+                      (n :: b)[OneShot] ->
+                    GHC.Base.foldr @ GHC.Types.Char @ b c n Pde.$fShowMultiIndex2)
+                   (Data.IntMap.Internal.$w$cshowsPrec
+                      @ GHC.Natural.Natural
+                      GHC.Natural.$fShowNatural
+                      11#
+                      x `cast` (Pde.N:MultiIndex[0])
+                      (GHC.Types.[] @ GHC.Types.Char))) -}
+6f598f8bafc2144bc3f64abb7e3051bc
+  $fShowMultiIndex_$cshowList :: [Pde.MultiIndex] -> GHC.Show.ShowS
+  {- Arity: 2, Strictness: <S,1*U><L,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (ls :: [Pde.MultiIndex]) (s :: GHC.Base.String) ->
+                 GHC.Show.showList__ @ Pde.MultiIndex Pde.$fShowMultiIndex1 ls s) -}
+6f598f8bafc2144bc3f64abb7e3051bc
+  $fShowMultiIndex_$cshowsPrec ::
+    GHC.Types.Int -> Pde.MultiIndex -> GHC.Show.ShowS
+  {- Arity: 2, Strictness: <S(S),1*U(U)><L,1*U>, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: GHC.Types.Int) (w1 :: Pde.MultiIndex) ->
+                 case w of ww { GHC.Types.I# ww1 -> Pde.$w$cshowsPrec ww1 w1 }) -}
+a8451ea4489922dbe82fe1615b48cdea
+  $fShowPde :: GHC.Show.Show a => GHC.Show.Show (Pde.Pde a)
+  DFunId
+  {- Arity: 1, Strictness: <L,U(C(C1(C1(U))),A,A)>m, Inline: CONLIKE,
+     Unfolding: DFun: @ a (v :: GHC.Show.Show a).
+                  @ (Pde.Pde a)
+                  (Pde.$fShowPde_$cshowsPrec @ a v)
+                  (Pde.$fShowPde_$cshow @ a v)
+                  (Pde.$fShowPde_$cshowList @ a v) -}
+4e3608ff1c2528e89a7b42a08e0c19be
+  $fShowPde1 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
+c05f2926b9f68eda2f75e6fda574f483
+  $fShowPde2 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString# Pde.$fShowPde3) -}
+b502243e0c86ef687c996766e656b8b5
+  $fShowPde3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("Pde "#) -}
+a8451ea4489922dbe82fe1615b48cdea
+  $fShowPde_$cshow :: GHC.Show.Show a => Pde.Pde a -> GHC.Base.String
+  {- Arity: 2, Strictness: <L,U(C(C1(C1(U))),A,A)><L,1*U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a ($dShow :: GHC.Show.Show a) (x :: Pde.Pde a) ->
+                 GHC.Base.augment
+                   @ GHC.Types.Char
+                   (\ @ b
+                      (c :: GHC.Types.Char -> b -> b)[OneShot]
+                      (n :: b)[OneShot] ->
+                    GHC.Base.foldr @ GHC.Types.Char @ b c n Pde.$fShowPde2)
+                   (Data.Map.Internal.$w$cshowsPrec
+                      @ (GHC.Types.Int, Pde.MultiIndex)
+                      @ a
+                      Pde.$fShowPde_$s$fShow(,)
+                      $dShow
+                      11#
+                      x `cast` (Pde.N:Pde[0] <a>_N)
+                      (GHC.Types.[] @ GHC.Types.Char))) -}
+a8451ea4489922dbe82fe1615b48cdea
+  $fShowPde_$cshowList ::
+    GHC.Show.Show a => [Pde.Pde a] -> GHC.Show.ShowS
+  {- Arity: 3, Strictness: <L,U(C(C1(C1(U))),A,A)><S,1*U><L,U>,
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   ($dShow :: GHC.Show.Show a)
+                   (ls :: [Pde.Pde a])
+                   (s :: GHC.Base.String) ->
+                 GHC.Show.showList__
+                   @ (Pde.Pde a)
+                   (Pde.$fShowPde_$cshowsPrec @ a $dShow Pde.$fShowPde1)
+                   ls
+                   s) -}
+a8451ea4489922dbe82fe1615b48cdea
+  $fShowPde_$cshowsPrec ::
+    GHC.Show.Show a => GHC.Types.Int -> Pde.Pde a -> GHC.Show.ShowS
+  {- Arity: 3,
+     Strictness: <L,U(C(C1(C1(U))),A,A)><S(S),1*U(U)><L,1*U>,
+     Inline: [0],
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   (w :: GHC.Show.Show a)
+                   (w1 :: GHC.Types.Int)
+                   (w2 :: Pde.Pde a) ->
+                 case w1 of ww { GHC.Types.I# ww1 ->
+                 Pde.$w$cshowsPrec1 @ a w ww1 w2 }) -}
+6a53786827a5954aa8b4b2b2c7fce27a
+  $fShowPde_$s$fShow(,) ::
+    GHC.Show.Show (GHC.Types.Int, Pde.MultiIndex)
+  {- Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (GHC.Types.Int, Pde.MultiIndex)
+                  (GHC.Show.$fShow(,)_$cshowsPrec
+                     @ GHC.Types.Int
+                     @ Pde.MultiIndex
+                     GHC.Show.$fShowInt
+                     Pde.$fShowMultiIndex)
+                  (\ (x :: (GHC.Types.Int, Pde.MultiIndex)) ->
+                   GHC.Show.$fShow(,)_$cshowsPrec
+                     @ GHC.Types.Int
+                     @ Pde.MultiIndex
+                     GHC.Show.$fShowInt
+                     Pde.$fShowMultiIndex
+                     GHC.Show.$fShow(,)1
+                     x
+                     (GHC.Types.[] @ GHC.Types.Char))
+                  (\ (ls :: [(GHC.Types.Int, Pde.MultiIndex)])
+                     (s :: GHC.Base.String) ->
+                   GHC.Show.showList__
+                     @ (GHC.Types.Int, Pde.MultiIndex)
+                     (GHC.Show.$fShow(,)_$cshowsPrec
+                        @ GHC.Types.Int
+                        @ Pde.MultiIndex
+                        GHC.Show.$fShowInt
+                        Pde.$fShowMultiIndex
+                        GHC.Show.$fShow(,)1)
+                     ls
+                     s) -}
+38a511d05298f5e1fd0d9cb74c5d7205
+  $tc'MultiIndex :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   10623815204585778126##
+                   11487948163302695425##
+                   Pde.$trModule
+                   Pde.$tc'MultiIndex2
+                   0#
+                   Pde.$tc'MultiIndex1) -}
+1bc246811e302c16105152a63a732dc4
+  $tc'MultiIndex1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
+b9cd4fc08c21fd7c525fd5dd7243bbfd
+  $tc'MultiIndex2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Pde.$tc'MultiIndex3) -}
+78766d314d650705c879f24f6513138c
+  $tc'MultiIndex3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'MultiIndex"#) -}
+0f1a5365c34d18f78af8c6bf3e52d87d
+  $tc'Pde :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   13006791554997873543##
+                   11142193227323426800##
+                   Pde.$trModule
+                   Pde.$tc'Pde2
+                   1#
+                   Pde.$tc'Pde1) -}
+cebda3179a85ee629989b9865f451be9
+  $tc'Pde1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
+7dfcb383cd3d2a9fd8c8803f77ed0636
+  $tc'Pde2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Pde.$tc'Pde3) -}
+f8b6c2378a8b9c3f318eeb1a6f18e53c
+  $tc'Pde3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'Pde"#) -}
+7d870cbfbba96d98d24f646358a89c6f
+  $tcMultiIndex :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   1164186120300207709##
+                   559057422434933506##
+                   Pde.$trModule
+                   Pde.$tcMultiIndex1
+                   0#
+                   GHC.Types.krep$*) -}
+16de180e23d682c8130b7c432333c8f4
+  $tcMultiIndex1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Pde.$tcMultiIndex2) -}
+335cfc297d04d83a12520bef28fcf377
+  $tcMultiIndex2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("MultiIndex"#) -}
+b32b65fa07dc227da255536f3ded25b6
+  $tcPde :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   10145811736971629081##
+                   13840776875339125915##
+                   Pde.$trModule
+                   Pde.$trModule1
+                   0#
+                   GHC.Types.krep$*Arr*) -}
+9d3bbf212e1ad37369559b12b0d3998f
+  $trModule :: GHC.Types.Module
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.Module Pde.$trModule3 Pde.$trModule1) -}
+117bf4cc9fa53ed8c1d78df072786460
+  $trModule1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Pde.$trModule2) -}
+a036a957cc1ecdedde4df8b5eb239ef1
+  $trModule2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("Pde"#) -}
+7bde52d054ade5378552c4195c27e500
+  $trModule3 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Pde.$trModule4) -}
+2583ff2a794963509d38a6d5bfed7059
+  $trModule4 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("main"#) -}
+6f598f8bafc2144bc3f64abb7e3051bc
+  $w$cshowsPrec :: GHC.Prim.Int# -> Pde.MultiIndex -> GHC.Show.ShowS
+  {- Arity: 2, Strictness: <S,U><L,1*U>, Inline: [0],
+     Unfolding: (\ (ww :: GHC.Prim.Int#) (w :: Pde.MultiIndex) ->
+                 let {
+                   g :: GHC.Base.String -> GHC.Base.String
+                   = Data.IntMap.Internal.$w$cshowsPrec
+                       @ GHC.Natural.Natural
+                       GHC.Natural.$fShowNatural
+                       11#
+                       w `cast` (Pde.N:MultiIndex[0])
+                 } in
+                 case GHC.Prim.>=# ww 11# of lwild {
+                   DEFAULT
+                   -> \ (x :: GHC.Base.String) ->
+                      GHC.Base.++ @ GHC.Types.Char Pde.$fShowMultiIndex2 (g x)
+                   1#
+                   -> \ (x :: GHC.Base.String) ->
+                      GHC.Types.:
+                        @ GHC.Types.Char
+                        GHC.Show.$fShow(,)4
+                        (GHC.Base.++
+                           @ GHC.Types.Char
+                           Pde.$fShowMultiIndex2
+                           (g (GHC.Types.: @ GHC.Types.Char GHC.Show.$fShow(,)2 x))) }) -}
+a8451ea4489922dbe82fe1615b48cdea
+  $w$cshowsPrec1 ::
+    GHC.Show.Show a => GHC.Prim.Int# -> Pde.Pde a -> GHC.Show.ShowS
+  {- Arity: 3, Strictness: <L,U(C(C1(C1(U))),A,A)><S,U><L,1*U>,
+     Inline: [0],
+     Unfolding: (\ @ a
+                   (w :: GHC.Show.Show a)
+                   (ww :: GHC.Prim.Int#)
+                   (w1 :: Pde.Pde a) ->
+                 let {
+                   g :: GHC.Base.String -> GHC.Base.String
+                   = Data.Map.Internal.$w$cshowsPrec
+                       @ (GHC.Types.Int, Pde.MultiIndex)
+                       @ a
+                       Pde.$fShowPde_$s$fShow(,)
+                       w
+                       11#
+                       w1 `cast` (Pde.N:Pde[0] <a>_N)
+                 } in
+                 case GHC.Prim.>=# ww 11# of lwild {
+                   DEFAULT
+                   -> \ (x :: GHC.Base.String) ->
+                      GHC.Base.++ @ GHC.Types.Char Pde.$fShowPde2 (g x)
+                   1#
+                   -> \ (x :: GHC.Base.String) ->
+                      GHC.Types.:
+                        @ GHC.Types.Char
+                        GHC.Show.$fShow(,)4
+                        (GHC.Base.++
+                           @ GHC.Types.Char
+                           Pde.$fShowPde2
+                           (g (GHC.Types.: @ GHC.Types.Char GHC.Show.$fShow(,)2 x))) }) -}
+6f598f8bafc2144bc3f64abb7e3051bc
+  newtype MultiIndex
+    = MultiIndex (Data.IntMap.Internal.IntMap GHC.Natural.Natural)
+a8451ea4489922dbe82fe1615b48cdea
+  newtype Pde a
+    = Pde (Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a)
+instance [safe] GHC.Classes.Eq [Pde.MultiIndex]
+  = Pde.$fEqMultiIndex
+instance [safe] GHC.Classes.Ord [Pde.MultiIndex]
+  = Pde.$fOrdMultiIndex
+instance [safe] GHC.Show.Show [Pde.MultiIndex]
+  = Pde.$fShowMultiIndex
+instance [safe] GHC.Show.Show [Pde.Pde] = Pde.$fShowPde
+"SPEC/Pde $fEq(,) @ Int @ Natural" [orphan] forall (v1 :: GHC.Classes.Eq
+                                                            GHC.Natural.Natural)
+                                                   (v :: GHC.Classes.Eq GHC.Types.Int)
+  GHC.Classes.$fEq(,) @ GHC.Types.Int @ GHC.Natural.Natural v v1
+  = Pde.$fOrdMultiIndex_$s$fEq(,)
+"SPEC/Pde $fEq(,)_$c/= @ Int @ Natural" [orphan] forall ($dEq1 :: GHC.Classes.Eq
+                                                                    GHC.Natural.Natural)
+                                                        ($dEq :: GHC.Classes.Eq GHC.Types.Int)
+  GHC.Classes.$fEq(,)_$c/= @ GHC.Types.Int
+                           @ GHC.Natural.Natural
+                           $dEq
+                           $dEq1
+  = Pde.$fOrdMultiIndex_$s$fEq(,)_$c/=
+"SPEC/Pde $fOrd(,) @ Int @ Natural" [orphan] forall (v1 :: GHC.Classes.Ord
+                                                             GHC.Natural.Natural)
+                                                    (v :: GHC.Classes.Ord GHC.Types.Int)
+  GHC.Classes.$fOrd(,) @ GHC.Types.Int @ GHC.Natural.Natural v v1
+  = Pde.$fOrdMultiIndex_$s$fOrd(,)
+"SPEC/Pde $fShow(,) @ Int @ MultiIndex" forall (v1 :: GHC.Show.Show
+                                                        Pde.MultiIndex)
+                                               (v :: GHC.Show.Show GHC.Types.Int)
+  GHC.Show.$fShow(,) @ GHC.Types.Int @ Pde.MultiIndex v v1
+  = Pde.$fShowPde_$s$fShow(,)
+vectorised variables:
+vectorised tycons:
+vectorised reused tycons:
+parallel variables:
+parallel tycons:
+trusted: safe
+require own pkg trusted: False
+

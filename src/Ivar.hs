@@ -12,7 +12,11 @@ module Ivar (
 
     import Data.List
     import qualified Data.IntMap.Strict as I
+    import qualified Data.Map.Strict as M
     import Control.Monad
+    import System.Random.TF
+    import System.Random.TF.Gen 
+    import System.Random.TF.Instances
     
 
     --store the scalar and the vector information in Ivar
@@ -22,7 +26,7 @@ module Ivar (
     instance Functor Ivar where
         fmap f (Ivar a map) = Ivar (f a) (I.map f map)
 
-    mkConstIvar :: a -> Ivar a 
+    mkConstIvar :: a -> Ivar a
     mkConstIvar a = Ivar a (I.empty)
 
     showIvar :: (Show a) => Ivar a -> String 
@@ -64,6 +68,9 @@ module Ivar (
     --we also need a function for inserting random values for the ivars (probably best at tensor level)
 
     --later on the random numbers are stored in a map from keys = ivar number to values = random Ints (use random integers)
+
+    mkRandomMap :: RandomGen g => g -> Int -> M.Map Int Int  
+    mkRandomMap gen i = M.fromList $ zip [1..i] (randoms gen) 
 
     mkIvarRandom :: Num a => Ivar a -> I.IntMap Int -> a 
     mkIvarRandom (Ivar a map1) ranMap = a + (fromIntegral $ sum ranList)

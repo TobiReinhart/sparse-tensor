@@ -30,7 +30,7 @@ version = Version [0,1,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
 bindir     = "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2/.stack-work/install/x86_64-osx/lts-12.11/8.4.3/bin"
-libdir     = "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2/.stack-work/install/x86_64-osx/lts-12.11/8.4.3/lib/x86_64-osx-ghc-8.4.3/HaskellTensor-0.1.0.0-2mJwBSEnKem6k3dIvw31mz-HaskellTensor"
+libdir     = "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2/.stack-work/install/x86_64-osx/lts-12.11/8.4.3/lib/x86_64-osx-ghc-8.4.3/HaskellTensor-0.1.0.0-2ghcPZanUqvL9QMzSEMLt-HaskellTensor"
 dynlibdir  = "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2/.stack-work/install/x86_64-osx/lts-12.11/8.4.3/lib/x86_64-osx-ghc-8.4.3"
 datadir    = "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2/.stack-work/install/x86_64-osx/lts-12.11/8.4.3/share/x86_64-osx-ghc-8.4.3/HaskellTensor-0.1.0.0"
 libexecdir = "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2/.stack-work/install/x86_64-osx/lts-12.11/8.4.3/libexec/x86_64-osx-ghc-8.4.3/HaskellTensor-0.1.0.0"

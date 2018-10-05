@@ -28,6 +28,9 @@ module Main (
     import Numeric.Natural 
     import GHC.TypeNats
     import EquivarianceMetric
+    import System.Random.TF
+    import System.Random.TF.Gen
+    import System.Random.TF.Instances 
      
 
     main = do
@@ -99,7 +102,10 @@ module Main (
 
         let totalEqnM = M.unions [eqn1SparseM, eqn2SparseM, eqn3SparseM, eqn4SparseM, eqn5SparseM, eqn6SparseM, eqnConstSparse]
 
+        gen <- newTFGen 
 
-        print totalEqnM
+        let test = take 20 $ randoms gen :: [Int]
+
+        print test
         
 

@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-05 21:57:20.717678 UTC
+2018-10-05 22:27:22.070077 UTC
 
 interface main:Pde 8043
-  interface hash: 2e60cd55b5bb1e41f4374a498b7fa7b7
-  ABI hash: ba83861ffd7a2a1f0568a32fff4e2555
-  export-list hash: fbf38b12116183a99c3d3304cd90a0ec
+  interface hash: 5f1cea0a20374fe6a7ce3f81649f7945
+  ABI hash: fda51ae1b1fba6c9e6d54a0fdc9c197c
+  export-list hash: ee985529e2b8dfc6b15f5555dda4c944
   orphan hash: 3d1cb500faf97cdd32ad5ee44b80de74
   flag hash: 707c86cfbee6a9c65f08462953a21ad8
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
@@ -15,10 +15,16 @@ interface main:Pde 8043
   where
 exports:
 module dependencies: Ivar
-package dependencies: array-0.5.2.0 base-4.11.1.0*
-                      containers-0.5.11.0* deepseq-1.4.3.0 ghc-prim-0.5.2.0
-                      integer-gmp-1.0.2.0
-orphans: base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
+package dependencies: array-0.5.2.0 base-4.11.1.0
+                      containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
+                      integer-gmp-1.0.2.0 primitive-0.6.3.0 random-1.1 tf-random-0.5
+                      time-1.8.0.2 transformers-0.5.5.0
+orphans: transformers-0.5.5.0:Control.Monad.Trans.Error
+         time-1.8.0.2:Data.Time.Format.Parse
+         time-1.8.0.2:Data.Time.LocalTime.Internal.ZonedTime
+         time-1.8.0.2:Data.Time.LocalTime.Internal.LocalTime
+         time-1.8.0.2:Data.Time.Calendar.Gregorian base-4.11.1.0:GHC.Float
+         base-4.11.1.0:GHC.Base
 family instance modules: base-4.11.1.0:Control.Applicative
                          base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
                          base-4.11.1.0:Data.Functor.Const
@@ -32,6 +38,8 @@ family instance modules: base-4.11.1.0:Control.Applicative
                          containers-0.5.11.0:Data.IntSet.Internal
                          containers-0.5.11.0:Data.Map.Internal
                          containers-0.5.11.0:Data.Set.Internal
+                         primitive-0.6.3.0:Control.Monad.Primitive
+                         primitive-0.6.3.0:Data.Primitive.ByteArray
 import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
 import  -/  base-4.11.1.0:Data.List 83dc843e47bfc0c5af51e19c6f3476d5
 import  -/  base-4.11.1.0:GHC.Base 604111500e81281298777e721c75643b
@@ -50,8 +58,8 @@ import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
 import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
 import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
-import  -/  Ivar c1750b764f1dd330bd88e26981136ebc
-  exports: bf23971c144b225f9046452a3f6bdb8a
+import  -/  Ivar 59d07a95b67596bdbcd852778d385604
+  exports: 99536c1169a3d98973bcc51248b50ec9
   Ivar 4ecbaf682cffce8cfc04b6bf4cdca2dd
   Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
   addIvar 05c03b458f32d9cc7a5d25e2e9ea4e41
@@ -640,13 +648,10 @@ a8451ea4489922dbe82fe1615b48cdea
 a8451ea4489922dbe82fe1615b48cdea
   newtype Pde a
     = Pde (Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a)
-instance [safe] GHC.Classes.Eq [Pde.MultiIndex]
-  = Pde.$fEqMultiIndex
-instance [safe] GHC.Classes.Ord [Pde.MultiIndex]
-  = Pde.$fOrdMultiIndex
-instance [safe] GHC.Show.Show [Pde.MultiIndex]
-  = Pde.$fShowMultiIndex
-instance [safe] GHC.Show.Show [Pde.Pde] = Pde.$fShowPde
+instance GHC.Classes.Eq [Pde.MultiIndex] = Pde.$fEqMultiIndex
+instance GHC.Classes.Ord [Pde.MultiIndex] = Pde.$fOrdMultiIndex
+instance GHC.Show.Show [Pde.MultiIndex] = Pde.$fShowMultiIndex
+instance GHC.Show.Show [Pde.Pde] = Pde.$fShowPde
 "SPEC/Pde $fEq(,) @ Int @ Natural" [orphan] forall (v1 :: GHC.Classes.Eq
                                                             GHC.Natural.Natural)
                                                    (v :: GHC.Classes.Eq GHC.Types.Int)
@@ -675,6 +680,6 @@ vectorised tycons:
 vectorised reused tycons:
 parallel variables:
 parallel tycons:
-trusted: safe
+trusted: none
 require own pkg trusted: False
 

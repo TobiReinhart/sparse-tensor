@@ -33,16 +33,16 @@
   (major1) == 0 && (major2) == 5 && (minor) <= 11)
 #endif /* MIN_VERSION_containers */
 
-/* package random-1.1 */
-#ifndef VERSION_random
-#define VERSION_random "1.1"
-#endif /* VERSION_random */
-#ifndef MIN_VERSION_random
-#define MIN_VERSION_random(major1,major2,minor) (\
-  (major1) <  1 || \
-  (major1) == 1 && (major2) <  1 || \
-  (major1) == 1 && (major2) == 1 && (minor) <= 0)
-#endif /* MIN_VERSION_random */
+/* package tf-random-0.5 */
+#ifndef VERSION_tf_random
+#define VERSION_tf_random "0.5"
+#endif /* VERSION_tf_random */
+#ifndef MIN_VERSION_tf_random
+#define MIN_VERSION_tf_random(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  5 || \
+  (major1) == 0 && (major2) == 5 && (minor) <= 0)
+#endif /* MIN_VERSION_tf_random */
 
 /* tool alex-3.2.4 */
 #ifndef TOOL_VERSION_alex
@@ -166,7 +166,7 @@
 #endif /* MIN_TOOL_VERSION_runghc */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "HaskellTensor-0.1.0.0-2mJwBSEnKem6k3dIvw31mz-HaskellTensor"
+#define CURRENT_COMPONENT_ID "HaskellTensor-0.1.0.0-2ghcPZanUqvL9QMzSEMLt-HaskellTensor"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"

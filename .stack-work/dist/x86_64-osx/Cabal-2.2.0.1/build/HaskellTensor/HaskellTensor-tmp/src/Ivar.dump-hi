@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-05 21:57:20.415895 UTC
+2018-10-05 22:34:31.538552 UTC
 
 interface main:Ivar 8043
-  interface hash: 1cc3310c2eaa4aa2a02ea0be4f7a7363
-  ABI hash: c1750b764f1dd330bd88e26981136ebc
-  export-list hash: bf23971c144b225f9046452a3f6bdb8a
+  interface hash: 311b2bf88120680e3ed9ae454cbcabca
+  ABI hash: 59d07a95b67596bdbcd852778d385604
+  export-list hash: 99536c1169a3d98973bcc51248b50ec9
   orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
   flag hash: 707c86cfbee6a9c65f08462953a21ad8
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
@@ -25,10 +25,16 @@ exports:
   Ivar.subIvar
   Ivar.Ivar{Ivar.Ivar}
 module dependencies:
-package dependencies: array-0.5.2.0 base-4.11.1.0*
-                      containers-0.5.11.0* deepseq-1.4.3.0 ghc-prim-0.5.2.0
-                      integer-gmp-1.0.2.0
-orphans: base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
+package dependencies: array-0.5.2.0 base-4.11.1.0
+                      containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
+                      integer-gmp-1.0.2.0 primitive-0.6.3.0 random-1.1 tf-random-0.5
+                      time-1.8.0.2 transformers-0.5.5.0
+orphans: transformers-0.5.5.0:Control.Monad.Trans.Error
+         time-1.8.0.2:Data.Time.Format.Parse
+         time-1.8.0.2:Data.Time.LocalTime.Internal.ZonedTime
+         time-1.8.0.2:Data.Time.LocalTime.Internal.LocalTime
+         time-1.8.0.2:Data.Time.Calendar.Gregorian base-4.11.1.0:GHC.Float
+         base-4.11.1.0:GHC.Base
 family instance modules: base-4.11.1.0:Control.Applicative
                          base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
                          base-4.11.1.0:Data.Functor.Const
@@ -40,6 +46,8 @@ family instance modules: base-4.11.1.0:Control.Applicative
                          base-4.11.1.0:GHC.Generics base-4.11.1.0:GHC.IO.Exception
                          containers-0.5.11.0:Data.IntMap.Internal
                          containers-0.5.11.0:Data.IntSet.Internal
+                         primitive-0.6.3.0:Control.Monad.Primitive
+                         primitive-0.6.3.0:Data.Primitive.ByteArray
 import  -/  base-4.11.1.0:Control.Monad c5f960c67d822497578bffbd3e4c01cf
 import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
 import  -/  base-4.11.1.0:Data.List 83dc843e47bfc0c5af51e19c6f3476d5
@@ -51,6 +59,7 @@ import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.IntMap.Internal ef73a09d9589b16c95e337bc0715aa57
 import  -/  containers-0.5.11.0:Data.IntMap.Strict 79a3c61ca2c76eb71c4304029717e288
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
+import  -/  tf-random-0.5:System.Random.TF 8abc0839ff798088d7b0fe5da790c9f8
 6fb5b1c62e6ccfd9020c45c8471a027a
   $fEqIvar :: GHC.Classes.Eq a => GHC.Classes.Eq (Ivar.Ivar a)
   DFunId
@@ -660,14 +669,14 @@ bb26e3c0940b0694df5c5429fec01633
                  case w2 of ww3 { Ivar.Ivar ww4 ww5 ->
                  case Ivar.$wsubIvar @ a w ww1 ww2 ww4 ww5 of ww6 { (#,#) ww7 ww8 ->
                  Ivar.Ivar @ a ww7 ww8 } } }) -}
-instance [safe] GHC.Classes.Eq [Ivar.Ivar] = Ivar.$fEqIvar
-instance [safe] GHC.Base.Functor [Ivar.Ivar] = Ivar.$fFunctorIvar
-instance [safe] GHC.Show.Show [Ivar.Ivar] = Ivar.$fShowIvar
+instance GHC.Classes.Eq [Ivar.Ivar] = Ivar.$fEqIvar
+instance GHC.Base.Functor [Ivar.Ivar] = Ivar.$fFunctorIvar
+instance GHC.Show.Show [Ivar.Ivar] = Ivar.$fShowIvar
 vectorised variables:
 vectorised tycons:
 vectorised reused tycons:
 parallel variables:
 parallel tycons:
-trusted: safe
+trusted: none
 require own pkg trusted: False
 

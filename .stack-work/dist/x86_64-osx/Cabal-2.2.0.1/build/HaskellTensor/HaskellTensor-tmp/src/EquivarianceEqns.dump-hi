@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-05 21:57:27.305108 UTC
+2018-10-05 22:27:27.415184 UTC
 
 interface main:EquivarianceEqns 8043
-  interface hash: b8dcefcbe4276a59f9779c911c3e75f4
-  ABI hash: 86a89044157a1794439169214f60987f
-  export-list hash: e9a0d15c4af853fe9ef121d9068fd8e3
+  interface hash: 42ae66ceac2eaa1fb0b6c57bc2c36a5a
+  ABI hash: c9863e21d3ccc997c657d4d1f19b6f1c
+  export-list hash: 54a34c61cb5cf7ce22ba84079aa3535c
   orphan hash: 198bd87d188d97032ee0c73d0941c8b1
   flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
@@ -42,10 +42,16 @@ exports:
   EquivarianceEqns.showEqns
   EquivarianceEqns.showEqnsFlat
 module dependencies: BasicTensors Index Ivar Pde Tensor
-package dependencies: array-0.5.2.0 base-4.11.1.0*
+package dependencies: array-0.5.2.0 base-4.11.1.0
                       containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
-                      integer-gmp-1.0.2.0
-orphans: base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
+                      integer-gmp-1.0.2.0 primitive-0.6.3.0 random-1.1 tf-random-0.5
+                      time-1.8.0.2 transformers-0.5.5.0
+orphans: transformers-0.5.5.0:Control.Monad.Trans.Error
+         time-1.8.0.2:Data.Time.Format.Parse
+         time-1.8.0.2:Data.Time.LocalTime.Internal.ZonedTime
+         time-1.8.0.2:Data.Time.LocalTime.Internal.LocalTime
+         time-1.8.0.2:Data.Time.Calendar.Gregorian base-4.11.1.0:GHC.Float
+         base-4.11.1.0:GHC.Base
 family instance modules: base-4.11.1.0:Control.Applicative
                          base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
                          base-4.11.1.0:Data.Functor.Const
@@ -60,6 +66,8 @@ family instance modules: base-4.11.1.0:Control.Applicative
                          containers-0.5.11.0:Data.Map.Internal
                          containers-0.5.11.0:Data.Sequence.Internal
                          containers-0.5.11.0:Data.Set.Internal
+                         primitive-0.6.3.0:Control.Monad.Primitive
+                         primitive-0.6.3.0:Data.Primitive.ByteArray
 import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
 import  -/  base-4.11.1.0:GHC.Base 604111500e81281298777e721c75643b
 import  -/  base-4.11.1.0:GHC.Enum 8824828888f5a89ecc9e7c73f05f3151
@@ -70,8 +78,8 @@ import  -/  base-4.11.1.0:GHC.Show 73be67392447c974f19c3befd83c46c0
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.Map 0dbdaec812ef695a364aa6c69e7f7d53
 import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
-import  -/  BasicTensors dedd0c15f8b4c0144932944b06b71bfe
-  exports: 6deae8a55d1eef27674836f7e531f6ba
+import  -/  BasicTensors eb6cceee2bfa4c3f5e3b279189c1d012
+  exports: bfb629e309a355731e9d93c9c77ae75c
   delta_20 cc7ac0d02f645bebaef7e7d6a42c65ec
   delta_3 88443abb7d76d02fee3e7a789d30d02a
   delta_9 e75aa262356472dc198559ec7f775732
@@ -95,15 +103,15 @@ import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
   Uind_9 ab8f3576b9e9258982a5d77295330a40
   Uinds_3 63ef11ca566ba01817ced09e779f86a0
   getValInd 974a87ce371ea262afad5f9d63705d90
-import  -/  Ivar c1750b764f1dd330bd88e26981136ebc
-  exports: bf23971c144b225f9046452a3f6bdb8a
+import  -/  Ivar 59d07a95b67596bdbcd852778d385604
+  exports: 99536c1169a3d98973bcc51248b50ec9
   Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
   addIvar 05c03b458f32d9cc7a5d25e2e9ea4e41
   mkConstIvar 3e3db0384e6c18ba4849c316c911d6a4
   sMultIvar 356c5596a99fee829bee8b24bdb79848
   showIvarRational 86836b8b8b42e6bab13bd30c13c32c0f
-import  -/  Pde ba83861ffd7a2a1f0568a32fff4e2555
-  exports: fbf38b12116183a99c3d3304cd90a0ec
+import  -/  Pde fda51ae1b1fba6c9e6d54a0fdc9c197c
+  exports: ee985529e2b8dfc6b15f5555dda4c944
 import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e
   exports: b4addde23d2a94c7aa7abec683ad90b2
   Tensor 1ac5ddd89ae57be76544d24271fdf653
@@ -3311,6 +3319,6 @@ vectorised tycons:
 vectorised reused tycons:
 parallel variables:
 parallel tycons:
-trusted: safe
+trusted: none
 require own pkg trusted: False
 

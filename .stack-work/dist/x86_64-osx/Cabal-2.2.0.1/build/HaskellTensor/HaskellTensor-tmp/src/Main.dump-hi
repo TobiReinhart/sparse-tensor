@@ -1,0 +1,2066 @@
+
+==================== FINAL INTERFACE ====================
+2018-10-05 21:57:28.258776 UTC
+
+interface main:Main 8043
+  interface hash: f3db557d5e5e859c800f1804dc0afc90
+  ABI hash: 6a6ab0fc62f334f2ae24469fd6de361e
+  export-list hash: 08ca04b65f1da2be6acb39b48558e6d1
+  orphan hash: 126e567afc948735698aa380225f330c
+  flag hash: 26906880275f8331bc9f1651bb2d3f20
+  opt_hash: 14e536840aca4e889cad654e6f9b79c1
+  hpc_hash: 93b885adfe0da089cdf634904fd59f71
+  sig of: Nothing
+  used TH splices: False
+  where
+exports:
+  Main.main
+module dependencies: BasicTensors EquivarianceEqns
+                     EquivarianceMetric Index Ivar Pde Tensor
+package dependencies: array-0.5.2.0 base-4.11.1.0*
+                      containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
+                      integer-gmp-1.0.2.0
+orphans: base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
+family instance modules: base-4.11.1.0:Control.Applicative
+                         base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
+                         base-4.11.1.0:Data.Functor.Const
+                         base-4.11.1.0:Data.Functor.Identity
+                         base-4.11.1.0:Data.Functor.Product base-4.11.1.0:Data.Functor.Sum
+                         base-4.11.1.0:Data.Monoid base-4.11.1.0:Data.Semigroup
+                         base-4.11.1.0:Data.Semigroup.Internal base-4.11.1.0:Data.Version
+                         base-4.11.1.0:Data.Void base-4.11.1.0:GHC.Exts
+                         base-4.11.1.0:GHC.Generics base-4.11.1.0:GHC.IO.Exception
+                         containers-0.5.11.0:Data.IntMap.Internal
+                         containers-0.5.11.0:Data.IntSet.Internal
+                         containers-0.5.11.0:Data.Map.Internal
+                         containers-0.5.11.0:Data.Sequence.Internal
+                         containers-0.5.11.0:Data.Set.Internal
+import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
+import  -/  base-4.11.1.0:GHC.TypeNats 8f7c6aed0d8e1900cac5f62a9bc0fd0b
+import  -/  base-4.11.1.0:Numeric.Natural da273ddb373e0510fde98e17e4aa338f
+import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
+import  -/  base-4.11.1.0:System.IO ce09fff7d191d14067bddc2efd9b53a4
+import  -/  containers-0.5.11.0:Data.Map 0dbdaec812ef695a364aa6c69e7f7d53
+import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
+import  -/  containers-0.5.11.0:Data.Sequence 21c58838329d44e2dc13db7c04e3a8d8
+import  -/  BasicTensors dedd0c15f8b4c0144932944b06b71bfe
+  exports: 6deae8a55d1eef27674836f7e531f6ba
+  triangleMap2 071b3254f5e3d39e3f2fcc42154abafa
+  triangleMap3 c08e9ef5d0a76c3c5e37732d3b2a82e2
+  triangleMapArea a91b35fbeac767f993b935761009c80c
+import  -/  EquivarianceEqns 86a89044157a1794439169214f60987f
+  exports: e9a0d15c4af853fe9ef121d9068fd8e3
+  eqn1_1 15ea3247bb82800890cc5ea3157c8e28
+  eqn1_1Flat 5e8c7c8a9a0ee666d33c5d6dd6aba2f9
+  eqn1_2 f61ade4f92eb967f2a7a335c974e4a6b
+  eqn1_3 fe352dbb05bb4902dd1a2c32ec031f4a
+  eqn1_4 87196d66631068545cecea1ba08f4cd7
+  eqn2_2 d054facbd025cb6e1389fe0ba0090bce
+  eqn2_2Flat ed9483647a5056977ef1bf1b72a137c2
+  eqn2_3 87f78a137befac2127fadfeca96c50f8
+  eqn3_3 675f31aa958718219debc695979cbcba
+  eqn3_3Flat 5bd0e277875bd77472ef93f4f3918593
+  mkEqn1Sparse 3e6aa2db07e386eb01b91074f468ad72
+  mkEqn2Sparse 08de88a0a5dc3ef369cbded15ab694a8
+  mkEqn3Sparse 6d6fd4a2dcad7a755130b17d3c658eab
+  mkEqn4Sparse 9276dc81a3506154e7435e57f848e3f0
+  mkEqn5Sparse f3c57ed8ae07262036a677030df95542
+  mkEqn6Sparse 512b9a62f4b560b9b70c68e248b5d70b
+  mkEqnConstSparse bac4327cf53946d31ed0521542939366
+  mkEqnConstSparseFlat 5aab3ca1a14086ac683e435f1d1a69a5
+import  -/  EquivarianceMetric 04cad2147ba4754670e92501c151d553
+  exports: 58a682d7ed5ba7e13534412014d6e47c
+  eqn1_1M 85dbb09fbc98dfafea265dc79dc9d7e6
+  eqn1_2M 6405688b730375fef1e010b5a3bea134
+  eqn1_3M 254eecdc694909bd3567f1e34166eb20
+  eqn2_2M d9f5f97795ca7d9ff3f6a5b547ffa0ae
+  eqn2_3M 2297756381c3ca506b0dd3f00f3b28a8
+  eqn3_3M 97c90902e75d6c80a3577f72007b14c6
+  mkEqn1SparseM fc035248924c172327018ffbbd84e6bc
+  mkEqn2SparseM 257e718cf22263b686c27bd9105bf364
+  mkEqn3SparseM f23ae2e0a4cf2d133ddeb8664388eed0
+  mkEqn4SparseM 1aa9d8fce788a8999bd7fb84646272c9
+  mkEqn5SparseM aeed38c88758bf5a5f85a3f274b31d07
+  mkEqn6SparseM 46f64c87982cefbe3780949e37795ab8
+import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
+  exports: 829f159844af2634a0b2006a8d08cd72
+  Lind_20 8a3588434be3c9662430693d2d2e332f
+  Lind_9 89b0e08dbee85927dc2463ead2b84188
+  Linds_3 562700c5f35c258ae2adef3c77ddc1b1
+  Uind_19 bb9e43f50d34b9bc0ad289f9375995d1
+  Uind_20 f2c1b76a3e7f0dd431510d7cb9f659a1
+  Uind_9 ab8f3576b9e9258982a5d77295330a40
+  Uinds_3 63ef11ca566ba01817ced09e779f86a0
+  mkInd 1af0255577b3469c19c700d71eb25f9f
+import  -/  Ivar c1750b764f1dd330bd88e26981136ebc
+  exports: bf23971c144b225f9046452a3f6bdb8a
+  Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
+import  -/  Pde ba83861ffd7a2a1f0568a32fff4e2555
+  exports: fbf38b12116183a99c3d3304cd90a0ec
+import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e
+  exports: b4addde23d2a94c7aa7abec683ad90b2
+  Tensor de2cb2f95a4c3ff6ea3ffdde0ef67deb
+70fe008ecc420925c316daac7946fc07
+  $s$fEq(,) :: GHC.Classes.Eq (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (GHC.Types.Int, GHC.Types.Int)
+                  (GHC.Classes.$fEq(,)_$c==
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Classes.$fEqInt
+                     GHC.Classes.$fEqInt)
+                  Main.$s$fEq(,)_$s$fEq(,)_$c/= -}
+d9c29de69e24759049df94d820948480
+  $s$fEq(,)_$s$fEq(,)_$c/= ::
+    (GHC.Types.Int, GHC.Types.Int)
+    -> (GHC.Types.Int, GHC.Types.Int) -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S(S)L),1*U(1*U(U),1*U(U))><S(S(S)L),1*U(1*U(U),1*U(U))>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ (x :: (GHC.Types.Int, GHC.Types.Int))
+                   (y :: (GHC.Types.Int, GHC.Types.Int)) ->
+                 case x of wild { (,) a1 a2 ->
+                 case y of wild1 { (,) b1 b2 ->
+                 case GHC.Classes.eqInt a1 b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True
+                   -> case GHC.Classes.eqInt a2 b2 of wild3 {
+                        GHC.Types.False -> GHC.Types.True
+                        GHC.Types.True -> GHC.Types.False } } } }) -}
+759c1de5a2f0b46f04556923ce7d2ab4
+  $s$fEqInd :: GHC.Classes.Eq (Index.Ind n Index.Uind_3)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun: @ n :: GHC.Types.Nat.
+                  @ (Index.Ind n Index.Uind_3)
+                  (\ (ds :: Index.Ind n Index.Uind_3)
+                     (ds1 :: Index.Ind n Index.Uind_3) ->
+                   case ds of wild { Index.UnsafemkInd a1 ->
+                   case ds1 of wild1 { Index.UnsafemkInd b1 ->
+                   Data.Sequence.Internal.$fEqSeq_$c==
+                     @ Index.Uind_3
+                     Index.$fEqUind_3
+                     a1
+                     b1 } })
+                  (Main.$s$fEqInd_$s$fEqInd_$c/= @ n) -}
+966913581c3294dcc73365b4450e0b94
+  $s$fEqInd1 :: GHC.Classes.Eq (Index.Ind n Index.Lind_3)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun: @ n :: GHC.Types.Nat.
+                  @ (Index.Ind n Index.Lind_3)
+                  (\ (ds :: Index.Ind n Index.Lind_3)
+                     (ds1 :: Index.Ind n Index.Lind_3) ->
+                   case ds of wild { Index.UnsafemkInd a1 ->
+                   case ds1 of wild1 { Index.UnsafemkInd b1 ->
+                   Data.Sequence.Internal.$fEqSeq_$c==
+                     @ Index.Lind_3
+                     Index.$fEqLind_3
+                     a1
+                     b1 } })
+                  (Main.$s$fEqInd_$s$fEqInd_$c/=1 @ n) -}
+df1cbbd80851edc2f9216b0cd9f8d850
+  $s$fEqInd_$s$fEqInd_$c/= ::
+    Index.Ind n Index.Uind_3
+    -> Index.Ind n Index.Uind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S(S),1*U(U)><S(S),1*U(U)>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ @ n :: GHC.Types.Nat
+                   (x :: Index.Ind n Index.Uind_3)
+                   (y :: Index.Ind n Index.Uind_3) ->
+                 case x of wild { Index.UnsafemkInd a1 ->
+                 case y of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fEqSeq_$c==
+                        @ Index.Uind_3
+                        Index.$fEqUind_3
+                        a1
+                        b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False } } }) -}
+755894b120163e1bd21c5fbc6e35ab02
+  $s$fEqInd_$s$fEqInd_$c/=1 ::
+    Index.Ind n Index.Lind_3
+    -> Index.Ind n Index.Lind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S(S),1*U(U)><S(S),1*U(U)>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ @ n :: GHC.Types.Nat
+                   (x :: Index.Ind n Index.Lind_3)
+                   (y :: Index.Ind n Index.Lind_3) ->
+                 case x of wild { Index.UnsafemkInd a1 ->
+                 case y of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fEqSeq_$c==
+                        @ Index.Lind_3
+                        Index.$fEqLind_3
+                        a1
+                        b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False } } }) -}
+990a15f86d84f30bccf37026ccdbd6e9
+  $s$fEqSeq ::
+    GHC.Classes.Eq (Data.Sequence.Internal.Seq Index.Uind_3)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                  (Data.Sequence.Internal.$fEqSeq_$c==
+                     @ Index.Uind_3
+                     Index.$fEqUind_3)
+                  Main.$s$fEqSeq_$s$fEqSeq_$c/= -}
+65c4a8fdd0fb51de1fe44ec02d104e21
+  $s$fEqSeq1 ::
+    GHC.Classes.Eq (Data.Sequence.Internal.Seq Index.Lind_3)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                  (Data.Sequence.Internal.$fEqSeq_$c==
+                     @ Index.Lind_3
+                     Index.$fEqLind_3)
+                  Main.$s$fEqSeq_$s$fEqSeq_$c/=1 -}
+a26df6b7f47a65286241dedc1d6d45e4
+  $s$fEqSeq_$s$fEqSeq_$c/= ::
+    Data.Sequence.Internal.Seq Index.Uind_3
+    -> Data.Sequence.Internal.Seq Index.Uind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ (x :: Data.Sequence.Internal.Seq Index.Uind_3)
+                   (y :: Data.Sequence.Internal.Seq Index.Uind_3) ->
+                 case Data.Sequence.Internal.$fEqSeq_$c==
+                        @ Index.Uind_3
+                        Index.$fEqUind_3
+                        x
+                        y of wild {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False }) -}
+d92ed8225fa2bec073094fb1d9ff370d
+  $s$fEqSeq_$s$fEqSeq_$c/=1 ::
+    Data.Sequence.Internal.Seq Index.Lind_3
+    -> Data.Sequence.Internal.Seq Index.Lind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ (x :: Data.Sequence.Internal.Seq Index.Lind_3)
+                   (y :: Data.Sequence.Internal.Seq Index.Lind_3) ->
+                 case Data.Sequence.Internal.$fEqSeq_$c==
+                        @ Index.Lind_3
+                        Index.$fEqLind_3
+                        x
+                        y of wild {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False }) -}
+fe5ec3a6975912c8d1bfdd6cf07055ec
+  $s$fOrd(,) :: GHC.Classes.Ord (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (GHC.Types.Int, GHC.Types.Int)
+                  Main.$s$fEq(,)
+                  (GHC.Classes.$fOrd(,)_$ccompare
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt
+                     GHC.Classes.$fOrdInt)
+                  (GHC.Classes.$fOrd(,)_$c<
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt
+                     GHC.Classes.$fOrdInt)
+                  (GHC.Classes.$fOrd(,)_$c<=
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt
+                     GHC.Classes.$fOrdInt)
+                  (\ (a1 :: (GHC.Types.Int, GHC.Types.Int))
+                     (b1 :: (GHC.Types.Int, GHC.Types.Int)) ->
+                   GHC.Classes.$fOrd(,)_$c<
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt
+                     GHC.Classes.$fOrdInt
+                     b1
+                     a1)
+                  (GHC.Classes.$fOrd(,)_$c>=
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt
+                     GHC.Classes.$fOrdInt)
+                  (GHC.Classes.$fOrd(,)_$cmax
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt
+                     GHC.Classes.$fOrdInt)
+                  (GHC.Classes.$fOrd(,)_$cmin
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt
+                     GHC.Classes.$fOrdInt) -}
+5f654ec29bae49586783c4054e0fca64
+  $s$fOrdInd :: GHC.Classes.Ord (Index.Ind n Index.Uind_3)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun: @ n :: GHC.Types.Nat.
+                  @ (Index.Ind n Index.Uind_3)
+                  (Main.$s$fEqInd @ n)
+                  (\ (a1 :: Index.Ind n Index.Uind_3)
+                     (b :: Index.Ind n Index.Uind_3) ->
+                   case a1 of wild { Index.UnsafemkInd a2 ->
+                   case b of wild1 { Index.UnsafemkInd b1 ->
+                   Data.Sequence.Internal.$fOrdSeq_$ccompare
+                     @ Index.Uind_3
+                     Index.$fOrdUind_3
+                     a2
+                     b1 } })
+                  (\ (a1 :: Index.Ind n Index.Uind_3)
+                     (b :: Index.Ind n Index.Uind_3) ->
+                   case a1 of wild { Index.UnsafemkInd a2 ->
+                   case b of wild1 { Index.UnsafemkInd b1 ->
+                   Data.Sequence.Internal.$fOrdSeq_$c<
+                     @ Index.Uind_3
+                     Index.$fOrdUind_3
+                     a2
+                     b1 } })
+                  (\ (a1 :: Index.Ind n Index.Uind_3)
+                     (b :: Index.Ind n Index.Uind_3) ->
+                   case b of wild { Index.UnsafemkInd a2 ->
+                   case a1 of wild1 { Index.UnsafemkInd b1 ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<
+                          @ Index.Uind_3
+                          Index.$fOrdUind_3
+                          a2
+                          b1 of wild2 {
+                     GHC.Types.False -> GHC.Types.True
+                     GHC.Types.True -> GHC.Types.False } } })
+                  (\ (a1 :: Index.Ind n Index.Uind_3)
+                     (b :: Index.Ind n Index.Uind_3) ->
+                   case b of wild { Index.UnsafemkInd a2 ->
+                   case a1 of wild1 { Index.UnsafemkInd b1 ->
+                   Data.Sequence.Internal.$fOrdSeq_$c<
+                     @ Index.Uind_3
+                     Index.$fOrdUind_3
+                     a2
+                     b1 } })
+                  (\ (a1 :: Index.Ind n Index.Uind_3)
+                     (b :: Index.Ind n Index.Uind_3) ->
+                   case a1 of wild { Index.UnsafemkInd a2 ->
+                   case b of wild1 { Index.UnsafemkInd b1 ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<
+                          @ Index.Uind_3
+                          Index.$fOrdUind_3
+                          a2
+                          b1 of wild2 {
+                     GHC.Types.False -> GHC.Types.True
+                     GHC.Types.True -> GHC.Types.False } } })
+                  (\ (x :: Index.Ind n Index.Uind_3)
+                     (y :: Index.Ind n Index.Uind_3) ->
+                   case y of wild { Index.UnsafemkInd a1 ->
+                   case x of wild1 { Index.UnsafemkInd b1 ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<
+                          @ Index.Uind_3
+                          Index.$fOrdUind_3
+                          a1
+                          b1 of wild2 {
+                     GHC.Types.False -> wild GHC.Types.True -> wild1 } } })
+                  (\ (x :: Index.Ind n Index.Uind_3)
+                     (y :: Index.Ind n Index.Uind_3) ->
+                   case y of wild { Index.UnsafemkInd a1 ->
+                   case x of wild1 { Index.UnsafemkInd b1 ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<
+                          @ Index.Uind_3
+                          Index.$fOrdUind_3
+                          a1
+                          b1 of wild2 {
+                     GHC.Types.False -> wild1 GHC.Types.True -> wild } } }) -}
+cb595ca779cbc4d85a7d2e56bb00ab69
+  $s$fOrdInd1 :: GHC.Classes.Ord (Index.Ind n Index.Lind_3)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun: @ n :: GHC.Types.Nat.
+                  @ (Index.Ind n Index.Lind_3)
+                  (Main.$s$fEqInd1 @ n)
+                  (\ (a1 :: Index.Ind n Index.Lind_3)
+                     (b :: Index.Ind n Index.Lind_3) ->
+                   case a1 of wild { Index.UnsafemkInd a2 ->
+                   case b of wild1 { Index.UnsafemkInd b1 ->
+                   Data.Sequence.Internal.$fOrdSeq_$ccompare
+                     @ Index.Lind_3
+                     Index.$fOrdLind_3
+                     a2
+                     b1 } })
+                  (\ (a1 :: Index.Ind n Index.Lind_3)
+                     (b :: Index.Ind n Index.Lind_3) ->
+                   case a1 of wild { Index.UnsafemkInd a2 ->
+                   case b of wild1 { Index.UnsafemkInd b1 ->
+                   Data.Sequence.Internal.$fOrdSeq_$c<
+                     @ Index.Lind_3
+                     Index.$fOrdLind_3
+                     a2
+                     b1 } })
+                  (\ (a1 :: Index.Ind n Index.Lind_3)
+                     (b :: Index.Ind n Index.Lind_3) ->
+                   case b of wild { Index.UnsafemkInd a2 ->
+                   case a1 of wild1 { Index.UnsafemkInd b1 ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<
+                          @ Index.Lind_3
+                          Index.$fOrdLind_3
+                          a2
+                          b1 of wild2 {
+                     GHC.Types.False -> GHC.Types.True
+                     GHC.Types.True -> GHC.Types.False } } })
+                  (\ (a1 :: Index.Ind n Index.Lind_3)
+                     (b :: Index.Ind n Index.Lind_3) ->
+                   case b of wild { Index.UnsafemkInd a2 ->
+                   case a1 of wild1 { Index.UnsafemkInd b1 ->
+                   Data.Sequence.Internal.$fOrdSeq_$c<
+                     @ Index.Lind_3
+                     Index.$fOrdLind_3
+                     a2
+                     b1 } })
+                  (\ (a1 :: Index.Ind n Index.Lind_3)
+                     (b :: Index.Ind n Index.Lind_3) ->
+                   case a1 of wild { Index.UnsafemkInd a2 ->
+                   case b of wild1 { Index.UnsafemkInd b1 ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<
+                          @ Index.Lind_3
+                          Index.$fOrdLind_3
+                          a2
+                          b1 of wild2 {
+                     GHC.Types.False -> GHC.Types.True
+                     GHC.Types.True -> GHC.Types.False } } })
+                  (\ (x :: Index.Ind n Index.Lind_3)
+                     (y :: Index.Ind n Index.Lind_3) ->
+                   case y of wild { Index.UnsafemkInd a1 ->
+                   case x of wild1 { Index.UnsafemkInd b1 ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<
+                          @ Index.Lind_3
+                          Index.$fOrdLind_3
+                          a1
+                          b1 of wild2 {
+                     GHC.Types.False -> wild GHC.Types.True -> wild1 } } })
+                  (\ (x :: Index.Ind n Index.Lind_3)
+                     (y :: Index.Ind n Index.Lind_3) ->
+                   case y of wild { Index.UnsafemkInd a1 ->
+                   case x of wild1 { Index.UnsafemkInd b1 ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<
+                          @ Index.Lind_3
+                          Index.$fOrdLind_3
+                          a1
+                          b1 of wild2 {
+                     GHC.Types.False -> wild1 GHC.Types.True -> wild } } }) -}
+9aae71e6b0316f0e00c906779052ab70
+  $s$fOrdInd_$c< ::
+    Index.Ind n Index.Uind_3
+    -> Index.Ind n Index.Uind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Uind_3)
+                   (b :: Index.Ind n Index.Uind_3) ->
+                 case a1 of wild { Index.UnsafemkInd a2 ->
+                 case b of wild1 { Index.UnsafemkInd b1 ->
+                 Data.Sequence.Internal.$fOrdSeq_$c<
+                   @ Index.Uind_3
+                   Index.$fOrdUind_3
+                   a2
+                   b1 } }) -}
+e3619b3f4cbe579c9bfa674745d22474
+  $s$fOrdInd_$c<1 ::
+    Index.Ind n Index.Lind_3
+    -> Index.Ind n Index.Lind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Lind_3)
+                   (b :: Index.Ind n Index.Lind_3) ->
+                 case a1 of wild { Index.UnsafemkInd a2 ->
+                 case b of wild1 { Index.UnsafemkInd b1 ->
+                 Data.Sequence.Internal.$fOrdSeq_$c<
+                   @ Index.Lind_3
+                   Index.$fOrdLind_3
+                   a2
+                   b1 } }) -}
+a4a67ca63d1ee58542edbd4261fdc029
+  $s$fOrdInd_$c<= ::
+    Index.Ind n Index.Uind_3
+    -> Index.Ind n Index.Uind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Uind_3)
+                   (b :: Index.Ind n Index.Uind_3) ->
+                 case b of wild { Index.UnsafemkInd a2 ->
+                 case a1 of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<
+                        @ Index.Uind_3
+                        Index.$fOrdUind_3
+                        a2
+                        b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False } } }) -}
+0896197ec387c7efdb65c07c5401e9a9
+  $s$fOrdInd_$c<=1 ::
+    Index.Ind n Index.Lind_3
+    -> Index.Ind n Index.Lind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Lind_3)
+                   (b :: Index.Ind n Index.Lind_3) ->
+                 case b of wild { Index.UnsafemkInd a2 ->
+                 case a1 of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<
+                        @ Index.Lind_3
+                        Index.$fOrdLind_3
+                        a2
+                        b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False } } }) -}
+ad550bf913b001bf6329fd651f65e3ef
+  $s$fOrdInd_$c> ::
+    Index.Ind n Index.Uind_3
+    -> Index.Ind n Index.Uind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Uind_3)
+                   (b :: Index.Ind n Index.Uind_3) ->
+                 case b of wild { Index.UnsafemkInd a2 ->
+                 case a1 of wild1 { Index.UnsafemkInd b1 ->
+                 Data.Sequence.Internal.$fOrdSeq_$c<
+                   @ Index.Uind_3
+                   Index.$fOrdUind_3
+                   a2
+                   b1 } }) -}
+8d6265440110fda05957b2605878c5e1
+  $s$fOrdInd_$c>1 ::
+    Index.Ind n Index.Lind_3
+    -> Index.Ind n Index.Lind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Lind_3)
+                   (b :: Index.Ind n Index.Lind_3) ->
+                 case b of wild { Index.UnsafemkInd a2 ->
+                 case a1 of wild1 { Index.UnsafemkInd b1 ->
+                 Data.Sequence.Internal.$fOrdSeq_$c<
+                   @ Index.Lind_3
+                   Index.$fOrdLind_3
+                   a2
+                   b1 } }) -}
+5dda3af6c1da81a99fa7744f02ef1a05
+  $s$fOrdInd_$c>= ::
+    Index.Ind n Index.Uind_3
+    -> Index.Ind n Index.Uind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Uind_3)
+                   (b :: Index.Ind n Index.Uind_3) ->
+                 case a1 of wild { Index.UnsafemkInd a2 ->
+                 case b of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<
+                        @ Index.Uind_3
+                        Index.$fOrdUind_3
+                        a2
+                        b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False } } }) -}
+4b34ff5e1487fb6e591e2e0d89c99d7d
+  $s$fOrdInd_$c>=1 ::
+    Index.Ind n Index.Lind_3
+    -> Index.Ind n Index.Lind_3 -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Lind_3)
+                   (b :: Index.Ind n Index.Lind_3) ->
+                 case a1 of wild { Index.UnsafemkInd a2 ->
+                 case b of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<
+                        @ Index.Lind_3
+                        Index.$fOrdLind_3
+                        a2
+                        b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False } } }) -}
+4d213b19112dc8e6980cd8d34c065c29
+  $s$fOrdInd_$ccompare ::
+    Index.Ind n Index.Uind_3
+    -> Index.Ind n Index.Uind_3 -> GHC.Types.Ordering
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Uind_3)
+                   (b :: Index.Ind n Index.Uind_3) ->
+                 case a1 of wild { Index.UnsafemkInd a2 ->
+                 case b of wild1 { Index.UnsafemkInd b1 ->
+                 Data.Sequence.Internal.$fOrdSeq_$ccompare
+                   @ Index.Uind_3
+                   Index.$fOrdUind_3
+                   a2
+                   b1 } }) -}
+4563f490a184c0d44f994a74a9def5e6
+  $s$fOrdInd_$ccompare1 ::
+    Index.Ind n Index.Lind_3
+    -> Index.Ind n Index.Lind_3 -> GHC.Types.Ordering
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S),1*U(1*U)><S(S),1*U(1*U)>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (a1 :: Index.Ind n Index.Lind_3)
+                   (b :: Index.Ind n Index.Lind_3) ->
+                 case a1 of wild { Index.UnsafemkInd a2 ->
+                 case b of wild1 { Index.UnsafemkInd b1 ->
+                 Data.Sequence.Internal.$fOrdSeq_$ccompare
+                   @ Index.Lind_3
+                   Index.$fOrdLind_3
+                   a2
+                   b1 } }) -}
+51fe1d4efd33817af1b3f070a86d30eb
+  $s$fOrdInd_$cmax ::
+    Index.Ind n Index.Uind_3
+    -> Index.Ind n Index.Uind_3 -> Index.Ind n Index.Uind_3
+  {- Arity: 2, HasNoCafRefs, Strictness: <S(S),1*U(U)><S(S),1*U(U)>m,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (x :: Index.Ind n Index.Uind_3)
+                   (y :: Index.Ind n Index.Uind_3) ->
+                 case y of wild { Index.UnsafemkInd a1 ->
+                 case x of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<
+                        @ Index.Uind_3
+                        Index.$fOrdUind_3
+                        a1
+                        b1 of wild2 {
+                   GHC.Types.False -> wild GHC.Types.True -> wild1 } } }) -}
+6e58e00ef28dd5767505410063510d30
+  $s$fOrdInd_$cmax1 ::
+    Index.Ind n Index.Lind_3
+    -> Index.Ind n Index.Lind_3 -> Index.Ind n Index.Lind_3
+  {- Arity: 2, HasNoCafRefs, Strictness: <S(S),1*U(U)><S(S),1*U(U)>m,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (x :: Index.Ind n Index.Lind_3)
+                   (y :: Index.Ind n Index.Lind_3) ->
+                 case y of wild { Index.UnsafemkInd a1 ->
+                 case x of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<
+                        @ Index.Lind_3
+                        Index.$fOrdLind_3
+                        a1
+                        b1 of wild2 {
+                   GHC.Types.False -> wild GHC.Types.True -> wild1 } } }) -}
+436df17ce799da3f108e77f680a9dc5d
+  $s$fOrdInd_$cmin ::
+    Index.Ind n Index.Uind_3
+    -> Index.Ind n Index.Uind_3 -> Index.Ind n Index.Uind_3
+  {- Arity: 2, HasNoCafRefs, Strictness: <S(S),1*U(U)><S(S),1*U(U)>m,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (x :: Index.Ind n Index.Uind_3)
+                   (y :: Index.Ind n Index.Uind_3) ->
+                 case y of wild { Index.UnsafemkInd a1 ->
+                 case x of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<
+                        @ Index.Uind_3
+                        Index.$fOrdUind_3
+                        a1
+                        b1 of wild2 {
+                   GHC.Types.False -> wild1 GHC.Types.True -> wild } } }) -}
+64ec8319772d0d4ca98cde75ab4b593a
+  $s$fOrdInd_$cmin1 ::
+    Index.Ind n Index.Lind_3
+    -> Index.Ind n Index.Lind_3 -> Index.Ind n Index.Lind_3
+  {- Arity: 2, HasNoCafRefs, Strictness: <S(S),1*U(U)><S(S),1*U(U)>m,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n :: GHC.Types.Nat
+                   (x :: Index.Ind n Index.Lind_3)
+                   (y :: Index.Ind n Index.Lind_3) ->
+                 case y of wild { Index.UnsafemkInd a1 ->
+                 case x of wild1 { Index.UnsafemkInd b1 ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<
+                        @ Index.Lind_3
+                        Index.$fOrdLind_3
+                        a1
+                        b1 of wild2 {
+                   GHC.Types.False -> wild1 GHC.Types.True -> wild } } }) -}
+f6468afa3266b585b68e57f94ae08caa
+  $s$fOrdSeq ::
+    GHC.Classes.Ord (Data.Sequence.Internal.Seq Index.Uind_3)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                  Main.$s$fEqSeq
+                  (Data.Sequence.Internal.$fOrdSeq_$ccompare
+                     @ Index.Uind_3
+                     Index.$fOrdUind_3)
+                  (Data.Sequence.Internal.$fOrdSeq_$c<
+                     @ Index.Uind_3
+                     Index.$fOrdUind_3)
+                  (Data.Sequence.Internal.$fOrdSeq_$c<=
+                     @ Index.Uind_3
+                     Index.$fOrdUind_3)
+                  (Data.Sequence.Internal.$fOrdSeq_$c>
+                     @ Index.Uind_3
+                     Index.$fOrdUind_3)
+                  (Data.Sequence.Internal.$fOrdSeq_$c>=
+                     @ Index.Uind_3
+                     Index.$fOrdUind_3)
+                  (\ (x :: Data.Sequence.Internal.Seq Index.Uind_3)
+                     (y :: Data.Sequence.Internal.Seq Index.Uind_3) ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<=
+                          @ Index.Uind_3
+                          Index.$fOrdUind_3
+                          x
+                          y of wild {
+                     GHC.Types.False -> x GHC.Types.True -> y })
+                  (\ (x :: Data.Sequence.Internal.Seq Index.Uind_3)
+                     (y :: Data.Sequence.Internal.Seq Index.Uind_3) ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<=
+                          @ Index.Uind_3
+                          Index.$fOrdUind_3
+                          x
+                          y of wild {
+                     GHC.Types.False -> y GHC.Types.True -> x }) -}
+4ee755ba959b50133b55cb91b901444a
+  $s$fOrdSeq1 ::
+    GHC.Classes.Ord (Data.Sequence.Internal.Seq Index.Lind_3)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                  Main.$s$fEqSeq1
+                  (Data.Sequence.Internal.$fOrdSeq_$ccompare
+                     @ Index.Lind_3
+                     Index.$fOrdLind_3)
+                  (Data.Sequence.Internal.$fOrdSeq_$c<
+                     @ Index.Lind_3
+                     Index.$fOrdLind_3)
+                  (Data.Sequence.Internal.$fOrdSeq_$c<=
+                     @ Index.Lind_3
+                     Index.$fOrdLind_3)
+                  (Data.Sequence.Internal.$fOrdSeq_$c>
+                     @ Index.Lind_3
+                     Index.$fOrdLind_3)
+                  (Data.Sequence.Internal.$fOrdSeq_$c>=
+                     @ Index.Lind_3
+                     Index.$fOrdLind_3)
+                  (\ (x :: Data.Sequence.Internal.Seq Index.Lind_3)
+                     (y :: Data.Sequence.Internal.Seq Index.Lind_3) ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<=
+                          @ Index.Lind_3
+                          Index.$fOrdLind_3
+                          x
+                          y of wild {
+                     GHC.Types.False -> x GHC.Types.True -> y })
+                  (\ (x :: Data.Sequence.Internal.Seq Index.Lind_3)
+                     (y :: Data.Sequence.Internal.Seq Index.Lind_3) ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<=
+                          @ Index.Lind_3
+                          Index.$fOrdLind_3
+                          x
+                          y of wild {
+                     GHC.Types.False -> y GHC.Types.True -> x }) -}
+ebf3e8657610096185ed369e45f88b5b
+  $s$fOrdSeq_$cmax ::
+    Data.Sequence.Internal.Seq Index.Uind_3
+    -> Data.Sequence.Internal.Seq Index.Uind_3
+    -> Data.Sequence.Internal.Seq Index.Uind_3
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (x :: Data.Sequence.Internal.Seq Index.Uind_3)
+                   (y :: Data.Sequence.Internal.Seq Index.Uind_3) ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<=
+                        @ Index.Uind_3
+                        Index.$fOrdUind_3
+                        x
+                        y of wild {
+                   GHC.Types.False -> x GHC.Types.True -> y }) -}
+f147f3b72e9202f0d046ccbad72a3c78
+  $s$fOrdSeq_$cmax1 ::
+    Data.Sequence.Internal.Seq Index.Lind_3
+    -> Data.Sequence.Internal.Seq Index.Lind_3
+    -> Data.Sequence.Internal.Seq Index.Lind_3
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (x :: Data.Sequence.Internal.Seq Index.Lind_3)
+                   (y :: Data.Sequence.Internal.Seq Index.Lind_3) ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<=
+                        @ Index.Lind_3
+                        Index.$fOrdLind_3
+                        x
+                        y of wild {
+                   GHC.Types.False -> x GHC.Types.True -> y }) -}
+f2edbcc3b938c555e74ebe69edcf2f41
+  $s$fOrdSeq_$cmin ::
+    Data.Sequence.Internal.Seq Index.Uind_3
+    -> Data.Sequence.Internal.Seq Index.Uind_3
+    -> Data.Sequence.Internal.Seq Index.Uind_3
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (x :: Data.Sequence.Internal.Seq Index.Uind_3)
+                   (y :: Data.Sequence.Internal.Seq Index.Uind_3) ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<=
+                        @ Index.Uind_3
+                        Index.$fOrdUind_3
+                        x
+                        y of wild {
+                   GHC.Types.False -> y GHC.Types.True -> x }) -}
+ddb2649e8ebe960d2dc14286b6cc0a23
+  $s$fOrdSeq_$cmin1 ::
+    Data.Sequence.Internal.Seq Index.Lind_3
+    -> Data.Sequence.Internal.Seq Index.Lind_3
+    -> Data.Sequence.Internal.Seq Index.Lind_3
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (x :: Data.Sequence.Internal.Seq Index.Lind_3)
+                   (y :: Data.Sequence.Internal.Seq Index.Lind_3) ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<=
+                        @ Index.Lind_3
+                        Index.$fOrdLind_3
+                        x
+                        y of wild {
+                   GHC.Types.False -> y GHC.Types.True -> x }) -}
+4f5da328cb489e211905ea56e6beab98
+  $s$fShow(,) :: GHC.Show.Show (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (GHC.Types.Int, GHC.Types.Int)
+                  (GHC.Show.$fShow(,)_$cshowsPrec
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Show.$fShowInt
+                     GHC.Show.$fShowInt)
+                  (\ (x :: (GHC.Types.Int, GHC.Types.Int)) ->
+                   GHC.Show.$fShow(,)_$cshowsPrec
+                     @ GHC.Types.Int
+                     @ GHC.Types.Int
+                     GHC.Show.$fShowInt
+                     GHC.Show.$fShowInt
+                     GHC.Show.$fShow(,)1
+                     x
+                     (GHC.Types.[] @ GHC.Types.Char))
+                  (\ (ls :: [(GHC.Types.Int, GHC.Types.Int)])
+                     (s :: GHC.Base.String) ->
+                   GHC.Show.showList__
+                     @ (GHC.Types.Int, GHC.Types.Int)
+                     (GHC.Show.$fShow(,)_$cshowsPrec
+                        @ GHC.Types.Int
+                        @ GHC.Types.Int
+                        GHC.Show.$fShowInt
+                        GHC.Show.$fShowInt
+                        GHC.Show.$fShow(,)1)
+                     ls
+                     s) -}
+41ce8336b68ddd971b995ad689574677
+  $s$fShowIvar ::
+    GHC.Show.Show (Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer))
+  {- Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer))
+                  (Ivar.$fShowIvar_$cshowsPrec
+                     @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                     GHC.Real.$fShowRatio_$s$fShowRatio)
+                  (\ (x :: Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer)) ->
+                   Ivar.$fShowIvar_$cshowsPrec
+                     @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                     GHC.Real.$fShowRatio_$s$fShowRatio
+                     Ivar.$fShowIvar1
+                     x
+                     (GHC.Types.[] @ GHC.Types.Char))
+                  (\ (ls :: [Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer)])
+                     (s :: GHC.Base.String) ->
+                   GHC.Show.showList__
+                     @ (Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer))
+                     (Ivar.$fShowIvar_$cshowsPrec
+                        @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                        GHC.Real.$fShowRatio_$s$fShowRatio
+                        Ivar.$fShowIvar1)
+                     ls
+                     s) -}
+f99aba6e4993c0e03a6fcd94b5e3d4b5
+  $s$fShowIvar_$cshowList ::
+    [Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer)]
+    -> GHC.Show.ShowS
+  {- Arity: 2, Strictness: <S,1*U><L,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (ls :: [Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer)])
+                   (s :: GHC.Base.String) ->
+                 GHC.Show.showList__
+                   @ (Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer))
+                   (Ivar.$fShowIvar_$cshowsPrec
+                      @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                      GHC.Real.$fShowRatio_$s$fShowRatio
+                      Ivar.$fShowIvar1)
+                   ls
+                   s) -}
+505c6e74c1a8312916dda45e07f6ed9f
+  $s$fShowIvar_$cshowsPrec ::
+    GHC.Types.Int
+    -> Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer)
+    -> GHC.Show.ShowS
+  {- Arity: 2, Strictness: <S(S),1*U(U)><S,1*U(U,1*U)>, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w1 :: GHC.Types.Int)
+                   (w2 :: Ivar.Ivar (GHC.Real.Ratio GHC.Integer.Type.Integer)) ->
+                 case w1 of ww { GHC.Types.I# ww1 ->
+                 case w2 of ww2 { Ivar.Ivar ww3 ww4 ->
+                 Ivar.$w$cshowsPrec
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   GHC.Real.$fShowRatio_$s$fShowRatio
+                   ww1
+                   ww3
+                   ww4 } }) -}
+443ae4caa4088e57b788bf044db13818
+  $sfromList ::
+    [(Index.Ind 2 Index.Uind_3, a)]
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Uind_3) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a (ds :: [(Index.Ind 2 Index.Uind_3, a)]) ->
+                 case ds of wild {
+                   [] -> Data.Map.Internal.Tip @ (Index.Ind 2 Index.Uind_3) @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case kx of dt { Index.UnsafemkInd ipv ->
+                           Data.Map.Internal.Bin
+                             @ (Index.Ind 2 Index.Uind_3)
+                             @ a
+                             1#
+                             dt
+                             x
+                             (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Uind_3) @ a)
+                             (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Uind_3) @ a) }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case kx of wild4 { Index.UnsafemkInd a2 ->
+                           case ky of wild5 { Index.UnsafemkInd b1 ->
+                           case Data.Sequence.Internal.$fOrdSeq_$c<
+                                  @ Index.Uind_3
+                                  Index.$fOrdUind_3
+                                  a2
+                                  b1 of wild6 {
+                             GHC.Types.False
+                             -> Main.$sfromList1
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ (Index.Ind 2 Index.Uind_3)
+                                     @ a
+                                     1#
+                                     wild4
+                                     x
+                                     (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Uind_3) @ a)
+                                     (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Uind_3) @ a))
+                                  wild2
+                             GHC.Types.True
+                             -> Main.$wpoly_go13
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ (Index.Ind 2 Index.Uind_3)
+                                     @ a
+                                     1#
+                                     wild4
+                                     x
+                                     (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Uind_3) @ a)
+                                     (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Uind_3) @ a))
+                                  wild2 } } } } } } }) -}
+cb82e2e503c859cbd6bbe36145b30f09
+  $sfromList1 ::
+    Data.Map.Internal.Map (Index.Ind 2 Index.Uind_3) a
+    -> [(Index.Ind 2 Index.Uind_3, a)]
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Uind_3) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+6d83befcd1a10c09312c198f4dda99c7
+  $sfromList2 ::
+    [(Index.Ind 3 Index.Lind_3, a)]
+    -> Data.Map.Internal.Map (Index.Ind 3 Index.Lind_3) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a (ds :: [(Index.Ind 3 Index.Lind_3, a)]) ->
+                 case ds of wild {
+                   [] -> Data.Map.Internal.Tip @ (Index.Ind 3 Index.Lind_3) @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case kx of dt { Index.UnsafemkInd ipv ->
+                           Data.Map.Internal.Bin
+                             @ (Index.Ind 3 Index.Lind_3)
+                             @ a
+                             1#
+                             dt
+                             x
+                             (Data.Map.Internal.Tip @ (Index.Ind 3 Index.Lind_3) @ a)
+                             (Data.Map.Internal.Tip @ (Index.Ind 3 Index.Lind_3) @ a) }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case kx of wild4 { Index.UnsafemkInd a2 ->
+                           case ky of wild5 { Index.UnsafemkInd b1 ->
+                           case Data.Sequence.Internal.$fOrdSeq_$c<
+                                  @ Index.Lind_3
+                                  Index.$fOrdLind_3
+                                  a2
+                                  b1 of wild6 {
+                             GHC.Types.False
+                             -> Main.$sfromList3
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ (Index.Ind 3 Index.Lind_3)
+                                     @ a
+                                     1#
+                                     wild4
+                                     x
+                                     (Data.Map.Internal.Tip @ (Index.Ind 3 Index.Lind_3) @ a)
+                                     (Data.Map.Internal.Tip @ (Index.Ind 3 Index.Lind_3) @ a))
+                                  wild2
+                             GHC.Types.True
+                             -> Main.$wpoly_go1
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ (Index.Ind 3 Index.Lind_3)
+                                     @ a
+                                     1#
+                                     wild4
+                                     x
+                                     (Data.Map.Internal.Tip @ (Index.Ind 3 Index.Lind_3) @ a)
+                                     (Data.Map.Internal.Tip @ (Index.Ind 3 Index.Lind_3) @ a))
+                                  wild2 } } } } } } }) -}
+6516aaa610ff5a81e73c1d083a1e091d
+  $sfromList3 ::
+    Data.Map.Internal.Map (Index.Ind 3 Index.Lind_3) a
+    -> [(Index.Ind 3 Index.Lind_3, a)]
+    -> Data.Map.Internal.Map (Index.Ind 3 Index.Lind_3) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+25a2f3624416e8ac4f78e1e1d66a87a1
+  $sfromList4 ::
+    [(Index.Ind 2 Index.Lind_3, a)]
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Lind_3) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a (ds :: [(Index.Ind 2 Index.Lind_3, a)]) ->
+                 case ds of wild {
+                   [] -> Data.Map.Internal.Tip @ (Index.Ind 2 Index.Lind_3) @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case kx of dt { Index.UnsafemkInd ipv ->
+                           Data.Map.Internal.Bin
+                             @ (Index.Ind 2 Index.Lind_3)
+                             @ a
+                             1#
+                             dt
+                             x
+                             (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Lind_3) @ a)
+                             (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Lind_3) @ a) }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case kx of wild4 { Index.UnsafemkInd a2 ->
+                           case ky of wild5 { Index.UnsafemkInd b1 ->
+                           case Data.Sequence.Internal.$fOrdSeq_$c<
+                                  @ Index.Lind_3
+                                  Index.$fOrdLind_3
+                                  a2
+                                  b1 of wild6 {
+                             GHC.Types.False
+                             -> Main.$sfromList5
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ (Index.Ind 2 Index.Lind_3)
+                                     @ a
+                                     1#
+                                     wild4
+                                     x
+                                     (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Lind_3) @ a)
+                                     (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Lind_3) @ a))
+                                  wild2
+                             GHC.Types.True
+                             -> Main.$wpoly_go2
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ (Index.Ind 2 Index.Lind_3)
+                                     @ a
+                                     1#
+                                     wild4
+                                     x
+                                     (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Lind_3) @ a)
+                                     (Data.Map.Internal.Tip @ (Index.Ind 2 Index.Lind_3) @ a))
+                                  wild2 } } } } } } }) -}
+5750e8d85bb8a84b7b11a2d59e0fe1bc
+  $sfromList5 ::
+    Data.Map.Internal.Map (Index.Ind 2 Index.Lind_3) a
+    -> [(Index.Ind 2 Index.Lind_3, a)]
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Lind_3) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+820c867406c8ee370647d1bbdb13710e
+  $sfromList6 ::
+    [(Data.Sequence.Internal.Seq Index.Uind_3, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq Index.Uind_3) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a
+                   (ds :: [(Data.Sequence.Internal.Seq Index.Uind_3, a)]) ->
+                 case ds of wild {
+                   []
+                   -> Data.Map.Internal.Tip
+                        @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                        @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case x of x1 { DEFAULT ->
+                           case kx
+                                  `cast`
+                                (Data.Sequence.Internal.N:Seq[0]
+                                     <Index.Uind_3>_R) of nt { DEFAULT ->
+                           Data.Map.Internal.Bin
+                             @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                             @ a
+                             1#
+                             nt `cast` (Sym (Data.Sequence.Internal.N:Seq[0] <Index.Uind_3>_R))
+                             x1
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                                @ a)
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                                @ a) } }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case Data.Sequence.Internal.$fOrdSeq_$c>=
+                                  @ Index.Uind_3
+                                  Index.$fOrdUind_3
+                                  kx
+                                  ky of wild4 {
+                             GHC.Types.False
+                             -> case x of x0 { DEFAULT ->
+                                case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <Index.Uind_3>_R) of nt { DEFAULT ->
+                                Main.$wpoly_go8
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <Index.Uind_3>_R))
+                                     x0
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                                        @ a))
+                                  wild2 } }
+                             GHC.Types.True
+                             -> case x of x0 { DEFAULT ->
+                                case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <Index.Uind_3>_R) of nt { DEFAULT ->
+                                Main.$sfromList7
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <Index.Uind_3>_R))
+                                     x0
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                                        @ a))
+                                  wild2 } } } } } } }) -}
+4965fcc2de69eb1956fc9f3d2ab55cd7
+  $sfromList7 ::
+    Data.Map.Internal.Map (Data.Sequence.Internal.Seq Index.Uind_3) a
+    -> [(Data.Sequence.Internal.Seq Index.Uind_3, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq Index.Uind_3) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+6638fcb422ebe434d7fac930edba5583
+  $sfromList8 ::
+    [(Data.Sequence.Internal.Seq Index.Lind_3, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq Index.Lind_3) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a
+                   (ds :: [(Data.Sequence.Internal.Seq Index.Lind_3, a)]) ->
+                 case ds of wild {
+                   []
+                   -> Data.Map.Internal.Tip
+                        @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                        @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case x of x1 { DEFAULT ->
+                           case kx
+                                  `cast`
+                                (Data.Sequence.Internal.N:Seq[0]
+                                     <Index.Lind_3>_R) of nt { DEFAULT ->
+                           Data.Map.Internal.Bin
+                             @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                             @ a
+                             1#
+                             nt `cast` (Sym (Data.Sequence.Internal.N:Seq[0] <Index.Lind_3>_R))
+                             x1
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                                @ a)
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                                @ a) } }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case Data.Sequence.Internal.$fOrdSeq_$c>=
+                                  @ Index.Lind_3
+                                  Index.$fOrdLind_3
+                                  kx
+                                  ky of wild4 {
+                             GHC.Types.False
+                             -> case x of x0 { DEFAULT ->
+                                case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <Index.Lind_3>_R) of nt { DEFAULT ->
+                                Main.$wpoly_go3
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <Index.Lind_3>_R))
+                                     x0
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                                        @ a))
+                                  wild2 } }
+                             GHC.Types.True
+                             -> case x of x0 { DEFAULT ->
+                                case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <Index.Lind_3>_R) of nt { DEFAULT ->
+                                Main.$sfromList9
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <Index.Lind_3>_R))
+                                     x0
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                                        @ a))
+                                  wild2 } } } } } } }) -}
+97ef4a6c1abad0a3d0875d6a1cf9f0f2
+  $sfromList9 ::
+    Data.Map.Internal.Map (Data.Sequence.Internal.Seq Index.Lind_3) a
+    -> [(Data.Sequence.Internal.Seq Index.Lind_3, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq Index.Lind_3) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+5f1c2a5a93e44c080e5d92c8437bafb6
+  $sinsert_go8 ::
+    GHC.Classes.Ord k1 =>
+    k1
+    -> a1 -> Data.Map.Internal.Map k1 a1 -> Data.Map.Internal.Map k1 a1
+  {- Arity: 4,
+     Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><S,1*U><S,1*U><S,1*U> -}
+2a3a5a04f8c10a4fb7a1445c7475df0d
+  $smapKeys ::
+    (k1 -> Index.Ind 2 Index.Uind_3)
+    -> Data.Map.Internal.Map k1 a
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Uind_3) a
+  {- Arity: 2, Strictness: <L,C(U)><S,1*U>,
+     Unfolding: (\ @ k1
+                   @ a
+                   (f :: k1 -> Index.Ind 2 Index.Uind_3)
+                   (eta :: Data.Map.Internal.Map k1 a) ->
+                 letrec {
+                   go13 :: [(Index.Ind 2 Index.Uind_3, a)]
+                           -> Data.Map.Internal.Map k1 a -> [(Index.Ind 2 Index.Uind_3, a)]
+                     {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                   = \ (z' :: [(Index.Ind 2 Index.Uind_3, a)])
+                       (ds :: Data.Map.Internal.Map k1 a) ->
+                     case ds of wild {
+                       Data.Map.Internal.Bin dt kx x l r
+                       -> go13
+                            (GHC.Types.: @ (Index.Ind 2 Index.Uind_3, a) (f kx, x) (go13 z' r))
+                            l
+                       Data.Map.Internal.Tip -> z' }
+                 } in
+                 Main.$sfromList
+                   @ a
+                   (go13 (GHC.Types.[] @ (Index.Ind 2 Index.Uind_3, a)) eta)) -}
+70a07b512ecee5ff6da67c9957087e7d
+  $smapKeys1 ::
+    (k1 -> Index.Ind 3 Index.Lind_3)
+    -> Data.Map.Internal.Map k1 a
+    -> Data.Map.Internal.Map (Index.Ind 3 Index.Lind_3) a
+  {- Arity: 2, Strictness: <L,C(U)><S,1*U>,
+     Unfolding: (\ @ k1
+                   @ a
+                   (f :: k1 -> Index.Ind 3 Index.Lind_3)
+                   (eta :: Data.Map.Internal.Map k1 a) ->
+                 letrec {
+                   go13 :: [(Index.Ind 3 Index.Lind_3, a)]
+                           -> Data.Map.Internal.Map k1 a -> [(Index.Ind 3 Index.Lind_3, a)]
+                     {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                   = \ (z' :: [(Index.Ind 3 Index.Lind_3, a)])
+                       (ds :: Data.Map.Internal.Map k1 a) ->
+                     case ds of wild {
+                       Data.Map.Internal.Bin dt kx x l r
+                       -> go13
+                            (GHC.Types.: @ (Index.Ind 3 Index.Lind_3, a) (f kx, x) (go13 z' r))
+                            l
+                       Data.Map.Internal.Tip -> z' }
+                 } in
+                 Main.$sfromList2
+                   @ a
+                   (go13 (GHC.Types.[] @ (Index.Ind 3 Index.Lind_3, a)) eta)) -}
+cb70a4bfe7746d9720d5fc30880104ad
+  $smapKeys2 ::
+    (k1 -> Index.Ind 2 Index.Lind_3)
+    -> Data.Map.Internal.Map k1 a
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Lind_3) a
+  {- Arity: 2, Strictness: <L,C(U)><S,1*U>,
+     Unfolding: (\ @ k1
+                   @ a
+                   (f :: k1 -> Index.Ind 2 Index.Lind_3)
+                   (eta :: Data.Map.Internal.Map k1 a) ->
+                 letrec {
+                   go13 :: [(Index.Ind 2 Index.Lind_3, a)]
+                           -> Data.Map.Internal.Map k1 a -> [(Index.Ind 2 Index.Lind_3, a)]
+                     {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                   = \ (z' :: [(Index.Ind 2 Index.Lind_3, a)])
+                       (ds :: Data.Map.Internal.Map k1 a) ->
+                     case ds of wild {
+                       Data.Map.Internal.Bin dt kx x l r
+                       -> go13
+                            (GHC.Types.: @ (Index.Ind 2 Index.Lind_3, a) (f kx, x) (go13 z' r))
+                            l
+                       Data.Map.Internal.Tip -> z' }
+                 } in
+                 Main.$sfromList4
+                   @ a
+                   (go13 (GHC.Types.[] @ (Index.Ind 2 Index.Lind_3, a)) eta)) -}
+67c7916dcc5105cad85644fc2343dfa5
+  $sunion ::
+    Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
+    -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
+    -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>, Inline: [~] -}
+be86c9d078d3acbf19ba91fe74a24273
+  $trModule :: GHC.Types.Module
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.Module Main.$trModule3 Main.$trModule1) -}
+b09d86f2c49dd5176b544d8d13ddb6c5
+  $trModule1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Main.$trModule2) -}
+e5875966b74dad2d29772660b8a75e33
+  $trModule2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("Main"#) -}
+23b03bd7d075a00f5ad1ee10e6add7b8
+  $trModule3 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Main.$trModule4) -}
+d026be77cb9ced20e35a61514e0458aa
+  $trModule4 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("main"#) -}
+7e62a3ff9624c3e98e472d0582eafa4c
+  $wpoly_go1 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map (Index.Ind 3 Index.Lind_3) a
+    -> [(Index.Ind 3 Index.Lind_3, a)]
+    -> Data.Map.Internal.Map (Index.Ind 3 Index.Lind_3) a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+5dff9410d40675588f350902551a1926
+  $wpoly_go13 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Uind_3) a
+    -> [(Index.Ind 2 Index.Uind_3, a)]
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Uind_3) a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+7432e184bf7cd97d69fcd1aff0b61c19
+  $wpoly_go2 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Lind_3) a
+    -> [(Index.Ind 2 Index.Lind_3, a)]
+    -> Data.Map.Internal.Map (Index.Ind 2 Index.Lind_3) a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+794e1f9d6aab82c78801b07c3b5f396a
+  $wpoly_go3 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq Index.Lind_3) a
+    -> [(Data.Sequence.Internal.Seq Index.Lind_3, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq Index.Lind_3) a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+0c470b15671b8aef13ad7828a0573e8a
+  $wpoly_go8 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq Index.Uind_3) a
+    -> [(Data.Sequence.Internal.Seq Index.Uind_3, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq Index.Uind_3) a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+a2f6fc7b224bc913b88ed8377c9e3b79
+  main :: GHC.Types.IO ()
+  {- Arity: 1,
+     Unfolding: InlineRule (0, True, True)
+                Main.main1 `cast` (Sym (GHC.Types.N:IO[0] <()>_R)) -}
+4797930d04b1566260ba65896fbdea0c
+  main1 ::
+    GHC.Prim.State# GHC.Prim.RealWorld
+    -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
+  {- Arity: 1,
+     Unfolding: (GHC.IO.Handle.Text.hPutStr2
+                   GHC.IO.Handle.FD.stdout
+                   Main.main2
+                   GHC.Types.True) -}
+d5b55010824aa7448e1997225fa67f0e
+  main10 ::
+    [Data.Map.Internal.Map
+       (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)]
+  {- Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (Data.Map.Internal.Map
+                        (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational))
+                   Main.main13
+                   Main.main11) -}
+c510b0dc241fccceb462311191c4bfd4
+  main11 ::
+    [Data.Map.Internal.Map
+       (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)]
+  {- Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (Data.Map.Internal.Map
+                        (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational))
+                   Main.main12
+                   (GHC.Types.[]
+                      @ (Data.Map.Internal.Map
+                           (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)))) -}
+6a2b8a1699d7be2a2ee1f4de79436c19
+  main12 ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+  {- Unfolding: (case BasicTensors.delta_3 of ww { Tensor.Tensor ww1 ->
+                 EquivarianceEqns.mkEqnConstSparse2
+                   @ GHC.Real.Rational
+                   (EquivarianceEqns.$sfromList
+                      @ GHC.Real.Rational
+                      (EquivarianceEqns.mkEqnConstSparse1
+                         @ GHC.Real.Rational
+                         (GHC.Types.[]
+                            @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                         ww1)) }) -}
+03153fb0db6b9d857e36c835cbb91952
+  main13 ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+  {- Unfolding: (case EquivarianceMetric.$weqn3_3M
+                        Main.main20
+                        Main.main_map1Metric
+                        Main.main_map2Metric of ww { Unit# ww1 ->
+                 EquivarianceMetric.$sfromList
+                   @ (Ivar.Ivar GHC.Real.Rational)
+                   (EquivarianceMetric.mkEqn6SparseM1
+                      @ (Ivar.Ivar GHC.Real.Rational)
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), Ivar.Ivar GHC.Real.Rational))
+                      ww1) }) -}
+fd17734135ee4888e7b82db49e1c1f5a
+  main14 :: [Index.Lind_9]
+  {- Unfolding: (case GHC.Prim.dataToTag#
+                        @ Index.Lind_9
+                        (Index.$w$ctoEnum3 0#) of a# { DEFAULT ->
+                 case GHC.Prim.># a# 9# of lwild {
+                   DEFAULT -> Index.$fEnumLind_9_go a#
+                   1# -> GHC.Types.[] @ Index.Lind_9 } }) -}
+a8ce5b6a0145893ed5296e31b154ae69
+  main15 ::
+    Data.Sequence.Internal.Seq Index.Uind_3 -> Index.Ind 2 Index.Uind_3
+  {- Unfolding: (Index.mkInd @ 2 @ Index.Uind_3 Main.main16) -}
+77582b81194b2fc7ef8d8a9f877b431a
+  main16 :: GHC.TypeNats.KnownNat 2
+  {- Unfolding: (case Main.main17 of wild {
+                   GHC.Integer.Type.S# i#
+                   -> case GHC.Prim.>=# i# 0# of lwild {
+                        DEFAULT
+                        -> (GHC.Natural.underflowError @ GHC.Natural.Natural)
+                             `cast`
+                           (Sym (GHC.TypeNats.N:SNat[0]
+                                     <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
+                        1#
+                        -> (GHC.Natural.NatS# (GHC.Prim.int2Word# i#))
+                             `cast`
+                           (Sym (GHC.TypeNats.N:SNat[0]
+                                     <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N) }
+                   GHC.Integer.Type.Jp# dt
+                   -> case GHC.Prim.uncheckedIShiftRL#
+                             (GHC.Prim.sizeofByteArray# dt)
+                             3# of wild1 {
+                        DEFAULT
+                        -> case GHC.Prim.sizeofByteArray# dt of wild2 {
+                             DEFAULT
+                             -> (GHC.Natural.NatJ# dt)
+                                  `cast`
+                                (Sym (GHC.TypeNats.N:SNat[0]
+                                          <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
+                             0#
+                             -> (GHC.Natural.underflowError @ GHC.Natural.Natural)
+                                  `cast`
+                                (Sym (GHC.TypeNats.N:SNat[0]
+                                          <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N) }
+                        1#
+                        -> case GHC.Prim.indexWordArray# dt 0# of wild2 { DEFAULT ->
+                           (GHC.Natural.NatS# wild2)
+                             `cast`
+                           (Sym (GHC.TypeNats.N:SNat[0]
+                                     <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N) } }
+                   GHC.Integer.Type.Jn# ipv
+                   -> (GHC.Natural.underflowError @ GHC.Natural.Natural)
+                        `cast`
+                      (Sym (GHC.TypeNats.N:SNat[0]
+                                <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N) }) -}
+59dd65b47e9cceef25a2e261e64a4576
+  main17 :: GHC.Integer.Type.Integer
+  {- HasNoCafRefs, Unfolding: (2) -}
+f3c6792d4fd7c079bb23ab356ef896af
+  main18 :: [Index.Uind_9]
+  {- Unfolding: (case GHC.Prim.dataToTag#
+                        @ Index.Uind_9
+                        (Index.$w$ctoEnum7 0#) of a# { DEFAULT ->
+                 case GHC.Prim.># a# 9# of lwild {
+                   DEFAULT -> Index.$fEnumUind_9_go a#
+                   1# -> GHC.Types.[] @ Index.Uind_9 } }) -}
+567cf0a14e908d3df0746325f99ad43c
+  main19 ::
+    Data.Sequence.Internal.Seq Index.Lind_3 -> Index.Ind 2 Index.Lind_3
+  {- Unfolding: (Index.mkInd @ 2 @ Index.Lind_3 Main.main16) -}
+0901666872e14fda6b3f8ba3918df47f
+  main2 :: GHC.Base.String
+  {- Unfolding: (Main.main3 (GHC.Types.[] @ GHC.Types.Char)) -}
+4b778fb4b0facc7cca377138c706a518
+  main20 ::
+    Data.Map.Internal.Map (Index.Ind 3 Index.Lind_3) Index.Uind_19
+  {- Unfolding: (Main.$smapKeys1
+                   @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                   @ Index.Uind_19
+                   Main.main22
+                   (Main.$sfromList8
+                      @ Index.Uind_19
+                      (GHC.List.zip
+                         @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                         @ Index.Uind_19
+                         (BasicTensors.$wsymIndList
+                            @ Index.Lind_3
+                            Index.$fEnumLind_3
+                            3#
+                            BasicTensors.flatArea5)
+                         Main.main21))) -}
+698c051ee2dcb971a96c883009ae7bf8
+  main21 :: [Index.Uind_19]
+  {- Unfolding: (case GHC.Prim.dataToTag#
+                        @ Index.Uind_19
+                        (Index.$w$ctoEnum4 0#) of a# { DEFAULT ->
+                 case GHC.Prim.># a# 19# of lwild {
+                   DEFAULT -> Index.$fEnumUind_19_go a#
+                   1# -> GHC.Types.[] @ Index.Uind_19 } }) -}
+e0bd20533a9cdf237525fb81b9ccdc92
+  main22 ::
+    Data.Sequence.Internal.Seq Index.Lind_3 -> Index.Ind 3 Index.Lind_3
+  {- Unfolding: (Index.mkInd @ 3 @ Index.Lind_3 Main.main23) -}
+25eca802ed8d42e7fc15b71807359b06
+  main23 :: GHC.TypeNats.KnownNat 3
+  {- Unfolding: (case Main.main24 of wild {
+                   GHC.Integer.Type.S# i#
+                   -> case GHC.Prim.>=# i# 0# of lwild {
+                        DEFAULT
+                        -> (GHC.Natural.underflowError @ GHC.Natural.Natural)
+                             `cast`
+                           (Sym (GHC.TypeNats.N:SNat[0]
+                                     <3>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <3>_N)
+                        1#
+                        -> (GHC.Natural.NatS# (GHC.Prim.int2Word# i#))
+                             `cast`
+                           (Sym (GHC.TypeNats.N:SNat[0]
+                                     <3>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <3>_N) }
+                   GHC.Integer.Type.Jp# dt
+                   -> case GHC.Prim.uncheckedIShiftRL#
+                             (GHC.Prim.sizeofByteArray# dt)
+                             3# of wild1 {
+                        DEFAULT
+                        -> case GHC.Prim.sizeofByteArray# dt of wild2 {
+                             DEFAULT
+                             -> (GHC.Natural.NatJ# dt)
+                                  `cast`
+                                (Sym (GHC.TypeNats.N:SNat[0]
+                                          <3>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <3>_N)
+                             0#
+                             -> (GHC.Natural.underflowError @ GHC.Natural.Natural)
+                                  `cast`
+                                (Sym (GHC.TypeNats.N:SNat[0]
+                                          <3>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <3>_N) }
+                        1#
+                        -> case GHC.Prim.indexWordArray# dt 0# of wild2 { DEFAULT ->
+                           (GHC.Natural.NatS# wild2)
+                             `cast`
+                           (Sym (GHC.TypeNats.N:SNat[0]
+                                     <3>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <3>_N) } }
+                   GHC.Integer.Type.Jn# ipv
+                   -> (GHC.Natural.underflowError @ GHC.Natural.Natural)
+                        `cast`
+                      (Sym (GHC.TypeNats.N:SNat[0]
+                                <3>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <3>_N) }) -}
+4f43af48171393f51fdc63c29a828be6
+  main24 :: GHC.Integer.Type.Integer
+  {- HasNoCafRefs, Unfolding: (3) -}
+9e9afc64cf17037c718f4ae6e610b8bd
+  main25 ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+  {- Unfolding: (case EquivarianceMetric.$weqn2_3M
+                        Main.main_map1Metric
+                        Main.main_map2Metric of ww { Unit# ww1 ->
+                 EquivarianceMetric.$sfromList
+                   @ (Ivar.Ivar GHC.Real.Rational)
+                   (EquivarianceMetric.mkEqn5SparseM1
+                      @ (Ivar.Ivar GHC.Real.Rational)
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), Ivar.Ivar GHC.Real.Rational))
+                      ww1) }) -}
+d56890913698ecf99bc853c7f6bc5bec
+  main26 ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+  {- Unfolding: (case EquivarianceMetric.$weqn2_2M
+                        Main.main_map1Metric
+                        Main.main_map2Metric of ww { Unit# ww1 ->
+                 EquivarianceMetric.$sfromList
+                   @ (Ivar.Ivar GHC.Real.Rational)
+                   (EquivarianceMetric.mkEqn4SparseM1
+                      @ (Ivar.Ivar GHC.Real.Rational)
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), Ivar.Ivar GHC.Real.Rational))
+                      ww1) }) -}
+af55999baa133535d9ddcbe5a580a103
+  main27 ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+  {- Unfolding: (case EquivarianceMetric.$weqn1_3M
+                        Main.main_map1Metric
+                        Main.main_map2Metric of ww { Unit# ww1 ->
+                 EquivarianceMetric.$sfromList
+                   @ (Ivar.Ivar GHC.Real.Rational)
+                   (EquivarianceMetric.mkEqn3SparseM1
+                      @ (Ivar.Ivar GHC.Real.Rational)
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), Ivar.Ivar GHC.Real.Rational))
+                      ww1) }) -}
+9011b29568c79cc12bb8f350e6102b6c
+  main28 ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+  {- Unfolding: (case EquivarianceMetric.$weqn1_2M
+                        Main.main_map1Metric
+                        Main.main_map2Metric of ww { Unit# ww1 ->
+                 EquivarianceMetric.$sfromList
+                   @ (Ivar.Ivar GHC.Real.Rational)
+                   (EquivarianceMetric.mkEqn2SparseM1
+                      @ (Ivar.Ivar GHC.Real.Rational)
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), Ivar.Ivar GHC.Real.Rational))
+                      ww1) }) -}
+fcf754af28101f369cd19a82a4933bd6
+  main29 ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+  {- Unfolding: (case EquivarianceMetric.$weqn1_1M
+                        Main.main_map1Metric
+                        Main.main_map2Metric of ww { Unit# ww1 ->
+                 EquivarianceMetric.$sfromList
+                   @ (Ivar.Ivar GHC.Real.Rational)
+                   (EquivarianceMetric.mkEqn1SparseM1
+                      @ (Ivar.Ivar GHC.Real.Rational)
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), Ivar.Ivar GHC.Real.Rational))
+                      ww1) }) -}
+59d271188d3209bd9c8b0adbe783ef1d
+  main3 :: GHC.Show.ShowS
+  {- Unfolding: (Data.Map.Internal.$w$cshowsPrec
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   @ (Ivar.Ivar GHC.Real.Rational)
+                   Main.$s$fShow(,)
+                   Main.$s$fShowIvar
+                   0#
+                   Main.main4) -}
+1f9425c36ce99a293d2585a98cefa081
+  main30 ::
+    GHC.Prim.State# GHC.Prim.RealWorld
+    -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
+  {- Arity: 1,
+     Unfolding: (GHC.TopHandler.runMainIO1
+                   @ ()
+                   Main.main1 `cast` (Sym (GHC.Types.N:IO[0] <()>_R))) -}
+996e764f86762b2cce52962c6a5f606a
+  main4 ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+  {- Unfolding: (Main.main_go13
+                   (Data.Map.Internal.Tip
+                      @ (GHC.Types.Int, GHC.Types.Int)
+                      @ (Ivar.Ivar GHC.Real.Rational))
+                   Main.main5) -}
+2a91d3c8b7d90781e5af6128547528cc
+  main5 ::
+    [Data.Map.Internal.Map
+       (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)]
+  {- Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (Data.Map.Internal.Map
+                        (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational))
+                   Main.main29
+                   Main.main6) -}
+b66bf148347e12b55315b13e6f038388
+  main6 ::
+    [Data.Map.Internal.Map
+       (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)]
+  {- Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (Data.Map.Internal.Map
+                        (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational))
+                   Main.main28
+                   Main.main7) -}
+30c132c85aa9100588f3c2dff014eb3c
+  main7 ::
+    [Data.Map.Internal.Map
+       (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)]
+  {- Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (Data.Map.Internal.Map
+                        (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational))
+                   Main.main27
+                   Main.main8) -}
+7278abaeec53590b1535a461fc047442
+  main8 ::
+    [Data.Map.Internal.Map
+       (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)]
+  {- Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (Data.Map.Internal.Map
+                        (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational))
+                   Main.main26
+                   Main.main9) -}
+5583e2248e16c56ba7535661d5e870b3
+  main9 ::
+    [Data.Map.Internal.Map
+       (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)]
+  {- Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (Data.Map.Internal.Map
+                        (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational))
+                   Main.main25
+                   Main.main10) -}
+b8c2cd866c8c2698b5da8ed1c7b7141a
+  main_go13 ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+    -> [Data.Map.Internal.Map
+          (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)]
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+2c89c9d85533696abeb928c3751808bd
+  main_map1Metric ::
+    Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
+  {- Unfolding: (Main.$smapKeys2
+                   @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                   @ Index.Uind_9
+                   Main.main19
+                   (Main.$sfromList8
+                      @ Index.Uind_9
+                      (GHC.List.zip
+                         @ (Data.Sequence.Internal.Seq Index.Lind_3)
+                         @ Index.Uind_9
+                         (BasicTensors.$wsymIndList
+                            @ Index.Lind_3
+                            Index.$fEnumLind_3
+                            2#
+                            BasicTensors.flatArea5)
+                         Main.main18))) -}
+5eb8c14ef2b980acb2003fe2f9f5a795
+  main_map2Metric ::
+    Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
+  {- Unfolding: (Main.$smapKeys
+                   @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                   @ Index.Lind_9
+                   Main.main15
+                   (Main.$sfromList6
+                      @ Index.Lind_9
+                      (GHC.List.zip
+                         @ (Data.Sequence.Internal.Seq Index.Uind_3)
+                         @ Index.Lind_9
+                         (BasicTensors.$wsymIndList
+                            @ Index.Uind_3
+                            Index.$fEnumUind_3
+                            2#
+                            BasicTensors.flatArea5)
+                         Main.main14))) -}
+"SPEC/Main $fEq(,) @ Int @ Int" [orphan] forall (v1 :: GHC.Classes.Eq
+                                                         GHC.Types.Int)
+                                                (v :: GHC.Classes.Eq GHC.Types.Int)
+  GHC.Classes.$fEq(,) @ GHC.Types.Int @ GHC.Types.Int v v1
+  = Main.$s$fEq(,)
+"SPEC/Main $fEq(,)_$c/= @ Int @ Int" [orphan] forall ($dEq1 :: GHC.Classes.Eq
+                                                                 GHC.Types.Int)
+                                                     ($dEq :: GHC.Classes.Eq GHC.Types.Int)
+  GHC.Classes.$fEq(,)_$c/= @ GHC.Types.Int @ GHC.Types.Int $dEq $dEq1
+  = Main.$s$fEq(,)_$s$fEq(,)_$c/=
+"SPEC/Main $fEqInd _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                               (v :: GHC.Classes.Eq Index.Lind_3)
+  Index.$fEqInd @ n @ Index.Lind_3 v = Main.$s$fEqInd1 @ n
+"SPEC/Main $fEqInd _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                               (v :: GHC.Classes.Eq Index.Uind_3)
+  Index.$fEqInd @ n @ Index.Uind_3 v = Main.$s$fEqInd @ n
+"SPEC/Main $fEqInd_$c/= _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                    ($dEq :: GHC.Classes.Eq Index.Lind_3)
+  Index.$fEqInd_$c/= @ n @ Index.Lind_3 $dEq
+  = Main.$s$fEqInd_$s$fEqInd_$c/=1 @ n
+"SPEC/Main $fEqInd_$c/= _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                    ($dEq :: GHC.Classes.Eq Index.Uind_3)
+  Index.$fEqInd_$c/= @ n @ Index.Uind_3 $dEq
+  = Main.$s$fEqInd_$s$fEqInd_$c/= @ n
+"SPEC/Main $fEqSeq @ Lind_3" [orphan] forall (v :: GHC.Classes.Eq
+                                                     Index.Lind_3)
+  Data.Sequence.Internal.$fEqSeq @ Index.Lind_3 v = Main.$s$fEqSeq1
+"SPEC/Main $fEqSeq @ Uind_3" [orphan] forall (v :: GHC.Classes.Eq
+                                                     Index.Uind_3)
+  Data.Sequence.Internal.$fEqSeq @ Index.Uind_3 v = Main.$s$fEqSeq
+"SPEC/Main $fEqSeq_$c/= @ Lind_3" [orphan] forall ($dEq :: GHC.Classes.Eq
+                                                             Index.Lind_3)
+  Data.Sequence.Internal.$fEqSeq_$c/= @ Index.Lind_3 $dEq
+  = Main.$s$fEqSeq_$s$fEqSeq_$c/=1
+"SPEC/Main $fEqSeq_$c/= @ Uind_3" [orphan] forall ($dEq :: GHC.Classes.Eq
+                                                             Index.Uind_3)
+  Data.Sequence.Internal.$fEqSeq_$c/= @ Index.Uind_3 $dEq
+  = Main.$s$fEqSeq_$s$fEqSeq_$c/=
+"SPEC/Main $fOrd(,) @ Int @ Int" [orphan] forall (v1 :: GHC.Classes.Ord
+                                                          GHC.Types.Int)
+                                                 (v :: GHC.Classes.Ord GHC.Types.Int)
+  GHC.Classes.$fOrd(,) @ GHC.Types.Int @ GHC.Types.Int v v1
+  = Main.$s$fOrd(,)
+"SPEC/Main $fOrdInd _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                (v :: GHC.Classes.Ord Index.Lind_3)
+  Index.$fOrdInd @ n @ Index.Lind_3 v = Main.$s$fOrdInd1 @ n
+"SPEC/Main $fOrdInd _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                (v :: GHC.Classes.Ord Index.Uind_3)
+  Index.$fOrdInd @ n @ Index.Uind_3 v = Main.$s$fOrdInd @ n
+"SPEC/Main $fOrdInd_$c< _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                    ($dOrd :: GHC.Classes.Ord Index.Lind_3)
+  Index.$fOrdInd_$c< @ n @ Index.Lind_3 $dOrd
+  = Main.$s$fOrdInd_$c<1 @ n
+"SPEC/Main $fOrdInd_$c< _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                    ($dOrd :: GHC.Classes.Ord Index.Uind_3)
+  Index.$fOrdInd_$c< @ n @ Index.Uind_3 $dOrd
+  = Main.$s$fOrdInd_$c< @ n
+"SPEC/Main $fOrdInd_$c<= _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                     ($dOrd :: GHC.Classes.Ord Index.Lind_3)
+  Index.$fOrdInd_$c<= @ n @ Index.Lind_3 $dOrd
+  = Main.$s$fOrdInd_$c<=1 @ n
+"SPEC/Main $fOrdInd_$c<= _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                     ($dOrd :: GHC.Classes.Ord Index.Uind_3)
+  Index.$fOrdInd_$c<= @ n @ Index.Uind_3 $dOrd
+  = Main.$s$fOrdInd_$c<= @ n
+"SPEC/Main $fOrdInd_$c> _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                    ($dOrd :: GHC.Classes.Ord Index.Lind_3)
+  Index.$fOrdInd_$c> @ n @ Index.Lind_3 $dOrd
+  = Main.$s$fOrdInd_$c>1 @ n
+"SPEC/Main $fOrdInd_$c> _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                    ($dOrd :: GHC.Classes.Ord Index.Uind_3)
+  Index.$fOrdInd_$c> @ n @ Index.Uind_3 $dOrd
+  = Main.$s$fOrdInd_$c> @ n
+"SPEC/Main $fOrdInd_$c>= _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                     ($dOrd :: GHC.Classes.Ord Index.Lind_3)
+  Index.$fOrdInd_$c>= @ n @ Index.Lind_3 $dOrd
+  = Main.$s$fOrdInd_$c>=1 @ n
+"SPEC/Main $fOrdInd_$c>= _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                     ($dOrd :: GHC.Classes.Ord Index.Uind_3)
+  Index.$fOrdInd_$c>= @ n @ Index.Uind_3 $dOrd
+  = Main.$s$fOrdInd_$c>= @ n
+"SPEC/Main $fOrdInd_$ccompare _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                          ($dOrd :: GHC.Classes.Ord Index.Lind_3)
+  Index.$fOrdInd_$ccompare @ n @ Index.Lind_3 $dOrd
+  = Main.$s$fOrdInd_$ccompare1 @ n
+"SPEC/Main $fOrdInd_$ccompare _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                          ($dOrd :: GHC.Classes.Ord Index.Uind_3)
+  Index.$fOrdInd_$ccompare @ n @ Index.Uind_3 $dOrd
+  = Main.$s$fOrdInd_$ccompare @ n
+"SPEC/Main $fOrdInd_$cmax _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                      ($dOrd :: GHC.Classes.Ord Index.Lind_3)
+  Index.$fOrdInd_$cmax @ n @ Index.Lind_3 $dOrd
+  = Main.$s$fOrdInd_$cmax1 @ n
+"SPEC/Main $fOrdInd_$cmax _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                      ($dOrd :: GHC.Classes.Ord Index.Uind_3)
+  Index.$fOrdInd_$cmax @ n @ Index.Uind_3 $dOrd
+  = Main.$s$fOrdInd_$cmax @ n
+"SPEC/Main $fOrdInd_$cmin _ @ Lind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                      ($dOrd :: GHC.Classes.Ord Index.Lind_3)
+  Index.$fOrdInd_$cmin @ n @ Index.Lind_3 $dOrd
+  = Main.$s$fOrdInd_$cmin1 @ n
+"SPEC/Main $fOrdInd_$cmin _ @ Uind_3" [orphan] forall @ n :: GHC.Types.Nat
+                                                      ($dOrd :: GHC.Classes.Ord Index.Uind_3)
+  Index.$fOrdInd_$cmin @ n @ Index.Uind_3 $dOrd
+  = Main.$s$fOrdInd_$cmin @ n
+"SPEC/Main $fOrdSeq @ Lind_3" [orphan] forall (v :: GHC.Classes.Ord
+                                                      Index.Lind_3)
+  Data.Sequence.Internal.$fOrdSeq @ Index.Lind_3 v = Main.$s$fOrdSeq1
+"SPEC/Main $fOrdSeq @ Uind_3" [orphan] forall (v :: GHC.Classes.Ord
+                                                      Index.Uind_3)
+  Data.Sequence.Internal.$fOrdSeq @ Index.Uind_3 v = Main.$s$fOrdSeq
+"SPEC/Main $fOrdSeq_$cmax @ Lind_3" [orphan] forall ($dOrd :: GHC.Classes.Ord
+                                                                Index.Lind_3)
+  Data.Sequence.Internal.$fOrdSeq_$cmax @ Index.Lind_3 $dOrd
+  = Main.$s$fOrdSeq_$cmax1
+"SPEC/Main $fOrdSeq_$cmax @ Uind_3" [orphan] forall ($dOrd :: GHC.Classes.Ord
+                                                                Index.Uind_3)
+  Data.Sequence.Internal.$fOrdSeq_$cmax @ Index.Uind_3 $dOrd
+  = Main.$s$fOrdSeq_$cmax
+"SPEC/Main $fOrdSeq_$cmin @ Lind_3" [orphan] forall ($dOrd :: GHC.Classes.Ord
+                                                                Index.Lind_3)
+  Data.Sequence.Internal.$fOrdSeq_$cmin @ Index.Lind_3 $dOrd
+  = Main.$s$fOrdSeq_$cmin1
+"SPEC/Main $fOrdSeq_$cmin @ Uind_3" [orphan] forall ($dOrd :: GHC.Classes.Ord
+                                                                Index.Uind_3)
+  Data.Sequence.Internal.$fOrdSeq_$cmin @ Index.Uind_3 $dOrd
+  = Main.$s$fOrdSeq_$cmin
+"SPEC/Main $fShow(,) @ Int @ Int" [orphan] forall (v1 :: GHC.Show.Show
+                                                           GHC.Types.Int)
+                                                  (v :: GHC.Show.Show GHC.Types.Int)
+  GHC.Show.$fShow(,) @ GHC.Types.Int @ GHC.Types.Int v v1
+  = Main.$s$fShow(,)
+"SPEC/Main $fShowIvar @ (Ratio Integer)" [orphan] forall (v :: GHC.Show.Show
+                                                                 (GHC.Real.Ratio
+                                                                    GHC.Integer.Type.Integer))
+  Ivar.$fShowIvar @ (GHC.Real.Ratio GHC.Integer.Type.Integer) v
+  = Main.$s$fShowIvar
+"SPEC/Main $fShowIvar_$cshowList @ (Ratio Integer)" [orphan] forall ($dShow :: GHC.Show.Show
+                                                                                 (GHC.Real.Ratio
+                                                                                    GHC.Integer.Type.Integer))
+  Ivar.$fShowIvar_$cshowList @ (GHC.Real.Ratio
+                                  GHC.Integer.Type.Integer)
+                             $dShow
+  = Main.$s$fShowIvar_$cshowList
+"SPEC/Main $fShowIvar_$cshowsPrec @ (Ratio Integer)" [orphan] [0] forall (w :: GHC.Show.Show
+                                                                                 (GHC.Real.Ratio
+                                                                                    GHC.Integer.Type.Integer))
+  Ivar.$fShowIvar_$cshowsPrec @ (GHC.Real.Ratio
+                                   GHC.Integer.Type.Integer)
+                              w
+  = Main.$s$fShowIvar_$cshowsPrec
+"SPEC/Main fromList @ (Ind 2 Lind_3) _" [orphan] forall @ a
+                                                        ($dOrd :: GHC.Classes.Ord
+                                                                    (Index.Ind 2 Index.Lind_3))
+  Data.Map.Internal.fromList @ (Index.Ind 2 Index.Lind_3) @ a $dOrd
+  = Main.$sfromList4 @ a
+"SPEC/Main fromList @ (Ind 2 Uind_3) _" [orphan] forall @ a
+                                                        ($dOrd :: GHC.Classes.Ord
+                                                                    (Index.Ind 2 Index.Uind_3))
+  Data.Map.Internal.fromList @ (Index.Ind 2 Index.Uind_3) @ a $dOrd
+  = Main.$sfromList @ a
+"SPEC/Main fromList @ (Ind 3 Lind_3) _" [orphan] forall @ a
+                                                        ($dOrd :: GHC.Classes.Ord
+                                                                    (Index.Ind 3 Index.Lind_3))
+  Data.Map.Internal.fromList @ (Index.Ind 3 Index.Lind_3) @ a $dOrd
+  = Main.$sfromList2 @ a
+"SPEC/Main fromList @ (Seq Lind_3) _" [orphan] forall @ a
+                                                      ($dOrd :: GHC.Classes.Ord
+                                                                  (Data.Sequence.Internal.Seq
+                                                                     Index.Lind_3))
+  Data.Map.Strict.Internal.fromList @ (Data.Sequence.Internal.Seq
+                                         Index.Lind_3)
+                                    @ a
+                                    $dOrd
+  = Main.$sfromList8 @ a
+"SPEC/Main fromList @ (Seq Uind_3) _" [orphan] forall @ a
+                                                      ($dOrd :: GHC.Classes.Ord
+                                                                  (Data.Sequence.Internal.Seq
+                                                                     Index.Uind_3))
+  Data.Map.Strict.Internal.fromList @ (Data.Sequence.Internal.Seq
+                                         Index.Uind_3)
+                                    @ a
+                                    $dOrd
+  = Main.$sfromList6 @ a
+"SPEC/Main mapKeys @ (Ind 2 Lind_3) _ _" [orphan] forall @ k1
+                                                         @ a
+                                                         ($dOrd :: GHC.Classes.Ord
+                                                                     (Index.Ind 2 Index.Lind_3))
+  Data.Map.Internal.mapKeys @ (Index.Ind 2 Index.Lind_3)
+                            @ k1
+                            @ a
+                            $dOrd
+  = Main.$smapKeys2 @ k1 @ a
+"SPEC/Main mapKeys @ (Ind 2 Uind_3) _ _" [orphan] forall @ k1
+                                                         @ a
+                                                         ($dOrd :: GHC.Classes.Ord
+                                                                     (Index.Ind 2 Index.Uind_3))
+  Data.Map.Internal.mapKeys @ (Index.Ind 2 Index.Uind_3)
+                            @ k1
+                            @ a
+                            $dOrd
+  = Main.$smapKeys @ k1 @ a
+"SPEC/Main mapKeys @ (Ind 3 Lind_3) _ _" [orphan] forall @ k1
+                                                         @ a
+                                                         ($dOrd :: GHC.Classes.Ord
+                                                                     (Index.Ind 3 Index.Lind_3))
+  Data.Map.Internal.mapKeys @ (Index.Ind 3 Index.Lind_3)
+                            @ k1
+                            @ a
+                            $dOrd
+  = Main.$smapKeys1 @ k1 @ a
+"SPEC/Main union @ (Int, Int) _" [orphan] forall @ a
+                                                 ($dOrd :: GHC.Classes.Ord
+                                                             (GHC.Types.Int, GHC.Types.Int))
+  Data.Map.Internal.union @ (GHC.Types.Int, GHC.Types.Int) @ a $dOrd
+  = Main.$sunion @ a
+vectorised variables:
+vectorised tycons:
+vectorised reused tycons:
+parallel variables:
+parallel tycons:
+trusted: safe
+require own pkg trusted: False
+

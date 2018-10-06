@@ -3,6 +3,8 @@
 
 
 module Pde (
+    prolongPde, prolongPdeAll, print2Maple, mkPdefromTens, evalPdeRand, triangleMap, mkAllMultInds, number2MultInd, prolongPdeConst, prolongPdeIvar,
+    combinePdes, prolongSymbolAll
 
 ) where
 
@@ -32,7 +34,7 @@ module Pde (
 
     isDerivableIvar1 :: MultiIndex -> Ivar a -> Bool
     isDerivableIvar1 (MultiIndex map1) (Ivar a map2)
-                | I.size map1  /= 1 = error "only works (and should be neededd) for diffOrder 1 multi Inds"
+                | I.size map1  /= 1 = error "only works (and should be needed) for diffOrder 1 multi Inds"
                 | otherwise = I.member pos map2
                     where 
                         pos = (I.keys map1) !! 0
@@ -65,20 +67,37 @@ module Pde (
                     where
                         pdeMapList = map (\x -> getPdeMap $ prolongPde x pde) mults
 
+    prolongSymbolAll :: Num a => [MultiIndex] -> Pde (Ivar a) -> Pde (Ivar a)
+    prolongSymbolAll mults pde = Pde $ M.unions pdeMapList
+                    where
+                        pdeMapList = map (\x -> getPdeMap $ prolongPdeConst x pde) mults
+
+
     --we need functions for printing a pde
 
     multInd2Number :: MultiIndex -> [Int]
-    multInd2Number (MultiIndex map) = I.keys map
+    multInd2Number (MultiIndex map1) = concat l2
+                where 
+                    l = I.assocs map1
+                    l2 = map (\(x,y) -> replicate (fromIntegral y) x) l
+
 
     multInd2Number1 :: MultiIndex -> Int
-    multInd2Number1 (MultiIndex map) 
-                    | I.size map == 1 = fromIntegral $ (I.!) map 0
+    multInd2Number1 mult 
+                    | length l == 1 = fromIntegral $ (multInd2Number mult) !! 0 
                     | otherwise = error "expect multiind with size one at ths point !"
+                     where
+                        l = multInd2Number mult
+
+    --there is still the problem with numbers other than 1 stored
 
 
     number2MultInd :: Int -> MultiIndex
     number2MultInd 0 = MultiIndex $ I.empty 
     number2MultInd i = MultiIndex $ I.singleton i 1
+
+    mkAllMultInds :: Int -> [MultiIndex]
+    mkAllMultInds i = map number2MultInd [1..i]
 
     --store the order of the snd derivatives in a map
 
@@ -97,11 +116,11 @@ module Pde (
                             diff = diffOrder mult 
                             num = multInd2Number mult 
 
-    print2Maple :: Show a => Int -> M.Map [Int] Int -> Pde (Ivar a) -> String
+    print2Maple :: Int -> M.Map [Int] Int -> Pde (Ivar Rational) -> String
     print2Maple nopsIvar triangle (Pde map1) = "{" ++ (tail $ concat l2) ++ "}"
                     where 
                         l = M.assocs map1 
-                        l2 = map (\((x,y),z) -> ',' : (show (x,multInd2MatrixNr y nopsIvar triangle)) ++ '=' : show y ++ "\n") l
+                        l2 = map (\((x,y),z) -> ',' : (show (x,multInd2MatrixNr y nopsIvar triangle)) ++ '=' : showIvarRational z ++ "\n") l
 
     --we need functions to construct pdes out of the tensor output and for prolonging the whole system
 
@@ -110,6 +129,16 @@ module Pde (
                 where 
                     map2 = M.mapKeys (\(x,y) -> (x,number2MultInd (y-1))) map1
 
+    evalPdeRand :: Int -> M.Map [Int] Int -> I.IntMap Int -> Pde (Ivar Rational) -> String 
+    evalPdeRand nopsIvar triangle randMap (Pde map1) = "{" ++ (tail $ concat l2) ++ "}"
+                    where 
+                        map2 = M.map (mkIvarRandom randMap) map1
+                        l = M.assocs map2 
+                        l2 = map (\((x,y),z) -> ',' : (show (x,multInd2MatrixNr y nopsIvar triangle)) ++ '=' : show (truncate z) ++ "\n") l
+
+
+    combinePdes :: Pde a -> Pde a -> Pde a
+    combinePdes (Pde map1) (Pde map2) = Pde $ M.union map1 map2
     
 
 

@@ -1,9 +1,9 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-05 22:27:26.315087 UTC
+2018-10-06 11:44:31.949559 UTC
 
 interface main:EquivarianceMetric 8043
-  interface hash: 1208b6b8d3ecd28b51940316565e6764
+  interface hash: 254397f72dfc74ec1e0561255a9108f7
   ABI hash: 0a734aa593f1cef874ea2864f49692f2
   export-list hash: 8d0560de87afac9f7b60fda506a8690e
   orphan hash: 6b678bb2740ddeec913fa6d2c051dca8
@@ -37,12 +37,12 @@ package dependencies: array-0.5.2.0 base-4.11.1.0
                       containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
                       integer-gmp-1.0.2.0 primitive-0.6.3.0 random-1.1 tf-random-0.5
                       time-1.8.0.2 transformers-0.5.5.0
-orphans: transformers-0.5.5.0:Control.Monad.Trans.Error
-         time-1.8.0.2:Data.Time.Format.Parse
+orphans: time-1.8.0.2:Data.Time.Format.Parse
          time-1.8.0.2:Data.Time.LocalTime.Internal.ZonedTime
          time-1.8.0.2:Data.Time.LocalTime.Internal.LocalTime
-         time-1.8.0.2:Data.Time.Calendar.Gregorian base-4.11.1.0:GHC.Float
-         base-4.11.1.0:GHC.Base
+         time-1.8.0.2:Data.Time.Calendar.Gregorian
+         transformers-0.5.5.0:Control.Monad.Trans.Error
+         base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
 family instance modules: base-4.11.1.0:Control.Applicative
                          base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
                          base-4.11.1.0:Data.Functor.Const
@@ -85,13 +85,13 @@ import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
   Uind_9 ab8f3576b9e9258982a5d77295330a40
   Uinds_3 63ef11ca566ba01817ced09e779f86a0
   getValInd 974a87ce371ea262afad5f9d63705d90
-import  -/  Ivar 59d07a95b67596bdbcd852778d385604
-  exports: 99536c1169a3d98973bcc51248b50ec9
+import  -/  Ivar 9a2610f6d3a35738cd6e3df0efa94d4d
+  exports: 847b7f62b7be31da91814bf314ffd8e5
   Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
   addIvar 05c03b458f32d9cc7a5d25e2e9ea4e41
   sMultIvar 356c5596a99fee829bee8b24bdb79848
-import  -/  Pde fda51ae1b1fba6c9e6d54a0fdc9c197c
-  exports: ee985529e2b8dfc6b15f5555dda4c944
+import  -/  Pde e16c2c7ed6b24e6283b8d96f4d70c5e8
+  exports: 8abb8fdc636680b3ed604e70d00ee765
 import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e
   exports: b4addde23d2a94c7aa7abec683ad90b2
   Tensor 1ac5ddd89ae57be76544d24271fdf653

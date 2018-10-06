@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-05 22:34:31.538552 UTC
+2018-10-06 10:12:01.285277 UTC
 
 interface main:Ivar 8043
-  interface hash: 311b2bf88120680e3ed9ae454cbcabca
-  ABI hash: 59d07a95b67596bdbcd852778d385604
-  export-list hash: 99536c1169a3d98973bcc51248b50ec9
+  interface hash: c5ad23a7a7b6c602f9427d96a1973140
+  ABI hash: 9a2610f6d3a35738cd6e3df0efa94d4d
+  export-list hash: 847b7f62b7be31da91814bf314ffd8e5
   orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
   flag hash: 707c86cfbee6a9c65f08462953a21ad8
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
@@ -29,12 +29,12 @@ package dependencies: array-0.5.2.0 base-4.11.1.0
                       containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
                       integer-gmp-1.0.2.0 primitive-0.6.3.0 random-1.1 tf-random-0.5
                       time-1.8.0.2 transformers-0.5.5.0
-orphans: transformers-0.5.5.0:Control.Monad.Trans.Error
-         time-1.8.0.2:Data.Time.Format.Parse
+orphans: time-1.8.0.2:Data.Time.Format.Parse
          time-1.8.0.2:Data.Time.LocalTime.Internal.ZonedTime
          time-1.8.0.2:Data.Time.LocalTime.Internal.LocalTime
-         time-1.8.0.2:Data.Time.Calendar.Gregorian base-4.11.1.0:GHC.Float
-         base-4.11.1.0:GHC.Base
+         time-1.8.0.2:Data.Time.Calendar.Gregorian
+         transformers-0.5.5.0:Control.Monad.Trans.Error
+         base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
 family instance modules: base-4.11.1.0:Control.Applicative
                          base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
                          base-4.11.1.0:Data.Functor.Const
@@ -46,20 +46,28 @@ family instance modules: base-4.11.1.0:Control.Applicative
                          base-4.11.1.0:GHC.Generics base-4.11.1.0:GHC.IO.Exception
                          containers-0.5.11.0:Data.IntMap.Internal
                          containers-0.5.11.0:Data.IntSet.Internal
+                         containers-0.5.11.0:Data.Map.Internal
+                         containers-0.5.11.0:Data.Set.Internal
                          primitive-0.6.3.0:Control.Monad.Primitive
                          primitive-0.6.3.0:Data.Primitive.ByteArray
 import  -/  base-4.11.1.0:Control.Monad c5f960c67d822497578bffbd3e4c01cf
 import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
 import  -/  base-4.11.1.0:Data.List 83dc843e47bfc0c5af51e19c6f3476d5
 import  -/  base-4.11.1.0:GHC.Base 604111500e81281298777e721c75643b
+import  -/  base-4.11.1.0:GHC.List 1e4357702d8d00cded0703bd293e50e8
 import  -/  base-4.11.1.0:GHC.Num 8e54b26dce4495382dc4b50cf36ab754
 import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
 import  -/  base-4.11.1.0:GHC.Show 73be67392447c974f19c3befd83c46c0
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.IntMap.Internal ef73a09d9589b16c95e337bc0715aa57
 import  -/  containers-0.5.11.0:Data.IntMap.Strict 79a3c61ca2c76eb71c4304029717e288
+import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
+import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
+import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
 import  -/  tf-random-0.5:System.Random.TF 8abc0839ff798088d7b0fe5da790c9f8
+import  -/  tf-random-0.5:System.Random.TF.Gen edab7920943edb50441b167dda441e39
+import  -/  tf-random-0.5:System.Random.TF.Instances 38b1c99a14c0f48d6db9f4a900310278
 6fb5b1c62e6ccfd9020c45c8471a027a
   $fEqIvar :: GHC.Classes.Eq a => GHC.Classes.Eq (Ivar.Ivar a)
   DFunId
@@ -351,21 +359,19 @@ aeebe53ce285b4d3ec24a0e006c0a77c
                       } in
                       go 1#
                    1# -> GHC.Types.[] @ (Ivar.Ivar a) }) -}
-7b970cc4572bdd13a27343354e7194b0
+f35b2e03e07c07a55c513e3a09bc32ca
   $wmkIvarRandom ::
     GHC.Num.Num a =>
-    a
-    -> Data.IntMap.Internal.IntMap a
-    -> Data.IntMap.Internal.IntMap GHC.Types.Int
-    -> a
+    Data.IntMap.Internal.IntMap GHC.Types.Int
+    -> a -> Data.IntMap.Internal.IntMap a -> a
   {- Arity: 4,
-     Strictness: <S(C(C(S))LLLLLL),U(1*C1(C1(U)),A,A,A,A,A,1*C1(U))><L,U><L,1*U><L,U>,
+     Strictness: <S(C(C(S))LLLLLL),U(1*C1(C1(U)),A,A,A,A,A,1*C1(U))><L,U><L,U><L,1*U>,
      Inline: [0],
      Unfolding: (\ @ a
                    (w :: GHC.Num.Num a)
+                   (w1 :: Data.IntMap.Internal.IntMap GHC.Types.Int)
                    (ww :: a)
-                   (ww1 :: Data.IntMap.Internal.IntMap a)
-                   (w1 :: Data.IntMap.Internal.IntMap GHC.Types.Int) ->
+                   (ww1 :: Data.IntMap.Internal.IntMap a) ->
                  GHC.Num.+
                    @ a
                    w
@@ -574,20 +580,20 @@ c65d130cc7fb2bce37fccd555d3bc2cf
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (a1 :: a) ->
                  Ivar.Ivar @ a a1 (Data.IntMap.Internal.Nil @ a)) -}
-e88d2a95c7d222674da4a0f89ebfa84b
+8da35aeee3e070f98e6e4df7c908d1a7
   mkIvarRandom ::
     GHC.Num.Num a =>
-    Ivar.Ivar a -> Data.IntMap.Internal.IntMap GHC.Types.Int -> a
+    Data.IntMap.Internal.IntMap GHC.Types.Int -> Ivar.Ivar a -> a
   {- Arity: 3,
-     Strictness: <S(C(C(S))LLLLLL),U(C(C1(U)),A,A,A,A,A,C(U))><S,1*U(U,1*U)><L,U>,
+     Strictness: <S(C(C(S))LLLLLL),U(C(C1(U)),A,A,A,A,A,C(U))><L,U><S,1*U(U,1*U)>,
      Inline: [0],
      Unfolding: InlineRule (3, True, False)
                 (\ @ a
                    (w :: GHC.Num.Num a)
-                   (w1 :: Ivar.Ivar a)
-                   (w2 :: Data.IntMap.Internal.IntMap GHC.Types.Int) ->
-                 case w1 of ww { Ivar.Ivar ww1 ww2 ->
-                 Ivar.$wmkIvarRandom @ a w ww1 ww2 w2 }) -}
+                   (w1 :: Data.IntMap.Internal.IntMap GHC.Types.Int)
+                   (w2 :: Ivar.Ivar a) ->
+                 case w2 of ww { Ivar.Ivar ww1 ww2 ->
+                 Ivar.$wmkIvarRandom @ a w w1 ww1 ww2 }) -}
 92b730a0a32b3732c1976e0fc44e586e
   mkIvarRandom_go ::
     (GHC.Types.Int -> GHC.Types.Int)

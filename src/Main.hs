@@ -23,7 +23,8 @@ module Main (
     import Pde
     import BasicTensors
     import EquivarianceEqns 
-    import qualified Data.Map as M 
+    import qualified Data.Map.Strict as M 
+    import qualified Data.IntMap.Strict as I
     import qualified Data.Sequence as S
     import Numeric.Natural 
     import GHC.TypeNats
@@ -104,8 +105,21 @@ module Main (
 
         gen <- newTFGen 
 
-        let test = take 20 $ randoms gen :: [Int]
+        let randList = randomRs (-500,500) gen 
 
-        print test
-        
+        let randMap = I.fromList $ zip [1..315] randList
+
+        let pde = mkPdefromTens totalEqn 
+
+        let trian = triangleMap 315 
+
+        let mults = mkAllMultInds 315
+
+        let pdeProlonged = prolongPdeAll mults pde
+
+        let prolongedSymbol = prolongSymbolAll mults pde
+
+        let pdeTotal = combinePdes pde pdeProlonged
+
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/SymbolProlongedRand.txt" $ evalPdeRand 315 trian randMap prolongedSymbol
 

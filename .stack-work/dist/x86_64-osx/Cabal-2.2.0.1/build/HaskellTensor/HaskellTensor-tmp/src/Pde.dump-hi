@@ -1,12 +1,12 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-05 22:27:22.070077 UTC
+2018-10-06 11:44:30.933037 UTC
 
 interface main:Pde 8043
-  interface hash: 5f1cea0a20374fe6a7ce3f81649f7945
-  ABI hash: fda51ae1b1fba6c9e6d54a0fdc9c197c
-  export-list hash: ee985529e2b8dfc6b15f5555dda4c944
-  orphan hash: 3d1cb500faf97cdd32ad5ee44b80de74
+  interface hash: ef014cbd5403de4d80bc8dde66703407
+  ABI hash: e16c2c7ed6b24e6283b8d96f4d70c5e8
+  export-list hash: 8abb8fdc636680b3ed604e70d00ee765
+  orphan hash: 5541bcf55a14e92286e9cfcaea52965e
   flag hash: 707c86cfbee6a9c65f08462953a21ad8
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
@@ -14,17 +14,29 @@ interface main:Pde 8043
   used TH splices: False
   where
 exports:
+  Pde.combinePdes
+  Pde.evalPdeRand
+  Pde.mkAllMultInds
+  Pde.mkPdefromTens
+  Pde.number2MultInd
+  Pde.print2Maple
+  Pde.prolongPde
+  Pde.prolongPdeAll
+  Pde.prolongPdeConst
+  Pde.prolongPdeIvar
+  Pde.prolongSymbolAll
+  Pde.triangleMap
 module dependencies: Ivar
 package dependencies: array-0.5.2.0 base-4.11.1.0
                       containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
                       integer-gmp-1.0.2.0 primitive-0.6.3.0 random-1.1 tf-random-0.5
                       time-1.8.0.2 transformers-0.5.5.0
-orphans: transformers-0.5.5.0:Control.Monad.Trans.Error
-         time-1.8.0.2:Data.Time.Format.Parse
+orphans: time-1.8.0.2:Data.Time.Format.Parse
          time-1.8.0.2:Data.Time.LocalTime.Internal.ZonedTime
          time-1.8.0.2:Data.Time.LocalTime.Internal.LocalTime
-         time-1.8.0.2:Data.Time.Calendar.Gregorian base-4.11.1.0:GHC.Float
-         base-4.11.1.0:GHC.Base
+         time-1.8.0.2:Data.Time.Calendar.Gregorian
+         transformers-0.5.5.0:Control.Monad.Trans.Error
+         base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
 family instance modules: base-4.11.1.0:Control.Applicative
                          base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
                          base-4.11.1.0:Data.Functor.Const
@@ -58,11 +70,13 @@ import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
 import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
 import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
-import  -/  Ivar 59d07a95b67596bdbcd852778d385604
-  exports: 99536c1169a3d98973bcc51248b50ec9
+import  -/  Ivar 9a2610f6d3a35738cd6e3df0efa94d4d
+  exports: 847b7f62b7be31da91814bf314ffd8e5
   Ivar 4ecbaf682cffce8cfc04b6bf4cdca2dd
   Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
   addIvar 05c03b458f32d9cc7a5d25e2e9ea4e41
+  mkIvarRandom 8da35aeee3e070f98e6e4df7c908d1a7
+  showIvarRational 86836b8b8b42e6bab13bd30c13c32c0f
 6f598f8bafc2144bc3f64abb7e3051bc
   $fEqMultiIndex :: GHC.Classes.Eq Pde.MultiIndex
   DFunId
@@ -500,6 +514,197 @@ a8451ea4489922dbe82fe1615b48cdea
                         GHC.Show.$fShow(,)1)
                      ls
                      s) -}
+a1e378fb4db7f83d66325a3c97af3fa5
+  $sfind1 ::
+    [GHC.Types.Int] -> Data.Map.Internal.Map [GHC.Types.Int] a -> a
+  {- Arity: 2, Strictness: <S,U><S,1*U> -}
+0346df8727f276cf43d4492837fd0485
+  $sfromList ::
+    [([GHC.Types.Int], a)] -> Data.Map.Internal.Map [GHC.Types.Int] a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a (ds :: [([GHC.Types.Int], a)]) ->
+                 case ds of wild {
+                   [] -> Data.Map.Internal.Tip @ [GHC.Types.Int] @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case x of x1 { DEFAULT ->
+                           case kx of dt { DEFAULT ->
+                           Data.Map.Internal.Bin
+                             @ [GHC.Types.Int]
+                             @ a
+                             1#
+                             dt
+                             x1
+                             (Data.Map.Internal.Tip @ [GHC.Types.Int] @ a)
+                             (Data.Map.Internal.Tip @ [GHC.Types.Int] @ a) } }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case GHC.Classes.$fOrd[]_$s$ccompare kx ky of wild4 {
+                             DEFAULT
+                             -> case x of x0 { DEFAULT ->
+                                case kx of dt { DEFAULT ->
+                                Pde.$sfromList1
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ [GHC.Types.Int]
+                                     @ a
+                                     1#
+                                     dt
+                                     x0
+                                     (Data.Map.Internal.Tip @ [GHC.Types.Int] @ a)
+                                     (Data.Map.Internal.Tip @ [GHC.Types.Int] @ a))
+                                  wild2 } }
+                             GHC.Types.LT
+                             -> case x of x0 { DEFAULT ->
+                                case kx of dt { DEFAULT ->
+                                Pde.$wpoly_go8
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ [GHC.Types.Int]
+                                     @ a
+                                     1#
+                                     dt
+                                     x0
+                                     (Data.Map.Internal.Tip @ [GHC.Types.Int] @ a)
+                                     (Data.Map.Internal.Tip @ [GHC.Types.Int] @ a))
+                                  wild2 } } } } } } }) -}
+8fee7a28b17587960aba0fedddded9a3
+  $sfromList1 ::
+    Data.Map.Internal.Map [GHC.Types.Int] a
+    -> [([GHC.Types.Int], a)]
+    -> Data.Map.Internal.Map [GHC.Types.Int] a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+e2f5c43e3818fc224de7f3f8988a9f87
+  $sfromList2 ::
+    [((GHC.Types.Int, Pde.MultiIndex), a)]
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a (ds :: [((GHC.Types.Int, Pde.MultiIndex), a)]) ->
+                 case ds of wild {
+                   [] -> Data.Map.Internal.Tip @ (GHC.Types.Int, Pde.MultiIndex) @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case kx of dt { (,) ipv ipv1 ->
+                           Data.Map.Internal.Bin
+                             @ (GHC.Types.Int, Pde.MultiIndex)
+                             @ a
+                             1#
+                             dt
+                             x
+                             (Data.Map.Internal.Tip @ (GHC.Types.Int, Pde.MultiIndex) @ a)
+                             (Data.Map.Internal.Tip @ (GHC.Types.Int, Pde.MultiIndex) @ a) }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case kx of ww { (,) ww1 ww2 ->
+                           case ky of ww3 { (,) ww4 ww5 ->
+                           case ww1 of wild4 { GHC.Types.I# x# ->
+                           case ww4 of wild5 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT
+                                  -> Pde.$sfromList3
+                                       @ a
+                                       (Data.Map.Internal.Bin
+                                          @ (GHC.Types.Int, Pde.MultiIndex)
+                                          @ a
+                                          1#
+                                          ww
+                                          x
+                                          (Data.Map.Internal.Tip
+                                             @ (GHC.Types.Int, Pde.MultiIndex)
+                                             @ a)
+                                          (Data.Map.Internal.Tip
+                                             @ (GHC.Types.Int, Pde.MultiIndex)
+                                             @ a))
+                                       wild2
+                                  1#
+                                  -> case GHC.Classes.$fOrd[]_$ccompare
+                                            @ (Data.IntSet.Internal.Key, GHC.Natural.Natural)
+                                            Pde.$fOrdMultiIndex_$s$fOrd(,)
+                                            (Data.IntMap.Internal.toAscList
+                                               @ GHC.Natural.Natural
+                                               ww2 `cast` (Pde.N:MultiIndex[0]))
+                                            (Data.IntMap.Internal.toAscList
+                                               @ GHC.Natural.Natural
+                                               ww5 `cast` (Pde.N:MultiIndex[0])) of wild6 {
+                                       DEFAULT
+                                       -> Pde.$sfromList3
+                                            @ a
+                                            (Data.Map.Internal.Bin
+                                               @ (GHC.Types.Int, Pde.MultiIndex)
+                                               @ a
+                                               1#
+                                               ww
+                                               x
+                                               (Data.Map.Internal.Tip
+                                                  @ (GHC.Types.Int, Pde.MultiIndex)
+                                                  @ a)
+                                               (Data.Map.Internal.Tip
+                                                  @ (GHC.Types.Int, Pde.MultiIndex)
+                                                  @ a))
+                                            wild2
+                                       GHC.Types.LT
+                                       -> Pde.$wpoly_go13
+                                            @ a
+                                            1#
+                                            (Data.Map.Internal.Bin
+                                               @ (GHC.Types.Int, Pde.MultiIndex)
+                                               @ a
+                                               1#
+                                               ww
+                                               x
+                                               (Data.Map.Internal.Tip
+                                                  @ (GHC.Types.Int, Pde.MultiIndex)
+                                                  @ a)
+                                               (Data.Map.Internal.Tip
+                                                  @ (GHC.Types.Int, Pde.MultiIndex)
+                                                  @ a))
+                                            wild2 } }
+                             1#
+                             -> Pde.$wpoly_go13
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ (GHC.Types.Int, Pde.MultiIndex)
+                                     @ a
+                                     1#
+                                     ww
+                                     x
+                                     (Data.Map.Internal.Tip @ (GHC.Types.Int, Pde.MultiIndex) @ a)
+                                     (Data.Map.Internal.Tip @ (GHC.Types.Int, Pde.MultiIndex) @ a))
+                                  wild2 } } } } } } } } }) -}
+b10f88047444d907d6848be50a8b638b
+  $sfromList3 ::
+    Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+    -> [((GHC.Types.Int, Pde.MultiIndex), a)]
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+e2397924aaa41f91eb4bab198b537224
+  $sinsert_$sgo8 ::
+    [GHC.Types.Int]
+    -> a1
+    -> Data.Map.Internal.Map [GHC.Types.Int] a1
+    -> Data.Map.Internal.Map [GHC.Types.Int] a1
+  {- Arity: 3, Strictness: <S,1*U><S,1*U><S,1*U> -}
+cfdf316d88321223cbb00f8125f04e11
+  $sunion ::
+    Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>, Inline: [~] -}
+6072eb52f109614441c899450ac5bd3f
+  $sunionWith ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
 38a511d05298f5e1fd0d9cb74c5d7205
   $tc'MultiIndex :: GHC.Types.TyCon
   {- HasNoCafRefs, Strictness: m,
@@ -642,12 +847,711 @@ a8451ea4489922dbe82fe1615b48cdea
                            @ GHC.Types.Char
                            Pde.$fShowPde2
                            (g (GHC.Types.: @ GHC.Types.Char GHC.Show.$fShow(,)2 x))) }) -}
+c3db9c8b96b4908dfc97aabc29ae4124
+  $w$sgo13 ::
+    (GHC.Types.Int, Pde.MultiIndex)
+    -> GHC.Types.Int
+    -> Pde.MultiIndex
+    -> a1
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a1
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a1
+  {- Arity: 5, Strictness: <L,U><L,1*U(U)><L,U><L,U><S,1*U>,
+     Inline: [0] -}
+7be3a4cfeeb988d0073745a21c3200fc
+  $wmkAllMultInds :: GHC.Prim.Int# -> [Pde.MultiIndex]
+  {- Arity: 1, Strictness: <S,U>, Inline: [0],
+     Unfolding: (\ (ww :: GHC.Prim.Int#) ->
+                 case GHC.Prim.># 1# ww of lwild {
+                   DEFAULT
+                   -> letrec {
+                        go :: GHC.Prim.Int# -> [Pde.MultiIndex]
+                          {- Arity: 1, Strictness: <L,U> -}
+                        = \ (x :: GHC.Prim.Int#) ->
+                          GHC.Types.:
+                            @ Pde.MultiIndex
+                            (Pde.$wnumber2MultInd x)
+                            (case GHC.Prim.==# x ww of lwild1 {
+                               DEFAULT -> go (GHC.Prim.+# x 1#)
+                               1# -> GHC.Types.[] @ Pde.MultiIndex })
+                      } in
+                      go 1#
+                   1# -> GHC.Types.[] @ Pde.MultiIndex }) -}
+d8b7a2292c0f6c6de81181e72edf0062
+  $wmultInd2MatrixNr ::
+    Pde.MultiIndex
+    -> GHC.Types.Int
+    -> Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+    -> GHC.Prim.Int#
+  {- Arity: 3, Strictness: <S,U><L,1*U(U)><L,1*U>, Inline: [0],
+     Unfolding: (\ (w :: Pde.MultiIndex)
+                   (w1 :: GHC.Types.Int)
+                   (w2 :: Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int) ->
+                 case Data.IntMap.Internal.$wgo
+                        @ GHC.Natural.Natural
+                        0#
+                        w `cast` (Pde.N:MultiIndex[0]) of ww {
+                   DEFAULT -> case Pde.print2Maple3 ret_ty GHC.Prim.Int# of {}
+                   0# -> 1#
+                   1#
+                   -> case GHC.List.$w!!
+                             @ GHC.Types.Int
+                             (Pde.multInd2Number w)
+                             0# of wild1 { GHC.Types.I# y ->
+                      GHC.Prim.+# 1# y }
+                   2#
+                   -> case w1 of wild { GHC.Types.I# x ->
+                      case Pde.$sfind1
+                             @ GHC.Types.Int
+                             (Pde.multInd2Number w)
+                             w2 of wild1 { GHC.Types.I# y ->
+                      GHC.Prim.+# x y } } }) -}
+3d094be048faae58815e6981ed52bdf9
+  $wnumber2MultInd :: GHC.Prim.Int# -> Pde.MultiIndex
+  {- Arity: 1, Strictness: <S,1*U>, Inline: [0],
+     Unfolding: (\ (ww :: GHC.Prim.Int#) ->
+                 case ww of ds {
+                   DEFAULT
+                   -> case 1 of wild {
+                        GHC.Integer.Type.S# i#
+                        -> case GHC.Prim.>=# i# 0# of lwild {
+                             DEFAULT
+                             -> case GHC.Natural.underflowError ret_ty Pde.MultiIndex of {}
+                             1#
+                             -> (Data.IntMap.Internal.Tip
+                                   @ GHC.Natural.Natural
+                                   ds
+                                   (GHC.Natural.NatS# (GHC.Prim.int2Word# i#)))
+                                  `cast`
+                                (Sym (Pde.N:MultiIndex[0])) }
+                        GHC.Integer.Type.Jp# dt
+                        -> case GHC.Prim.uncheckedIShiftRL#
+                                  (GHC.Prim.sizeofByteArray# dt)
+                                  3# of wild1 {
+                             DEFAULT
+                             -> case GHC.Prim.sizeofByteArray# dt of wild2 {
+                                  DEFAULT
+                                  -> (Data.IntMap.Internal.Tip
+                                        @ GHC.Natural.Natural
+                                        ds
+                                        (GHC.Natural.NatJ# dt))
+                                       `cast`
+                                     (Sym (Pde.N:MultiIndex[0]))
+                                  0#
+                                  -> case GHC.Natural.underflowError ret_ty Pde.MultiIndex of {} }
+                             1#
+                             -> case GHC.Prim.indexWordArray# dt 0# of wild2 { DEFAULT ->
+                                (Data.IntMap.Internal.Tip
+                                   @ GHC.Natural.Natural
+                                   ds
+                                   (GHC.Natural.NatS# wild2))
+                                  `cast`
+                                (Sym (Pde.N:MultiIndex[0])) } }
+                        GHC.Integer.Type.Jn# ipv
+                        -> case GHC.Natural.underflowError ret_ty Pde.MultiIndex of {} }
+                   0#
+                   -> (Data.IntMap.Internal.Nil @ GHC.Natural.Natural)
+                        `cast`
+                      (Sym (Pde.N:MultiIndex[0])) }) -}
+6d521587f0d2f646d10998ec40b6bf4c
+  $wpoly_go13 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+    -> [((GHC.Types.Int, Pde.MultiIndex), a)]
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+b7ad0ad0a9657e3d735d9c0ef662dddb
+  $wpoly_go8 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map [GHC.Types.Int] a
+    -> [([GHC.Types.Int], a)]
+    -> Data.Map.Internal.Map [GHC.Types.Int] a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+8591187e460c5277dce927d318259cb5
+  $wtriangleMap ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+  {- Arity: 1, Strictness: <S,U>, Inline: [0],
+     Unfolding: (\ (ww :: GHC.Prim.Int#) ->
+                 case GHC.Prim.># 1# ww of lwild {
+                   DEFAULT
+                   -> letrec {
+                        go :: GHC.Prim.Int#
+                              -> [GHC.Types.Int] -> [([GHC.Types.Int], GHC.Types.Int)]
+                          {- Arity: 2, Strictness: <S,U><L,1*U> -}
+                        = \ (x :: GHC.Prim.Int#) (eta :: [GHC.Types.Int]) ->
+                          case GHC.Prim.># x ww of lwild1 {
+                            DEFAULT
+                            -> let {
+                                 wild :: GHC.Types.Int = GHC.Types.I# x
+                               } in
+                               letrec {
+                                 go1 :: GHC.Prim.Int#
+                                        -> [GHC.Types.Int] -> [([GHC.Types.Int], GHC.Types.Int)]
+                                   {- Arity: 2, Strictness: <L,U><S,1*U> -}
+                                 = \ (x1 :: GHC.Prim.Int#) (eta1 :: [GHC.Types.Int]) ->
+                                   case eta1 of wild1 {
+                                     [] -> GHC.Types.[] @ ([GHC.Types.Int], GHC.Types.Int)
+                                     : y ys
+                                     -> GHC.Types.:
+                                          @ ([GHC.Types.Int], GHC.Types.Int)
+                                          (GHC.Types.:
+                                             @ GHC.Types.Int
+                                             wild
+                                             (GHC.Types.:
+                                                @ GHC.Types.Int
+                                                (GHC.Types.I# x1)
+                                                (GHC.Types.[] @ GHC.Types.Int)),
+                                           y)
+                                          (case GHC.Prim.==# x1 ww of lwild2 {
+                                             DEFAULT -> go1 (GHC.Prim.+# x1 1#) ys
+                                             1#
+                                             -> case GHC.Prim.==# x ww of lwild3 {
+                                                  DEFAULT -> go (GHC.Prim.+# x 1#) ys
+                                                  1#
+                                                  -> GHC.Types.[]
+                                                       @ ([GHC.Types.Int], GHC.Types.Int) } }) }
+                               } in
+                               go1 x eta
+                            1#
+                            -> case GHC.Prim.==# x ww of lwild2 {
+                                 DEFAULT -> go (GHC.Prim.+# x 1#) eta
+                                 1# -> GHC.Types.[] @ ([GHC.Types.Int], GHC.Types.Int) } }
+                      } in
+                      Pde.$sfromList @ GHC.Types.Int (go 1# Pde.triangleMap2)
+                   1# -> Pde.triangleMap1 }) -}
 6f598f8bafc2144bc3f64abb7e3051bc
   newtype MultiIndex
     = MultiIndex (Data.IntMap.Internal.IntMap GHC.Natural.Natural)
 a8451ea4489922dbe82fe1615b48cdea
   newtype Pde a
     = Pde (Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a)
+a3131fb0e902bb84dba4af01a668b5fc
+  combinePdes :: Pde.Pde a -> Pde.Pde a -> Pde.Pde a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>,
+     Unfolding: InlineRule (0, True, True)
+                Pde.$sunion
+                  `cast`
+                (forall (a :: <*>_N).
+                 Sym (Pde.N:Pde[0]) <a>_N
+                 ->_R Sym (Pde.N:Pde[0]) <a>_N
+                 ->_R Sym (Pde.N:Pde[0]) <a>_N) -}
+f3974d1091c7c239243d972cfe3e9e0f
+  evalPdeRand ::
+    GHC.Types.Int
+    -> Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+    -> Data.IntMap.Internal.IntMap GHC.Types.Int
+    -> Pde.Pde (Ivar.Ivar GHC.Real.Rational)
+    -> GHC.Base.String
+  {- Arity: 4, Strictness: <L,U(U)><L,U><L,U><L,1*U> -}
+0ef23efabef62049bc575eb10831d522
+  mkAllMultInds :: GHC.Types.Int -> [Pde.MultiIndex]
+  {- Arity: 1, Strictness: <S(S),1*U(U)>, Inline: [0],
+     Unfolding: InlineRule (1, True, False)
+                (\ (w :: GHC.Types.Int) ->
+                 case w of ww { GHC.Types.I# ww1 -> Pde.$wmkAllMultInds ww1 }) -}
+78f1cee431fc093fb5ace9712d1da429
+  mkPdefromTens ::
+    GHC.Show.Show a =>
+    Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar a)
+    -> Pde.Pde (Ivar.Ivar a)
+  {- Arity: 2, Strictness: <L,A><S,1*U>,
+     Unfolding: InlineRule (0, True, True)
+                Pde.mkPdefromTens1
+                  `cast`
+                (forall (a :: <*>_N).
+                 <GHC.Show.Show a>_R
+                 ->_R <Data.Map.Internal.Map
+                         (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar a)>_R
+                 ->_R Sym (Pde.N:Pde[0]) <Ivar.Ivar a>_N) -}
+8bba768cfac5d01d71dbc8dd98172a24
+  mkPdefromTens1 ::
+    GHC.Show.Show a =>
+    Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar a)
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+  {- Arity: 2, Strictness: <L,A><S,1*U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a
+                   ($dShow :: GHC.Show.Show a)
+                   (map1 :: Data.Map.Internal.Map
+                              (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar a)) ->
+                 Pde.$sfromList2
+                   @ (Ivar.Ivar a)
+                   (Pde.mkPdefromTens2
+                      @ a
+                      (GHC.Types.[] @ ((GHC.Types.Int, Pde.MultiIndex), Ivar.Ivar a))
+                      map1)) -}
+eb46bbc577a4d6fe497b3ec9fbfd7d49
+  mkPdefromTens2 ::
+    [((GHC.Types.Int, Pde.MultiIndex), Ivar.Ivar a)]
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar a)
+    -> [((GHC.Types.Int, Pde.MultiIndex), Ivar.Ivar a)]
+  {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+4acd3bc23aa2def2b4ffbc5038d7eaac
+  multInd2Number :: Pde.MultiIndex -> [GHC.Types.Int]
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ (ds :: Pde.MultiIndex) ->
+                 case ds `cast` (Pde.N:MultiIndex[0]) of wild {
+                   DEFAULT
+                   -> Pde.print2Maple_go
+                        (GHC.Types.[] @ Data.IntSet.Internal.Key)
+                        wild
+                   Data.IntMap.Internal.Bin dt dt1 l r
+                   -> case GHC.Prim.<# dt1 0# of lwild {
+                        DEFAULT
+                        -> Pde.print2Maple_go
+                             (Pde.print2Maple_go (GHC.Types.[] @ Data.IntSet.Internal.Key) r)
+                             l
+                        1#
+                        -> Pde.print2Maple_go
+                             (Pde.print2Maple_go (GHC.Types.[] @ Data.IntSet.Internal.Key) l)
+                             r } }) -}
+2cc23123388a0f0cbc4848f248881138
+  multInd2Number1 :: Pde.MultiIndex -> GHC.Types.Int
+  {- Arity: 1, Strictness: <S,U>,
+     Unfolding: (\ (mult :: Pde.MultiIndex) ->
+                 case GHC.List.$wlenAcc
+                        @ GHC.Types.Int
+                        (Pde.multInd2Number mult)
+                        0# of ww2 {
+                   DEFAULT -> Pde.prolongPde4
+                   1#
+                   -> GHC.List.$w!! @ GHC.Types.Int (Pde.multInd2Number mult) 0# }) -}
+eef366e2de7615489f1c12e852f31815
+  number2MultInd :: GHC.Types.Int -> Pde.MultiIndex
+  {- Arity: 1, Strictness: <S(S),1*U(1*U)>, Inline: [0],
+     Unfolding: InlineRule (1, True, False)
+                (\ (w :: GHC.Types.Int) ->
+                 case w of ww { GHC.Types.I# ww1 -> Pde.$wnumber2MultInd ww1 }) -}
+6cc49d1eb8222d919d8764ecd9c78260
+  print2Maple ::
+    GHC.Types.Int
+    -> Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+    -> Pde.Pde (Ivar.Ivar GHC.Real.Rational)
+    -> GHC.Base.String
+  {- Arity: 3, Strictness: <L,U(U)><L,U><L,1*U>,
+     Unfolding: (\ (nopsIvar :: GHC.Types.Int)
+                   (triangle :: Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int)
+                   (ds :: Pde.Pde (Ivar.Ivar GHC.Real.Rational)) ->
+                 GHC.CString.unpackAppendCString#
+                   Pde.print2Maple9
+                   (letrec {
+                      go13 :: [GHC.Types.Char]
+                              -> Data.Map.Internal.Map
+                                   (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar GHC.Real.Rational)
+                              -> [GHC.Types.Char]
+                        {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                      = \ (z' :: [GHC.Types.Char])
+                          (ds1 :: Data.Map.Internal.Map
+                                    (GHC.Types.Int, Pde.MultiIndex)
+                                    (Ivar.Ivar GHC.Real.Rational)) ->
+                        case ds1 of wild {
+                          Data.Map.Internal.Bin dt kx x l r
+                          -> case kx of wild1 { (,) x1 y ->
+                             go13
+                               (GHC.Base.++_$s++
+                                  @ GHC.Types.Char
+                                  (go13 z' r)
+                                  Pde.print2Maple8
+                                  (GHC.Base.++_$s++
+                                     @ GHC.Types.Char
+                                     (GHC.Types.:
+                                        @ GHC.Types.Char
+                                        Pde.print2Maple7
+                                        (case x of ww { Ivar.Ivar ww1 ww2 ->
+                                         case ww1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                                         case Ivar.$wshowIvarRational
+                                                ww4
+                                                ww5
+                                                ww2 of ww6 { (#,#) ww7 ww8 ->
+                                         GHC.Base.++_$s++
+                                           @ GHC.Types.Char
+                                           Pde.print2Maple5
+                                           ww7
+                                           ww8 } } }))
+                                     GHC.Show.$fShow(,)4
+                                     (case x1 of ww2 { GHC.Types.I# ww3 ->
+                                      case GHC.Show.$wshowSignedInt
+                                             0#
+                                             ww3
+                                             (GHC.Types.:
+                                                @ GHC.Types.Char
+                                                GHC.Show.showList__1
+                                                (GHC.Show.$fShow(,)_$sgo1
+                                                   Pde.print2Maple4
+                                                   (\ (w2 :: GHC.Base.String)[OneShot] ->
+                                                    case Pde.$wmultInd2MatrixNr
+                                                           y
+                                                           nopsIvar
+                                                           triangle of ww { DEFAULT ->
+                                                    case GHC.Show.$wshowSignedInt
+                                                           0#
+                                                           ww
+                                                           w2 of ww4 { (#,#) ww5 ww6 ->
+                                                    GHC.Types.: @ GHC.Types.Char ww5 ww6 } })
+                                                   (GHC.Types.[]
+                                                      @ GHC.Show.ShowS))) of ww4 { (#,#) ww5 ww6 ->
+                                      GHC.Types.: @ GHC.Types.Char ww5 ww6 } })))
+                               l }
+                          Data.Map.Internal.Tip -> z' }
+                    } in
+                    case go13
+                           (GHC.Types.[] @ GHC.Types.Char)
+                           ds `cast` (Pde.N:Pde[0] <Ivar.Ivar GHC.Real.Rational>_N) of wild {
+                      [] -> case GHC.List.scanl2 ret_ty [GHC.Types.Char] of {}
+                      : ds1 xs -> GHC.Base.++ @ GHC.Types.Char xs Pde.print2Maple1 })) -}
+81603c8b5e2581ff577f67c1e9310387
+  print2Maple1 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString# Pde.print2Maple2) -}
+f7a56067f6093fa73afce52148094c40
+  print2Maple2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("}"#) -}
+ebd5d3430153324a8afb31082dd697f0
+  print2Maple3 :: GHC.Types.Int
+  {- Strictness: x -}
+79594a4a082952642433912c8312e745
+  print2Maple4 :: [GHC.Types.Char]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Char
+                   GHC.Show.$fShow(,)2
+                   (GHC.Types.[] @ GHC.Types.Char)) -}
+89d268ba2f15ba44bef7d4c764720b36
+  print2Maple5 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString# Pde.print2Maple6) -}
+14caa54861fbd7ce1863f8693da984af
+  print2Maple6 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("\n"#) -}
+8d803033e8a6a8242919558365b144ec
+  print2Maple7 :: GHC.Types.Char
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.C# '='#) -}
+dc6abccb456a0a8dde86b72c677fc3d4
+  print2Maple8 :: GHC.Types.Char
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.C# ','#) -}
+2695bb83ff396ce00a198bf5c4f57125
+  print2Maple9 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("{"#) -}
+89107ea1694eafc63b5cba876e4a91e7
+  print2Maple_go ::
+    [Data.IntSet.Internal.Key]
+    -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
+    -> [Data.IntSet.Internal.Key]
+  {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+b71ad48c2ae639f9d31447311825a3ee
+  prolongPde ::
+    GHC.Num.Num a =>
+    Pde.MultiIndex -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
+  {- Arity: 3, Strictness: <L,U(C(C1(U)),A,A,A,A,A,A)><L,U><S,U>,
+     Unfolding: InlineRule (0, True, True)
+                Pde.prolongPde1
+                  `cast`
+                (forall (a :: <*>_N).
+                 <GHC.Num.Num a>_R
+                 ->_R <Pde.MultiIndex>_R
+                 ->_R <Pde.Pde (Ivar.Ivar a)>_R
+                 ->_R Sym (Pde.N:Pde[0]) <Ivar.Ivar a>_N) -}
+961267eb5db2897c043cd16b72e714b2
+  prolongPde1 ::
+    GHC.Num.Num a =>
+    Pde.MultiIndex
+    -> Pde.Pde (Ivar.Ivar a)
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+  {- Arity: 3, Strictness: <L,U(C(C1(U)),A,A,A,A,A,A)><L,U><S,U>,
+     Unfolding: (\ @ a
+                   ($dNum :: GHC.Num.Num a)
+                   (eta :: Pde.MultiIndex)
+                   (eta1 :: Pde.Pde (Ivar.Ivar a)) ->
+                 Pde.$sunionWith
+                   @ (Ivar.Ivar a)
+                   (Ivar.addIvar @ a $dNum)
+                   (Pde.prolongPde5 @ (Ivar.Ivar a) eta eta1)
+                   (Pde.prolongPde2 @ a eta eta1)) -}
+132a06b5c10aca741715c0534c0375be
+  prolongPde2 ::
+    Pde.MultiIndex
+    -> Pde.Pde (Ivar.Ivar a)
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+  {- Arity: 2, Strictness: <L,U><S,1*U>,
+     Unfolding: (\ @ a
+                   (mult :: Pde.MultiIndex)
+                   (ds :: Pde.Pde (Ivar.Ivar a)) ->
+                 let {
+                   lvl46 :: GHC.Types.Int = Pde.multInd2Number1 mult
+                 } in
+                 letrec {
+                   go13 :: [((GHC.Types.Int, Pde.MultiIndex), Ivar.Ivar a)]
+                           -> Data.Map.Internal.Map
+                                (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+                           -> [((GHC.Types.Int, Pde.MultiIndex), Ivar.Ivar a)]
+                     {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                   = \ (z' :: [((GHC.Types.Int, Pde.MultiIndex), Ivar.Ivar a)])
+                       (ds1 :: Data.Map.Internal.Map
+                                 (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)) ->
+                     case ds1 of wild {
+                       Data.Map.Internal.Bin dt kx x l r
+                       -> case kx of wild1 { (,) x1 y ->
+                          go13
+                            (GHC.Types.:
+                               @ ((GHC.Types.Int, Pde.MultiIndex), Ivar.Ivar a)
+                               ((case lvl46 of wild2 { GHC.Types.I# y1 ->
+                                 case x1 of wild3 { GHC.Types.I# y2 ->
+                                 GHC.Types.I# (GHC.Prim.+# (GHC.Prim.*# 136# y1) y2) } },
+                                 y),
+                                x)
+                               (go13 z' r))
+                            l }
+                       Data.Map.Internal.Tip -> z' }
+                 } in
+                 let {
+                   lvl47 :: Data.IntSet.Internal.Key
+                   = GHC.List.$w!!
+                       @ Data.IntSet.Internal.Key
+                       (Data.IntMap.Internal.keys
+                          @ GHC.Natural.Natural
+                          mult `cast` (Pde.N:MultiIndex[0]))
+                       0#
+                 } in
+                 letrec {
+                   go8 :: Data.Map.Internal.Map
+                            (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+                          -> Data.Map.Internal.Map
+                               (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+                     {- Arity: 1, Strictness: <S,1*U> -}
+                   = \ (ds1 :: Data.Map.Internal.Map
+                                 (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)) ->
+                     case ds1 of wild {
+                       Data.Map.Internal.Bin dt kx x l r
+                       -> case x of wild1 { Ivar.Ivar s map2 ->
+                          case go8 l of dt1 { DEFAULT ->
+                          case go8 r of dt2 { DEFAULT ->
+                          Data.Map.Internal.Bin
+                            @ (GHC.Types.Int, Pde.MultiIndex)
+                            @ (Ivar.Ivar a)
+                            dt
+                            kx
+                            (Ivar.Ivar
+                               @ a
+                               (Data.IntMap.Internal.! @ a map2 lvl47)
+                               (Data.IntMap.Internal.Nil @ a))
+                            dt1
+                            dt2 } } }
+                       Data.Map.Internal.Tip
+                       -> Data.Map.Internal.Tip
+                            @ (GHC.Types.Int, Pde.MultiIndex)
+                            @ (Ivar.Ivar a) }
+                 } in
+                 let {
+                   lvl48 :: GHC.Types.Bool
+                   = case Data.IntMap.Internal.$wgo
+                            @ GHC.Natural.Natural
+                            0#
+                            mult `cast` (Pde.N:MultiIndex[0]) of ww {
+                       DEFAULT -> GHC.Types.True 1# -> GHC.Types.False }
+                 } in
+                 Pde.$sfromList2
+                   @ (Ivar.Ivar a)
+                   (go13
+                      (GHC.Types.[] @ ((GHC.Types.Int, Pde.MultiIndex), Ivar.Ivar a))
+                      (go8
+                         (Data.Map.Internal.filterWithKey
+                            @ (GHC.Types.Int, Pde.MultiIndex)
+                            @ (Ivar.Ivar a)
+                            (\ (ds1 :: (GHC.Types.Int, Pde.MultiIndex))
+                               (x :: Ivar.Ivar a)[OneShot] ->
+                             case x of wild { Ivar.Ivar a1 map2 ->
+                             case lvl48 of wild1 {
+                               GHC.Types.False -> Data.IntMap.Internal.member @ a lvl47 map2
+                               GHC.Types.True -> Pde.prolongPde3 } })
+                            ds `cast` (Pde.N:Pde[0] <Ivar.Ivar a>_N))))) -}
+7baa7b367bbdf62b023ce61d3b196593
+  prolongPde3 :: GHC.Types.Bool
+  {- Strictness: x -}
+f19c2f8ed5de3812721d67f4680bbdb2
+  prolongPde4 :: GHC.Types.Int
+  {- Strictness: x -}
+f327d949ac70be074458cc7c154355ba
+  prolongPde5 ::
+    Pde.MultiIndex
+    -> Pde.Pde a
+    -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+  {- Arity: 2, Strictness: <L,U><S,1*U>,
+     Unfolding: (\ @ a (mult :: Pde.MultiIndex) (ds :: Pde.Pde a) ->
+                 let {
+                   lvl46 :: GHC.Types.Int = Pde.multInd2Number1 mult
+                 } in
+                 letrec {
+                   go13 :: [((GHC.Types.Int, Pde.MultiIndex), a)]
+                           -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
+                           -> [((GHC.Types.Int, Pde.MultiIndex), a)]
+                     {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                   = \ (z' :: [((GHC.Types.Int, Pde.MultiIndex), a)])
+                       (ds1 :: Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a) ->
+                     case ds1 of wild {
+                       Data.Map.Internal.Bin dt kx x l r
+                       -> case kx of wild1 { (,) x1 y ->
+                          go13
+                            (GHC.Types.:
+                               @ ((GHC.Types.Int, Pde.MultiIndex), a)
+                               ((case lvl46 of wild2 { GHC.Types.I# y1 ->
+                                 case x1 of wild3 { GHC.Types.I# y2 ->
+                                 GHC.Types.I# (GHC.Prim.+# (GHC.Prim.*# 136# y1) y2) } },
+                                 (Data.IntMap.Strict.unionWithKey
+                                    @ GHC.Natural.Natural
+                                    Pde.prolongPde6
+                                    mult `cast` (Pde.N:MultiIndex[0])
+                                    y `cast` (Pde.N:MultiIndex[0]))
+                                   `cast`
+                                 (Sym (Pde.N:MultiIndex[0]))),
+                                x)
+                               (go13 z' r))
+                            l }
+                       Data.Map.Internal.Tip -> z' }
+                 } in
+                 Pde.$sfromList2
+                   @ a
+                   (go13
+                      (GHC.Types.[] @ ((GHC.Types.Int, Pde.MultiIndex), a))
+                      ds `cast` (Pde.N:Pde[0] <a>_N))) -}
+4e2be49edc43f69df94c3614c82d74e4
+  prolongPde6 ::
+    Data.IntSet.Internal.Key
+    -> GHC.Natural.Natural
+    -> GHC.Natural.Natural
+    -> GHC.Natural.Natural
+  {- Arity: 3, HasNoCafRefs, Strictness: <L,A><S,U><S,U>,
+     Unfolding: InlineRule (3, True, True)
+                (\ (ds :: Data.IntSet.Internal.Key)
+                   (x :: GHC.Natural.Natural)[OneShot]
+                   (y :: GHC.Natural.Natural)[OneShot] ->
+                 GHC.Natural.plusNatural x y) -}
+15a2648675f015c00f283ea56c9d4cf0
+  prolongPdeAll ::
+    GHC.Num.Num a =>
+    [Pde.MultiIndex] -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
+  {- Arity: 3, Strictness: <L,U(C(C1(U)),A,A,A,A,A,A)><S,1*U><L,U>,
+     Unfolding: InlineRule (0, True, True)
+                Pde.prolongPdeAll1
+                  `cast`
+                (forall (a :: <*>_N).
+                 <GHC.Num.Num a>_R
+                 ->_R <[Pde.MultiIndex]>_R
+                 ->_R <Pde.Pde (Ivar.Ivar a)>_R
+                 ->_R Sym (Pde.N:Pde[0]) <Ivar.Ivar a>_N) -}
+c0572276ee6ce846b18b6454eb8695be
+  prolongPdeAll1 ::
+    GHC.Num.Num a =>
+    [Pde.MultiIndex]
+    -> Pde.Pde (Ivar.Ivar a)
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+  {- Arity: 3, Strictness: <L,U(C(C1(U)),A,A,A,A,A,A)><S,1*U><L,U>,
+     Unfolding: (\ @ a
+                   ($dNum :: GHC.Num.Num a)
+                   (mults :: [Pde.MultiIndex])
+                   (pde :: Pde.Pde (Ivar.Ivar a)) ->
+                 Pde.prolongPdeAll2
+                   @ a
+                   (Data.Map.Internal.Tip
+                      @ (GHC.Types.Int, Pde.MultiIndex)
+                      @ (Ivar.Ivar a))
+                   (GHC.Base.map
+                      @ Pde.MultiIndex
+                      @ (Data.Map.Internal.Map
+                           (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a))
+                      (\ (x :: Pde.MultiIndex) -> Pde.prolongPde1 @ a $dNum x pde)
+                      mults)) -}
+ed20075dc90052f1bbcf315137dc371c
+  prolongPdeAll2 ::
+    Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+    -> [Data.Map.Internal.Map
+          (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)]
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+c2c6505c6eeab17a6c75496464fd4888
+  prolongPdeConst :: Pde.MultiIndex -> Pde.Pde a -> Pde.Pde a
+  {- Arity: 2, Strictness: <L,U><S,1*U>,
+     Unfolding: InlineRule (0, True, True)
+                Pde.prolongPde5
+                  `cast`
+                (forall (a :: <*>_N).
+                 <Pde.MultiIndex>_R
+                 ->_R <Pde.Pde a>_R
+                 ->_R Sym (Pde.N:Pde[0]) <a>_N) -}
+e25e654680e2278f28c25fd7cce75ab3
+  prolongPdeIvar ::
+    Pde.MultiIndex -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
+  {- Arity: 2, Strictness: <L,U><S,1*U>,
+     Unfolding: InlineRule (0, True, True)
+                Pde.prolongPde2
+                  `cast`
+                (forall (a :: <*>_N).
+                 <Pde.MultiIndex>_R
+                 ->_R <Pde.Pde (Ivar.Ivar a)>_R
+                 ->_R Sym (Pde.N:Pde[0]) <Ivar.Ivar a>_N) -}
+b4477d173d0d4cf4fb0baa4f36fde1e0
+  prolongSymbolAll ::
+    GHC.Num.Num a =>
+    [Pde.MultiIndex] -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
+  {- Arity: 3, Strictness: <L,A>,
+     Unfolding: InlineRule (0, True, True)
+                Pde.prolongSymbolAll1
+                  `cast`
+                (forall (a :: <*>_N).
+                 <GHC.Num.Num a>_R
+                 ->_R <[Pde.MultiIndex]>_R
+                 ->_R <Pde.Pde (Ivar.Ivar a)>_R
+                 ->_R Sym (Pde.N:Pde[0]) <Ivar.Ivar a>_N) -}
+90bf4c3ba42794bc6939421a81697d10
+  prolongSymbolAll1 ::
+    GHC.Num.Num a =>
+    [Pde.MultiIndex]
+    -> Pde.Pde (Ivar.Ivar a)
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+  {- Arity: 3, Strictness: <L,A>,
+     Unfolding: InlineRule (1, True, True)
+                (\ @ a ($dNum :: GHC.Num.Num a) -> Pde.prolongSymbolAll2 @ a) -}
+097f43e3f71f6b2eca338760806b5e5f
+  prolongSymbolAll2 ::
+    [Pde.MultiIndex]
+    -> Pde.Pde (Ivar.Ivar a)
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
+  {- Arity: 2, Strictness: <S,1*U><L,U>,
+     Unfolding: (\ @ a
+                   (mults :: [Pde.MultiIndex])
+                   (pde :: Pde.Pde (Ivar.Ivar a)) ->
+                 Pde.prolongPdeAll2
+                   @ a
+                   (Data.Map.Internal.Tip
+                      @ (GHC.Types.Int, Pde.MultiIndex)
+                      @ (Ivar.Ivar a))
+                   (GHC.Base.map
+                      @ Pde.MultiIndex
+                      @ (Data.Map.Internal.Map
+                           (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a))
+                      (\ (x :: Pde.MultiIndex) -> Pde.prolongPde5 @ (Ivar.Ivar a) x pde)
+                      mults)) -}
+70177a5bc750d19619c2dd2d58be51fb
+  triangleMap ::
+    GHC.Types.Int
+    -> Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+  {- Arity: 1, Strictness: <S(S),1*U(U)>, Inline: [0],
+     Unfolding: InlineRule (1, True, False)
+                (\ (w :: GHC.Types.Int) ->
+                 case w of ww { GHC.Types.I# ww1 -> Pde.$wtriangleMap ww1 }) -}
+c5279563f5d77eff814dfc838f074c5d
+  triangleMap1 :: Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+  {- Unfolding: (Pde.$sfromList
+                   @ GHC.Types.Int
+                   (GHC.Types.[] @ ([GHC.Types.Int], GHC.Types.Int))) -}
+390cd4e6263600a132edbd3eccba9d78
+  triangleMap2 :: [GHC.Types.Int]
+  {- Unfolding: (GHC.Enum.eftInt 1# 9223372036854775807#) -}
 instance GHC.Classes.Eq [Pde.MultiIndex] = Pde.$fEqMultiIndex
 instance GHC.Classes.Ord [Pde.MultiIndex] = Pde.$fOrdMultiIndex
 instance GHC.Show.Show [Pde.MultiIndex] = Pde.$fShowMultiIndex
@@ -675,6 +1579,32 @@ instance GHC.Show.Show [Pde.Pde] = Pde.$fShowPde
                                                (v :: GHC.Show.Show GHC.Types.Int)
   GHC.Show.$fShow(,) @ GHC.Types.Int @ Pde.MultiIndex v v1
   = Pde.$fShowPde_$s$fShow(,)
+"SPEC/Pde fromList @ (Int, MultiIndex) _" forall @ a
+                                                 ($dOrd1 :: GHC.Classes.Ord
+                                                              (GHC.Types.Int, Pde.MultiIndex))
+  Data.Map.Internal.fromList @ (GHC.Types.Int, Pde.MultiIndex)
+                             @ a
+                             $dOrd1
+  = Pde.$sfromList2 @ a
+"SPEC/Pde fromList @ [Int] _" [orphan] forall @ a
+                                              ($dOrd1 :: GHC.Classes.Ord [GHC.Types.Int])
+  Data.Map.Strict.Internal.fromList @ [GHC.Types.Int] @ a $dOrd1
+  = Pde.$sfromList @ a
+"SPEC/Pde union @ (Int, MultiIndex) _" forall @ a
+                                              ($dOrd1 :: GHC.Classes.Ord
+                                                           (GHC.Types.Int, Pde.MultiIndex))
+  Data.Map.Internal.union @ (GHC.Types.Int, Pde.MultiIndex)
+                          @ a
+                          $dOrd1
+  = Pde.$sunion @ a
+"SPEC/Pde unionWith @ (Int, MultiIndex) _" forall @ a
+                                                  ($dOrd1 :: GHC.Classes.Ord
+                                                               (GHC.Types.Int, Pde.MultiIndex))
+  Data.Map.Strict.Internal.unionWith @ (GHC.Types.Int,
+                                        Pde.MultiIndex)
+                                     @ a
+                                     $dOrd1
+  = Pde.$sunionWith @ a
 vectorised variables:
 vectorised tycons:
 vectorised reused tycons:

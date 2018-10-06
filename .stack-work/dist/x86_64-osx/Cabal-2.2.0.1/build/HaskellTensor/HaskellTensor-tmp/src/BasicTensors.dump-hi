@@ -1,9 +1,9 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-05 22:27:24.753766 UTC
+2018-10-06 10:12:05.10031 UTC
 
 interface main:BasicTensors 8043
-  interface hash: 51022d42b59065219b5526d8c987de9c
+  interface hash: 53cd28a124fd9a5d1f2fe9d70fdba680
   ABI hash: eb6cceee2bfa4c3f5e3b279189c1d012
   export-list hash: bfb629e309a355731e9d93c9c77ae75c
   orphan hash: 9d17a12baec57bab7908e574e049e4a0
@@ -53,12 +53,12 @@ package dependencies: array-0.5.2.0 base-4.11.1.0
                       containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
                       integer-gmp-1.0.2.0 primitive-0.6.3.0 random-1.1 tf-random-0.5
                       time-1.8.0.2 transformers-0.5.5.0
-orphans: transformers-0.5.5.0:Control.Monad.Trans.Error
-         time-1.8.0.2:Data.Time.Format.Parse
+orphans: time-1.8.0.2:Data.Time.Format.Parse
          time-1.8.0.2:Data.Time.LocalTime.Internal.ZonedTime
          time-1.8.0.2:Data.Time.LocalTime.Internal.LocalTime
-         time-1.8.0.2:Data.Time.Calendar.Gregorian base-4.11.1.0:GHC.Float
-         base-4.11.1.0:GHC.Base
+         time-1.8.0.2:Data.Time.Calendar.Gregorian
+         transformers-0.5.5.0:Control.Monad.Trans.Error
+         base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
 family instance modules: base-4.11.1.0:Control.Applicative
                          base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
                          base-4.11.1.0:Data.Functor.Const
@@ -109,8 +109,8 @@ import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
   getValInd 974a87ce371ea262afad5f9d63705d90
   mkInd 1af0255577b3469c19c700d71eb25f9f
   sortInd 624a9be640c385afb47cb821ef6d66d3
-import  -/  Ivar 59d07a95b67596bdbcd852778d385604
-  exports: 99536c1169a3d98973bcc51248b50ec9
+import  -/  Ivar 9a2610f6d3a35738cd6e3df0efa94d4d
+  exports: 847b7f62b7be31da91814bf314ffd8e5
   Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
   number2Ivar b988f0c628c785064134f5698bb06f7d
 import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e

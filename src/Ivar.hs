@@ -72,8 +72,8 @@ module Ivar (
     mkRandomMap :: RandomGen g => g -> Int -> M.Map Int Int  
     mkRandomMap gen i = M.fromList $ zip [1..i] (randoms gen) 
 
-    mkIvarRandom :: Num a => Ivar a -> I.IntMap Int -> a 
-    mkIvarRandom (Ivar a map1) ranMap = a + (fromIntegral $ sum ranList)
+    mkIvarRandom :: Num a => I.IntMap Int -> Ivar a -> a 
+    mkIvarRandom ranMap (Ivar a map1) = a + (fromIntegral $ sum ranList)
                     where
                         ranList = I.elems $ I.mapWithKey (\k v -> (I.!) ranMap k) map1
 

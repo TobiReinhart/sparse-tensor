@@ -1,9 +1,9 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-06 11:44:33.077275 UTC
+2018-10-07 19:39:50.082721 UTC
 
 interface main:EquivarianceEqns 8043
-  interface hash: 9ec75666efd443cbd9b37c33b13266ba
+  interface hash: c437eb1f78340db89facac1fd1a25e09
   ABI hash: c9863e21d3ccc997c657d4d1f19b6f1c
   export-list hash: 54a34c61cb5cf7ce22ba84079aa3535c
   orphan hash: 198bd87d188d97032ee0c73d0941c8b1
@@ -110,8 +110,8 @@ import  -/  Ivar 9a2610f6d3a35738cd6e3df0efa94d4d
   mkConstIvar 3e3db0384e6c18ba4849c316c911d6a4
   sMultIvar 356c5596a99fee829bee8b24bdb79848
   showIvarRational 86836b8b8b42e6bab13bd30c13c32c0f
-import  -/  Pde e16c2c7ed6b24e6283b8d96f4d70c5e8
-  exports: 8abb8fdc636680b3ed604e70d00ee765
+import  -/  Pde cd5d2d09242d9c38299d583ec360f10a
+  exports: 0546aa92469ff41a60195e40423be0c0
 import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e
   exports: b4addde23d2a94c7aa7abec683ad90b2
   Tensor 1ac5ddd89ae57be76544d24271fdf653

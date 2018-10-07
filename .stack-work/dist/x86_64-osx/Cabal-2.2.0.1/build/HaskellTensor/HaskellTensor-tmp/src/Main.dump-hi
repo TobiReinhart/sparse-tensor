@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-06 11:44:34.148564 UTC
+2018-10-07 19:39:51.238319 UTC
 
 interface main:Main 8043
-  interface hash: b43cae8d3b91201d8eef8c6150615d07
-  ABI hash: 3287231c31a62db7c9832487b9d6f50c
+  interface hash: d3e436abc8d904353b8c789141600dac
+  ABI hash: 2acb51529e70406791dc1f9bf3b6bbf3
   export-list hash: ddc2ba71dfc32bed9b40cd7414e1e6d1
   orphan hash: d4fb35ada186a1cf02574d9911c171df
   flag hash: 26906880275f8331bc9f1651bb2d3f20
@@ -105,14 +105,13 @@ import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
 import  -/  Ivar 9a2610f6d3a35738cd6e3df0efa94d4d
   exports: 847b7f62b7be31da91814bf314ffd8e5
   Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
-import  -/  Pde e16c2c7ed6b24e6283b8d96f4d70c5e8
-  exports: 8abb8fdc636680b3ed604e70d00ee765
+import  -/  Pde cd5d2d09242d9c38299d583ec360f10a
+  exports: 0546aa92469ff41a60195e40423be0c0
   combinePdes a3131fb0e902bb84dba4af01a668b5fc
   evalPdeRand f3974d1091c7c239243d972cfe3e9e0f
   mkAllMultInds 0ef23efabef62049bc575eb10831d522
   mkPdefromTens 78f1cee431fc093fb5ace9712d1da429
-  prolongPdeAll 15a2648675f015c00f283ea56c9d4cf0
-  prolongSymbolAll b4477d173d0d4cf4fb0baa4f36fde1e0
+  prolongPdeAll 0031cb1b750afe3f5dcf1db202c28190
   triangleMap 70177a5bc750d19619c2dd2d58be51fb
 import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e
   exports: b4addde23d2a94c7aa7abec683ad90b2
@@ -1567,12 +1566,12 @@ dc64384fc0f2f3b757a79032b7605b7f
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq Index.Uind_3) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-7f86ec2504a3e2703e15a6fe0a461152
+7f59eb8ffe9554526a711b92ae7e8f99
   main :: GHC.Types.IO ()
   {- Arity: 1, Strictness: <S,U>,
      Unfolding: InlineRule (0, True, True)
                 Main.main1 `cast` (Sym (GHC.Types.N:IO[0] <()>_R)) -}
-c1d8b7a389e6c2c8ba07941380ea30f5
+cd4d29c7159ee640bbc7c2facc0b86f3
   main1 ::
     GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
@@ -1737,21 +1736,24 @@ d8c4a4f9e241319773086fe505aac2e9
   main19 ::
     Data.Sequence.Internal.Seq Index.Lind_3 -> Index.Ind 4 Index.Lind_3
   {- Unfolding: (Index.mkInd @ 4 @ Index.Lind_3 Main.main16) -}
-a92f211a1b3d92ba3c0d5d12b1fb1190
+cb833fd3a5137696500be2a11aa22afb
   main2 ::
     Data.Map.Internal.Map
       (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar GHC.Real.Rational)
-  {- Unfolding: (Pde.prolongPdeAll2
-                   @ GHC.Real.Rational
-                   (Data.Map.Internal.Tip
-                      @ (GHC.Types.Int, Pde.MultiIndex)
-                      @ (Ivar.Ivar GHC.Real.Rational))
-                   (GHC.Base.map
-                      @ Pde.MultiIndex
-                      @ (Data.Map.Internal.Map
-                           (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar GHC.Real.Rational))
-                      Main.main3
-                      (Pde.$wmkAllMultInds 315#))) -}
+  {- Unfolding: (Pde.$sunion
+                   @ (Ivar.Ivar GHC.Real.Rational)
+                   Main.main4
+                   (Pde.prolongPdeAll2
+                      @ GHC.Real.Rational
+                      (Data.Map.Internal.Tip
+                         @ (GHC.Types.Int, Pde.MultiIndex)
+                         @ (Ivar.Ivar GHC.Real.Rational))
+                      (GHC.Base.map
+                         @ Pde.MultiIndex
+                         @ (Data.Map.Internal.Map
+                              (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar GHC.Real.Rational))
+                         Main.main3
+                         (Pde.$wmkAllMultInds 315#)))) -}
 d955c86cae3a2ab381da5603e282f0f5
   main20 :: [Index.Lind_9]
   {- Unfolding: (case GHC.Prim.dataToTag#
@@ -1900,15 +1902,16 @@ c8d335bba0bc997cf47342a4e43ee504
                       (GHC.Types.[]
                          @ ((GHC.Types.Int, GHC.Types.Int), Ivar.Ivar GHC.Real.Rational))
                       ww1) }) -}
-d306fb1a551ac89adccc63f74e0d0657
+6fc0381fb33ba0dd2600ac6ad2774d6f
   main3 ::
     Pde.MultiIndex
     -> Data.Map.Internal.Map
          (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar GHC.Real.Rational)
   {- Arity: 1, Strictness: <L,U>,
      Unfolding: (\ (x :: Pde.MultiIndex) ->
-                 Pde.prolongPde5
-                   @ (Ivar.Ivar GHC.Real.Rational)
+                 Pde.prolongPde1
+                   @ GHC.Real.Rational
+                   GHC.Real.$fFractionalRatio_$s$fNumRatio
                    x
                    Main.main4
                      `cast`
@@ -2000,7 +2003,7 @@ aa1769bccef8fb555a6e796cc8b85d22
 6c7aa4279e55e52727987cb96123d567
   main38 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 315#) -}
-9a51a0e23b69c4779b2421fdeadad0b1
+81f45a676139daf732ba27ac65625f32
   main39 :: [GHC.Types.Char]
   {- Unfolding: (GHC.CString.unpackCString# Main.main40) -}
 9cb50aae504938d722edcd6562e3c992
@@ -2018,11 +2021,11 @@ aa1769bccef8fb555a6e796cc8b85d22
                             @ (GHC.Types.Int, GHC.Types.Int)
                             @ (Ivar.Ivar GHC.Real.Rational))
                          Main.main5))) -}
-ce53aeaf41b4a0710dbf8f7775033dd3
+2724e4abac9dc8c2e6df0eebfc7a5d0d
   main40 :: GHC.Prim.Addr#
   {- HasNoCafRefs,
-     Unfolding: ("/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/SymbolProlongedRand.txt"#) -}
-786f0dc7b73e4a05baa23350af96445d
+     Unfolding: ("/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PdeProlongedRand2.txt"#) -}
+23366468027b39901ba15e27fe63cf72
   main41 ::
     GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)

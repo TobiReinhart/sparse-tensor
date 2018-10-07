@@ -4,7 +4,7 @@
 
 module Pde (
     prolongPde, prolongPdeAll, print2Maple, mkPdefromTens, evalPdeRand, triangleMap, mkAllMultInds, number2MultInd, prolongPdeConst, prolongPdeIvar,
-    combinePdes, prolongSymbolAll
+    combinePdes, prolongSymbolAll, deriveIvar1, multInd2Number1, addMultiInds, isDerivableIvar1
 
 ) where
 
@@ -39,8 +39,8 @@ module Pde (
                     where 
                         pos = (I.keys map1) !! 0
 
-    deriveIvar1 :: MultiIndex -> Ivar a -> Ivar a
-    deriveIvar1 (MultiIndex map1) (Ivar s map2) = Ivar i I.empty
+    deriveIvar1 :: Num a => MultiIndex -> Ivar a -> Ivar a
+    deriveIvar1 (MultiIndex map1) (Ivar s map2) = Ivar (i+s) I.empty
                     where 
                         pos = (I.keys map1) !! 0
                         i = (I.!) map2 pos
@@ -50,7 +50,7 @@ module Pde (
     prolongPdeConst :: MultiIndex -> Pde a -> Pde a
     prolongPdeConst mult (Pde map1) = Pde $ M.mapKeys (\(x,y) -> (136*(multInd2Number1 mult)+x,addMultiInds mult y)) map1
 
-    prolongPdeIvar :: MultiIndex -> Pde (Ivar a) -> Pde (Ivar a)
+    prolongPdeIvar :: Num a => MultiIndex -> Pde (Ivar a) -> Pde (Ivar a)
     prolongPdeIvar mult (Pde map1) = Pde map3
                     where
                         mapFilter = M.filter (isDerivableIvar1 mult) map1
@@ -66,6 +66,8 @@ module Pde (
     prolongPdeAll mults pde = Pde $ M.unions pdeMapList
                     where
                         pdeMapList = map (\x -> getPdeMap $ prolongPde x pde) mults
+
+    --this is probably not necessary
 
     prolongSymbolAll :: Num a => [MultiIndex] -> Pde (Ivar a) -> Pde (Ivar a)
     prolongSymbolAll mults pde = Pde $ M.unions pdeMapList

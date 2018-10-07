@@ -117,9 +117,7 @@ module Main (
 
         let pdeProlonged = prolongPdeAll mults pde
 
-        let prolongedSymbol = prolongSymbolAll mults pde
-
         let pdeTotal = combinePdes pde pdeProlonged
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/SymbolProlongedRand.txt" $ evalPdeRand 315 trian randMap prolongedSymbol
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PdeProlongedRand2.txt" $ evalPdeRand 315 trian randMap pdeTotal
 

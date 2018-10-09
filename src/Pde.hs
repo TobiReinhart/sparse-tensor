@@ -4,7 +4,7 @@
 
 module Pde (
     prolongPde, prolongPdeAll, print2Maple, mkPdefromTens, evalPdeRand, triangleMap, mkAllMultInds, number2MultInd, prolongPdeConst, prolongPdeIvar,
-    combinePdes, prolongSymbolAll, deriveIvar1, multInd2Number1, addMultiInds, isDerivableIvar1
+    combinePdes, prolongSymbolAll, deriveIvar1, multInd2Number1, addMultiInds, isDerivableIvar1, print2MaplePde
 
 ) where
 
@@ -149,7 +149,16 @@ module Pde (
     combinePdes :: Pde a -> Pde a -> Pde a
     combinePdes (Pde map1) (Pde map2) = Pde $ M.union map1 map2
 
-    --is there an error?
+
+    print2MaplePde :: Pde (Ivar Rational) -> String
+    print2MaplePde (Pde map1) = "[" ++ tail (foldr (++) " "  $ I.map (\y -> "," ++ y ) map2) ++ "]"
+                    where 
+                        l = M.assocs map1 
+                        l2 = map (\((x,y),z) -> (x, "(" ++ showIvarRational z ++ ")" ++ "*" ++ "L" ++  (show (multInd2Number y)) ++ "\n")) l
+                        map2 = I.fromListWith (\a b -> a ++ "+" ++ b) l2 
+
+
+    --is there an error? -> with the use of multiInd2MatrixNr
 
 
 

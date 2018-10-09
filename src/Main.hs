@@ -107,7 +107,7 @@ module Main (
 
         let randList = randomRs (-10000,10000) gen :: [Int]
 
-        --let randMap = I.fromList $ zip [1..315] randList
+        let randMap = I.fromList $ zip [1..315] randList
 
         let pde = mkPdefromTens totalEqn 
 
@@ -121,7 +121,7 @@ module Main (
 
         --now the same for the metric
 
-        let randMapM = I.fromList$ zip [1..150] randList
+        --let randMapM = I.fromList$ zip [1..150] randList
 
         let pdeM = mkPdefromTens totalEqnM
 
@@ -135,5 +135,5 @@ module Main (
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/MetricPdeCorrected2.txt" $ print2Maple 150 trianM  pdeM
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/MetricPdeProlongedCorrected3.txt" $ evalPdeRand 150 trianM randMapM pdeProlongedM
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/AreaNewProlonged.txt" $ evalPdeRand 315 trian randMap pdeTotal
 

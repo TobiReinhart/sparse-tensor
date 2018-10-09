@@ -18,7 +18,10 @@ module Pde (
     newtype MultiIndex  = MultiIndex (I.IntMap Natural) deriving (Eq,Ord,Show) 
 
     diffOrder :: MultiIndex -> Int
-    diffOrder (MultiIndex iMap) = I.size iMap
+    diffOrder (MultiIndex iMap) = fromIntegral $ I.foldr (+) 0 iMap 
+                
+
+    --there is a problem with difforder !!! (1 key multiple "entries")
 
     addMultiInds :: MultiIndex -> MultiIndex -> MultiIndex
     addMultiInds (MultiIndex iMap1) (MultiIndex iMap2) = MultiIndex $ I.unionWith (+) iMap1 iMap2
@@ -34,16 +37,20 @@ module Pde (
 
     isDerivableIvar1 :: MultiIndex -> Ivar a -> Bool
     isDerivableIvar1 (MultiIndex map1) (Ivar a map2)
-                | I.size map1  /= 1 = error "only works (and should be needed) for diffOrder 1 multi Inds"
+                | diffOrder (MultiIndex map1)  /= 1 = error "only works (and should be needed) for diffOrder 1 multi Inds"
                 | otherwise = I.member pos map2
                     where 
                         pos = (I.keys map1) !! 0
 
+    --there is a problem when 0 is stored !! -> it might happen that adding Ivars yields zeros stored in the ivar (corrected in Ivar)
+
     deriveIvar1 :: Num a => MultiIndex -> Ivar a -> Ivar a
-    deriveIvar1 (MultiIndex map1) (Ivar s map2) = Ivar (i+s) I.empty
+    deriveIvar1 (MultiIndex map1) (Ivar s map2) = Ivar (i) I.empty
                     where 
                         pos = (I.keys map1) !! 0
                         i = (I.!) map2 pos
+
+    --there was a small error
             
     --the idea is to first filter the list of keys by isDerivableIvar1 and then only derive the remaining keys
 
@@ -57,12 +64,12 @@ module Pde (
                         map2 = M.map (deriveIvar1 mult) mapFilter
                         map3 = M.mapKeys (\(x,y) -> (136*(multInd2Number1 mult)+x,y)) map2 
 
-    prolongPde :: Num a => MultiIndex -> Pde (Ivar a) -> Pde (Ivar a)
+    prolongPde :: (Num a, Eq a) => MultiIndex -> Pde (Ivar a) -> Pde (Ivar a)
     prolongPde mult sys = Pde $ M.unionWith addIvar (getPdeMap $ prolongPdeConst mult sys) (getPdeMap $ prolongPdeIvar mult sys)
 
     --the only problem is getting the new eqn number when prolonging -> solved by using M.mapKeys 
 
-    prolongPdeAll :: Num a => [MultiIndex] -> Pde (Ivar a) -> Pde (Ivar a)
+    prolongPdeAll :: (Num a, Eq a) => [MultiIndex] -> Pde (Ivar a) -> Pde (Ivar a)
     prolongPdeAll mults pde = Pde $ M.unions pdeMapList
                     where
                         pdeMapList = map (\x -> getPdeMap $ prolongPde x pde) mults
@@ -113,7 +120,7 @@ module Pde (
     multInd2MatrixNr mult nopsIvars triangle 
                     | diff == 0 = 1
                     | diff == 1 = 1 + (num !! 0)
-                    | diff == 2 = nopsIvars + ( (M.!) triangle num ) 
+                    | diff == 2 = 1 +  nopsIvars + ( (M.!) triangle num ) 
                         where 
                             diff = diffOrder mult 
                             num = multInd2Number mult 
@@ -141,7 +148,8 @@ module Pde (
 
     combinePdes :: Pde a -> Pde a -> Pde a
     combinePdes (Pde map1) (Pde map2) = Pde $ M.union map1 map2
-    
+
+    --is there an error?
 
 
 

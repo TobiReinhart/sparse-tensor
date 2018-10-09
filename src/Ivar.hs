@@ -33,7 +33,9 @@ module Ivar (
     showIvar (Ivar a map1) = (show a) ++ (concat ivarString)
                 where 
                     pairList = I.assocs map1
-                    ivarString = map (\(x,y) -> (show y) ++ "*" ++ "V" ++ (show x)) pairList
+                    ivarString = map (\(x,y) -> "+" ++ "(" ++ (show y) ++ "*" ++ "V" ++ (show x) ++ ")") pairList
+
+    --there was an error !!! (same as last week in showIvarRational)
 
     showIvarRational :: Ivar Rational -> String
     showIvarRational (Ivar a map1) = (show $ truncate a) ++ (concat ivarString)
@@ -42,13 +44,16 @@ module Ivar (
                     ivarString = map (\(x,y) -> "+" ++ "(" ++ (show $ truncate y) ++ "*" ++ "V" ++ (show x) ++ ")") pairList
 
 
-    sMultIvar :: Num a => a -> Ivar a -> Ivar a
+    sMultIvar :: (Num a, Eq a) => a -> Ivar a -> Ivar a
+    sMultIvar 0 ivar = mkConstIvar 0
     sMultIvar x ivar = fmap ((*) x) ivar
 
-    addIvar :: Num a => Ivar a -> Ivar a -> Ivar a
-    addIvar (Ivar x1 map1) (Ivar x2 map2) = Ivar (x1+x2) (I.unionWith (+) map1 map2)
+    addIvar :: (Num a, Eq a) => Ivar a -> Ivar a -> Ivar a
+    addIvar (Ivar x1 map1) (Ivar x2 map2) = Ivar (x1+x2) $ I.filter (/=0) (I.unionWith (+) map1 map2)
 
-    subIvar :: Num a => Ivar a -> Ivar a -> Ivar a
+    --we do not want zeros to be stored
+
+    subIvar :: (Num a,Eq a) => Ivar a -> Ivar a -> Ivar a
     subIvar ivar1 ivar2 = addIvar ivar1 (sMultIvar (-1) ivar2) 
 
     --construct all purely variable Ivars (for i variables)
@@ -73,9 +78,11 @@ module Ivar (
     mkRandomMap gen i = M.fromList $ zip [1..i] (randoms gen) 
 
     mkIvarRandom :: Num a => I.IntMap Int -> Ivar a -> a 
-    mkIvarRandom ranMap (Ivar a map1) = a + (fromIntegral $ sum ranList)
+    mkIvarRandom ranMap (Ivar a map1) = a + (sum ranList)
                     where
-                        ranList = I.elems $ I.mapWithKey (\k v -> (I.!) ranMap k) map1
+                        ranList = I.elems $ I.mapWithKey (\k v -> (*) v (fromIntegral $ (I.!) ranMap k)) map1
+
+    --there was an error with keys having values other than 1
 
     
 

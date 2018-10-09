@@ -1,12 +1,12 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-07 19:39:49.021745 UTC
+2018-10-09 09:33:11.415439 UTC
 
 interface main:EquivarianceMetric 8043
-  interface hash: 6d95f0c42a5a27737cea0543ee78c24d
-  ABI hash: 0a734aa593f1cef874ea2864f49692f2
-  export-list hash: 8d0560de87afac9f7b60fda506a8690e
-  orphan hash: 6b678bb2740ddeec913fa6d2c051dca8
+  interface hash: 03ce316dfd7a9dfd412119a6af914fc5
+  ABI hash: 96c2b93053cff8c5dace3924695c3828
+  export-list hash: f81050501e3f236c43b15806b5856af7
+  orphan hash: 86b2522a5eb7f4a4ebe45664bee9e4eb
   flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
@@ -65,7 +65,7 @@ import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.Map 0dbdaec812ef695a364aa6c69e7f7d53
 import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
-import  -/  BasicTensors eb6cceee2bfa4c3f5e3b279189c1d012
+import  -/  BasicTensors 8c63975df09792138d35d4ae483dd468
   exports: bfb629e309a355731e9d93c9c77ae75c
   delta_3 88443abb7d76d02fee3e7a789d30d02a
   delta_9 e75aa262356472dc198559ec7f775732
@@ -73,9 +73,9 @@ import  -/  BasicTensors eb6cceee2bfa4c3f5e3b279189c1d012
   interI_3 57cff971f1b5458cd80b1b0dcdf7525b
   interJ_2 2f0595593070d5b724a7c4cfafd49d1c
   interMetric c50059fc8b234941837aa330e53351d5
-  ivar1M 1c31f8a8d5743cc1758fc9046b63f2e8
-  ivar2M 6d08df96079034dbcf835ae06fd70a50
-  ivar3M 3da6ce0185868b2f662024ecd5dabce3
+  ivar1M 1c1c77169c405d269b4f1805aaa89dbd
+  ivar2M bc8b403819069ae5cd2160e773dfc326
+  ivar3M 7fccb231ed4c1eb7a6c6b5ef86484e1d
 import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
   exports: 829f159844af2634a0b2006a8d08cd72
   Index 5df768242bb15e89c1079fab7e7d3758
@@ -85,12 +85,12 @@ import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
   Uind_9 ab8f3576b9e9258982a5d77295330a40
   Uinds_3 63ef11ca566ba01817ced09e779f86a0
   getValInd 974a87ce371ea262afad5f9d63705d90
-import  -/  Ivar 9a2610f6d3a35738cd6e3df0efa94d4d
+import  -/  Ivar 59828d84f4f392dde7d157e78b1e20aa
   exports: 847b7f62b7be31da91814bf314ffd8e5
   Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
-  addIvar 05c03b458f32d9cc7a5d25e2e9ea4e41
-  sMultIvar 356c5596a99fee829bee8b24bdb79848
-import  -/  Pde cd5d2d09242d9c38299d583ec360f10a
+  addIvar d292753012f6d0425a83cacf61d3f780
+  sMultIvar 9041089729d8e9da4cfe3d58c70439ce
+import  -/  Pde 401686636a619427e6547ad9a294d9f0
   exports: 0546aa92469ff41a60195e40423be0c0
 import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e
   exports: b4addde23d2a94c7aa7abec683ad90b2
@@ -103,29 +103,6 @@ import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e
   tensorSMult eda9d768e6307a83070b869854214b43
   tensorSub 5ae6e28292f5ee5e3aebc88142b4d18f
   tensorTranspose 3f7c7309fc31e499e4e26c886fbf7b4a
-2b302c1ba7e36100136802766545a673
-  $saddIvar ::
-    Ivar.Ivar GHC.Real.Rational
-    -> Ivar.Ivar GHC.Real.Rational -> Ivar.Ivar GHC.Real.Rational
-  {- Arity: 2,
-     Strictness: <S,1*U(1*U(U,U),1*U)><S,1*U(1*U(U,U),1*U)>m,
-     Inline: [0],
-     Unfolding: InlineRule (2, True, False)
-                (\ (w1 :: Ivar.Ivar GHC.Real.Rational)
-                   (w2 :: Ivar.Ivar GHC.Real.Rational) ->
-                 case w1 of ww { Ivar.Ivar ww1 ww2 ->
-                 case w2 of ww3 { Ivar.Ivar ww4 ww5 ->
-                 Ivar.Ivar
-                   @ GHC.Real.Rational
-                   (GHC.Real.$fEnumRatio_$s$c+ ww1 ww4)
-                   (Data.IntMap.Strict.unionWithKey
-                      @ GHC.Real.Rational
-                      (\ (ds :: Data.IntSet.Internal.Key)
-                         (x :: GHC.Real.Rational)[OneShot]
-                         (y :: GHC.Real.Rational)[OneShot] ->
-                       GHC.Real.$fEnumRatio_$s$c+ x y)
-                      ww2
-                      ww5) } }) -}
 e5c19495a36ab9c4c48821e1bd30ca1f
   $sfromList ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
@@ -392,7 +369,7 @@ df5bc445bd99850fc55bf271a5896b7c
   {- Arity: 9,
      Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
      Inline: [0] -}
-d5c74310d0fb92006bcaf3c029e3f7c6
+e22b81cdafe0c84767eff004932462a7
   $weqn1_1M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -423,7 +400,7 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                         @ 1
                         @ 0
                         @ 0
-                        EquivarianceMetric.eqn1_1M4
+                        EquivarianceMetric.eqn1_1M7
                         ww2
                         BasicTensors.ivar1M1 of ww4 { Unit# ww5 ->
                  Tensor.$wtensorContractWith_9
@@ -444,8 +421,8 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                      `cast`
                    (Sym (GHC.TypeNats.N:SNat[0]
                              <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                   EquivarianceMetric.eqn1_1M4
                    EquivarianceMetric.eqn1_1M1
-                   EquivarianceMetric.$saddIvar
                    ww5
                      `cast`
                    (Data.Map.Internal.Map
@@ -460,7 +437,7 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                          (Index.Ind (Add0R (<1>_N)) <Index.Uind_3>_N)_N
                          (Index.Ind (Add0R (<1>_N)) <Index.Lind_3>_N)_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } }) -}
-72c207fa2e523729b4606bffdf01f978
+9abc12c93d6e4027c4ae1bd8547fe0d0
   $weqn1_2M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -495,7 +472,7 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                         GHC.Real.$fFractionalRatio_$s$c*
                         ww2
                         ww3 of ww4 { Unit# ww5 ->
-                 case EquivarianceMetric.eqn1_2M3
+                 case EquivarianceMetric.eqn1_2M4
                         `cast`
                       (Tensor.Tensor
                          (Add0L (<0>_N))
@@ -527,7 +504,7 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                         @ 1
                         @ 0
                         @ 1
-                        EquivarianceMetric.eqn1_1M4
+                        EquivarianceMetric.eqn1_2M3
                         (Data.Map.Strict.Internal.unionWith
                            @ (Index.Index 0 0 0 0 1 1 2 2)
                            @ GHC.Real.Rational
@@ -567,7 +544,7 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                         (Sym (GHC.TypeNats.N:SNat[0]
                                   <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
                         EquivarianceMetric.eqn1_2M1
-                        EquivarianceMetric.$saddIvar
+                        EquivarianceMetric.eqn1_1M1
                         ww11
                           `cast`
                         (Data.Map.Internal.Map
@@ -600,8 +577,8 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                      `cast`
                    (Sym (GHC.TypeNats.N:SNat[0]
                              <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                   EquivarianceMetric.eqn1_1M4
                    EquivarianceMetric.eqn1_1M1
-                   EquivarianceMetric.$saddIvar
                    ww13
                      `cast`
                    (Data.Map.Internal.Map
@@ -615,7 +592,7 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                          <Index.Ind 1 Index.Uind_3>_N
                          <Index.Ind 2 Index.Lind_3>_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } } }) -}
-683941b5d83edc3a38f5bd4b883d35a7
+8b679227403452914d41ddad99e21b18
   $weqn1_3M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -660,57 +637,19 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                         @ 0
                         @ 1
                         @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
                         @ 1
                         @ 1
-                        @ 0
-                        @ 0
-                        @ 0
-                        @ 0
                         @ 1
                         @ 1
-                        @ 0
-                        @ 0
                         GHC.Real.$fFractionalRatio_$s$c*
-                        ww2
-                        ww3 of ww8 { Unit# ww9 ->
-                 case Tensor.$wtensorTranspose
-                        @ 0
-                        @ 0
-                        @ 0
-                        @ 0
-                        @ 2
-                        @ 2
-                        @ 1
-                        @ 1
-                        @ GHC.Real.Rational
-                        EquivarianceMetric.eqn1_3M5
-                        EquivarianceMetric.eqn1_1M1
-                        ww9
-                          `cast`
-                        (Data.Map.Internal.Map
-                           ((,,,,,,,)
-                              (Index.Ind (Add0L (<0>_N)) <Index.Uind_20>_N)_N
-                              (Index.Ind (Add0L (<0>_N)) <Index.Lind_20>_N)_N
-                              (Index.Ind (Add0L (<0>_N)) <Index.Uind_19>_N)_N
-                              (Index.Ind (Add0L (<0>_N)) <Index.Lind_19>_N)_N
-                              (Index.Ind (AddDef (<1>_N, <1>_N)) <Index.Uind_9>_N)_N
-                              (Index.Ind (AddDef (<1>_N, <1>_N)) <Index.Lind_9>_N)_N
-                              (Index.Ind (Add0R (<1>_N)) <Index.Uind_3>_N)_N
-                              (Index.Ind (Add0R (<1>_N)) <Index.Lind_3>_N)_N)_N
-                           <GHC.Real.Rational>_R)_R of ww10 { Unit# ww11 ->
-                 case Tensor.$wtensorTranspose
-                        @ 0
-                        @ 0
-                        @ 0
-                        @ 0
-                        @ 2
-                        @ 2
-                        @ 1
-                        @ 1
-                        @ GHC.Real.Rational
-                        EquivarianceMetric.eqn1_3M4
-                        EquivarianceMetric.eqn1_1M1
-                        ww11 of ww12 { Unit# ww13 ->
+                        ww3
+                        ww2 of ww8 { Unit# ww9 ->
                  case Tensor.$wtensorProductWith
                         @ GHC.Real.Rational
                         @ (Ivar.Ivar GHC.Real.Rational)
@@ -731,7 +670,7 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                         @ 2
                         @ 0
                         @ 0
-                        EquivarianceMetric.eqn1_1M4
+                        EquivarianceMetric.eqn1_3M4
                         (EquivarianceMetric.$sunionWith
                            @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                            GHC.Real.$fEnumRatio_$s$c+
@@ -748,8 +687,20 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                                  (Index.Ind (Add0R (<1>_N)) <Index.Uind_3>_N)_N
                                  (Index.Ind (Add0R (<1>_N)) <Index.Lind_3>_N)_N)_N
                               <GHC.Real.Rational>_R)_R
-                           ww13)
-                        BasicTensors.ivar3M1 of ww14 { Unit# ww15 ->
+                           ww9
+                             `cast`
+                           (Data.Map.Internal.Map
+                              ((,,,,,,,)
+                                 (Index.Ind (Add0L (<0>_N)) <Index.Uind_20>_N)_N
+                                 (Index.Ind (Add0L (<0>_N)) <Index.Lind_20>_N)_N
+                                 (Index.Ind (Add0L (<0>_N)) <Index.Uind_19>_N)_N
+                                 (Index.Ind (Add0L (<0>_N)) <Index.Lind_19>_N)_N
+                                 (Index.Ind (AddDef (<1>_N, <1>_N)) <Index.Uind_9>_N)_N
+                                 (Index.Ind (AddDef (<1>_N, <1>_N)) <Index.Lind_9>_N)_N
+                                 (Index.Ind (Add0L (<1>_N)) <Index.Uind_3>_N)_N
+                                 (Index.Ind (Add0L (<1>_N)) <Index.Lind_3>_N)_N)_N
+                              <GHC.Real.Rational>_R)_R)
+                        BasicTensors.ivar3M1 of ww10 { Unit# ww11 ->
                  case Tensor.$wtensorContractWith_9
                         @ 1
                         @ 3
@@ -769,8 +720,8 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                         (Sym (GHC.TypeNats.N:SNat[0]
                                   <3>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <3>_N)
                         EquivarianceMetric.eqn1_3M2
-                        EquivarianceMetric.$saddIvar
-                        ww15
+                        EquivarianceMetric.eqn1_1M1
+                        ww11
                           `cast`
                         (Data.Map.Internal.Map
                            ((,,,,,,,)
@@ -785,7 +736,7 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                                  <Index.Lind_9>_N)_N
                               (Index.Ind (Add0R (<1>_N)) <Index.Uind_3>_N)_N
                               (Index.Ind (Add0R (<1>_N)) <Index.Lind_3>_N)_N)_N
-                           <Ivar.Ivar GHC.Real.Rational>_R)_R of ww16 { Unit# ww17 ->
+                           <Ivar.Ivar GHC.Real.Rational>_R)_R of ww12 { Unit# ww13 ->
                  Tensor.$wtensorContractWith_9
                    @ 0
                    @ 2
@@ -805,8 +756,8 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                    (Sym (GHC.TypeNats.N:SNat[0]
                              <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
                    EquivarianceMetric.eqn1_3M1
-                   EquivarianceMetric.$saddIvar
-                   ww17
+                   EquivarianceMetric.eqn1_1M1
+                   ww13
                      `cast`
                    (Data.Map.Internal.Map
                       ((,,,,,,,)
@@ -818,8 +769,8 @@ d5c74310d0fb92006bcaf3c029e3f7c6
                          (Index.Ind (Sym (AddDef (<2>_N, <1>_N))) <Index.Lind_9>_N)_N
                          <Index.Ind 1 Index.Uind_3>_N
                          <Index.Ind 1 Index.Lind_3>_N)_N
-                      <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } } } } }) -}
-efb75eb864909ae6587f09e7b8baee3c
+                      <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } } }) -}
+65ce6db2749684a819bc97f5f4c27cb4
   $weqn2_2M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -872,7 +823,7 @@ efb75eb864909ae6587f09e7b8baee3c
                           `cast`
                         (Sym (GHC.TypeNats.N:SNat[0]
                                   <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
-                        EquivarianceMetric.eqn1_1M1
+                        EquivarianceMetric.eqn1_3M1
                         GHC.Real.$fEnumRatio_$s$c+
                         ww5
                           `cast`
@@ -910,7 +861,7 @@ efb75eb864909ae6587f09e7b8baee3c
                         @ 1
                         @ 0
                         @ 0
-                        EquivarianceMetric.eqn1_1M4
+                        EquivarianceMetric.eqn2_2M1
                         ww9
                         BasicTensors.ivar1M1 of ww10 { Unit# ww11 ->
                  Tensor.$wtensorContractWith_9
@@ -931,8 +882,8 @@ efb75eb864909ae6587f09e7b8baee3c
                      `cast`
                    (Sym (GHC.TypeNats.N:SNat[0]
                              <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                   EquivarianceMetric.eqn1_1M4
                    EquivarianceMetric.eqn1_1M1
-                   EquivarianceMetric.$saddIvar
                    ww11
                      `cast`
                    (Data.Map.Internal.Map
@@ -947,7 +898,7 @@ efb75eb864909ae6587f09e7b8baee3c
                          (Index.Ind (Add0R (<0>_N)) <Index.Uind_3>_N)_N
                          (Index.Ind (Add0R (<2>_N)) <Index.Lind_3>_N)_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } }) -}
-895f3397aa60e59fb91a99309a5dce76
+d0a0780c50649c069fa38f51e3077b5b
   $weqn2_3M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -958,8 +909,8 @@ efb75eb864909ae6587f09e7b8baee3c
                            (Index.Linds_3 2) Index.Uind_9)
                    (w1 :: Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9) ->
                  case BasicTensors.interJ_2 w1 of ww { Tensor.Tensor ww1 ->
-                 case BasicTensors.$winterMetric w w1 of ww2 { Unit# ww3 ->
-                 case BasicTensors.interI_2 w of ww4 { Tensor.Tensor ww5 ->
+                 case BasicTensors.interI_2 w of ww2 { Tensor.Tensor ww3 ->
+                 case BasicTensors.$winterMetric w w1 of ww4 { Unit# ww5 ->
                  case Tensor.$wtensorProductWith
                         @ GHC.Real.Rational
                         @ GHC.Real.Rational
@@ -969,17 +920,17 @@ efb75eb864909ae6587f09e7b8baee3c
                         @ 0
                         @ 0
                         @ 1
-                        @ 1
-                        @ 1
-                        @ 1
-                        @ 0
-                        @ 0
-                        @ 0
-                        @ 0
-                        @ 1
                         @ 0
                         @ 0
                         @ 2
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 1
+                        @ 1
+                        @ 1
                         GHC.Real.$fFractionalRatio_$s$c*
                         ww3
                         ww5 of ww6 { Unit# ww7 ->
@@ -1001,7 +952,7 @@ efb75eb864909ae6587f09e7b8baee3c
                           `cast`
                         (Sym (GHC.TypeNats.N:SNat[0]
                                   <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
-                        EquivarianceMetric.eqn1_1M1
+                        EquivarianceMetric.eqn1_1M4
                         GHC.Real.$fEnumRatio_$s$c+
                         ww7
                           `cast`
@@ -1012,12 +963,9 @@ efb75eb864909ae6587f09e7b8baee3c
                               (Index.Ind (Add0L (<0>_N)) <Index.Uind_19>_N)_N
                               (Index.Ind (Add0L (<0>_N)) <Index.Lind_19>_N)_N
                               (Index.Ind (AddDef (<1>_N, <1>_N)) <Index.Uind_9>_N)_N
-                              (Index.Ind (Add0R (<1>_N)) <Index.Lind_9>_N)_N
-                              (Index.Ind
-                                 (Add0R (<1>_N) ; Sym (Add0L (<1>_N))) <Index.Uind_3>_N)_N
-                              (Index.Ind
-                                 (AddDef (<1>_N, <2>_N) ; Sym (AddDef (<2>_N, <1>_N)))
-                                 <Index.Lind_3>_N)_N)_N
+                              (Index.Ind (Add0L (<1>_N)) <Index.Lind_9>_N)_N
+                              <Index.Ind (0 GHC.TypeNats.+ 1) Index.Uind_3>_N
+                              <Index.Ind (2 GHC.TypeNats.+ 1) Index.Lind_3>_N)_N
                            <GHC.Real.Rational>_R)_R of ww8 { Unit# ww9 ->
                  case Tensor.$wtensorProductWith
                         @ GHC.Real.Rational
@@ -1060,7 +1008,7 @@ efb75eb864909ae6587f09e7b8baee3c
                           `cast`
                         (Sym (GHC.TypeNats.N:SNat[0]
                                   <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                        EquivarianceMetric.eqn2_3M2
+                        EquivarianceMetric.eqn2_3M3
                         GHC.Real.$fEnumRatio_$s$c+
                         ww11
                           `cast`
@@ -1078,7 +1026,7 @@ efb75eb864909ae6587f09e7b8baee3c
                                  (Add0L (<2>_N) ; Sym (AddDef (<1>_N, <1>_N)))
                                  <Index.Lind_3>_N)_N)_N
                            <GHC.Real.Rational>_R)_R of ww12 { Unit# ww13 ->
-                 case EquivarianceMetric.eqn2_3M1
+                 case EquivarianceMetric.eqn2_3M2
                         `cast`
                       (Tensor.Tensor
                          (Add0L (<0>_N))
@@ -1110,7 +1058,7 @@ efb75eb864909ae6587f09e7b8baee3c
                         @ 1
                         @ 0
                         @ 1
-                        EquivarianceMetric.eqn1_1M4
+                        EquivarianceMetric.eqn2_3M1
                         (EquivarianceMetric.$sunionWith
                            @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                            GHC.Real.$fEnumRatio_$s$c+
@@ -1136,7 +1084,7 @@ efb75eb864909ae6587f09e7b8baee3c
                         (Sym (GHC.TypeNats.N:SNat[0]
                                   <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
                         EquivarianceMetric.eqn1_2M1
-                        EquivarianceMetric.$saddIvar
+                        EquivarianceMetric.eqn1_1M1
                         ww17
                           `cast`
                         (Data.Map.Internal.Map
@@ -1169,8 +1117,8 @@ efb75eb864909ae6587f09e7b8baee3c
                      `cast`
                    (Sym (GHC.TypeNats.N:SNat[0]
                              <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                   EquivarianceMetric.eqn1_1M4
                    EquivarianceMetric.eqn1_1M1
-                   EquivarianceMetric.$saddIvar
                    ww19
                      `cast`
                    (Data.Map.Internal.Map
@@ -1184,7 +1132,7 @@ efb75eb864909ae6587f09e7b8baee3c
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Uind_3>_N)_N
                          (Index.Ind (Sym (AddDef (<1>_N, <1>_N))) <Index.Lind_3>_N)_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } } } } } } }) -}
-b97f30ec182bdc1bfcd517366da598c0
+ca6157f33a8120cb0d0ae15ea02d734f
   $weqn3_3M ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
@@ -1275,7 +1223,7 @@ b97f30ec182bdc1bfcd517366da598c0
                           `cast`
                         (Sym (GHC.TypeNats.N:SNat[0]
                                   <3>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <3>_N)
-                        EquivarianceMetric.eqn3_3M1
+                        EquivarianceMetric.eqn3_3M2
                         GHC.Real.$fEnumRatio_$s$c+
                         ww10
                           `cast`
@@ -1344,7 +1292,7 @@ b97f30ec182bdc1bfcd517366da598c0
                           `cast`
                         (Sym (GHC.TypeNats.N:SNat[0]
                                   <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                        EquivarianceMetric.eqn1_1M1
+                        EquivarianceMetric.eqn1_1M4
                         GHC.Real.$fEnumRatio_$s$c+
                         ww14
                           `cast`
@@ -1379,7 +1327,7 @@ b97f30ec182bdc1bfcd517366da598c0
                         @ 1
                         @ 0
                         @ 0
-                        EquivarianceMetric.eqn1_1M4
+                        EquivarianceMetric.eqn3_3M1
                         ww16
                         BasicTensors.ivar1M1 of ww17 { Unit# ww18 ->
                  Tensor.$wtensorContractWith_9
@@ -1401,7 +1349,7 @@ b97f30ec182bdc1bfcd517366da598c0
                    (Sym (GHC.TypeNats.N:SNat[0]
                              <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
                    EquivarianceMetric.eqn1_3M1
-                   EquivarianceMetric.$saddIvar
+                   EquivarianceMetric.eqn1_1M1
                    ww18
                      `cast`
                    (Data.Map.Internal.Map
@@ -1761,7 +1709,7 @@ a47711a191557795f988c2b6387a75c7
                                               (GHC.Prim.*# (GHC.Prim.-# (GHC.Prim.+# 1# a#) 1#) 4#))
                                            4#)
                                         1#) } } } } } } #)) -}
-27c395997e470fa6d6df598462e9d18a
+b40ccb58374af280eb9de4502d1e9e47
   $windex2Sparse5M ::
     Index.Uinds_9 1
     -> Index.Linds_9 2
@@ -1816,12 +1764,12 @@ a47711a191557795f988c2b6387a75c7
                                            (GHC.Prim.*# (GHC.Prim.-# (GHC.Prim.+# 1# a#) 1#) 4#))
                                         4#) } } } } } },
                     case ww1 of wild { Index.UnsafemkInd s ->
-                    case Data.Sequence.Internal.$wlookup @ Index.Lind_9 0# s of wild1 {
+                    case Data.Sequence.Internal.$wlookup @ Index.Lind_9 1# s of wild1 {
                       GHC.Base.Nothing
                       -> case Data.Maybe.fromJust1 ret_ty GHC.Types.Int of {}
                       GHC.Base.Just x
                       -> case GHC.Prim.dataToTag# @ Index.Lind_9 x of a# { DEFAULT ->
-                         case Data.Sequence.Internal.$wlookup @ Index.Lind_9 1# s of wild2 {
+                         case Data.Sequence.Internal.$wlookup @ Index.Lind_9 0# s of wild2 {
                            GHC.Base.Nothing
                            -> case Data.Maybe.fromJust1 ret_ty GHC.Types.Int of {}
                            GHC.Base.Just x1
@@ -1834,7 +1782,7 @@ a47711a191557795f988c2b6387a75c7
                                          (GHC.Prim.*# (GHC.Prim.-# (GHC.Prim.+# 1# a#) 1#) 10#))
                                       (GHC.Prim.+# 1# a#1))
                                    1#) } } } } } #)) -}
-6dbcd82c8c806346b24cf908e8a79170
+69f7bec81d5f85953fb99645f1102422
   $windex2Sparse6M ::
     Index.Uinds_19 1
     -> Index.Linds_9 2
@@ -1892,12 +1840,12 @@ a47711a191557795f988c2b6387a75c7
                                            (GHC.Prim.*# (GHC.Prim.-# (GHC.Prim.+# 1# a#) 1#) 4#))
                                         4#) } } } } } },
                     case ww1 of wild { Index.UnsafemkInd s ->
-                    case Data.Sequence.Internal.$wlookup @ Index.Lind_9 0# s of wild1 {
+                    case Data.Sequence.Internal.$wlookup @ Index.Lind_9 1# s of wild1 {
                       GHC.Base.Nothing
                       -> case Data.Maybe.fromJust1 ret_ty GHC.Types.Int of {}
                       GHC.Base.Just x
                       -> case GHC.Prim.dataToTag# @ Index.Lind_9 x of a# { DEFAULT ->
-                         case Data.Sequence.Internal.$wlookup @ Index.Lind_9 1# s of wild2 {
+                         case Data.Sequence.Internal.$wlookup @ Index.Lind_9 0# s of wild2 {
                            GHC.Base.Nothing
                            -> case Data.Maybe.fromJust1 ret_ty GHC.Types.Int of {}
                            GHC.Base.Just x1
@@ -1910,45 +1858,354 @@ a47711a191557795f988c2b6387a75c7
                                          (GHC.Prim.*# (GHC.Prim.-# (GHC.Prim.+# 1# a#) 1#) 10#))
                                       (GHC.Prim.+# 1# a#1))
                                    1#) } } } } } #)) -}
-b6c35e820c23b7b6bd3ad0e3222216c9
+c7a76ce8d7d38f94bffe354b1fc5437b
   $wlvl ::
-    GHC.Real.Rational
-    -> GHC.Real.Rational
-    -> Data.IntMap.Internal.IntMap GHC.Real.Rational
+    GHC.Integer.Type.Integer
+    -> GHC.Integer.Type.Integer
+    -> Ivar.Ivar GHC.Real.Rational
     -> (# GHC.Real.Rational,
           Data.IntMap.Internal.IntMap GHC.Real.Rational #)
-  {- Arity: 3, Strictness: <L,U(U,U)><L,1*U(U,U)><L,1*U>,
+  {- Arity: 3, Strictness: <S,U><L,U><L,1*U(1*U(U,U),1*U)>,
      Inline: [0],
-     Unfolding: (\ (w :: GHC.Real.Rational)
-                   (ww :: GHC.Real.Rational)
-                   (ww1 :: Data.IntMap.Internal.IntMap GHC.Real.Rational) ->
-                 (# GHC.Real.$fFractionalRatio_$s$c* w ww,
-                    letrec {
-                      go :: Data.IntMap.Internal.IntMap GHC.Real.Rational
-                            -> Data.IntMap.Internal.IntMap GHC.Real.Rational
-                        {- Arity: 1, Strictness: <S,1*U> -}
-                      = \ (ds :: Data.IntMap.Internal.IntMap GHC.Real.Rational) ->
-                        case ds of wild {
-                          Data.IntMap.Internal.Bin dt1 dt2 l r
-                          -> case go l of dt3 { DEFAULT ->
-                             case go r of dt4 { DEFAULT ->
-                             Data.IntMap.Internal.Bin @ GHC.Real.Rational dt1 dt2 dt3 dt4 } }
-                          Data.IntMap.Internal.Tip dt1 x
-                          -> case w of ww2 { GHC.Real.:% ww3 ww4 ->
-                             case x of ww5 { GHC.Real.:% ww6 ww7 ->
-                             case GHC.Real.$w$sreduce
-                                    (GHC.Integer.Type.timesInteger ww3 ww6)
-                                    (GHC.Integer.Type.timesInteger
-                                       ww4
-                                       ww7) of ww8 { (#,#) ww9 ww10 ->
-                             Data.IntMap.Internal.Tip
-                               @ GHC.Real.Rational
-                               dt1
-                               (GHC.Real.:% @ GHC.Integer.Type.Integer ww9 ww10) } } }
-                          Data.IntMap.Internal.Nil
-                          -> Data.IntMap.Internal.Nil @ GHC.Real.Rational }
-                    } in
-                    go ww1 #)) -}
+     Unfolding: (\ (ww :: GHC.Integer.Type.Integer)
+                   (ww1 :: GHC.Integer.Type.Integer)
+                   (w :: Ivar.Ivar GHC.Real.Rational) ->
+                 let {
+                   $j :: (# GHC.Real.Rational,
+                            Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+                     <join 0>
+                   = case w of wild1 { Ivar.Ivar a1 map ->
+                     (# case a1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                        case GHC.Real.$w$sreduce
+                               (GHC.Integer.Type.timesInteger ww ww4)
+                               (GHC.Integer.Type.timesInteger ww1 ww5) of ww6 { (#,#) ww7 ww8 ->
+                        GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8 } },
+                        letrec {
+                          go :: Data.IntMap.Internal.IntMap GHC.Real.Rational
+                                -> Data.IntMap.Internal.IntMap GHC.Real.Rational
+                            {- Arity: 1, Strictness: <S,1*U> -}
+                          = \ (ds :: Data.IntMap.Internal.IntMap GHC.Real.Rational) ->
+                            case ds of wild {
+                              Data.IntMap.Internal.Bin dt1 dt2 l r
+                              -> case go l of dt3 { DEFAULT ->
+                                 case go r of dt4 { DEFAULT ->
+                                 Data.IntMap.Internal.Bin @ GHC.Real.Rational dt1 dt2 dt3 dt4 } }
+                              Data.IntMap.Internal.Tip dt1 x
+                              -> case x of ww3 { GHC.Real.:% ww4 ww5 ->
+                                 case GHC.Real.$w$sreduce
+                                        (GHC.Integer.Type.timesInteger ww ww4)
+                                        (GHC.Integer.Type.timesInteger
+                                           ww1
+                                           ww5) of ww6 { (#,#) ww7 ww8 ->
+                                 Data.IntMap.Internal.Tip
+                                   @ GHC.Real.Rational
+                                   dt1
+                                   (GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8) } }
+                              Data.IntMap.Internal.Nil
+                              -> Data.IntMap.Internal.Nil @ GHC.Real.Rational }
+                        } in
+                        go map #) }
+                 } in
+                 case GHC.Integer.Type.eqInteger# ww Ivar.addIvar1 of wild2 {
+                   DEFAULT -> $j
+                   1#
+                   -> case GHC.Integer.Type.eqInteger#
+                             ww1
+                             GHC.Real.$fEnumRatio1 of wild3 {
+                        DEFAULT -> $j
+                        1#
+                        -> (# EquivarianceMetric.eqn1_1M8,
+                              Data.IntMap.Internal.Nil @ GHC.Real.Rational #) } }) -}
+eff4ef7a46730363fcc1151b25c0f630
+  $wlvl1 ::
+    GHC.Integer.Type.Integer
+    -> GHC.Integer.Type.Integer
+    -> Ivar.Ivar GHC.Real.Rational
+    -> (# GHC.Real.Rational,
+          Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+  {- Arity: 3, Strictness: <S,U><L,U><L,1*U(1*U(U,U),1*U)>,
+     Inline: [0],
+     Unfolding: (\ (ww :: GHC.Integer.Type.Integer)
+                   (ww1 :: GHC.Integer.Type.Integer)
+                   (w :: Ivar.Ivar GHC.Real.Rational) ->
+                 let {
+                   $j :: (# GHC.Real.Rational,
+                            Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+                     <join 0>
+                   = case w of wild1 { Ivar.Ivar a1 map ->
+                     (# case a1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                        case GHC.Real.$w$sreduce
+                               (GHC.Integer.Type.timesInteger ww ww4)
+                               (GHC.Integer.Type.timesInteger ww1 ww5) of ww6 { (#,#) ww7 ww8 ->
+                        GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8 } },
+                        letrec {
+                          go :: Data.IntMap.Internal.IntMap GHC.Real.Rational
+                                -> Data.IntMap.Internal.IntMap GHC.Real.Rational
+                            {- Arity: 1, Strictness: <S,1*U> -}
+                          = \ (ds :: Data.IntMap.Internal.IntMap GHC.Real.Rational) ->
+                            case ds of wild {
+                              Data.IntMap.Internal.Bin dt1 dt2 l r
+                              -> case go l of dt3 { DEFAULT ->
+                                 case go r of dt4 { DEFAULT ->
+                                 Data.IntMap.Internal.Bin @ GHC.Real.Rational dt1 dt2 dt3 dt4 } }
+                              Data.IntMap.Internal.Tip dt1 x
+                              -> case x of ww3 { GHC.Real.:% ww4 ww5 ->
+                                 case GHC.Real.$w$sreduce
+                                        (GHC.Integer.Type.timesInteger ww ww4)
+                                        (GHC.Integer.Type.timesInteger
+                                           ww1
+                                           ww5) of ww6 { (#,#) ww7 ww8 ->
+                                 Data.IntMap.Internal.Tip
+                                   @ GHC.Real.Rational
+                                   dt1
+                                   (GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8) } }
+                              Data.IntMap.Internal.Nil
+                              -> Data.IntMap.Internal.Nil @ GHC.Real.Rational }
+                        } in
+                        go map #) }
+                 } in
+                 case GHC.Integer.Type.eqInteger# ww Ivar.addIvar1 of wild2 {
+                   DEFAULT -> $j
+                   1#
+                   -> case GHC.Integer.Type.eqInteger#
+                             ww1
+                             GHC.Real.$fEnumRatio1 of wild3 {
+                        DEFAULT -> $j
+                        1#
+                        -> (# EquivarianceMetric.eqn1_1M8,
+                              Data.IntMap.Internal.Nil @ GHC.Real.Rational #) } }) -}
+b5d6e2143dc678520b037a084ab4dcc3
+  $wlvl2 ::
+    GHC.Integer.Type.Integer
+    -> GHC.Integer.Type.Integer
+    -> Ivar.Ivar GHC.Real.Rational
+    -> (# GHC.Real.Rational,
+          Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+  {- Arity: 3, Strictness: <S,U><L,U><L,1*U(1*U(U,U),1*U)>,
+     Inline: [0],
+     Unfolding: (\ (ww :: GHC.Integer.Type.Integer)
+                   (ww1 :: GHC.Integer.Type.Integer)
+                   (w :: Ivar.Ivar GHC.Real.Rational) ->
+                 let {
+                   $j :: (# GHC.Real.Rational,
+                            Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+                     <join 0>
+                   = case w of wild1 { Ivar.Ivar a1 map ->
+                     (# case a1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                        case GHC.Real.$w$sreduce
+                               (GHC.Integer.Type.timesInteger ww ww4)
+                               (GHC.Integer.Type.timesInteger ww1 ww5) of ww6 { (#,#) ww7 ww8 ->
+                        GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8 } },
+                        letrec {
+                          go :: Data.IntMap.Internal.IntMap GHC.Real.Rational
+                                -> Data.IntMap.Internal.IntMap GHC.Real.Rational
+                            {- Arity: 1, Strictness: <S,1*U> -}
+                          = \ (ds :: Data.IntMap.Internal.IntMap GHC.Real.Rational) ->
+                            case ds of wild {
+                              Data.IntMap.Internal.Bin dt1 dt2 l r
+                              -> case go l of dt3 { DEFAULT ->
+                                 case go r of dt4 { DEFAULT ->
+                                 Data.IntMap.Internal.Bin @ GHC.Real.Rational dt1 dt2 dt3 dt4 } }
+                              Data.IntMap.Internal.Tip dt1 x
+                              -> case x of ww3 { GHC.Real.:% ww4 ww5 ->
+                                 case GHC.Real.$w$sreduce
+                                        (GHC.Integer.Type.timesInteger ww ww4)
+                                        (GHC.Integer.Type.timesInteger
+                                           ww1
+                                           ww5) of ww6 { (#,#) ww7 ww8 ->
+                                 Data.IntMap.Internal.Tip
+                                   @ GHC.Real.Rational
+                                   dt1
+                                   (GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8) } }
+                              Data.IntMap.Internal.Nil
+                              -> Data.IntMap.Internal.Nil @ GHC.Real.Rational }
+                        } in
+                        go map #) }
+                 } in
+                 case GHC.Integer.Type.eqInteger# ww Ivar.addIvar1 of wild2 {
+                   DEFAULT -> $j
+                   1#
+                   -> case GHC.Integer.Type.eqInteger#
+                             ww1
+                             GHC.Real.$fEnumRatio1 of wild3 {
+                        DEFAULT -> $j
+                        1#
+                        -> (# EquivarianceMetric.eqn1_1M8,
+                              Data.IntMap.Internal.Nil @ GHC.Real.Rational #) } }) -}
+d19df3b1f8b8818cb86fba3c548c9cec
+  $wlvl3 ::
+    GHC.Integer.Type.Integer
+    -> GHC.Integer.Type.Integer
+    -> Ivar.Ivar GHC.Real.Rational
+    -> (# GHC.Real.Rational,
+          Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+  {- Arity: 3, Strictness: <S,U><L,U><L,1*U(1*U(U,U),1*U)>,
+     Inline: [0],
+     Unfolding: (\ (ww :: GHC.Integer.Type.Integer)
+                   (ww1 :: GHC.Integer.Type.Integer)
+                   (w :: Ivar.Ivar GHC.Real.Rational) ->
+                 let {
+                   $j :: (# GHC.Real.Rational,
+                            Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+                     <join 0>
+                   = case w of wild1 { Ivar.Ivar a1 map ->
+                     (# case a1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                        case GHC.Real.$w$sreduce
+                               (GHC.Integer.Type.timesInteger ww ww4)
+                               (GHC.Integer.Type.timesInteger ww1 ww5) of ww6 { (#,#) ww7 ww8 ->
+                        GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8 } },
+                        letrec {
+                          go :: Data.IntMap.Internal.IntMap GHC.Real.Rational
+                                -> Data.IntMap.Internal.IntMap GHC.Real.Rational
+                            {- Arity: 1, Strictness: <S,1*U> -}
+                          = \ (ds :: Data.IntMap.Internal.IntMap GHC.Real.Rational) ->
+                            case ds of wild {
+                              Data.IntMap.Internal.Bin dt1 dt2 l r
+                              -> case go l of dt3 { DEFAULT ->
+                                 case go r of dt4 { DEFAULT ->
+                                 Data.IntMap.Internal.Bin @ GHC.Real.Rational dt1 dt2 dt3 dt4 } }
+                              Data.IntMap.Internal.Tip dt1 x
+                              -> case x of ww3 { GHC.Real.:% ww4 ww5 ->
+                                 case GHC.Real.$w$sreduce
+                                        (GHC.Integer.Type.timesInteger ww ww4)
+                                        (GHC.Integer.Type.timesInteger
+                                           ww1
+                                           ww5) of ww6 { (#,#) ww7 ww8 ->
+                                 Data.IntMap.Internal.Tip
+                                   @ GHC.Real.Rational
+                                   dt1
+                                   (GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8) } }
+                              Data.IntMap.Internal.Nil
+                              -> Data.IntMap.Internal.Nil @ GHC.Real.Rational }
+                        } in
+                        go map #) }
+                 } in
+                 case GHC.Integer.Type.eqInteger# ww Ivar.addIvar1 of wild2 {
+                   DEFAULT -> $j
+                   1#
+                   -> case GHC.Integer.Type.eqInteger#
+                             ww1
+                             GHC.Real.$fEnumRatio1 of wild3 {
+                        DEFAULT -> $j
+                        1#
+                        -> (# EquivarianceMetric.eqn1_1M8,
+                              Data.IntMap.Internal.Nil @ GHC.Real.Rational #) } }) -}
+3e43969c27c61ad4453eaac3b08b0597
+  $wlvl4 ::
+    GHC.Integer.Type.Integer
+    -> GHC.Integer.Type.Integer
+    -> Ivar.Ivar GHC.Real.Rational
+    -> (# GHC.Real.Rational,
+          Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+  {- Arity: 3, Strictness: <S,U><L,U><L,1*U(1*U(U,U),1*U)>,
+     Inline: [0],
+     Unfolding: (\ (ww :: GHC.Integer.Type.Integer)
+                   (ww1 :: GHC.Integer.Type.Integer)
+                   (w :: Ivar.Ivar GHC.Real.Rational) ->
+                 let {
+                   $j :: (# GHC.Real.Rational,
+                            Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+                     <join 0>
+                   = case w of wild1 { Ivar.Ivar a1 map ->
+                     (# case a1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                        case GHC.Real.$w$sreduce
+                               (GHC.Integer.Type.timesInteger ww ww4)
+                               (GHC.Integer.Type.timesInteger ww1 ww5) of ww6 { (#,#) ww7 ww8 ->
+                        GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8 } },
+                        letrec {
+                          go :: Data.IntMap.Internal.IntMap GHC.Real.Rational
+                                -> Data.IntMap.Internal.IntMap GHC.Real.Rational
+                            {- Arity: 1, Strictness: <S,1*U> -}
+                          = \ (ds :: Data.IntMap.Internal.IntMap GHC.Real.Rational) ->
+                            case ds of wild {
+                              Data.IntMap.Internal.Bin dt1 dt2 l r
+                              -> case go l of dt3 { DEFAULT ->
+                                 case go r of dt4 { DEFAULT ->
+                                 Data.IntMap.Internal.Bin @ GHC.Real.Rational dt1 dt2 dt3 dt4 } }
+                              Data.IntMap.Internal.Tip dt1 x
+                              -> case x of ww3 { GHC.Real.:% ww4 ww5 ->
+                                 case GHC.Real.$w$sreduce
+                                        (GHC.Integer.Type.timesInteger ww ww4)
+                                        (GHC.Integer.Type.timesInteger
+                                           ww1
+                                           ww5) of ww6 { (#,#) ww7 ww8 ->
+                                 Data.IntMap.Internal.Tip
+                                   @ GHC.Real.Rational
+                                   dt1
+                                   (GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8) } }
+                              Data.IntMap.Internal.Nil
+                              -> Data.IntMap.Internal.Nil @ GHC.Real.Rational }
+                        } in
+                        go map #) }
+                 } in
+                 case GHC.Integer.Type.eqInteger# ww Ivar.addIvar1 of wild2 {
+                   DEFAULT -> $j
+                   1#
+                   -> case GHC.Integer.Type.eqInteger#
+                             ww1
+                             GHC.Real.$fEnumRatio1 of wild3 {
+                        DEFAULT -> $j
+                        1#
+                        -> (# EquivarianceMetric.eqn1_1M8,
+                              Data.IntMap.Internal.Nil @ GHC.Real.Rational #) } }) -}
+5912ba113434628670b9c5e179e28c43
+  $wlvl5 ::
+    GHC.Integer.Type.Integer
+    -> GHC.Integer.Type.Integer
+    -> Ivar.Ivar GHC.Real.Rational
+    -> (# GHC.Real.Rational,
+          Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+  {- Arity: 3, Strictness: <S,U><L,U><L,1*U(1*U(U,U),1*U)>,
+     Inline: [0],
+     Unfolding: (\ (ww :: GHC.Integer.Type.Integer)
+                   (ww1 :: GHC.Integer.Type.Integer)
+                   (w :: Ivar.Ivar GHC.Real.Rational) ->
+                 let {
+                   $j :: (# GHC.Real.Rational,
+                            Data.IntMap.Internal.IntMap GHC.Real.Rational #)
+                     <join 0>
+                   = case w of wild1 { Ivar.Ivar a1 map ->
+                     (# case a1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                        case GHC.Real.$w$sreduce
+                               (GHC.Integer.Type.timesInteger ww ww4)
+                               (GHC.Integer.Type.timesInteger ww1 ww5) of ww6 { (#,#) ww7 ww8 ->
+                        GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8 } },
+                        letrec {
+                          go :: Data.IntMap.Internal.IntMap GHC.Real.Rational
+                                -> Data.IntMap.Internal.IntMap GHC.Real.Rational
+                            {- Arity: 1, Strictness: <S,1*U> -}
+                          = \ (ds :: Data.IntMap.Internal.IntMap GHC.Real.Rational) ->
+                            case ds of wild {
+                              Data.IntMap.Internal.Bin dt1 dt2 l r
+                              -> case go l of dt3 { DEFAULT ->
+                                 case go r of dt4 { DEFAULT ->
+                                 Data.IntMap.Internal.Bin @ GHC.Real.Rational dt1 dt2 dt3 dt4 } }
+                              Data.IntMap.Internal.Tip dt1 x
+                              -> case x of ww3 { GHC.Real.:% ww4 ww5 ->
+                                 case GHC.Real.$w$sreduce
+                                        (GHC.Integer.Type.timesInteger ww ww4)
+                                        (GHC.Integer.Type.timesInteger
+                                           ww1
+                                           ww5) of ww6 { (#,#) ww7 ww8 ->
+                                 Data.IntMap.Internal.Tip
+                                   @ GHC.Real.Rational
+                                   dt1
+                                   (GHC.Real.:% @ GHC.Integer.Type.Integer ww7 ww8) } }
+                              Data.IntMap.Internal.Nil
+                              -> Data.IntMap.Internal.Nil @ GHC.Real.Rational }
+                        } in
+                        go map #) }
+                 } in
+                 case GHC.Integer.Type.eqInteger# ww Ivar.addIvar1 of wild2 {
+                   DEFAULT -> $j
+                   1#
+                   -> case GHC.Integer.Type.eqInteger#
+                             ww1
+                             GHC.Real.$fEnumRatio1 of wild3 {
+                        DEFAULT -> $j
+                        1#
+                        -> (# EquivarianceMetric.eqn1_1M8,
+                              Data.IntMap.Internal.Nil @ GHC.Real.Rational #) } }) -}
 e5a6336c8d7aba574c2aebc146609d4e
   $wpoly_go13 ::
     GHC.Prim.Int#
@@ -1956,7 +2213,7 @@ e5a6336c8d7aba574c2aebc146609d4e
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-85dbb09fbc98dfafea265dc79dc9d7e6
+6676d4a4b312914a58a0af3f43c35293
   eqn1_1M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -1977,29 +2234,84 @@ e5a6336c8d7aba574c2aebc146609d4e
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-f94ea9505613bffc345db080e4560338
-  eqn1_1M1 :: (GHC.Types.Int, GHC.Types.Int)
+bf81985bc2ffc50875745de1c8551350
+  eqn1_1M1 ::
+    Ivar.Ivar GHC.Real.Rational
+    -> Ivar.Ivar GHC.Real.Rational -> Ivar.Ivar GHC.Real.Rational
+  {- Arity: 2,
+     Strictness: <S,1*U(1*U(U,U),1*U)><S,1*U(1*U(U,U),1*U)>m,
+     Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: Ivar.Ivar GHC.Real.Rational)
+                   (w1 :: Ivar.Ivar GHC.Real.Rational) ->
+                 case w of ww { Ivar.Ivar ww1 ww2 ->
+                 case w1 of ww3 { Ivar.Ivar ww4 ww5 ->
+                 Ivar.Ivar
+                   @ GHC.Real.Rational
+                   (GHC.Real.$fEnumRatio_$s$c+ ww1 ww4)
+                   (Data.IntMap.Internal.filterWithKey
+                      @ GHC.Real.Rational
+                      EquivarianceMetric.eqn1_1M3
+                      (Data.IntMap.Strict.unionWithKey
+                         @ GHC.Real.Rational
+                         EquivarianceMetric.eqn1_1M2
+                         ww2
+                         ww5)) } }) -}
+4ee3ef1cccda86726801e9072e319107
+  eqn1_1M2 ::
+    Data.IntSet.Internal.Key
+    -> GHC.Real.Rational
+    -> GHC.Real.Rational
+    -> GHC.Real.Ratio GHC.Integer.Type.Integer
+  {- Arity: 3, Strictness: <L,A><S(SS),1*U(U,U)><S(SS),1*U(U,U)>m,
+     Unfolding: (\ (ds1 :: Data.IntSet.Internal.Key)
+                   (x :: GHC.Real.Rational)[OneShot]
+                   (y :: GHC.Real.Rational)[OneShot] ->
+                 GHC.Real.$fEnumRatio_$s$c+ x y) -}
+ddb1d0c2c61485d4d18dd78b1a1bbea0
+  eqn1_1M3 ::
+    Data.IntSet.Internal.Key -> GHC.Real.Rational -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,A><S(SS),1*U(U,U)>,
+     Unfolding: (\ (ds1 :: Data.IntSet.Internal.Key)
+                   (x :: GHC.Real.Rational)[OneShot] ->
+                 case x of wild { GHC.Real.:% a1 a2 ->
+                 case GHC.Integer.Type.eqInteger# a1 Ivar.addIvar1 of wild2 {
+                   DEFAULT -> GHC.Types.True
+                   1#
+                   -> case GHC.Integer.Type.eqInteger#
+                             a2
+                             GHC.Real.$fEnumRatio1 of wild3 {
+                        DEFAULT -> GHC.Types.True 1# -> GHC.Types.False } } }) -}
+5524726564e7cf006a4eee3292c4be4c
+  eqn1_1M4 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
-     Unfolding: ((EquivarianceMetric.eqn1_1M3,
-                  EquivarianceMetric.eqn1_1M2)) -}
-896394442a442e1c73f3c8b8f92657bd
-  eqn1_1M2 :: GHC.Types.Int
+     Unfolding: ((EquivarianceMetric.eqn1_1M6,
+                  EquivarianceMetric.eqn1_1M5)) -}
+4f2057ecb0dd7d8e32ec0af1763f345a
+  eqn1_1M5 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 1#) -}
-1189b2313e5e9129f321b21af3011da8
-  eqn1_1M3 :: GHC.Types.Int
+db30ba19c6b1d1d53040330bebcb9feb
+  eqn1_1M6 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
-6f945188686f0a39f7da87d2a5cc1a06
-  eqn1_1M4 ::
+906d30a14f1686179c0e4110708d8523
+  eqn1_1M7 ::
     GHC.Real.Rational
     -> Ivar.Ivar GHC.Real.Rational -> Ivar.Ivar GHC.Real.Rational
-  {- Arity: 2, Strictness: <L,U(U,U)><S,1*U(1*U(U,U),1*U)>m,
+  {- Arity: 2, Strictness: <S(SS),1*U(U,U)><L,1*U(1*U(U,U),1*U)>m,
      Inline: [0],
      Unfolding: InlineRule (2, True, False)
                 (\ (w :: GHC.Real.Rational) (w1 :: Ivar.Ivar GHC.Real.Rational) ->
-                 case w1 of ww { Ivar.Ivar ww1 ww2 ->
-                 case EquivarianceMetric.$wlvl w ww1 ww2 of ww3 { (#,#) ww4 ww5 ->
+                 case w of ww { GHC.Real.:% ww1 ww2 ->
+                 case EquivarianceMetric.$wlvl ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
                  Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
-6405688b730375fef1e010b5a3bea134
+762b6a33376ef3812f2de75f84e569d0
+  eqn1_1M8 :: GHC.Real.Ratio GHC.Integer.Type.Integer
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Real.:%
+                   @ GHC.Integer.Type.Integer
+                   Ivar.addIvar1
+                   GHC.Real.$fEnumRatio1) -}
+1cdd916d26c38ef4fd39cb91c5b85618
   eqn1_2M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -2020,16 +2332,27 @@ f94ea9505613bffc345db080e4560338
                    @ 2
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-1567363383e4bf033b99f334aaca95a0
+6bc4b3fa389024ab80415b5df642b771
   eqn1_2M1 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
-     Unfolding: ((EquivarianceMetric.eqn1_1M2,
+     Unfolding: ((EquivarianceMetric.eqn1_1M5,
                   EquivarianceMetric.eqn1_2M2)) -}
 f2ba8fccd7efb588bc9ac649049cfe1b
   eqn1_2M2 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 2#) -}
-8d8e68f190056c4c57a4e67e87b1769d
+ae541880d439e28e5d311e2bb0487130
   eqn1_2M3 ::
+    GHC.Real.Rational
+    -> Ivar.Ivar GHC.Real.Rational -> Ivar.Ivar GHC.Real.Rational
+  {- Arity: 2, Strictness: <S(SS),1*U(U,U)><L,1*U(1*U(U,U),1*U)>m,
+     Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: GHC.Real.Rational) (w1 :: Ivar.Ivar GHC.Real.Rational) ->
+                 case w of ww { GHC.Real.:% ww1 ww2 ->
+                 case EquivarianceMetric.$wlvl1 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
+                 Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
+a09d19957cd9049914c8e4c083904e98
+  eqn1_2M4 ::
     Tensor.Tensor
       (0 GHC.TypeNats.+ 0)
       (0 GHC.TypeNats.+ 0)
@@ -2074,8 +2397,8 @@ f2ba8fccd7efb588bc9ac649049cfe1b
                         @ 2
                         @ 2
                         @ GHC.Real.Rational
-                        EquivarianceMetric.eqn1_2M4
-                        EquivarianceMetric.eqn1_1M1
+                        EquivarianceMetric.eqn1_2M5
+                        EquivarianceMetric.eqn1_1M4
                         ww5
                           `cast`
                         (Data.Map.Internal.Map
@@ -2124,8 +2447,8 @@ f2ba8fccd7efb588bc9ac649049cfe1b
                    @ (2 GHC.TypeNats.+ 0)
                    @ GHC.Real.Rational
                    ww10 } } } } }) -}
-941f6a86b688680810f0218b008ff211
-  eqn1_2M4 :: GHC.Types.Int
+87559bfe744ee2b1cbf4deaccba436f9
+  eqn1_2M5 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 8#) -}
 94efa25b0bde4837c402d1879f09bbb4
   eqn1_2M_go8 ::
@@ -2134,7 +2457,7 @@ f2ba8fccd7efb588bc9ac649049cfe1b
     -> Data.Map.Internal.Map
          (Index.Index 0 0 0 0 1 1 2 2) GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U> -}
-254eecdc694909bd3567f1e34166eb20
+a5eb8aa0f2d8460ba5d5444eda709a4e
   eqn1_3M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -2155,26 +2478,31 @@ f2ba8fccd7efb588bc9ac649049cfe1b
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-37eccf1c0ff15c1b0553d1a9868a5aed
+cb744124ebc5e36e031b587d0063a4c8
   eqn1_3M1 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
-     Unfolding: ((EquivarianceMetric.eqn1_1M3,
+     Unfolding: ((EquivarianceMetric.eqn1_1M6,
                   EquivarianceMetric.eqn1_2M2)) -}
-d13e625f4696b232e604d6f981448177
+a4cd0515f289711df3f0e9bb9333aa96
   eqn1_3M2 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
-     Unfolding: ((EquivarianceMetric.eqn1_1M2,
+     Unfolding: ((EquivarianceMetric.eqn1_1M5,
                   EquivarianceMetric.eqn1_3M3)) -}
 0ae868d74489baa444cdc07d76f2e3b4
   eqn1_3M3 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 3#) -}
-ae4c0da14f1b44d24edcf89847b8b344
-  eqn1_3M4 :: GHC.Types.Int
-  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 5#) -}
-4b3ac0298a4ce3e9c500b022bc4379d0
-  eqn1_3M5 :: GHC.Types.Int
-  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 6#) -}
-d9f5f97795ca7d9ff3f6a5b547ffa0ae
+ae3389084704b95873a80bf631aa0d3d
+  eqn1_3M4 ::
+    GHC.Real.Rational
+    -> Ivar.Ivar GHC.Real.Rational -> Ivar.Ivar GHC.Real.Rational
+  {- Arity: 2, Strictness: <S(SS),1*U(U,U)><L,1*U(1*U(U,U),1*U)>m,
+     Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: GHC.Real.Rational) (w1 :: Ivar.Ivar GHC.Real.Rational) ->
+                 case w of ww { GHC.Real.:% ww1 ww2 ->
+                 case EquivarianceMetric.$wlvl2 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
+                 Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
+e3f2a0a25016e708928cc04ac3143b8a
   eqn2_2M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -2195,7 +2523,18 @@ d9f5f97795ca7d9ff3f6a5b547ffa0ae
                    @ 2
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-2297756381c3ca506b0dd3f00f3b28a8
+8c1438f85309a4a467f0551772fd80e0
+  eqn2_2M1 ::
+    GHC.Real.Rational
+    -> Ivar.Ivar GHC.Real.Rational -> Ivar.Ivar GHC.Real.Rational
+  {- Arity: 2, Strictness: <S(SS),1*U(U,U)><L,1*U(1*U(U,U),1*U)>m,
+     Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: GHC.Real.Rational) (w1 :: Ivar.Ivar GHC.Real.Rational) ->
+                 case w of ww { GHC.Real.:% ww1 ww2 ->
+                 case EquivarianceMetric.$wlvl3 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
+                 Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
+298e8396091f5c537603a747dbb9bcbc
   eqn2_3M ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -2216,8 +2555,19 @@ d9f5f97795ca7d9ff3f6a5b547ffa0ae
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-eb3759a1cd3848831e98f5a456f10cd1
+fca111f57a1a4b8f6e72aa1c968ac5a0
   eqn2_3M1 ::
+    GHC.Real.Rational
+    -> Ivar.Ivar GHC.Real.Rational -> Ivar.Ivar GHC.Real.Rational
+  {- Arity: 2, Strictness: <S(SS),1*U(U,U)><L,1*U(1*U(U,U),1*U)>m,
+     Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: GHC.Real.Rational) (w1 :: Ivar.Ivar GHC.Real.Rational) ->
+                 case w of ww { GHC.Real.:% ww1 ww2 ->
+                 case EquivarianceMetric.$wlvl4 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
+                 Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
+7f57bbd4f0b36d85fb119d0c0f995ba6
+  eqn2_3M2 ::
     Tensor.Tensor
       (0 GHC.TypeNats.+ 0)
       (0 GHC.TypeNats.+ 0)
@@ -2299,11 +2649,11 @@ eb3759a1cd3848831e98f5a456f10cd1
                    @ (0 GHC.TypeNats.+ 1)
                    @ GHC.Real.Rational
                    ww8 } } } }) -}
-b50dada792d2ff4a979e33db4e71b037
-  eqn2_3M2 :: (GHC.Types.Int, GHC.Types.Int)
+a36a7d18de578137af8bea6a8430e32b
+  eqn2_3M3 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
-     Unfolding: ((EquivarianceMetric.eqn1_1M2,
-                  EquivarianceMetric.eqn1_1M2)) -}
+     Unfolding: ((EquivarianceMetric.eqn1_1M5,
+                  EquivarianceMetric.eqn1_1M6)) -}
 24cf434b242aa828d8ce1f4dfd5b95c0
   eqn2_3M_go1 ::
     Data.Map.Internal.Map
@@ -2318,7 +2668,7 @@ ac4821a54b61852a4056d237e61b470a
     -> Data.Map.Internal.Map
          (Index.Index 0 0 0 0 2 2 1 1) GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U> -}
-97c90902e75d6c80a3577f72007b14c6
+9b7d245959db2d72578f811d4112015a
   eqn3_3M ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
@@ -2341,8 +2691,19 @@ ac4821a54b61852a4056d237e61b470a
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-8fd7e36a4b209df0b4243fee7de1419a
-  eqn3_3M1 :: (GHC.Types.Int, GHC.Types.Int)
+21b6eb4153f21f04f6df1b5b331cfb3c
+  eqn3_3M1 ::
+    GHC.Real.Rational
+    -> Ivar.Ivar GHC.Real.Rational -> Ivar.Ivar GHC.Real.Rational
+  {- Arity: 2, Strictness: <S(SS),1*U(U,U)><L,1*U(1*U(U,U),1*U)>m,
+     Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: GHC.Real.Rational) (w1 :: Ivar.Ivar GHC.Real.Rational) ->
+                 case w of ww { GHC.Real.:% ww1 ww2 ->
+                 case EquivarianceMetric.$wlvl5 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
+                 Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
+7422edc1d797c6f7d03e23b3db720290
+  eqn3_3M2 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
      Unfolding: ((EquivarianceMetric.eqn1_2M2,
                   EquivarianceMetric.eqn1_3M3)) -}
@@ -2398,7 +2759,7 @@ ac4821a54b61852a4056d237e61b470a
                         ww6
                         ww8 of ww9 { (#,#) ww10 ww11 ->
                  (ww10, ww11) } }) -}
-6a17f3e15c4dd0f9a3090ffd17dc1cd7
+b642c0d881e63ba248ff47feb112aba3
   index2Sparse5M ::
     Index.Index 0 0 0 0 1 2 0 1 -> (GHC.Types.Int, GHC.Types.Int)
   {- Arity: 1, Strictness: <S,1*U(A,A,A,A,1*U(U),1*U(U),A,1*U(U))>m,
@@ -2411,7 +2772,7 @@ ac4821a54b61852a4056d237e61b470a
                         ww6
                         ww8 of ww9 { (#,#) ww10 ww11 ->
                  (ww10, ww11) } }) -}
-b16fe1e34231be107526045a80bd82fe
+4b34d89707c649059fdead1e2d095f35
   index2Sparse6M ::
     Index.Index 0 0 1 0 0 2 0 1 -> (GHC.Types.Int, GHC.Types.Int)
   {- Arity: 1, Strictness: <S,1*U(A,A,1*U(U),A,A,1*U(U),A,1*U(U))>m,
@@ -2544,10 +2905,6 @@ aeed38c88758bf5a5f85a3f274b31d07
     -> Data.Map.Internal.Map (Index.Index 0 0 1 0 0 2 0 1) a
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-"SPEC/EquivarianceMetric addIvar @ Rational" [orphan] [0] forall (w :: GHC.Num.Num
-                                                                         GHC.Real.Rational)
-  Ivar.addIvar @ (GHC.Real.Ratio GHC.Integer.Type.Integer) w
-  = EquivarianceMetric.$saddIvar
 "SPEC/EquivarianceMetric fromList @ (Int, Int) _" [orphan] forall @ a
                                                                   ($dOrd :: GHC.Classes.Ord
                                                                               (GHC.Types.Int,

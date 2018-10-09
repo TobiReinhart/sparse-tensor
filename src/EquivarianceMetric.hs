@@ -48,8 +48,7 @@ module EquivarianceMetric (
     eqn1_3M map1Metric map2Metric  = tensorContractWith_9 (0,2) addIvar $ tensorContractWith_9 (1,3) addIvar prod
                     where
                         int1 = tensorProductWith (*) (interMetric map1Metric map2Metric) delta_9
-                        int2_1 = tensorProductWith (*) (interMetric map1Metric map2Metric) delta_9
-                        int2 = tensorTranspose 5 (0,1) $ tensorTranspose 6 (0,1) int2_1
+                        int2 = tensorProductWith (*) delta_9 (interMetric map1Metric map2Metric)
                         intTotal = tensorAdd int1 int2
                         prod = tensorProductWith sMultIvar intTotal ivar3M
 
@@ -60,16 +59,16 @@ module EquivarianceMetric (
     eqn2_2M map1Metric map2Metric = tensorContractWith_9 (0,1) addIvar prod 
                     where
                         int1 = tensorProductWith (*) (interMetric map1Metric map2Metric) (interI_2 map1Metric)
-                        interTotal = tensorContractWith_3 (0,1) (+) int1
+                        interTotal = tensorContractWith_3 (0,2) (+) int1
                         prod = tensorProductWith sMultIvar interTotal ivar1M
                     
     eqn2_3M :: M.Map (Linds_3 2) Uind_9 -> M.Map (Uinds_3 2) Lind_9 -> Tensor 0 0 0 0 1 2 0 1 (Ivar Rational)
     eqn2_3M map1Metric map2Metric = tensorContractWith_3 (0,1) addIvar $ tensorContractWith_9 (1,2) addIvar prod 
                     where
-                        int1_1 = tensorProductWith (*) (interMetric map1Metric map2Metric) (interI_2 map1Metric)
+                        int1_1 = tensorProductWith (*) (interI_2 map1Metric) (interMetric map1Metric map2Metric) 
                         int1_2 = tensorContractWith_3 (0,1) (+) int1_1
                         int1_3 = tensorProductWith (*) (interJ_2 map2Metric) int1_2
-                        int1_4 = tensorContractWith_3 (1,1) (+) int1_3
+                        int1_4 = tensorContractWith_3 (1,0) (+) int1_3
                         int1 = tensorSMult 2 int1_4 
                         int2 = tensorProductWith (*) delta_9 $ tensorProductWith (*) delta_9 delta_3
                         interTotal = tensorSub int1 int2
@@ -122,17 +121,17 @@ module EquivarianceMetric (
     index2Sparse5M :: Index 0 0 0 0 1 2 0 1 -> (Int,Int) 
     index2Sparse5M (_, _, _, _, x5, x6, _, x8) = (16+(j-1)*4+n,10*5+(a-1)*10+i+1)
                          where 
-                             a = 1 + (fromEnum $ getValInd x6 0)
+                             a = 1 + (fromEnum $ getValInd x6 1)
                              j = 1 + (fromEnum $ getValInd x5 0)
-                             i = 1 + (fromEnum $ getValInd x6 1)
+                             i = 1 + (fromEnum $ getValInd x6 0)
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse6M :: Index 0 0 1 0 0 2 0 1 -> (Int,Int) 
     index2Sparse6M (_, _, x3, _, _, x6, _, x8) = (56+(j-1)*4+n,10*5+(a-1)*10+i+1)
                          where 
-                             a = 1 + (fromEnum $ getValInd x6 0)
+                             a = 1 + (fromEnum $ getValInd x6 1)
                              j = 1 + (fromEnum $ getValInd x3 0)
-                             i = 1 + (fromEnum $ getValInd x6 1)
+                             i = 1 + (fromEnum $ getValInd x6 0)
                              n = 1 + (fromEnum $ getValInd x8 0)
 
 

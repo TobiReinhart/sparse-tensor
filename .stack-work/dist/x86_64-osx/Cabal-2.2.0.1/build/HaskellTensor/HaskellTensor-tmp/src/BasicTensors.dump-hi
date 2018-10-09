@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-06 10:12:05.10031 UTC
+2018-10-09 09:33:09.813571 UTC
 
 interface main:BasicTensors 8043
-  interface hash: 53cd28a124fd9a5d1f2fe9d70fdba680
-  ABI hash: eb6cceee2bfa4c3f5e3b279189c1d012
+  interface hash: 2185eebe3ab1e89e14c62e8718b1aae5
+  ABI hash: 8c63975df09792138d35d4ae483dd468
   export-list hash: bfb629e309a355731e9d93c9c77ae75c
   orphan hash: 9d17a12baec57bab7908e574e049e4a0
   flag hash: 941ef95016433cfd417a6725e52dbf85
@@ -109,10 +109,10 @@ import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
   getValInd 974a87ce371ea262afad5f9d63705d90
   mkInd 1af0255577b3469c19c700d71eb25f9f
   sortInd 624a9be640c385afb47cb821ef6d66d3
-import  -/  Ivar 9a2610f6d3a35738cd6e3df0efa94d4d
+import  -/  Ivar 59828d84f4f392dde7d157e78b1e20aa
   exports: 847b7f62b7be31da91814bf314ffd8e5
   Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
-  number2Ivar b988f0c628c785064134f5698bb06f7d
+  number2Ivar fbae32d28cb725e708659381449a4539
 import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e
   exports: b4addde23d2a94c7aa7abec683ad90b2
   Tensor de2cb2f95a4c3ff6ea3ffdde0ef67deb
@@ -1051,7 +1051,7 @@ dbbe040e287ff39524415067b4a2daa1
                            GHC.Base.Nothing -> Data.Maybe.fromJust1 @ a
                            GHC.Base.Just x -> x } })
                    GHC.Types.True -> GHC.Types.True }) -}
-3beedc3948278fa525579505e6031863
+6e4d0fd9eb9060129e967cba56b4df44
   $wivar2FM ::
     Index.Linds_9 1
     -> Index.Linds_3 1
@@ -2262,7 +2262,7 @@ b8c3603e132d51dc2cbf2002fade5c2f
                    (w2 :: GHC.Enum.Enum a)
                    (w3 :: Index.Ind 4 a) ->
                  BasicTensors.$wisZeroArea @ a w1 w3) -}
-87176b309ca169e3ea3fa024b6257a60
+034c4f52b55e2b73d6fdd69ab4e6f3d8
   ivar1 ::
     Tensor.Tensor 0 1 0 0 0 0 0 0 (Ivar.Ivar GHC.Real.Rational)
   {- Strictness: m,
@@ -2277,7 +2277,7 @@ b8c3603e132d51dc2cbf2002fade5c2f
                    @ 0
                    @ (Ivar.Ivar GHC.Real.Rational)
                    BasicTensors.ivar4) -}
-7c72635cc4709263a543ebc2b8df6350
+ed79ea07cf797d42213bb48500b2d770
   ivar10 ::
     Data.Map.Internal.Map
       (Index.Index 0 1 0 0 0 0 0 1) (Ivar.Ivar GHC.Real.Rational)
@@ -2290,7 +2290,7 @@ b8c3603e132d51dc2cbf2002fade5c2f
                       @ (Ivar.Ivar GHC.Real.Rational)
                       BasicTensors.ivar2_indList
                       BasicTensors.ivar11)) -}
-775c48cbf92098d6abf4f7f371dc71ae
+e13c7b78d693133a23e8bcc6553e0d9f
   ivar11 :: [Ivar.Ivar GHC.Real.Rational]
   {- Unfolding: (GHC.Base.map
                    @ (Index.Uinds_20 0, Index.Linds_20 1, Index.Uinds_19 0,
@@ -2308,7 +2308,7 @@ b8c3603e132d51dc2cbf2002fade5c2f
                   BasicTensors.delta_7, BasicTensors.delta_7, BasicTensors.delta_7,
                   BasicTensors.delta_7, BasicTensors.delta_7,
                   BasicTensors.delta_6)) -}
-0943cc60daaff5cd8e13fe5f52e4662d
+88151a23ff5f29bcee2f5502ac7e1dda
   ivar13 ::
     (Index.Uinds_20 0, Index.Linds_20 1, Index.Uinds_19 0,
      Index.Linds_19 0, Index.Uinds_9 0, Index.Linds_9 0,
@@ -2364,7 +2364,7 @@ b8c3603e132d51dc2cbf2002fade5c2f
                                      @ GHC.Real.Rational
                                      (GHC.Prim.+# (GHC.Prim.+# 22# (GHC.Prim.*# a# 4#)) 3#)
                                      BasicTensors.ivar8 } } } } } }) }) -}
-795f1fce43e372653cb04c0b874598fd
+6d68c273ef9cf9a42e8b5bc1d5057fd9
   ivar14 ::
     Data.Map.Internal.Map
       (Index.Index 0 1 0 0 0 1 0 0) (Ivar.Ivar GHC.Real.Rational)
@@ -2377,7 +2377,7 @@ b8c3603e132d51dc2cbf2002fade5c2f
                       @ (Ivar.Ivar GHC.Real.Rational)
                       BasicTensors.ivar3_indList
                       BasicTensors.ivar15)) -}
-0c16f845d11c2750d1810c55372c80df
+5f4c347715ab44ca5a6ff34a4a56190c
   ivar15 :: [Ivar.Ivar GHC.Real.Rational]
   {- Unfolding: (GHC.Base.map
                    @ (Index.Uinds_20 0, Index.Linds_20 1, Index.Uinds_19 0,
@@ -2395,7 +2395,7 @@ cc9c58add087d29fce3aecfb15bddd46
                   BasicTensors.delta_7, BasicTensors.delta_7, BasicTensors.delta_7,
                   BasicTensors.delta_6, BasicTensors.delta_7,
                   BasicTensors.delta_7)) -}
-fa41f92bab1e259fb9c3906f8b66c613
+fb8ee456b18709db1d4e3e6b318e7434
   ivar17 ::
     (Index.Uinds_20 0, Index.Linds_20 1, Index.Uinds_19 0,
      Index.Linds_19 0, Index.Uinds_9 0, Index.Linds_9 1,
@@ -2435,7 +2435,7 @@ fa41f92bab1e259fb9c3906f8b66c613
                                 @ GHC.Real.Rational
                                 (GHC.Prim.+# (GHC.Prim.+# 106# (GHC.Prim.*# a# 10#)) a#1)
                                 BasicTensors.ivar8 } } } } } }) }) -}
-0a88340332a2918dc798f949c1e4344d
+580425167487791a0d65c54fb54eebfc
   ivar1FM ::
     Index.Index 0 0 0 0 0 1 0 0 -> Ivar.Ivar GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U(A,A,A,A,A,1*U(U),A,A)>m,
@@ -2447,7 +2447,7 @@ fa41f92bab1e259fb9c3906f8b66c613
                    @ GHC.Real.Rational
                    (GHC.Real.:%
                       @ GHC.Integer.Type.Integer
-                      Ivar.constrAllIvars2
+                      Ivar.addIvar1
                       GHC.Real.$fEnumRatio1)
                    (case ww8 of wild { Index.UnsafemkInd s ->
                     case Data.Sequence.Internal.$wlookup @ Index.Lind_9 0# s of wild1 {
@@ -2464,7 +2464,7 @@ fa41f92bab1e259fb9c3906f8b66c613
                               @ GHC.Integer.Type.Integer
                               Ivar.constrAllIvars1
                               GHC.Real.$fEnumRatio1) } } }) }) -}
-1c31f8a8d5743cc1758fc9046b63f2e8
+1c1c77169c405d269b4f1805aaa89dbd
   ivar1M ::
     Tensor.Tensor 0 0 0 0 0 1 0 0 (Ivar.Ivar GHC.Real.Rational)
   {- Strictness: m,
@@ -2479,7 +2479,7 @@ fa41f92bab1e259fb9c3906f8b66c613
                    @ 0
                    @ (Ivar.Ivar GHC.Real.Rational)
                    BasicTensors.ivar1M1) -}
-c835272358bb4bb9d3714d78b8c45937
+856b1ccafdcaf44c5a2931fdeef4f984
   ivar1M1 ::
     Data.Map.Internal.Map
       (Index.Index 0 0 0 0 0 1 0 0) (Ivar.Ivar GHC.Real.Rational)
@@ -2492,7 +2492,7 @@ c835272358bb4bb9d3714d78b8c45937
                       @ (Ivar.Ivar GHC.Real.Rational)
                       BasicTensors.ivar1M_indList
                       BasicTensors.ivar1M2)) -}
-00b2d43fd0e3375494d61d9ea3f9651e
+c1230ed3867e4e0f9a134b08c420df3a
   ivar1M2 :: [Ivar.Ivar GHC.Real.Rational]
   {- Unfolding: (GHC.Base.map
                    @ (Index.Uinds_20 0, Index.Linds_20 0, Index.Uinds_19 0,
@@ -2598,7 +2598,7 @@ e7f3ff1286401e7bf46a2d1accc87141
                    (Sym (GHC.TypeNats.N:SNat[0]
                              <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
                    BasicTensors.ivar6) -}
-c8677a80e53b1bfcca45b8397fe1728b
+0737557436268459f171275a299eb1a7
   ivar2 ::
     Tensor.Tensor 0 1 0 0 0 0 0 1 (Ivar.Ivar GHC.Real.Rational)
   {- Strictness: m,
@@ -2613,7 +2613,7 @@ c8677a80e53b1bfcca45b8397fe1728b
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    BasicTensors.ivar10) -}
-0ef548bf056c8c12b211ec6936647f58
+accc5ba3643f5ea9c2bde00c4af40d5b
   ivar2FM ::
     Index.Index 0 0 0 0 0 1 0 1 -> Ivar.Ivar GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U(A,A,A,A,A,1*U(U),A,1*U(U))>m,
@@ -2623,7 +2623,7 @@ c8677a80e53b1bfcca45b8397fe1728b
                  case w of ww { (,,,,,,,) ww2 ww3 ww5 ww6 ww7 ww8 ww9 ww10 ->
                  case BasicTensors.$wivar2FM ww8 ww10 of ww11 { (#,#) ww12 ww13 ->
                  Ivar.Ivar @ GHC.Real.Rational ww12 ww13 } }) -}
-6d08df96079034dbcf835ae06fd70a50
+bc8b403819069ae5cd2160e773dfc326
   ivar2M ::
     Tensor.Tensor 0 0 0 0 0 1 0 1 (Ivar.Ivar GHC.Real.Rational)
   {- Strictness: m,
@@ -2638,7 +2638,7 @@ c8677a80e53b1bfcca45b8397fe1728b
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    BasicTensors.ivar2M1) -}
-015101dc6c0abe4ab8b461b36db9702b
+3612812767e6544c0c306f969036f535
   ivar2M1 ::
     Data.Map.Internal.Map
       (Index.Index 0 0 0 0 0 1 0 1) (Ivar.Ivar GHC.Real.Rational)
@@ -2651,7 +2651,7 @@ c8677a80e53b1bfcca45b8397fe1728b
                       @ (Ivar.Ivar GHC.Real.Rational)
                       BasicTensors.ivar2M_indList
                       BasicTensors.ivar2M2)) -}
-a48cee70b432a6b8952c27458af010c8
+c238295dba0be598f8e05ef7cc7e848b
   ivar2M2 :: [Ivar.Ivar GHC.Real.Rational]
   {- Unfolding: (GHC.Base.map
                    @ (Index.Uinds_20 0, Index.Linds_20 0, Index.Uinds_19 0,
@@ -2757,7 +2757,7 @@ a87b4148a1fbd21969d99ade2bc04137
                    (Sym (GHC.TypeNats.N:SNat[0]
                              <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
                    BasicTensors.ivar12) -}
-255b2aa0f0026e0356911561e8e0469e
+7361711a7a126f2952b583b35e396fb6
   ivar3 ::
     Tensor.Tensor 0 1 0 0 0 1 0 0 (Ivar.Ivar GHC.Real.Rational)
   {- Strictness: m,
@@ -2772,7 +2772,7 @@ a87b4148a1fbd21969d99ade2bc04137
                    @ 0
                    @ (Ivar.Ivar GHC.Real.Rational)
                    BasicTensors.ivar14) -}
-e4512e8e50791aada510359e15fe4bc2
+a9ccec8ccc47162f7385b8b6611a8f53
   ivar3FM ::
     Index.Index 0 0 0 0 0 2 0 0 -> Ivar.Ivar GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U(A,A,A,A,A,1*U(U),A,A)>m,
@@ -2802,7 +2802,7 @@ e4512e8e50791aada510359e15fe4bc2
                                 @ GHC.Real.Rational
                                 (GHC.Prim.+# (GHC.Prim.+# 51# (GHC.Prim.*# a# 10#)) a#1)
                                 BasicTensors.ivar8 } } } } }) }) -}
-3da6ce0185868b2f662024ecd5dabce3
+7fccb231ed4c1eb7a6c6b5ef86484e1d
   ivar3M ::
     Tensor.Tensor 0 0 0 0 0 2 0 0 (Ivar.Ivar GHC.Real.Rational)
   {- Strictness: m,
@@ -2817,7 +2817,7 @@ e4512e8e50791aada510359e15fe4bc2
                    @ 0
                    @ (Ivar.Ivar GHC.Real.Rational)
                    BasicTensors.ivar3M1) -}
-ab74f8842be5caf098bf4f3348696282
+76f5e28b84b96385ab996ddb02aae6a2
   ivar3M1 ::
     Data.Map.Internal.Map
       (Index.Index 0 0 0 0 0 2 0 0) (Ivar.Ivar GHC.Real.Rational)
@@ -2830,7 +2830,7 @@ ab74f8842be5caf098bf4f3348696282
                       @ (Ivar.Ivar GHC.Real.Rational)
                       BasicTensors.ivar3M_indList
                       BasicTensors.ivar3M2)) -}
-2a967fc5649a755344fb592cef52ab90
+349e4ee296497051862baa2c184255c2
   ivar3M2 :: [Ivar.Ivar GHC.Real.Rational]
   {- Unfolding: (GHC.Base.map
                    @ (Index.Uinds_20 0, Index.Linds_20 0, Index.Uinds_19 0,
@@ -2935,7 +2935,7 @@ ab74f8842be5caf098bf4f3348696282
                    (Sym (GHC.TypeNats.N:SNat[0]
                              <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
                    BasicTensors.ivar16) -}
-bb6ba495ffc8675a7f77e61683afdddd
+58246fc272455bc8c474afa773447e05
   ivar4 ::
     Data.Map.Internal.Map
       (Index.Index 0 1 0 0 0 0 0 0) (Ivar.Ivar GHC.Real.Rational)
@@ -2948,7 +2948,7 @@ bb6ba495ffc8675a7f77e61683afdddd
                       @ (Ivar.Ivar GHC.Real.Rational)
                       BasicTensors.ivar1_indList
                       BasicTensors.ivar5)) -}
-99c7f7681eebe8839a86361ed8f0c52a
+3cf844118d44ea495144436197296299
   ivar5 :: [Ivar.Ivar GHC.Real.Rational]
   {- Unfolding: (GHC.Base.map
                    @ (Index.Uinds_20 0, Index.Linds_20 1, Index.Uinds_19 0,
@@ -2966,7 +2966,7 @@ bb6ba495ffc8675a7f77e61683afdddd
                   BasicTensors.delta_7, BasicTensors.delta_7, BasicTensors.delta_7,
                   BasicTensors.delta_7, BasicTensors.delta_7,
                   BasicTensors.delta_7)) -}
-39d82ef4c27f640f98c81017db70cd51
+6de5c72c33b13837793b886d428fe96b
   ivar7 ::
     (Index.Uinds_20 0, Index.Linds_20 1, Index.Uinds_19 0,
      Index.Linds_19 0, Index.Uinds_9 0, Index.Linds_9 0,
@@ -3002,12 +3002,12 @@ bb6ba495ffc8675a7f77e61683afdddd
                    @ GHC.Integer.Type.Integer
                    Ivar.constrAllIvars1
                    GHC.Real.$fEnumRatio1) -}
-a9f41659837fe7ab4d951cab4e7db8ab
+761392319b29009fe53e261f9b3f1430
   ivar9 :: GHC.Real.Rational
   {- HasNoCafRefs, Strictness: m,
      Unfolding: (GHC.Real.:%
                    @ GHC.Integer.Type.Integer
-                   Ivar.constrAllIvars2
+                   Ivar.addIvar1
                    GHC.Real.$fEnumRatio1) -}
 00341d0597e8742cd92344d0ea0d2e38
   symI_2 ::

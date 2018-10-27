@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-05 21:57:21.842938 UTC
+2018-10-11 14:05:40.035405 UTC
 
 interface main:Tensor 8043
-  interface hash: 935972ec0e4e55f9ef7a0f8c1a96deeb
-  ABI hash: 9e7e50ba8259015167e1b18f0d26629e
-  export-list hash: b4addde23d2a94c7aa7abec683ad90b2
+  interface hash: 06e8a56b8debf72cee033532293ea060
+  ABI hash: 98e0906bee6c6cfcd97a95b5d4cb24fb
+  export-list hash: fec1157eea535063319b082e204812dd
   orphan hash: a5ac230787a679843ebf1598745ea270
   flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
@@ -34,6 +34,7 @@ exports:
   Tensor.tensorSMult
   Tensor.tensorSub
   Tensor.tensorTranspose
+  Tensor.unsafeGetVal
   Tensor.Tensor{Tensor.Tensor}
 module dependencies: Index
 package dependencies: array-0.5.2.0 base-4.11.1.0*
@@ -5002,6 +5003,30 @@ eda9d768e6307a83070b869854214b43
                    @ n8
                    @ a
                    ww3 } }) -}
+d34a7f54a52ed836f7ce3a7499bc8770
+  unsafeGetVal ::
+    Tensor.Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    -> Index.Index n1 n2 n3 n4 n5 n6 n7 n8 -> a
+  {- Arity: 2, Strictness: <S(S),1*U(1*U)><S,1*U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ n1 :: GHC.Types.Nat
+                   @ n2 :: GHC.Types.Nat
+                   @ n3 :: GHC.Types.Nat
+                   @ n4 :: GHC.Types.Nat
+                   @ n5 :: GHC.Types.Nat
+                   @ n6 :: GHC.Types.Nat
+                   @ n7 :: GHC.Types.Nat
+                   @ n8 :: GHC.Types.Nat
+                   @ a
+                   (ds :: Tensor.Tensor n1 n2 n3 n4 n5 n6 n7 n8 a)
+                   (ind :: Index.Index n1 n2 n3 n4 n5 n6 n7 n8) ->
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Data.Map.Internal.find
+                   @ (Index.Index n1 n2 n3 n4 n5 n6 n7 n8)
+                   @ a
+                   (Tensor.aSymTensor4 @ n8 @ n7 @ n6 @ n5 @ n4 @ n3 @ n2 @ n1)
+                   ind
+                   map1 }) -}
 instance [safe] GHC.Base.Functor [Tensor.Tensor]
   = Tensor.$fFunctorTensor
 instance [safe] GHC.Show.Show [Tensor.Tensor] = Tensor.$fShowTensor

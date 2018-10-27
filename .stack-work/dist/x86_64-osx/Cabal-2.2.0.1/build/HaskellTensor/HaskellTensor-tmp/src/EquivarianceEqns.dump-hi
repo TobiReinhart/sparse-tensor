@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-09 11:08:51.309651 UTC
+2018-10-25 18:42:13.641427 UTC
 
 interface main:EquivarianceEqns 8043
-  interface hash: 4ebbe3bf0c67c84d94c577940a67cbf0
-  ABI hash: fc4d13f90c703c10d60d59e09f2d871b
+  interface hash: 8d7504893112be60ecb7f8523b052794
+  ABI hash: 006e05329738f00b05412798984c1746
   export-list hash: c43ff65b6fe961c9888524a8d759107a
   orphan hash: 5a8ea31337cbb9a6102439cfc89b3120
   flag hash: 941ef95016433cfd417a6725e52dbf85
@@ -78,17 +78,17 @@ import  -/  base-4.11.1.0:GHC.Show 73be67392447c974f19c3befd83c46c0
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.Map 0dbdaec812ef695a364aa6c69e7f7d53
 import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
-import  -/  BasicTensors 8c63975df09792138d35d4ae483dd468
-  exports: bfb629e309a355731e9d93c9c77ae75c
+import  -/  BasicTensors 7c7d5617ec2e1fdf148631cc7f92e983
+  exports: e8469ff54339c3b652e9a436a8919378
   delta_20 cc7ac0d02f645bebaef7e7d6a42c65ec
   delta_3 88443abb7d76d02fee3e7a789d30d02a
   delta_9 e75aa262356472dc198559ec7f775732
-  flatArea e38bfe165091a2ff6146ada68c291483
-  interArea 3958efe6dc6689d27e7175316387343e
+  flatArea 437cca0696d272553ab445b607846411
+  interArea b8de977ddd264acefafcb1bb50ac05a7
   interI_2 eb0e312eaf44de854b31148d758e3c06
-  interI_3 57cff971f1b5458cd80b1b0dcdf7525b
+  interI_3 9ebbcc686d6c1e79936e1e48d95b2145
   interJ_2 2f0595593070d5b724a7c4cfafd49d1c
-  interMetric c50059fc8b234941837aa330e53351d5
+  interMetric 2d510a194197f99dd3e1918f1f626886
   ivar1 034c4f52b55e2b73d6fdd69ab4e6f3d8
   ivar2 0737557436268459f171275a299eb1a7
   ivar3 7361711a7a126f2952b583b35e396fb6
@@ -110,10 +110,10 @@ import  -/  Ivar 59828d84f4f392dde7d157e78b1e20aa
   mkConstIvar 3e3db0384e6c18ba4849c316c911d6a4
   sMultIvar 9041089729d8e9da4cfe3d58c70439ce
   showIvarRational 845045f98240ad11356e64a039b10cbc
-import  -/  Pde 806bee59defa29b2902b62e3a42c1cdf
-  exports: 895fa7c5c5e2ebbb27281f0215f400c3
-import  -/  Tensor 9e7e50ba8259015167e1b18f0d26629e
-  exports: b4addde23d2a94c7aa7abec683ad90b2
+import  -/  Pde eae954b97181edb505aaa709b5471e56
+  exports: d780795f6c5eb865753089f7498e7db4
+import  -/  Tensor 98e0906bee6c6cfcd97a95b5d4cb24fb
+  exports: fec1157eea535063319b082e204812dd
   Tensor 1ac5ddd89ae57be76544d24271fdf653
   Tensor de2cb2f95a4c3ff6ea3ffdde0ef67deb
   tensorAdd b03543f4dfebee64226240002a5665ef
@@ -390,7 +390,7 @@ c7ca6d2755ab846df44475897042281a
   {- Arity: 9,
      Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
      Inline: [0] -}
-a5c471e215b11f872ece8228c1b9f818
+ef8e0f4114e51601d812ed5ea325ae4c
   $weqn1_1 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -458,7 +458,7 @@ a5c471e215b11f872ece8228c1b9f818
                          (Index.Ind (Add0R (<1>_N)) <Index.Uind_3>_N)_N
                          (Index.Ind (Add0R (<1>_N)) <Index.Lind_3>_N)_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } }) -}
-6bd888c3363215f8fe36af79eaf51be5
+c2996680fcbbee79ba8f754d1beb22c6
   $weqn1_1Flat ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -527,7 +527,7 @@ a5c471e215b11f872ece8228c1b9f818
                          (Index.Ind (Add0R (<1>_N)) <Index.Uind_3>_N)_N
                          (Index.Ind (Add0R (<1>_N)) <Index.Lind_3>_N)_N)_N
                       <GHC.Real.Rational>_R)_R } } }) -}
-3bd550d1db5ad66722e216090bcfc6f6
+4ba881005c01e39a1f845422f337eeff
   $weqn1_2 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -682,7 +682,7 @@ a5c471e215b11f872ece8228c1b9f818
                          <Index.Ind 1 Index.Uind_3>_N
                          <Index.Ind 2 Index.Lind_3>_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } } }) -}
-42b61d72e61dc3eaef646fe0158c080c
+a6df12d976dcf1d5db730f1043c048b8
   $weqn1_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -864,7 +864,7 @@ a5c471e215b11f872ece8228c1b9f818
                          <Index.Ind 1 Index.Uind_3>_N
                          <Index.Ind 1 Index.Lind_3>_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } } } } }) -}
-062f6b60c945e41e11505585c377df18
+349f36a0809c007bf8e1444558bc2a1b
   $weqn2_2 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
@@ -994,7 +994,7 @@ a5c471e215b11f872ece8228c1b9f818
                          (Index.Ind (Add0R (<0>_N)) <Index.Uind_3>_N)_N
                          (Index.Ind (Add0R (<2>_N)) <Index.Lind_3>_N)_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } }) -}
-93f3f9e017944462f3f9e7327820ae30
+ef0cabc32f50d1b7527908e153c704f6
   $weqn2_2Flat ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
@@ -1125,7 +1125,7 @@ a5c471e215b11f872ece8228c1b9f818
                          (Index.Ind (Add0R (<0>_N)) <Index.Uind_3>_N)_N
                          (Index.Ind (Add0R (<2>_N)) <Index.Lind_3>_N)_N)_N
                       <GHC.Real.Rational>_R)_R } } } } } }) -}
-9223ff391c152a62121cd49e9afe15ff
+c563068c5c69a874c7df0b538cb41bac
   $weqn2_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -1366,7 +1366,7 @@ a5c471e215b11f872ece8228c1b9f818
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Uind_3>_N)_N
                          (Index.Ind (Sym (AddDef (<1>_N, <1>_N))) <Index.Lind_3>_N)_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } } } } } } }) -}
-f10e48313a9d29b5c0c8fafb7e9c902e
+ca559716b8357a611a34870faa661c9b
   $weqn3_3 ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -1600,7 +1600,7 @@ f10e48313a9d29b5c0c8fafb7e9c902e
                          (Index.Ind (Add0R (<0>_N)) <Index.Uind_3>_N)_N
                          (Index.Ind (Add0R (<1>_N)) <Index.Lind_3>_N)_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } } } } } }) -}
-0b40a4cde7fd1304f06fbbfbcd750e41
+8301b450457bcdf0d999fcca69c57200
   $weqn3_3Flat ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -2787,7 +2787,7 @@ babe7a71ccdc16e2e5ac704ce56cd56c
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-a4008ae53674813bbdacb0c72fc191cf
+6dcec299a1137b2e8b05519313804b1c
   eqn1_1 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -2955,7 +2955,7 @@ e272704ea48c755feba60b0f1701c5d8
 454f21b4b2dd1bdf7672fff7bd69c35b
   eqn1_19 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 8#) -}
-b6e3f97c2975477109b520f93ff9bb55
+cb957d9e8a823dcef7b924a495e4f1e3
   eqn1_1Flat ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -2976,7 +2976,7 @@ b6e3f97c2975477109b520f93ff9bb55
                    @ 1
                    @ GHC.Real.Rational
                    ww1 }) -}
-b49c429ee0f344fe33feb086210a52e2
+f01de9e8be840ee0fd09557e232ebaa5
   eqn1_2 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -3015,7 +3015,7 @@ e8394ec1ffb131c2d54314f497cd1c97
     -> Data.Map.Internal.Map
          (Index.Index 1 1 0 0 0 0 2 2) GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U> -}
-64531d8816d649ad4e5637880f3a6bfa
+8d1dbc35daf73a1ff264d83cffd39ccf
   eqn1_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -3102,7 +3102,7 @@ b4986707693c20c95cd0738cbeec4d29
                  case w of ww { GHC.Real.:% ww1 ww2 ->
                  case EquivarianceEqns.$wlvl3 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
                  Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
-806ee545e4ed15ebf1e8c40d5bd7b0ad
+f4e83b4961fbc8a76c3a32b5e7658ac9
   eqn2_2 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
@@ -3125,7 +3125,7 @@ b4986707693c20c95cd0738cbeec4d29
                    @ 2
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-070d13ded26b5dc93256b263109fef1c
+1f0f4e67d55f8bcb7b4a3b31b3f50de2
   eqn2_2Flat ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
@@ -3148,7 +3148,7 @@ b4986707693c20c95cd0738cbeec4d29
                    @ 2
                    @ GHC.Real.Rational
                    ww1 }) -}
-3b80ebf54469d5d6918a940ab055bd2f
+a4c291a57a95cc7b316deb1ed7f53075
   eqn2_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -3302,7 +3302,7 @@ ee1bceabf270e794fb82739df30f147b
   eqn3_2 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
      Unfolding: ((EquivarianceEqns.eqn1_16, EquivarianceEqns.eqn3_4)) -}
-ec1e19af586ff3ecb65923a000fec23e
+9f9b336ab991a2fe8e06c8f11d9d204e
   eqn3_3 ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -3327,7 +3327,7 @@ ec1e19af586ff3ecb65923a000fec23e
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-c8e86b3ed636f25cf9811675be66f4f8
+bf7093251851333d68970378e9d91407
   eqn3_3Flat ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9

@@ -18,7 +18,7 @@ module BasicTensors (
     triangleMap2, triangleMap3, interI_2, interJ_2, symI_2, interI_3, interJ_3, symI_3, areaDofList, interMetric, interArea,
     ivar1, ivar2, ivar3, delta_3, delta_9, delta_19, delta_20, triangleMapArea, interI_Area, interJ_Area,
     interF_IArea, canonicalizeArea, isZeroArea, eta, epsilon, flatAreaST, flatArea,
-    ivar1FM, ivar2FM, ivar3FM, ivar1M, ivar2M, ivar3M
+    ivar1FM, ivar2FM, ivar3FM, ivar1M, ivar2M, ivar3M, invEta, etaAbs, invEtaAbs, flatAreaMap
 
 ) where
 
@@ -31,6 +31,8 @@ module BasicTensors (
     import Data.Proxy
     import Data.Maybe
     import qualified Data.Map.Strict as M
+    import qualified Data.IntMap.Strict as I
+
 
 
 
@@ -340,8 +342,31 @@ module BasicTensors (
                          x = fromEnum $ getValInd a 0
                          y = fromEnum $ getValInd a 1
 
+    invEta_F :: Index 0 0 0 0 0 0 2 0 -> Rational
+    invEta_F (_,_,_,_,_,_,a,_) 
+                | x == y && x == 0 = 1
+                | x == y = -1
+                | otherwise = 0
+                 where 
+                         x = fromEnum $ getValInd a 0
+                         y = fromEnum $ getValInd a 1
+
     eta :: Tensor 0 0 0 0 0 0 0 2 Rational
     eta = mkTensorfromF (0,0,0,0,0,0,0,2) eta_F
+
+    invEta :: Tensor 0 0 0 0 0 0 2 0 Rational
+    invEta = mkTensorfromF (0,0,0,0,0,0,2,0) invEta_F
+
+    etaAbs :: M.Map (Uinds_3 2) Lind_9 -> Tensor 0 0 0 0 0 1 0 0 Rational
+    etaAbs mapJ = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) t1
+                where 
+                        t1 = tensorProductWith (*) eta (interJ_2 mapJ)
+
+    invEtaAbs :: M.Map (Linds_3 2) Uind_9 -> Tensor 0 0 0 0 1 0 0 0 Rational
+    invEtaAbs mapI = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) t1
+                where 
+                        t1 = tensorProductWith (*) invEta (interI_2 mapI)
+
 
     permSignN :: Ord a => [a] -> Int
     permSignN [] = 0
@@ -365,6 +390,8 @@ module BasicTensors (
     epsilon :: Tensor 0 0 0 0 0 0 0 4 Rational
     epsilon = mkTensorfromF (0,0,0,0,0,0,0,4) epsilon_F
 
+    --the spacetimeform of the flat area metric
+
     flatAreaST :: Tensor 0 0 0 0 0 0 0 4 Rational
     flatAreaST = tensorSub (tensorSub etaProd1 etaProd2) epsilon 
                 where
@@ -372,10 +399,21 @@ module BasicTensors (
                         etaProd1 = tensorTranspose 8 (1,2) etaProd
                         etaProd2 = tensorTranspose 8 (1,3) $ tensorTranspose 8 (2,3) etaProd
 
+    --and the abstract index form
+
     flatArea :: M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 0 0 0 Rational
     flatArea map1 = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) $ tensorContractWith_3 (2,2) (+) $ tensorContractWith_3 (3,3) (+) prod
                 where
                         prod = tensorProductWith (*) flatAreaST $ interJ_Area map1
+
+    --we need to store the information of flatArea in an IntMap
+
+    flatAreaMap :: M.Map (Uinds_3 4) Lind_20 -> I.IntMap Int
+    flatAreaMap map1 = I.fromList $ (zip [1..21] valList) ++ (zip [22..315] $ repeat 0)
+                        where 
+                                flatAreaT = flatArea map1
+                                inds = map (\x -> indexList [] [x] [] [] [] [] [] []) [0..20]
+                                valList = map truncate $ map (getVal flatAreaT) inds 
     
     --there is a problem (solved tesnorTranspose works reverse direction when applied multiple times, from now order to old order)
    

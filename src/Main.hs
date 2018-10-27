@@ -66,8 +66,6 @@ module Main (
 
         let totalEqn = M.unions [eqn1Sparse, eqn2Sparse, eqn3Sparse, eqn4Sparse, eqn5Sparse, eqn6Sparse, eqnConstSparse]
 
-        --writeFile "PdeHaskell3.txt" $ showEqns totalEqn 
-
         let eqn1Flat = mkEqn1Sparse $ eqn1_1Flat map1Area map2Area
 
         let eqn2Flat = mkEqn4Sparse $ eqn2_2Flat map1Metric map1Area map2Area
@@ -121,7 +119,7 @@ module Main (
 
         --now the same for the metric
 
-        --let randMapM = I.fromList$ zip [1..150] randList
+        let randMapM = I.fromList$ zip [1..150] randList
 
         let pdeM = mkPdefromTens totalEqnM
 
@@ -135,5 +133,38 @@ module Main (
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/MetricPdeCorrected2.txt" $ print2Maple 150 trianM  pdeM
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/AreaNewProlonged.txt" $ evalPdeRand 315 trian randMap pdeTotal
+        let tens = tensorContractWith_9 (0,0) addIvar $ tensorContractWith_9 (1,1) addIvar $ tensorProductWith sMultIvar (tensorProductWith (*) (invEtaAbs map1Metric) (invEtaAbs map1Metric)) ivar3M
+
+        let eqn6New = mkEqn6SparseMPulled $ tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) $ tensorContractWith_3 (3,2) (+) 
+             $ tensorProductWith (*) (interJ_2 map2Metric) $ tensorProductWith (*) (interJ_2 map2Metric) (interI_3 mapInter3)
+
+        let pulledEqn3 = mkPdefromTens eqn6New
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PulledEqn3_2.txt" $ printConstPde pulledEqn3
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PMetricNew.txt" $ evalPdeRand 150 trianM randMapM pdeTotalM
+
+        let flatAreaT = flatArea map2Area
+
+        let flatAreaM = flatAreaMap map2Area 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PdeHaskellFlatNew1.txt" $ showEqnsFlat totalFlatEqn 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PdeHaskellFlatNew2.txt" $  evalPdeRand 315 trian flatAreaM pde
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PdeHaskellFlatProlonged.txt" $  evalPdeRand 315 trian flatAreaM pdeTotal 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PdeHaskellAreaRand.txt" $  evalPdeRand 315 trian randMap pde
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PdeHaskell3New.txt" $ showEqns totalEqn 
+
+        let eqnSD = mkPdefromTens $ M.union eqn1Sparse eqnConstSparse
+
+        let multsSD = mkAllMultInds 21
+
+        let trianSD = triangleMap 21
+         
+        let eqnSDProlonged = combinePdes eqnSD $ prolongPdeAllBlock1 multsSD eqnSD
+
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Block1ProlongedVars.txt" $  print2Maple 21 trianSD eqnSDProlonged 
 

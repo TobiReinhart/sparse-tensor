@@ -18,7 +18,7 @@
 module EquivarianceMetric (
     eqn1_1M, eqn1_2M, eqn1_3M, eqn2_2M, eqn2_3M, eqn3_3M, 
     index2Sparse1M, index2Sparse2M, index2Sparse3M, index2Sparse4M, index2Sparse5M, index2Sparse6M,
-    mkEqn1SparseM, mkEqn2SparseM, mkEqn3SparseM, mkEqn4SparseM, mkEqn5SparseM, mkEqn6SparseM
+    mkEqn1SparseM, mkEqn2SparseM, mkEqn3SparseM, mkEqn4SparseM, mkEqn5SparseM, mkEqn6SparseM, index2Sparse6MPulled, mkEqn6SparseMPulled
     
 ) where
 
@@ -152,5 +152,18 @@ module EquivarianceMetric (
 
     mkEqn6SparseM :: Tensor 0 0 1 0 0 2 0 1 a -> M.Map (Int,Int) a
     mkEqn6SparseM (Tensor map1) = M.mapKeys index2Sparse6M map1 
+
+    --for the equation contracted with eta
+
+    index2Sparse6MPulled :: Index 0 0 1 0 0 2 1 0 -> (Int,Int) 
+    index2Sparse6MPulled (_, _, x3, _, _, x6, x8, _) = (56+(j-1)*4+n,10*5+(a-1)*10+i+1)
+                         where 
+                             a = 1 + (fromEnum $ getValInd x6 1)
+                             j = 1 + (fromEnum $ getValInd x3 0)
+                             i = 1 + (fromEnum $ getValInd x6 0)
+                             n = 1 + (fromEnum $ getValInd x8 0)
+
+    mkEqn6SparseMPulled :: Tensor 0 0 1 0 0 2 1 0 a -> M.Map (Int,Int) a
+    mkEqn6SparseMPulled (Tensor map1) = M.mapKeys index2Sparse6MPulled map1 
 
     

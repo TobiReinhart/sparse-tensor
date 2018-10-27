@@ -16,7 +16,7 @@
 module Tensor (
     Tensor(..), mkTensorfromList, mkTensorfromF, getVal, tensorProductWith, tensorContractWith_3, tensorContractWith_9, tensorContractWith_19,
     tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor, tensorTranspose,
-    tensorIndList, mkTensorfromFZeros, evalFullTensor, evalTensorVals
+    tensorIndList, mkTensorfromFZeros, evalFullTensor, evalTensorVals, unsafeGetVal
 ) where
 
     import Index
@@ -78,6 +78,9 @@ module Tensor (
     getVal (Tensor map1) ind 
             | M.member ind map1 = (M.!) map1 ind
             | otherwise = 0  
+
+    unsafeGetVal :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> a
+    unsafeGetVal (Tensor map1) ind = (M.!) map1 ind
 
     getRank :: forall n1 n2 n3 n4 n5 n6 n7 n8 a. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
         Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Rank

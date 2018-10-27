@@ -4,7 +4,8 @@
 
 module Pde (
     prolongPde, prolongPdeAll, print2Maple, mkPdefromTens, evalPdeRand, triangleMap, mkAllMultInds, number2MultInd, prolongPdeConst, prolongPdeIvar,
-    combinePdes, prolongSymbolAll, deriveIvar1, multInd2Number1, addMultiInds, isDerivableIvar1, print2MaplePde
+    combinePdes, prolongSymbolAll, deriveIvar1, multInd2Number1, addMultiInds, isDerivableIvar1, print2MaplePde, printConstPde,
+    prolongPdeAllBlock1
 
 ) where
 
@@ -133,10 +134,12 @@ module Pde (
 
     --we need functions to construct pdes out of the tensor output and for prolonging the whole system
 
-    mkPdefromTens :: Show a => M.Map (Int,Int) (Ivar a) -> Pde (Ivar a)
+    mkPdefromTens :: M.Map (Int,Int) a -> Pde a
     mkPdefromTens map1 = Pde map2 
                 where 
                     map2 = M.mapKeys (\(x,y) -> (x,number2MultInd (y-1))) map1
+
+    --this function can also be used for evaluating the eqn at the flat geometry
 
     evalPdeRand :: Int -> M.Map [Int] Int -> I.IntMap Int -> Pde (Ivar Rational) -> String 
     evalPdeRand nopsIvar triangle randMap (Pde map1) = "{" ++ (tail $ concat l2) ++ "}"
@@ -145,6 +148,8 @@ module Pde (
                         l = M.assocs map2 
                         l2 = map (\((x,y),z) -> ',' : (show (x,multInd2MatrixNr y nopsIvar triangle)) ++ '=' : show (truncate z) ++ "\n") l
 
+
+    
 
     combinePdes :: Pde a -> Pde a -> Pde a
     combinePdes (Pde map1) (Pde map2) = Pde $ M.union map1 map2
@@ -159,6 +164,36 @@ module Pde (
 
 
     --is there an error? -> with the use of multiInd2MatrixNr
+
+    printConstPde :: Show a => Pde a -> String 
+    printConstPde (Pde map1) = "[" ++ tail (foldr (++) " "  $ I.map (\y -> "," ++ y ) map2) ++ "]"
+                    where 
+                        l = M.assocs map1 
+                        l2 = map (\((x,y),z) -> (x, "(" ++ (show $ z) ++ ")" ++ "*" ++ "L" ++  (show (multInd2Number y)) ++ "\n")) l
+                        map2 = I.fromListWith (\a b -> a ++ "+" ++ b) l2 
+
+    --the following functions are specific for the first 16 eqns 
+
+    prolongPdeConstBlock1 :: MultiIndex -> Pde a -> Pde a
+    prolongPdeConstBlock1 mult (Pde map1) = Pde $ M.mapKeys (\(x,y) -> (16*(multInd2Number1 mult)+x,addMultiInds mult y)) map1
+
+    prolongPdeIvarBlock1 :: Num a => MultiIndex -> Pde (Ivar a) -> Pde (Ivar a)
+    prolongPdeIvarBlock1 mult (Pde map1) = Pde map3
+                    where
+                        mapFilter = M.filter (isDerivableIvar1 mult) map1
+                        map2 = M.map (deriveIvar1 mult) mapFilter
+                        map3 = M.mapKeys (\(x,y) -> (16*(multInd2Number1 mult)+x,y)) map2 
+
+    prolongPdeBlock1 :: (Num a, Eq a) => MultiIndex -> Pde (Ivar a) -> Pde (Ivar a)
+    prolongPdeBlock1 mult sys = Pde $ M.unionWith addIvar (getPdeMap $ prolongPdeConstBlock1 mult sys) (getPdeMap $ prolongPdeIvarBlock1 mult sys)
+
+    --the only problem is getting the new eqn number when prolonging -> solved by using M.mapKeys 
+
+    prolongPdeAllBlock1 :: (Num a, Eq a) => [MultiIndex] -> Pde (Ivar a) -> Pde (Ivar a)
+    prolongPdeAllBlock1 mults pde = Pde $ M.unions pdeMapList
+                    where
+                        pdeMapList = map (\x -> getPdeMap $ prolongPdeBlock1 x pde) mults
+    
 
 
 

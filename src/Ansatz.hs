@@ -6,6 +6,8 @@ module Ansatz (
 
     import qualified Data.Set as Set
     import qualified Data.Sequence as S
+    import qualified Data.IntMap.Strict as I
+    import Data.List 
 
     --all we need to store in the tree are Ints that label the index position
 
@@ -93,3 +95,87 @@ module Ansatz (
     topSortAppend i list = map (\x -> i : x) list  
     
     --we need a function for converting the inverse permutations obtained from getTopSorts 
+
+    --for the are symmetry of the indices we actually do not need the inverse permutation
+
+    invertPerm :: [Int] -> [Int]
+    invertPerm [] = []
+    invertPerm l = foldr f [] [1..length l] 
+                where 
+                    f = \ a b -> (1 + (length $ takeWhile (/= a) l) : b )
+
+    getTopSortsInverse :: Forest -> [[Int]]
+    getTopSortsInverse forest = map invertPerm $ getTopSorts forest 
+
+    indexPerm :: [Int] -> I.IntMap Char  -> String 
+    indexPerm a b
+                | length a /= I.size b = error "indexList and permutation do  not fit togehter"
+                | otherwise = "[" ++ (intersperse ',' indList) ++ "]"
+                        where
+                            indList = map (\x -> (I.!) b x) a   
+
+    mkIndMap :: String -> I.IntMap Char 
+    mkIndMap inds = I.fromList $ zip [1..] inds  
+
+    getTopSortsIndex :: Forest -> String ->  [String]
+    getTopSortsIndex forest inds = map (\x -> indexPerm x (mkIndMap inds)) $ getTopSorts forest 
+
+
+    getTopSortsIndexInverse :: Forest -> String ->  [String]
+    getTopSortsIndexInverse forest inds = map (\x -> indexPerm x (mkIndMap inds)) $ getTopSortsInverse forest 
+
+    --there might occur zeros due to contraction of symmetric and anti-symmetric indices
+    --zeros must be specified by hand
+
+    removeZeros :: [Int] -> [[Int]] -> [[Int]]
+    removeZeros  zeroCombs perms = filter (\x -> not $ isInfixOf zeroCombs x) perms  
+
+    getTopSortsIndexNoZero :: Forest -> String -> [Int] -> [String]
+    getTopSortsIndexNoZero forest inds zeros = map (\x -> indexPerm x (mkIndMap inds)) filteredsorts 
+                where 
+                    sorts = getTopSorts forest 
+                    filteredsorts = removeZeros zeros sorts
+
+    getTopSortsIndexInverseNoZero :: Forest -> String -> [Int] -> [String]
+    getTopSortsIndexInverseNoZero forest inds zeros = map (\x -> indexPerm x (mkIndMap inds)) filteredsorts 
+                where 
+                    sorts = getTopSortsInverse forest 
+                    filteredsorts = removeZeros zeros sorts
+
+    --in total we can proceed as follows 
+
+    -- 1) find all combinations of the lower inds that are canonically sorted w.r.t. the contraction labels (index names) of the lower inds, non inverse
+
+    -- 2) find the sublist that is canonical sorted w.r.t. position (induced from the upper inds) inverse
+
+    -- 3) remove zeros
+
+    getInds :: Forest -> Forest -> String -> [String]
+    getInds upperInds lowerInds indlabels =  map (\x -> indexPerm x (mkIndMap indlabels)) totalList
+            where 
+                upperList = getTopSortsInverse upperInds 
+                lowerList = getTopSorts lowerInds
+                totalList = intersect upperList lowerList
+
+    --there is a problem with removing zeros !!
+
+    --and a probelm with dublicates
+
+    filterArea :: [Int] -> [Int] -> Bool
+    filterArea pos list 
+                | a < b && c < d && a < d = True
+                | otherwise = False
+                where
+                    a = list !! ( pos !! 0)
+                    b = list !! ( pos !! 1)
+                    c = list !! ( pos !! 2)
+                    d = list !! ( pos !! 3)
+                
+
+    getIndsTest :: Forest ->  String -> [String]
+    getIndsTest  lowerInds indlabels =  map (\x -> indexPerm x (mkIndMap indlabels)) totalList
+            where 
+                lowerList = getTopSorts lowerInds
+                totalList = filter (filterArea [0,1,2,3]) lowerList
+
+--the problem is not solved with this version -> it seems like the symmetry orderings do not commute!!

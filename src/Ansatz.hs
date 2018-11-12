@@ -178,4 +178,53 @@ module Ansatz (
                 lowerList = getTopSorts lowerInds
                 totalList = filter (filterArea [0,1,2,3]) lowerList
 
---the problem is not solved with this version -> it seems like the symmetry orderings do not commute!!
+    --finally a function that filters for an arbitrary given symmetry (for that purpose it is better to work with Sequences)
+
+    topSortSeqAppend :: a -> [S.Seq a] -> [S.Seq a]
+    topSortSeqAppend i [] = [S.fromList [i]]
+    topSortSeqAppend i list = map (\x -> (S.<|) i x) list  
+
+    getTopSortsSeq :: Forest -> [S.Seq Int]
+    getTopSortsSeq forest = concat $ S.mapWithIndex f forest 
+            where 
+                f = \x y -> topSortSeqAppend (getRootVal y) $ getTopSortsSeq $ removeRootForest x forest 
+
+
+    filter1Sym :: S.Seq Int -> (Int,Int) -> Bool 
+    filter1Sym seq (i,j) 
+            | a < b = True
+            | otherwise = False  
+             where
+                a = S.index seq (i-1)
+                b = S.index seq (j-1)
+
+    filterSym :: S.Seq Int -> [(Int,Int)] -> Bool
+    filterSym seq list = foldl (\x y -> x && y) True boolList
+            where 
+                boolList = map (filter1Sym seq) list  
+
+    
+    getAllInds :: [Edge] -> [Root] -> [(Int,Int)] -> [S.Seq Int]
+    getAllInds edges roots symList = filter (\x -> filterSym x symList) topSorts 
+            where
+                forest = mkForest edges roots 
+                topSorts = getTopSortsSeq forest 
+
+    indexPermSeq :: S.Seq Int -> I.IntMap Char -> String 
+    indexPermSeq a b
+                | S.length a /= I.size b = error "indexList and permutation do  not fit togehter"
+                | otherwise = "[" ++ (intersperse ',' indList) ++ "]"
+                        where
+                            indList = S.foldrWithIndex (\i x y -> ((I.!) b x) : y) [] a
+
+    getAllIndsLabel :: String -> [Edge] -> [Root] -> [(Int,Int)] -> [String]
+    getAllIndsLabel inds edges roots symList = map (\x -> indexPermSeq x (mkIndMap inds)) $ getAllInds edges roots symList
+
+    
+
+
+
+
+
+
+    --the problem is not solved with this version -> it seems like the symmetry orderings do not commute!!

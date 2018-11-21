@@ -97,5 +97,132 @@ where
                 perm = map concat $ tail $ permutations l
                 cList = zip (repeat $ concat l) perm
     
-    --so far the symmetrizer functions work
+    --so far the symmetrizer swap work
+
+    --define a type for one symmetrized tensor ansatz with coeffs of type a
+
+    type Ansatz a = M.Map (S.Seq Int) a
+
+    --symmetrizing an ansatz is done by mapping over the Map with key
+
+    symAnsatzPos :: (Fractional a) => (Int,Int) -> Ansatz a -> Ansatz a
+    symAnsatzPos pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz) 
+            where 
+                f = \x y -> x + y 
+                swapAnsatz = M.mapKeys (swapPos pair) a
+
+    aSymAnsatzPos :: (Fractional a) => (Int,Int) -> Ansatz a -> Ansatz a
+    aSymAnsatzPos pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz) 
+            where 
+                f = \x y -> x - y 
+                swapAnsatz = M.mapKeys (swapPos pair) a
+        
+    symAnsatzLabel :: (Fractional a) => (Int,Int) -> Ansatz a -> Ansatz a
+    symAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz) 
+            where 
+                f = \x y -> x + y
+                swapAnsatz = M.mapKeys (swapLabel pair) a
+
+    aSymAnsatzLabel :: (Fractional a) => (Int,Int) -> Ansatz a -> Ansatz a
+    aSymAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz)  
+            where 
+                f = \x y -> x - y 
+                swapAnsatz = M.mapKeys (swapLabel pair) a
+
+    symBlockAnsatzPos :: (Fractional a) => ([Int],[Int]) -> Ansatz a -> Ansatz a
+    symBlockAnsatzPos pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz) 
+            where 
+                f = \x y -> x + y 
+                swapAnsatz = M.mapKeys (swapBlockPos pair) a
+
+    aSymBlockAnsatzPos :: (Fractional a) => ([Int],[Int]) -> Ansatz a -> Ansatz a
+    aSymBlockAnsatzPos pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz)  
+            where 
+                f = \x y -> x - y 
+                swapAnsatz = M.mapKeys (swapBlockPos pair) a
+        
+    symBlockAnsatzLabel :: (Fractional a) => ([Int],[Int]) -> Ansatz a -> Ansatz a
+    symBlockAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz) 
+            where 
+                f = \x y -> x + y 
+                swapAnsatz = M.mapKeys (swapBlockLabel pair) a
+
+    aSymBlockAnsatzLabel :: (Fractional a) => ([Int],[Int]) -> Ansatz a -> Ansatz a
+    aSymBlockAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz)  
+            where 
+                f = \x y -> x - y 
+                swapAnsatz = M.mapKeys (swapBlockLabel pair) a
+
+    factorial :: (Num a, Eq a) => a -> a
+    factorial 0 = error "Int must be positiv!"
+    factorial 1 = fromIntegral 1
+    factorial n = n*factorial n-1 
+
+
+    symCyclePos :: (Fractional a) => [Int] -> Ansatz a -> Ansatz a
+    symCyclePos l ans =  M.fromListWith f newAnsatzList 
+            where 
+                norm = 1/ (fromIntegral $ factorial $ length l )
+                f = \x y -> x + y 
+                g = \(x,y) -> (zip (cyclicSwapPos l x) (repeat $ norm * y))
+                ansatzList = M.assocs ans
+                newAnsatzList = concat $ map g ansatzList 
+
+    symCycleLabel :: (Fractional a) => [Int] -> Ansatz a -> Ansatz a
+    symCycleLabel l ans =  M.fromListWith f newAnsatzList 
+            where 
+                norm = 1/ (fromIntegral $ factorial $ length l )
+                f = \x y -> x + y 
+                g = \(x,y) -> (zip (cyclicSwapLabel l x) (repeat $ norm * y))
+                ansatzList = M.assocs ans
+                newAnsatzList = concat $ map g ansatzList 
+            
+    symCycleBlockPos :: (Fractional a) => [[Int]] -> Ansatz a -> Ansatz a
+    symCycleBlockPos l ans =  M.fromListWith f newAnsatzList 
+            where 
+                norm = 1/ (fromIntegral $ factorial $ length l )
+                f = \x y -> x + y 
+                g = \(x,y) -> (zip (cyclicSwapBlockPos l x) (repeat $ norm * y))
+                ansatzList = M.assocs ans
+                newAnsatzList = concat $ map g ansatzList 
+
+    symCycleBlockLabel :: (Fractional a) => [[Int]] -> Ansatz a -> Ansatz a
+    symCycleBlockLabel l ans =  M.fromListWith f newAnsatzList 
+            where 
+                norm = 1/ (fromIntegral $ factorial $ length l )
+                f = \x y -> x + y 
+                g = \(x,y) -> (zip (cyclicSwapBlockLabel l x) (repeat $ norm * y))
+                ansatzList = M.assocs ans
+                newAnsatzList = concat $ map g ansatzList
+
+    --we need to put the above symmetrizing functions together to one all together symmetrizer
+
+    --define a symmetry type alias of the form [pairsyms, apairsyms, blocksyms, cyclic syms, block cyclic syms]
+
+    type Symmetry = ([(Int,Int)], [(Int,Int)], [([Int],[Int])], [[Int]], [[[Int]]])
+
+    --the generalized symmetrizer takes 2 symmetries one that works on pos and one that works on labels
+
+
+    symAnsatz :: (Fractional a) => Symmetry -> Symmetry -> Ansatz a -> Ansatz a 
+    symAnsatz (posPair, posAPair, posBlock, posCycle, posBlockCycle) (labPair, labAPair, labBlock, labCycle, labBlockCycle) ans = 
+        foldr symCycleBlockLabel (
+            foldr symCycleLabel (
+                foldr symBlockAnsatzLabel (
+                    foldr aSymAnsatzLabel (
+                        foldr symAnsatzLabel (
+                            foldr symCycleBlockPos (
+                                foldr symCyclePos (
+                                    foldr symBlockAnsatzPos ( 
+                                        foldr aSymAnsatzPos (
+                                            foldr symAnsatzPos ans posPair
+                                        ) posAPair
+                                    ) posBlock
+                                ) posCycle 
+                            ) posBlockCycle
+                        ) labPair
+                    ) labAPair
+                ) labBlock
+            ) labCycle
+        ) labBlockCycle  
             

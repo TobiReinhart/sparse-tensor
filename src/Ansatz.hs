@@ -1,6 +1,7 @@
 --this module is intended for generating tensorial ansätze (built from the inverse geometry) , i.e symmetrized delta products
 
 module Ansatz (
+    getAllInds, getAllIndsLabel
 
 ) where
 
@@ -96,7 +97,7 @@ module Ansatz (
     
     --we need a function for converting the inverse permutations obtained from getTopSorts 
 
-    --for the are symmetry of the indices we actually do not need the inverse permutation
+    --for the area symmetry of the indices we actually do not need the inverse permutation
 
     invertPerm :: [Int] -> [Int]
     invertPerm [] = []
@@ -203,6 +204,7 @@ module Ansatz (
             where 
                 boolList = map (filter1Sym seq) list  
 
+    --this is the most important function, returns a list of sequences of all orderings of the lower indices labelled from 1 to n
     
     getAllInds :: [Edge] -> [Root] -> [(Int,Int)] -> [S.Seq Int]
     getAllInds edges roots symList = filter (\x -> filterSym x symList) topSorts 
@@ -227,4 +229,3 @@ module Ansatz (
 
 
 
-    --the problem is not solved with this version -> it seems like the symmetry orderings do not commute!!

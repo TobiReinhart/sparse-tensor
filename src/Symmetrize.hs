@@ -6,18 +6,24 @@ module Symmetrize (
 )
 where
 
+    import Ansatz 
     import Data.List
     import qualified Data.Sequence as S
     import qualified Data.Map.Strict as M
     import Data.Maybe
+    import qualified Data.Set as Set 
 
     --the first step is defining functions for the symmetrization of Sequences
 
     --first we need the 2 basic swaps
 
+    --pos start at 1
+
     swapPos :: (Int,Int) -> S.Seq a -> S.Seq a
-    swapPos (i,j) seq = S.update j a $ S.update i b seq
+    swapPos (x,y) seq = S.update j a $ S.update i b seq
             where 
+                i = x-1
+                j = y-1
                 a = fromJust $ S.lookup i seq
                 b = fromJust $ S.lookup j seq
 
@@ -49,8 +55,10 @@ where
     --now the cyclic symmetry
  
     update1CyclePos :: ([Int],[Int]) -> (S.Seq a) -> (S.Seq a)
-    update1CyclePos (i,j) s = foldr updateS s updateList 
+    update1CyclePos (x,y) s = foldr updateS s updateList 
             where 
+                i = map (\a -> a - 1) x
+                j = map (\b -> b - 1) y
                 updateList = zip i $ map (fromJust.((S.!?) s)) j
                 updateS = \x -> S.update (fst x) (snd x) 
 
@@ -112,9 +120,9 @@ where
                 swapAnsatz = M.mapKeys (swapPos pair) a
 
     aSymAnsatzPos :: (Fractional a) => (Int,Int) -> Ansatz a -> Ansatz a
-    aSymAnsatzPos pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz) 
+    aSymAnsatzPos pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (-1/2)) swapAnsatz) 
             where 
-                f = \x y -> x - y 
+                f = \x y -> x + y 
                 swapAnsatz = M.mapKeys (swapPos pair) a
         
     symAnsatzLabel :: (Fractional a) => (Int,Int) -> Ansatz a -> Ansatz a
@@ -124,9 +132,9 @@ where
                 swapAnsatz = M.mapKeys (swapLabel pair) a
 
     aSymAnsatzLabel :: (Fractional a) => (Int,Int) -> Ansatz a -> Ansatz a
-    aSymAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz)  
+    aSymAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (-1/2)) swapAnsatz)  
             where 
-                f = \x y -> x - y 
+                f = \x y -> x + y 
                 swapAnsatz = M.mapKeys (swapLabel pair) a
 
     symBlockAnsatzPos :: (Fractional a) => ([Int],[Int]) -> Ansatz a -> Ansatz a
@@ -136,9 +144,9 @@ where
                 swapAnsatz = M.mapKeys (swapBlockPos pair) a
 
     aSymBlockAnsatzPos :: (Fractional a) => ([Int],[Int]) -> Ansatz a -> Ansatz a
-    aSymBlockAnsatzPos pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz)  
+    aSymBlockAnsatzPos pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (-1/2)) swapAnsatz)  
             where 
-                f = \x y -> x - y 
+                f = \x y -> x + y 
                 swapAnsatz = M.mapKeys (swapBlockPos pair) a
         
     symBlockAnsatzLabel :: (Fractional a) => ([Int],[Int]) -> Ansatz a -> Ansatz a
@@ -148,16 +156,17 @@ where
                 swapAnsatz = M.mapKeys (swapBlockLabel pair) a
 
     aSymBlockAnsatzLabel :: (Fractional a) => ([Int],[Int]) -> Ansatz a -> Ansatz a
-    aSymBlockAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz)  
+    aSymBlockAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (-1/2)) swapAnsatz)  
             where 
-                f = \x y -> x - y 
+                f = \x y -> x + y 
                 swapAnsatz = M.mapKeys (swapBlockLabel pair) a
 
     factorial :: (Num a, Eq a) => a -> a
     factorial 0 = error "Int must be positiv!"
-    factorial 1 = fromIntegral 1
-    factorial n = n*factorial n-1 
+    factorial 1 =  1
+    factorial n = n*factorial (n-1)
 
+    --cyclic symmetry does not work
 
     symCyclePos :: (Fractional a) => [Int] -> Ansatz a -> Ansatz a
     symCyclePos l ans =  M.fromListWith f newAnsatzList 
@@ -226,3 +235,40 @@ where
             ) labCycle
         ) labBlockCycle  
             
+    -- once an ansatz is symmetrized we need to remove zeros -> not necessary as if one perm is zero due to the group structure the whole ansatz vanishes
+
+    isZero :: (Fractional a, Eq a) => Ansatz a -> Bool
+    isZero ans = elem 0 $ M.elems ans
+
+    --we need a data structure to store the multiple ansätze -> try sets
+
+    --the only question remaining is whether it is better to construct the orbits element wise and remove all elements that are included in the first orbit
+    --or to construct the orbits by mapping subOrbit constructors over the whole set
+
+    --try both implementations and compare
+
+    --start with the first option
+
+    --there is something wrong 
+    
+    symAnsSet :: (Eq a, Fractional a) => Symmetry -> Symmetry -> [Ansatz a] -> [Ansatz a]
+    symAnsSet sym1 sym2 [] = []
+    symAnsSet sym1 sym2 (x:xs) 
+            | isZero symx = symAnsSet sym1 sym2 $ rmAnsatz symx xs 
+            | otherwise = symx : (symAnsSet sym1 sym2 $ rmAnsatz symx xs)
+                where
+                    symx = symAnsatz sym1 sym2 x 
+    
+    rmAnsatz :: Fractional a => Ansatz a -> [Ansatz a] -> [Ansatz a]
+    rmAnsatz ans ansList = filter (rmFunction rSet) ansList 
+            where 
+                rSet = M.keysSet ans 
+                
+
+    rmFunction :: Fractional a => Set.Set (S.Seq Int) -> Ansatz a -> Bool
+    rmFunction rSet ans = (Set.size inter) == 0  
+            where
+                inter = Set.intersection rSet $ M.keysSet ans 
+
+    mkAns :: (Fractional a) => S.Seq Int -> Ansatz a
+    mkAns seq = M.fromList [(seq,1)]

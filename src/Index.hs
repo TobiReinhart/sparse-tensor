@@ -16,7 +16,7 @@
 
 
 module Index (
-    Ind, mkInd, getValInd, getRangeList, sortInd, 
+    Ind, mkInd, getValInd, getRangeList, sortInd, indSign2, 
     Uind_3(..), Lind_3(..), Uind_9(..), Lind_9(..), Uind_19(..), Lind_19(..), Uind_20(..), Lind_20(..),
     Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
      indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
@@ -53,6 +53,16 @@ module Index (
 
     sortInd :: Ord a => Ind n a -> Ind n a
     sortInd (UnsafemkInd s) = UnsafemkInd $ S.sort s 
+
+    indSign2 :: Ord a => Ind 2 a -> Int
+    indSign2 ind
+            | i < j = 1
+            | i == j = 0
+            | i > j = -1
+             where
+                i = getValInd ind 0
+                j = getValInd ind 1
+                    
 
     --(for the tensor construction) construct all possible indices with i entries (for Ord a, between 0 and r)
 

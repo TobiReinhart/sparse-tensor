@@ -1,7 +1,7 @@
 --this module is intended for generating tensorial ansätze (built from the inverse geometry) , i.e symmetrized delta products
 
 module Ansatz (
-    getAllInds, getAllIndsLabel
+    getAllInds, getAllIndsLabel, indexPermSeq, mkIndMap
 
 ) where
 
@@ -219,8 +219,8 @@ module Ansatz (
                         where
                             indList = S.foldrWithIndex (\i x y -> ((I.!) b x) : y) [] a
 
-    getAllIndsLabel :: String -> [Edge] -> [Root] -> [(Int,Int)] -> [String]
-    getAllIndsLabel inds edges roots symList = map (\x -> indexPermSeq x (mkIndMap inds)) $ getAllInds edges roots symList
+    getAllIndsLabel :: String -> [Edge] -> [Root] -> [(Int,Int)] -> String
+    getAllIndsLabel inds edges roots symList = "[" ++ concat ( intersperse "," (map (\x -> indexPermSeq x (mkIndMap inds)) $ getAllInds edges roots symList)) ++ "]"
 
     
 

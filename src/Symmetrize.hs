@@ -272,3 +272,14 @@ where
 
     mkAns :: (Fractional a) => S.Seq Int -> Ansatz a
     mkAns seq = M.fromList [(seq,1)]
+
+    getRep :: (Fractional a) => [Ansatz a] -> [S.Seq Int]
+    getRep ans = map (\x -> (M.keys x) !! 0) ans 
+
+    getRepInds :: (Fractional a) => String -> [Ansatz a] -> String 
+    getRepInds inds ans = "[" ++ (concat (intersperse "," (map (\x -> indexPermSeq x iMap) seqList))) ++ "]"
+            where 
+                seqList = getRep ans 
+                iMap = mkIndMap inds
+
+    

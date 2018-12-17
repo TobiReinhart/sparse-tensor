@@ -15,7 +15,7 @@
 {-# LANGUAGE TypeApplications #-}
 
 module BasicTensors (
-    triangleMap2, triangleMap3, interI_2, interJ_2, symI_2, interI_3, interJ_3, symI_3, areaDofList, interMetric, interArea,
+    triangleMap2, triangleMap3, interI_2, interJ_2, interJ_2noFactor, symI_2, aSymI_2,  interI_3, interJ_3, symI_3, areaDofList, interMetric, interArea,
     ivar1, ivar2, ivar3, delta_3, delta_9, delta_19, delta_20, triangleMapArea, interI_Area, interJ_Area,
     interF_IArea, canonicalizeArea, isZeroArea, eta, epsilon, flatAreaST, flatArea,
     ivar1FM, ivar2FM, ivar3FM, ivar1M, ivar2M, ivar3M, invEta, etaAbs, invEtaAbs, flatAreaMap
@@ -127,7 +127,17 @@ module BasicTensors (
                     xVal = getValInd x 0
                     mult = jMult2 y 
 
-    --and define the symmetrizer (for equations without fractions)                
+    --define a factorless J intertwiner
+
+    interF_J2noFactor :: M.Map (Uinds_3 2) Lind_9 -> Index 0 0 0 0 0 1 2 0 -> Rational
+    interF_J2noFactor map1 (_,_,_,_,_,x,y,_) 
+                | indI == xVal = 1
+                | otherwise = 0
+                 where 
+                    indI = (M.!) map1 $ sortInd y
+                    xVal = getValInd x 0
+
+    --and define the symmetrizer               
             
     symF_I2 :: M.Map (Linds_3 2) Uind_9 -> Index 0 0 0 0 1 0 0 2 -> Rational
     symF_I2 map1 (_,_,_,_,x,_,_,y) 
@@ -137,6 +147,17 @@ module BasicTensors (
                     indI = (M.!) map1 $ sortInd y
                     xVal = getValInd x 0
                     mult = jMult2 y 
+
+    --and an antisymmetrizer (for equations without fractions)
+
+    aSymF_I2 :: M.Map (Linds_3 2) Uind_9 -> Index 0 0 0 0 1 0 0 2 -> Rational
+    aSymF_I2 map1 (_,_,_,_,x,_,_,y) 
+                | indI == xVal = sign 
+                | otherwise = 0
+                 where 
+                    indI = (M.!) map1 $ sortInd y
+                    xVal = getValInd x 0
+                    sign = fromIntegral $ indSign2 y 
 
 
     --now the 3 intertwiners
@@ -189,8 +210,14 @@ module BasicTensors (
     interJ_2 :: M.Map (Uinds_3 2) Lind_9 -> Tensor 0 0 0 0 0 1 2 0 Rational
     interJ_2 map1 = mkTensorfromF (0,0,0,0,0,1,2,0) (interF_J2 map1) 
 
+    interJ_2noFactor :: M.Map (Uinds_3 2) Lind_9 -> Tensor 0 0 0 0 0 1 2 0 Rational
+    interJ_2noFactor map1 = mkTensorfromF (0,0,0,0,0,1,2,0) (interF_J2noFactor map1) 
+
     symI_2 :: M.Map (Linds_3 2) Uind_9 -> Tensor 0 0 0 0 1 0 0 2 Rational
     symI_2 map1 = mkTensorfromF (0,0,0,0,1,0,0,2) (symF_I2 map1) 
+
+    aSymI_2 :: M.Map (Linds_3 2) Uind_9 -> Tensor 0 0 0 0 1 0 0 2 Rational
+    aSymI_2 map1 = mkTensorfromF (0,0,0,0,1,0,0,2) (aSymF_I2 map1) 
 
     interI_3 :: M.Map (Linds_3 3) Uind_19 -> Tensor 0 0 1 0 0 0 0 3 Rational
     interI_3 map1 = mkTensorfromF (0,0,1,0,0,0,0,3) (interF_I3 map1) 

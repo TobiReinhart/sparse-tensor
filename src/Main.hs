@@ -32,6 +32,7 @@ module Main (
     import System.Random.TF
     import System.Random.TF.Gen
     import System.Random.TF.Instances 
+    import Integrabillity
      
 
     main = do
@@ -71,6 +72,10 @@ module Main (
         let eqn2Flat = mkEqn4Sparse $ eqn2_2Flat map1Metric map1Area map2Area
 
         let eqn3Flat = mkEqn6Sparse $ eqn3_3Flat mapInter3 map2Metric map1Area map2Area 
+
+        let eqn3FlatnoFactor = mkEqn6Sparse $ eqn3_3FlatnoFactor mapInter3 map2Metric map1Area map2Area 
+
+        let eqn3FlatSym = mkEqn6Sparse $ eqn3_3FlatSym mapInter3 map2Metric map1Area map2Area 
 
         let eqnConstFlat = mkEqnConstSparseFlat eqnConst 
 
@@ -168,4 +173,40 @@ module Main (
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Block1ProlongedVars.txt" $  print2Maple 21 trianSD eqnSDProlonged 
 
-        print 1
+        --now the integrabillity conditions
+
+        let int1 = mkEqnSparseCond1 $ intCond1 map1Area map2Area map1Metric map2Metric 
+
+        let totalInt1 = M.union eqn3Flat int1 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Integrabillity1_2.txt" $  showEqnsFlat totalInt1
+
+        --let intZero =  mkEqnSparseCond1Zero $ int1Zero map1Area map2Area map1Metric 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Integrabillity1Zero.txt" $  showEqnsFlat intZero
+
+        let test = mkEqnSparseBlock1Eta $ tensorContractWith_3 (1,0) (+) $ tensorProductWith (*) (eqn1_1Flat map1Area map2Area) invEta  
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Integrabillity2Zero.txt" $  showEqnsFlat eqn2Flat
+
+        let int2 = mkEqnSparseCond2 $ intCond2 map1Area map2Area map1Metric 
+        
+        let totalInt2 = M.union eqn2Flat int2 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Integrabillity2.txt" $  showEqnsFlat totalInt2
+
+        let int3 = mkEqnSparseCond3 $ intCond3 map1Area map2Area map1Metric
+
+        let totalInt3 = M.union eqn1Flat int3 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Integrabillity3.txt" $  showEqnsFlat totalInt3
+
+        let totalEqn1 = M.unions [totalFlatEqn,totalInt3,totalInt2,totalInt1]
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/totalInt.txt" $  showEqnsFlat totalEqn1
+
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Flat3Sym.txt" $  showEqnsFlat eqn3FlatSym
+
+
+
+

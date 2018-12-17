@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-25 07:12:41.472241 UTC
+2018-12-17 19:48:15.637065 UTC
 
 interface main:BasicTensors 8043
-  interface hash: 709ef74f8997e9153b9890963044512d
-  ABI hash: 7c7d5617ec2e1fdf148631cc7f92e983
-  export-list hash: e8469ff54339c3b652e9a436a8919378
+  interface hash: 70112154ef8e9e272c6ed642ab491472
+  ABI hash: 68ea0ee54f7eb6bff42a74eeaee77700
+  export-list hash: 6ab7736aa6adae85dcd723138b6bd2e0
   orphan hash: 9d17a12baec57bab7908e574e049e4a0
   flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
@@ -14,6 +14,7 @@ interface main:BasicTensors 8043
   used TH splices: False
   where
 exports:
+  BasicTensors.aSymI_2
   BasicTensors.areaDofList
   BasicTensors.canonicalizeArea
   BasicTensors.delta_19
@@ -32,6 +33,7 @@ exports:
   BasicTensors.interI_3
   BasicTensors.interI_Area
   BasicTensors.interJ_2
+  BasicTensors.interJ_2noFactor
   BasicTensors.interJ_3
   BasicTensors.interJ_Area
   BasicTensors.interMetric
@@ -100,8 +102,8 @@ import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf
 import  -/  containers-0.5.11.0:Data.Sequence 21c58838329d44e2dc13db7c04e3a8d8
 import  -/  containers-0.5.11.0:Data.Sequence.Internal a2eae372f67713826bf16d410fc6cd8f
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
-import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
-  exports: 829f159844af2634a0b2006a8d08cd72
+import  -/  Index 60260ed90a129e1e10b6c5fafcb2ded1
+  exports: 02acfc58131cc32506762c89c9bc64b7
   Ind 04f0c119619fb72f4781dea97cf7ac74
   Index 5df768242bb15e89c1079fab7e7d3758
   Lind_19 63717b7e9c5966f94652645ea1e25d12
@@ -113,20 +115,21 @@ import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
   Uind_9 ab8f3576b9e9258982a5d77295330a40
   Uinds_3 63ef11ca566ba01817ced09e779f86a0
   getValInd 974a87ce371ea262afad5f9d63705d90
-  indexList 2dd56684330919c6c47e077f40101de2
-  mkInd 1af0255577b3469c19c700d71eb25f9f
+  indSign2 2df0ffafadb0ef3b365482ab3de9470a
+  indexList 67c2aa64f98fe4ae995ef7cc191511c7
+  mkInd c1470ba25733eac9d3cf9089c612a176
   sortInd 624a9be640c385afb47cb821ef6d66d3
 import  -/  Ivar 59828d84f4f392dde7d157e78b1e20aa
   exports: 847b7f62b7be31da91814bf314ffd8e5
   Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
   number2Ivar fbae32d28cb725e708659381449a4539
-import  -/  Tensor 98e0906bee6c6cfcd97a95b5d4cb24fb
+import  -/  Tensor 9c4499b0a9f488433615a1f4f28a9b18
   exports: fec1157eea535063319b082e204812dd
   Tensor de2cb2f95a4c3ff6ea3ffdde0ef67deb
   getVal e9629c3f31e067cd8b33566ddb175223
   mkTensorfromF d25eb1d0d5a12827f4c56b25c6bb6d54
   mkTensorfromFZeros 5c384ef0fe558d8a9f8d838b1556b0a6
-  tensorContractWith_3 7df9914f29bbc16d916cd370e5be97ea
+  tensorContractWith_3 529107206dcaa10693fc48c26137b94b
   tensorProductWith 6e1300f3b6ea8f7dd056901f69230be2
   tensorSMult eda9d768e6307a83070b869854214b43
   tensorSub 5ae6e28292f5ee5e3aebc88142b4d18f
@@ -609,7 +612,7 @@ b38e7dc0237143afdaf0ce47845cc7c5
   {- Arity: 2,
      Strictness: <L,U(1*U(1*C1(C1(U)),A),A,C(C1(U)),1*C1(C1(U)),C(C1(U)),A,A,A)><L,U(U)>,
      Inline: [0] -}
-829edfd72494fa41643dafae57b9cc1a
+8145d8339d56a4ae9db93fa4b4065690
   $wetaAbs ::
     Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
     -> (# Data.Map.Internal.Map
@@ -711,7 +714,7 @@ b38e7dc0237143afdaf0ce47845cc7c5
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Uind_3>_N)_N
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Lind_3>_N)_N)_N
                       <GHC.Real.Rational>_R)_R } } } }) -}
-08f231e11bf763210143a5755886329f
+62c9a87a228420af96d0ffe98ec36727
   $wflatArea ::
     Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
     -> (# Data.Map.Internal.Map
@@ -879,7 +882,7 @@ b38e7dc0237143afdaf0ce47845cc7c5
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Uind_3>_N)_N
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Lind_3>_N)_N)_N
                       <GHC.Real.Rational>_R)_R } } } } } }) -}
-53edd6dcd86bc09a1a75265cf71218d2
+c704768db61047e6f4394df32dc544ef
   $winterArea ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -1055,7 +1058,7 @@ b38e7dc0237143afdaf0ce47845cc7c5
                            case GHC.Prim.==# a# b# of lwild {
                              DEFAULT -> BasicTensors.delta_4 1# -> ww6 } } } } } } } }
                    GHC.Types.True -> BasicTensors.delta_4 }) -}
-a5b6907ee3d0fb5a05c2aab6aac2cf0f
+bfef654f87c36b21c8efbb289b831972
   $winterMetric ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -1127,7 +1130,7 @@ a5b6907ee3d0fb5a05c2aab6aac2cf0f
                                  <Index.Lind_3>_N)_N)_N
                            <GHC.Real.Rational>_R)_R of ww8 { Unit# ww9 ->
                  (# BasicTensors.interMetric_go8 ww9 #) } } } }) -}
-3d1239b74c223af5a88d16a7cdc41f93
+a6a2d9ce27ba0a5114dcc0845937c037
   $winvEtaAbs ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> (# Data.Map.Internal.Map
@@ -1378,6 +1381,11 @@ d11031f7d9555261acf244015f5d526b
   {- Arity: 3,
      Strictness: <S(LLLLLLC(C(S))L),U(A,A,C(U),A,A,A,C(C1(U)),A)><S,U><L,U>,
      Inline: [0] -}
+ce4c78589fa1c490048ec19d5ac45bab
+  aSymI_2 ::
+    Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
+    -> Tensor.Tensor 0 0 0 0 1 0 0 2 GHC.Real.Rational
+  {- Arity: 1, Strictness: <L,U> -}
 1ec2cba96b65767e3ebe59fc9715f5a0
   areaDofList ::
     (GHC.Enum.Enum a, GHC.Classes.Eq a, GHC.Classes.Ord a) =>
@@ -2054,7 +2062,7 @@ fa9a332461c7da03bc2c5bde319bdbd5
                              <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
                    GHC.Real.$fFractionalRatio_$s$fNumRatio
                    GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-b65176072f910f039bf2d27dc84eb3b8
+fa4fc7b12f873464bfff9a40d3cbe3e8
   etaAbs ::
     Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
     -> Tensor.Tensor 0 0 0 0 0 1 0 0 GHC.Real.Rational
@@ -2084,7 +2092,7 @@ a4f25786d93be12bc15a741bb22b1bbd
 f679a364d95cce64ffefdacaa8b7d01d
   eta_dt :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (-1) -}
-437cca0696d272553ab445b607846411
+c50387668f8e570ba03b4875269be9e8
   flatArea ::
     Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
     -> Tensor.Tensor 0 1 0 0 0 0 0 0 GHC.Real.Rational
@@ -2114,7 +2122,7 @@ f679a364d95cce64ffefdacaa8b7d01d
 23b814303c3de16d9c58c1b320277b0e
   flatArea3 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 3#) -}
-e42637f2a96e073bc5d4c66960b79efe
+45fc69ea838313a3be4b563d5cc8f021
   flatAreaMap ::
     Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
     -> Data.IntMap.Internal.IntMap GHC.Types.Int
@@ -2401,7 +2409,7 @@ cafc95ca2ca0904c1dde98316d9a59e4
     -> Data.Map.Internal.Map
          (Index.Index 0 0 0 0 0 0 0 4) GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U> -}
-b8de977ddd264acefafcb1bb50ac05a7
+1a57b66a1918e60a1c093487dbdb6d77
   interArea ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -2612,6 +2620,11 @@ a950ea8c4b383982ad1ced1b3b041eba
     Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
     -> Tensor.Tensor 0 0 0 0 0 1 2 0 GHC.Real.Rational
   {- Arity: 1, Strictness: <L,U> -}
+e53a12da024a0e2b5a867c759844c9a0
+  interJ_2noFactor ::
+    Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
+    -> Tensor.Tensor 0 0 0 0 0 1 2 0 GHC.Real.Rational
+  {- Arity: 1, Strictness: <L,U> -}
 2bd0f4395e39d51430c568e723434493
   interJ_3 ::
     Data.Map.Internal.Map (Index.Uinds_3 3) Index.Lind_19
@@ -2622,7 +2635,7 @@ abda42636f9f83a6cd6f259f75da5680
     Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
     -> Tensor.Tensor 0 1 0 0 0 0 4 0 GHC.Real.Rational
   {- Arity: 1, Strictness: <L,U> -}
-2d510a194197f99dd3e1918f1f626886
+6c93f1cf065a9e72cbd51e41cd4d10ce
   interMetric ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -2776,7 +2789,7 @@ cec04a7b488fa60e971e36c1b60fffc4
                              <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
                    GHC.Real.$fFractionalRatio_$s$fNumRatio
                    GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-7b8e2fb956f9d1516496ba808e72b0f3
+8c61a1a1828dcde141516155f97f410e
   invEtaAbs ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Tensor.Tensor 0 0 0 0 1 0 0 0 GHC.Real.Rational

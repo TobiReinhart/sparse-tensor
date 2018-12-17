@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2018-10-11 14:05:40.035405 UTC
+2018-12-15 08:39:30.743982 UTC
 
 interface main:Tensor 8043
-  interface hash: 06e8a56b8debf72cee033532293ea060
-  ABI hash: 98e0906bee6c6cfcd97a95b5d4cb24fb
+  interface hash: 22bc82ac2a9f44cbb9c74c79feea4b7a
+  ABI hash: 9c4499b0a9f488433615a1f4f28a9b18
   export-list hash: fec1157eea535063319b082e204812dd
   orphan hash: a5ac230787a679843ebf1598745ea270
   flag hash: 941ef95016433cfd417a6725e52dbf85
@@ -70,20 +70,20 @@ import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
 import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
 import  -/  containers-0.5.11.0:Data.Sequence 21c58838329d44e2dc13db7c04e3a8d8
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
-import  -/  Index 51cf191d1cb6350a504c41afe069a0d6
-  exports: 829f159844af2634a0b2006a8d08cd72
+import  -/  Index 60260ed90a129e1e10b6c5fafcb2ded1
+  exports: 02acfc58131cc32506762c89c9bc64b7
   Index 5df768242bb15e89c1079fab7e7d3758
   checkInd 570f4ec43fff48378153eca9b14303d2
   combineIndex d37427b86cab9b30c2ce6cd8e2c968c4
   cyclicSwapIndex a1373ab8c3f264afe57ba05e218f3a4b
-  delContractionIndex_19 991f8370c137f5ab2d5abafe023c02be
-  delContractionIndex_20 69e5e0b20ba237280b0f082e285f240a
-  delContractionIndex_3 4e19f655d6e5a93fe2ef909b8a1caa78
-  delContractionIndex_9 484db7cb1906c1d4ceba12b91736a84b
-  delInd 6c62515cf9bb2535438f5e66acb99481
+  delContractionIndex_19 0b2b9b6ed852560172f2c864fa5a7ff2
+  delContractionIndex_20 63a1bffefcd9860475f032474b8b96e9
+  delContractionIndex_3 412f4a053469f50e9ef7e445b9603e03
+  delContractionIndex_9 89c794989b95369089bef9eb9e76b3d8
+  delInd 9ed412d39a1a8e714d485ad627cd5359
   getRangeList 35c271ce9c33d7029e662d493b216f1d
   isContractionIndex 1843a9729d1a8c76b7b7f3c072c98cce
-  mkInd 1af0255577b3469c19c700d71eb25f9f
+  mkInd c1470ba25733eac9d3cf9089c612a176
   swapBlockPosIndex f6e0e202d7d5ae54fc71799dd1056b0d
   swapPosIndex ba35e111a2bf2c8383fc832846f5a3ce
 de2cb2f95a4c3ff6ea3ffdde0ef67deb
@@ -3040,7 +3040,7 @@ d5791154d3f1a17af509c3a8e7372c52
                          (GHC.Num.+ @ a $dNum)
                          ww
                          ww2) #) }) -}
-74ddf09fd0372cbb99f1dc4dbfc8e5dc
+315639f3c249d7edd553b354308953a6
   $wtensorContractWith_19 ::
     (GHC.TypeNats.KnownNat n3, GHC.TypeNats.KnownNat n4) =>
     (GHC.Types.Int, GHC.Types.Int)
@@ -3110,7 +3110,7 @@ d5791154d3f1a17af509c3a8e7372c52
                             w2
                             k)
                          ww) #)) -}
-40ca7aa60fa08fba934ccf09fd56e570
+33aa0d10523eaef8e3e6852db9f673a7
   $wtensorContractWith_20 ::
     (GHC.TypeNats.KnownNat n1, GHC.TypeNats.KnownNat n2) =>
     (GHC.Types.Int, GHC.Types.Int)
@@ -3180,7 +3180,7 @@ d5791154d3f1a17af509c3a8e7372c52
                             w2
                             k)
                          ww) #)) -}
-7806bcc4a1df69e46a029bfc9ff73a7c
+cec78cdbdcdc804a0ab5fb5784fdd1ec
   $wtensorContractWith_3 ::
     (GHC.TypeNats.KnownNat n7, GHC.TypeNats.KnownNat n8) =>
     (GHC.Types.Int, GHC.Types.Int)
@@ -3250,7 +3250,7 @@ d5791154d3f1a17af509c3a8e7372c52
                             w2
                             k)
                          ww) #)) -}
-ddc1ba3dccac2d153e44537e0e17957e
+5fc2f0ac5a95bd8c8d4991bb838632c0
   $wtensorContractWith_9 ::
     (GHC.TypeNats.KnownNat n5, GHC.TypeNats.KnownNat n6) =>
     (GHC.Types.Int, GHC.Types.Int)
@@ -4478,7 +4478,7 @@ b03543f4dfebee64226240002a5665ef
 8e1f794854d89bc2c6d3671575591521
   tensorContractWith_1 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 2#) -}
-e666f5ac1805c75daabe80183f088ab8
+329d389a2230dfda068ca4570ddf5b7e
   tensorContractWith_19 ::
     (GHC.TypeNats.KnownNat n3, GHC.TypeNats.KnownNat n4) =>
     (GHC.Types.Int, GHC.Types.Int)
@@ -4535,7 +4535,7 @@ e666f5ac1805c75daabe80183f088ab8
 f5b2dabd16345e8ee998f4d55afc7785
   tensorContractWith_2 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 1#) -}
-1477c6dd935488fa0f3cdeb91dbffde2
+6cf282d64edd6c9ec712d855bb38e06a
   tensorContractWith_20 ::
     (GHC.TypeNats.KnownNat n1, GHC.TypeNats.KnownNat n2) =>
     (GHC.Types.Int, GHC.Types.Int)
@@ -4589,7 +4589,7 @@ f5b2dabd16345e8ee998f4d55afc7785
                    @ n8
                    @ a
                    ww3 } }) -}
-7df9914f29bbc16d916cd370e5be97ea
+529107206dcaa10693fc48c26137b94b
   tensorContractWith_3 ::
     (GHC.TypeNats.KnownNat n7, GHC.TypeNats.KnownNat n8) =>
     (GHC.Types.Int, GHC.Types.Int)
@@ -4649,7 +4649,7 @@ fd53639966fdb5f8804d2e0bc1f03852
 2b36f7f16c0f3479abe15dbe357bc93b
   tensorContractWith_5 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 3#) -}
-b638d8248a3b4c115e727ecd66f6bb14
+cc576f2038f8bd555f142bcde424c5f8
   tensorContractWith_9 ::
     (GHC.TypeNats.KnownNat n5, GHC.TypeNats.KnownNat n6) =>
     (GHC.Types.Int, GHC.Types.Int)

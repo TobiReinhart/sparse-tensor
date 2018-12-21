@@ -1,0 +1,693 @@
+
+==================== FINAL INTERFACE ====================
+2018-12-21 19:05:51.619663 UTC
+
+interface main:Symmetrize 8043
+  interface hash: dc311cf15d1645ca655f0c8ede545d39
+  ABI hash: b5f0b4927f9e36a72e9b4cc67721e63e
+  export-list hash: c79a0ef965b8f406eb0b9e72ceb58ef0
+  orphan hash: 4a48000f354263bab76e696a9d5d0ba4
+  flag hash: 707c86cfbee6a9c65f08462953a21ad8
+  opt_hash: 14e536840aca4e889cad654e6f9b79c1
+  hpc_hash: 93b885adfe0da089cdf634904fd59f71
+  sig of: Nothing
+  used TH splices: False
+  where
+exports:
+  Symmetrize.getRepInds
+  Symmetrize.mkAns
+  Symmetrize.symAnsSet
+  Symmetrize.Symmetry
+module dependencies: Ansatz
+package dependencies: array-0.5.2.0 base-4.11.1.0*
+                      containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
+                      integer-gmp-1.0.2.0
+orphans: base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
+family instance modules: base-4.11.1.0:Control.Applicative
+                         base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
+                         base-4.11.1.0:Data.Functor.Const
+                         base-4.11.1.0:Data.Functor.Identity
+                         base-4.11.1.0:Data.Functor.Product base-4.11.1.0:Data.Functor.Sum
+                         base-4.11.1.0:Data.Monoid base-4.11.1.0:Data.Semigroup
+                         base-4.11.1.0:Data.Semigroup.Internal base-4.11.1.0:Data.Version
+                         base-4.11.1.0:Data.Void base-4.11.1.0:GHC.Exts
+                         base-4.11.1.0:GHC.Generics base-4.11.1.0:GHC.IO.Exception
+                         containers-0.5.11.0:Data.IntMap.Internal
+                         containers-0.5.11.0:Data.IntSet.Internal
+                         containers-0.5.11.0:Data.Map.Internal
+                         containers-0.5.11.0:Data.Sequence.Internal
+                         containers-0.5.11.0:Data.Set.Internal
+import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
+import  -/  base-4.11.1.0:Data.List 83dc843e47bfc0c5af51e19c6f3476d5
+import  -/  base-4.11.1.0:Data.Maybe 409c3da2b142470b68be39ce1d97a9f7
+import  -/  base-4.11.1.0:Data.OldList 1b35aa3c6805ff7c8887a35a866fe006
+import  -/  base-4.11.1.0:Data.Tuple 3af66f3ac61ed95ba8a3a3f68ebc5003
+import  -/  base-4.11.1.0:GHC.Base 604111500e81281298777e721c75643b
+import  -/  base-4.11.1.0:GHC.Err 5e26aa744981f14e0f1e4d29c44ac52e
+import  -/  base-4.11.1.0:GHC.List 1e4357702d8d00cded0703bd293e50e8
+import  -/  base-4.11.1.0:GHC.Num 8e54b26dce4495382dc4b50cf36ab754
+import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
+import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
+import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
+import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
+import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
+import  -/  containers-0.5.11.0:Data.Sequence 21c58838329d44e2dc13db7c04e3a8d8
+import  -/  containers-0.5.11.0:Data.Sequence.Internal a2eae372f67713826bf16d410fc6cd8f
+import  -/  containers-0.5.11.0:Data.Set 7d3c64a641be4cacbcd8119445bab919
+import  -/  containers-0.5.11.0:Data.Set.Internal 93fa3ef95853aa2a7aadf32d693bd451
+import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
+import  -/  Ansatz fceab4c3109e895058fcc6810ff83fa5
+  exports: 59de763b5ed7159158b40cd802183e31
+  indexPermSeq 2454eb28858c3e07119d32f481df1b5b
+  mkIndMap 7a1883f6d2f07bda88482cc980b808dc
+fbf178f7dbeaf45b97aea4e18e490073
+  $s$fEqSeq ::
+    GHC.Classes.Eq (Data.Sequence.Internal.Seq GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                  (Data.Sequence.Internal.$fEqSeq_$c==
+                     @ GHC.Types.Int
+                     GHC.Classes.$fEqInt)
+                  Symmetrize.$s$fEqSeq_$s$fEqSeq_$c/= -}
+36abf02c0589dcb03efdef7ef89820a7
+  $s$fEqSeq_$s$fEqSeq_$c/= ::
+    Data.Sequence.Internal.Seq GHC.Types.Int
+    -> Data.Sequence.Internal.Seq GHC.Types.Int -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ (x :: Data.Sequence.Internal.Seq GHC.Types.Int)
+                   (y :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                 case Data.Sequence.Internal.$fEqSeq_$c==
+                        @ GHC.Types.Int
+                        GHC.Classes.$fEqInt
+                        x
+                        y of wild {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False }) -}
+f8b607662f02bf9fb6d538c742201af1
+  $s$fOrdSeq ::
+    GHC.Classes.Ord (Data.Sequence.Internal.Seq GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                  Symmetrize.$s$fEqSeq
+                  (Data.Sequence.Internal.$fOrdSeq_$ccompare
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt)
+                  (Data.Sequence.Internal.$fOrdSeq_$c<
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt)
+                  (Data.Sequence.Internal.$fOrdSeq_$c<=
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt)
+                  (Data.Sequence.Internal.$fOrdSeq_$c>
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt)
+                  (Data.Sequence.Internal.$fOrdSeq_$c>=
+                     @ GHC.Types.Int
+                     GHC.Classes.$fOrdInt)
+                  (\ (x :: Data.Sequence.Internal.Seq GHC.Types.Int)
+                     (y :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<=
+                          @ GHC.Types.Int
+                          GHC.Classes.$fOrdInt
+                          x
+                          y of wild {
+                     GHC.Types.False -> x GHC.Types.True -> y })
+                  (\ (x :: Data.Sequence.Internal.Seq GHC.Types.Int)
+                     (y :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                   case Data.Sequence.Internal.$fOrdSeq_$c<=
+                          @ GHC.Types.Int
+                          GHC.Classes.$fOrdInt
+                          x
+                          y of wild {
+                     GHC.Types.False -> y GHC.Types.True -> x }) -}
+1b1e7cb8a3dbd51d324bfb489f656797
+  $s$fOrdSeq_$cmax ::
+    Data.Sequence.Internal.Seq GHC.Types.Int
+    -> Data.Sequence.Internal.Seq GHC.Types.Int
+    -> Data.Sequence.Internal.Seq GHC.Types.Int
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (x :: Data.Sequence.Internal.Seq GHC.Types.Int)
+                   (y :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<=
+                        @ GHC.Types.Int
+                        GHC.Classes.$fOrdInt
+                        x
+                        y of wild {
+                   GHC.Types.False -> x GHC.Types.True -> y }) -}
+5739faa864dbbf1272d1d73f934faf23
+  $s$fOrdSeq_$cmin ::
+    Data.Sequence.Internal.Seq GHC.Types.Int
+    -> Data.Sequence.Internal.Seq GHC.Types.Int
+    -> Data.Sequence.Internal.Seq GHC.Types.Int
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (x :: Data.Sequence.Internal.Seq GHC.Types.Int)
+                   (y :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                 case Data.Sequence.Internal.$fOrdSeq_$c<=
+                        @ GHC.Types.Int
+                        GHC.Classes.$fOrdInt
+                        x
+                        y of wild {
+                   GHC.Types.False -> y GHC.Types.True -> x }) -}
+551ee57a955df347c10285759c46f8cd
+  $sconcat :: [[a]] -> [a]
+  {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U>,
+     Inline: (sat-args=1),
+     Unfolding: InlineRule (1, False, False)
+                (\ @ a (xs :: [[a]]) ->
+                 GHC.Base.build
+                   @ a
+                   (\ @ b (c :: a -> b -> b)[OneShot] (n :: b)[OneShot] ->
+                    GHC.Base.foldr
+                      @ [a]
+                      @ b
+                      (\ (x :: [a]) (y :: b)[OneShot] -> GHC.Base.foldr @ a @ b c y x)
+                      n
+                      xs)) -}
+f4e49f702a31b5dc6e123db93108d469
+  $sfromList ::
+    [(Data.Sequence.Internal.Seq GHC.Types.Int, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a
+                   (ds :: [(Data.Sequence.Internal.Seq GHC.Types.Int, a)]) ->
+                 case ds of wild {
+                   []
+                   -> Data.Map.Internal.Tip
+                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                        @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case kx
+                                  `cast`
+                                (Data.Sequence.Internal.N:Seq[0]
+                                     <GHC.Types.Int>_R) of nt { DEFAULT ->
+                           Data.Map.Internal.Bin
+                             @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                             @ a
+                             1#
+                             nt `cast` (Sym (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R))
+                             x
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                @ a)
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                @ a) }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case Data.Sequence.Internal.$fOrdSeq_$c>=
+                                  @ GHC.Types.Int
+                                  GHC.Classes.$fOrdInt
+                                  kx
+                                  ky of wild4 {
+                             GHC.Types.False
+                             -> case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <GHC.Types.Int>_R) of nt { DEFAULT ->
+                                Symmetrize.$wpoly_go13
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R))
+                                     x
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                        @ a))
+                                  wild2 }
+                             GHC.Types.True
+                             -> case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <GHC.Types.Int>_R) of nt { DEFAULT ->
+                                Symmetrize.$sfromList1
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R))
+                                     x
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                        @ a))
+                                  wild2 } } } } } }) -}
+f20e74447beed04aaeb385ba08f1425c
+  $sfromList1 ::
+    Data.Map.Internal.Map (Data.Sequence.Internal.Seq GHC.Types.Int) a
+    -> [(Data.Sequence.Internal.Seq GHC.Types.Int, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+20eb675f88bfbc437ccf22a9366f6fb3
+  $sfromList2 ::
+    [(GHC.Types.Int, a)] -> Data.Map.Internal.Map GHC.Types.Int a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a (ds :: [(GHC.Types.Int, a)]) ->
+                 case ds of wild {
+                   [] -> Data.Map.Internal.Tip @ GHC.Types.Int @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case x of x1 { DEFAULT ->
+                           case kx of dt { GHC.Types.I# ipv ->
+                           Data.Map.Internal.Bin
+                             @ GHC.Types.Int
+                             @ a
+                             1#
+                             dt
+                             x1
+                             (Data.Map.Internal.Tip @ GHC.Types.Int @ a)
+                             (Data.Map.Internal.Tip @ GHC.Types.Int @ a) } }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case kx of wild4 { GHC.Types.I# x1 ->
+                           case ky of wild5 { GHC.Types.I# y ->
+                           case GHC.Prim.>=# x1 y of lwild {
+                             DEFAULT
+                             -> case x of x0 { DEFAULT ->
+                                Symmetrize.$wpoly_go8
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ GHC.Types.Int
+                                     @ a
+                                     1#
+                                     wild4
+                                     x0
+                                     (Data.Map.Internal.Tip @ GHC.Types.Int @ a)
+                                     (Data.Map.Internal.Tip @ GHC.Types.Int @ a))
+                                  wild2 }
+                             1#
+                             -> case x of x0 { DEFAULT ->
+                                Symmetrize.$sfromList3
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ GHC.Types.Int
+                                     @ a
+                                     1#
+                                     wild4
+                                     x0
+                                     (Data.Map.Internal.Tip @ GHC.Types.Int @ a)
+                                     (Data.Map.Internal.Tip @ GHC.Types.Int @ a))
+                                  wild2 } } } } } } } }) -}
+78b2044e76850df39da37ce393fd4549
+  $sfromList3 ::
+    Data.Map.Internal.Map GHC.Types.Int a
+    -> [(GHC.Types.Int, a)] -> Data.Map.Internal.Map GHC.Types.Int a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+a6f92d8e40cd224a0de14b18cf841461
+  $sfromList4 ::
+    [(Data.Sequence.Internal.Seq GHC.Types.Int, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a
+                   (ds :: [(Data.Sequence.Internal.Seq GHC.Types.Int, a)]) ->
+                 case ds of wild {
+                   []
+                   -> Data.Map.Internal.Tip
+                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                        @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case x of x1 { DEFAULT ->
+                           case kx
+                                  `cast`
+                                (Data.Sequence.Internal.N:Seq[0]
+                                     <GHC.Types.Int>_R) of nt { DEFAULT ->
+                           Data.Map.Internal.Bin
+                             @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                             @ a
+                             1#
+                             nt `cast` (Sym (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R))
+                             x1
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                @ a)
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                @ a) } }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case Data.Sequence.Internal.$fOrdSeq_$c>=
+                                  @ GHC.Types.Int
+                                  GHC.Classes.$fOrdInt
+                                  kx
+                                  ky of wild4 {
+                             GHC.Types.False
+                             -> case x of x0 { DEFAULT ->
+                                case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <GHC.Types.Int>_R) of nt { DEFAULT ->
+                                Symmetrize.$wpoly_go1
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R))
+                                     x0
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                        @ a))
+                                  wild2 } }
+                             GHC.Types.True
+                             -> case x of x0 { DEFAULT ->
+                                case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <GHC.Types.Int>_R) of nt { DEFAULT ->
+                                Symmetrize.$sfromList5
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R))
+                                     x0
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                        @ a))
+                                  wild2 } } } } } } }) -}
+ca825b91d482b438717929674f14d56b
+  $sfromList5 ::
+    Data.Map.Internal.Map (Data.Sequence.Internal.Seq GHC.Types.Int) a
+    -> [(Data.Sequence.Internal.Seq GHC.Types.Int, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+3671193c9ca6bf60f2c27de87c2f0705
+  $sinsertWithKey_go8 ::
+    GHC.Classes.Ord k1 =>
+    (k1 -> a1 -> a1 -> a1)
+    -> k1
+    -> a1
+    -> Data.Map.Internal.Map k1 a1
+    -> Data.Map.Internal.Map k1 a1
+  {- Arity: 5,
+     Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><L,1*C1(C1(C1(U)))><S,1*U><L,U><S,1*U> -}
+96dae4aac87a233cd9b1c626ff18fa76
+  $sinsert_go13 ::
+    GHC.Classes.Ord k1 =>
+    k1
+    -> k1
+    -> a1
+    -> Data.Map.Internal.Map k1 a1
+    -> Data.Map.Internal.Map k1 a1
+  {- Arity: 5,
+     Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><L,U><S,1*U><L,U><S,1*U> -}
+00afb71a88a91750f45071bc414a637a
+  $sintersection ::
+    Data.Set.Internal.Set (Data.Sequence.Internal.Seq GHC.Types.Int)
+    -> Data.Set.Internal.Set (Data.Sequence.Internal.Seq GHC.Types.Int)
+    -> Data.Set.Internal.Set (Data.Sequence.Internal.Seq GHC.Types.Int)
+  {- Arity: 2, Strictness: <S,1*U><L,1*U>, Inline: [~] -}
+6a7980f01a6f6ecee29d0280dab7feab
+  $sunionWith ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+8b15182a08f94d8622c734a3ed7e3a89
+  $trModule :: GHC.Types.Module
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.Module
+                   Symmetrize.$trModule3
+                   Symmetrize.$trModule1) -}
+44e2d5e8bb042ff14b73f7cd8252ffdf
+  $trModule1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Symmetrize.$trModule2) -}
+331e0961dcdb5783f6cccc25b38ec1d7
+  $trModule2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("Symmetrize"#) -}
+10bb41eac753747d331a1c6e48475c54
+  $trModule3 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Symmetrize.$trModule4) -}
+2f9dbaded017ce5a9dc2ed8f26b08541
+  $trModule4 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("main"#) -}
+c12bcb44fc387fcd5c417556b2147809
+  $w$sgo8 ::
+    GHC.Prim.Int#
+    -> a1
+    -> Data.Map.Internal.Map GHC.Types.Int a1
+    -> Data.Map.Internal.Map GHC.Types.Int a1
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+832a226ff5cc71ce93f15e219541aa17
+  $wgetRepInds ::
+    GHC.Base.String -> [Symmetrize.Ansatz a] -> [GHC.Types.Char]
+  {- Arity: 2, Strictness: <L,1*U><L,1*U>, Inline: [0],
+     Unfolding: (\ @ a
+                   (w :: GHC.Base.String)
+                   (w1 :: [Symmetrize.Ansatz a]) ->
+                 GHC.CString.unpackAppendCString#
+                   Symmetrize.getRepInds5
+                   (let {
+                      iMap :: Data.IntMap.Internal.IntMap GHC.Types.Char
+                      = Data.IntMap.Strict.fromList1
+                          @ GHC.Types.Char
+                          (Data.IntMap.Internal.Nil @ GHC.Types.Char)
+                          (Ansatz.getAllIndsLabel_go1 1# w)
+                    } in
+                    case GHC.Base.map
+                           @ (Data.Map.Internal.Map
+                                (Data.Sequence.Internal.Seq GHC.Types.Int) a)
+                           @ [GHC.Types.Char]
+                           (\ (x :: Data.Map.Internal.Map
+                                      (Data.Sequence.Internal.Seq GHC.Types.Int) a) ->
+                            Ansatz.indexPermSeq
+                              (GHC.List.$w!!
+                                 @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                 (Data.Map.Internal.keys_go
+                                    @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                    @ a
+                                    (GHC.Types.[] @ (Data.Sequence.Internal.Seq GHC.Types.Int))
+                                    x)
+                                 0#)
+                              iMap)
+                           w1 of wild {
+                      [] -> Symmetrize.getRepInds3
+                      : x xs
+                      -> Symmetrize.getRepInds_go
+                           (GHC.Types.:
+                              @ [GHC.Types.Char]
+                              x
+                              (Data.OldList.prependToAll
+                                 @ [GHC.Types.Char]
+                                 Symmetrize.getRepInds1
+                                 xs)) })) -}
+8155ff7cfecac0b16d2ac769b58ded35
+  $wpoly_go1 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+    -> [(Data.Sequence.Internal.Seq GHC.Types.Int, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+7aafe2757d163d0d23c4dc2bcb4554b5
+  $wpoly_go13 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+    -> [(Data.Sequence.Internal.Seq GHC.Types.Int, a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq GHC.Types.Int) a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+eb795dc014cacc0b04e666198b39f638
+  $wpoly_go2 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map GHC.Types.Int a -> GHC.Base.Maybe a
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,U><S,1*U>, Inline: [0] -}
+ca99d7cfddb90769a4433ba4632d4d07
+  $wpoly_go8 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map GHC.Types.Int a
+    -> [(GHC.Types.Int, a)]
+    -> Data.Map.Internal.Map GHC.Types.Int a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+59ca30dfa63bfd2b6a4358e1a88c35bf
+  type Ansatz a =
+    Data.Map.Internal.Map (Data.Sequence.Internal.Seq GHC.Types.Int) a
+f51775b478da3c80f3a4963df025dc97
+  type Symmetry =
+    ([(GHC.Types.Int, GHC.Types.Int)],
+     [(GHC.Types.Int, GHC.Types.Int)],
+     [([GHC.Types.Int], [GHC.Types.Int])], [[GHC.Types.Int]],
+     [[[GHC.Types.Int]]])
+db9f32ddd6ee6ab813b40760a609a8e4
+  getRepInds ::
+    GHC.Real.Fractional a =>
+    GHC.Base.String -> [Symmetrize.Ansatz a] -> GHC.Base.String
+  {- Arity: 3, Strictness: <L,A><L,1*U><L,1*U>, Inline: [0],
+     Unfolding: InlineRule (3, True, True)
+                (\ @ a
+                   (w :: GHC.Real.Fractional a)
+                   (w1 :: GHC.Base.String)
+                   (w2 :: [Symmetrize.Ansatz a]) ->
+                 Symmetrize.$wgetRepInds @ a w1 w2) -}
+f227ba0cc5c0b611e43e37a6b42a74a7
+  getRepInds1 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString#
+                   Symmetrize.getRepInds2) -}
+168de9239c692e5eb55c3780cffdb621
+  getRepInds2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: (","#) -}
+16e8ef1f8695d60db725be29a9480a3b
+  getRepInds3 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString#
+                   Symmetrize.getRepInds4) -}
+c7e24b858e65902338e997162c07cd2b
+  getRepInds4 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("]"#) -}
+da3c8377e8a7cd20f07ec4e876339df6
+  getRepInds5 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("["#) -}
+6eebb3bab105c0762846e0d09620b922
+  getRepInds_go :: [[GHC.Types.Char]] -> [GHC.Types.Char]
+  {- Arity: 1, Strictness: <S,1*U> -}
+06d0925877023ff7f5a7034b2c348be4
+  mkAns ::
+    GHC.Real.Fractional a =>
+    Data.Sequence.Internal.Seq GHC.Types.Int -> Symmetrize.Ansatz a
+  {- Arity: 1, Strictness: <L,1*U(1*U(A,A,A,A,A,A,1*C1(U)),A,A,A)>,
+     Unfolding: (\ @ a ($dFractional :: GHC.Real.Fractional a) ->
+                 let {
+                   lvl32 :: a
+                   = GHC.Num.fromInteger
+                       @ a
+                       (GHC.Real.$p1Fractional @ a $dFractional)
+                       Symmetrize.mkAns1
+                 } in
+                 \ (seq :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                 Symmetrize.$sfromList4
+                   @ a
+                   (GHC.Types.:
+                      @ (Data.Sequence.Internal.Seq GHC.Types.Int, a)
+                      (seq, lvl32)
+                      (GHC.Types.[] @ (Data.Sequence.Internal.Seq GHC.Types.Int, a)))) -}
+1b4ede4ead2391d2fc86af101d0dabde
+  mkAns1 :: GHC.Integer.Type.Integer
+  {- HasNoCafRefs, Unfolding: (1) -}
+3e28567e813dc1dfde267efbdbdbad70
+  symAnsSet ::
+    (GHC.Classes.Eq a, GHC.Real.Fractional a) =>
+    Symmetrize.Symmetry
+    -> Symmetrize.Symmetry
+    -> [Symmetrize.Ansatz a]
+    -> [Symmetrize.Ansatz a]
+  {- Arity: 5,
+     Strictness: <L,U(C(C1(U)),A)><L,U(U(C(C1(U)),A,C(C1(U)),C(U),A,A,C(U)),C(C1(U)),A,A)><L,1*U(U,U,U,U,U)><L,1*U(U,U,U,U,U)><S,1*U> -}
+"SPEC/Symmetrize $fEqSeq @ Int" [orphan] forall (v :: GHC.Classes.Eq
+                                                        GHC.Types.Int)
+  Data.Sequence.Internal.$fEqSeq @ GHC.Types.Int v
+  = Symmetrize.$s$fEqSeq
+"SPEC/Symmetrize $fEqSeq_$c/= @ Int" [orphan] forall ($dEq :: GHC.Classes.Eq
+                                                                GHC.Types.Int)
+  Data.Sequence.Internal.$fEqSeq_$c/= @ GHC.Types.Int $dEq
+  = Symmetrize.$s$fEqSeq_$s$fEqSeq_$c/=
+"SPEC/Symmetrize $fOrdSeq @ Int" [orphan] forall (v :: GHC.Classes.Ord
+                                                         GHC.Types.Int)
+  Data.Sequence.Internal.$fOrdSeq @ GHC.Types.Int v
+  = Symmetrize.$s$fOrdSeq
+"SPEC/Symmetrize $fOrdSeq_$cmax @ Int" [orphan] forall ($dOrd :: GHC.Classes.Ord
+                                                                   GHC.Types.Int)
+  Data.Sequence.Internal.$fOrdSeq_$cmax @ GHC.Types.Int $dOrd
+  = Symmetrize.$s$fOrdSeq_$cmax
+"SPEC/Symmetrize $fOrdSeq_$cmin @ Int" [orphan] forall ($dOrd :: GHC.Classes.Ord
+                                                                   GHC.Types.Int)
+  Data.Sequence.Internal.$fOrdSeq_$cmin @ GHC.Types.Int $dOrd
+  = Symmetrize.$s$fOrdSeq_$cmin
+"SPEC/Symmetrize concat @ [] _" [orphan] forall @ a
+                                                ($dFoldable :: Data.Foldable.Foldable [])
+  Data.Foldable.concat @ [] @ a $dFoldable = Symmetrize.$sconcat @ a
+"SPEC/Symmetrize fromList @ (Seq Int) _" [orphan] forall @ a
+                                                         ($dOrd :: GHC.Classes.Ord
+                                                                     (Data.Sequence.Internal.Seq
+                                                                        GHC.Types.Int))
+  Data.Map.Internal.fromList @ (Data.Sequence.Internal.Seq
+                                  GHC.Types.Int)
+                             @ a
+                             $dOrd
+  = Symmetrize.$sfromList @ a
+"SPEC/Symmetrize fromList @ (Seq Int) _" [orphan] forall @ a
+                                                         ($dOrd :: GHC.Classes.Ord
+                                                                     (Data.Sequence.Internal.Seq
+                                                                        GHC.Types.Int))
+  Data.Map.Strict.Internal.fromList @ (Data.Sequence.Internal.Seq
+                                         GHC.Types.Int)
+                                    @ a
+                                    $dOrd
+  = Symmetrize.$sfromList4 @ a
+"SPEC/Symmetrize fromList @ Int _" [orphan] forall @ a
+                                                   ($dOrd :: GHC.Classes.Ord GHC.Types.Int)
+  Data.Map.Strict.Internal.fromList @ GHC.Types.Int @ a $dOrd
+  = Symmetrize.$sfromList2 @ a
+"SPEC/Symmetrize intersection @ (Seq Int)" [orphan] forall ($dOrd :: GHC.Classes.Ord
+                                                                       (Data.Sequence.Internal.Seq
+                                                                          GHC.Types.Int))
+  Data.Set.Internal.intersection @ (Data.Sequence.Internal.Seq
+                                      GHC.Types.Int)
+                                 $dOrd
+  = Symmetrize.$sintersection
+"SPEC/Symmetrize unionWith @ (Seq Int) _" [orphan] forall @ a
+                                                          ($dOrd :: GHC.Classes.Ord
+                                                                      (Data.Sequence.Internal.Seq
+                                                                         GHC.Types.Int))
+  Data.Map.Strict.Internal.unionWith @ (Data.Sequence.Internal.Seq
+                                          GHC.Types.Int)
+                                     @ a
+                                     $dOrd
+  = Symmetrize.$sunionWith @ a
+vectorised variables:
+vectorised tycons:
+vectorised reused tycons:
+parallel variables:
+parallel tycons:
+trusted: safe
+require own pkg trusted: False
+

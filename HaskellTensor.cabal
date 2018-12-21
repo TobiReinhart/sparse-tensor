@@ -18,4 +18,4 @@ executable HaskellTensor
   main-is:             Main.hs
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5, containers, tf-random
-  other-modules:       BasicTensors, EquivarianceEqns, EquivarianceMetric, Index, Ivar, Pde, Tensor, Integrabillity
+  other-modules:       BasicTensors, EquivarianceEqns, EquivarianceMetric, Index, Ivar, Pde, Tensor, Integrabillity, Ansatz, Symmetrize

@@ -1,9 +1,9 @@
 
 ==================== FINAL INTERFACE ====================
-2018-12-17 19:48:17.448575 UTC
+2018-12-19 10:00:30.209299 UTC
 
 interface main:EquivarianceMetric 8043
-  interface hash: b1cbd9756eeeab6409b3114cc9563717
+  interface hash: 2631f8a12b9390bccdab07409de06827
   ABI hash: b0b61bc35827109582b81bc5629308d0
   export-list hash: 70c5689f919659ae1a2e8e7443db1155
   orphan hash: 86b2522a5eb7f4a4ebe45664bee9e4eb
@@ -67,8 +67,8 @@ import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.Map 0dbdaec812ef695a364aa6c69e7f7d53
 import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
-import  -/  BasicTensors 68ea0ee54f7eb6bff42a74eeaee77700
-  exports: 6ab7736aa6adae85dcd723138b6bd2e0
+import  -/  BasicTensors 7da7d9b4111070d0fcb49fe29a885e43
+  exports: ee852659668621914165c2baf135a5c3
   delta_3 88443abb7d76d02fee3e7a789d30d02a
   delta_9 e75aa262356472dc198559ec7f775732
   interI_2 eb0e312eaf44de854b31148d758e3c06

@@ -2,6 +2,7 @@
 
 module Symmetrize (
 
+mkAns, Symmetry, symAnsSet, getRepInds
 
 )
 where
@@ -212,6 +213,7 @@ where
 
     --the generalized symmetrizer takes 2 symmetries one that works on pos and one that works on labels
 
+    --the position symmetrizies must be impleneted in the datastructure for eta ansätze 
 
     symAnsatz :: (Fractional a) => Symmetry -> Symmetry -> Ansatz a -> Ansatz a 
     symAnsatz (posPair, posAPair, posBlock, posCycle, posBlockCycle) (labPair, labAPair, labBlock, labCycle, labBlockCycle) ans = 

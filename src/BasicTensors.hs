@@ -15,8 +15,8 @@
 {-# LANGUAGE TypeApplications #-}
 
 module BasicTensors (
-    triangleMap2, triangleMap3, interI_2, interJ_2, interJ_2noFactor, symI_2, aSymI_2,  interI_3, interJ_3, symI_3, areaDofList, interMetric, interArea,
-    ivar1, ivar2, ivar3, delta_3, delta_9, delta_19, delta_20, triangleMapArea, interI_Area, interJ_Area,
+    triangleMap2, triangleMap3, interI_2, interJ_2, interJ_2noFactor, symI_2, aSymI_2,  interI_3, interJ_3, symI_3, areaDofList, interMetric, interMetricnoFactor, interArea, interAreanoFactor,
+    ivar1, ivar2, ivar3, delta_3, delta_9, delta_19, delta_20, triangleMapArea, interI_Area, symI_Area, interJ_Area, interJ_AreanoFactor,
     interF_IArea, canonicalizeArea, isZeroArea, eta, epsilon, flatAreaST, flatArea,
     ivar1FM, ivar2FM, ivar3FM, ivar1M, ivar2M, ivar3M, invEta, etaAbs, invEtaAbs, flatAreaMap
 
@@ -191,7 +191,7 @@ module BasicTensors (
                     xVal = getValInd x 0
                     mult = jMult3 y 
 
-    --and define the symmetrizer (for equations without fractions)                
+    --and define the symmetrizer               
             
     symF_I3 :: M.Map (Linds_3 3) Uind_19 -> Index 0 0 1 0 0 0 0 3 -> Rational
     symF_I3 map1 (_,_,x,_,_,_,_,y) 
@@ -302,6 +302,17 @@ module BasicTensors (
                     indI = (M.!) map1 $ fst sortY
                     xVal = getValInd x 0
 
+
+    symF_IArea :: M.Map (Linds_3 4) Uind_20 -> Index 1 0 0 0 0 0 0 4 -> Rational
+    symF_IArea map1 (x,_,_,_,_,_,_,y) 
+                | isZeroArea y = 0
+                | indI == xVal = snd sortY * (jMultArea (fst sortY))
+                | otherwise = 0
+                 where 
+                    sortY = canonicalizeArea y
+                    indI = (M.!) map1 $ fst sortY
+                    xVal = getValInd x 0
+
     interF_JArea :: M.Map (Uinds_3 4) Lind_20 -> Index 0 1 0 0 0 0 4 0 -> Rational
     interF_JArea map1 (_,x,_,_,_,_,y,_) 
                 | isZeroArea y = 0
@@ -312,13 +323,29 @@ module BasicTensors (
                     indI = (M.!) map1 $ fst sortY
                     xVal = getValInd x 0
 
+    interF_JAreanoFactor :: M.Map (Uinds_3 4) Lind_20 -> Index 0 1 0 0 0 0 4 0 -> Rational
+    interF_JAreanoFactor map1 (_,x,_,_,_,_,y,_) 
+                | isZeroArea y = 0
+                | indI == xVal = snd sortY 
+                | otherwise = 0
+                 where 
+                    sortY = canonicalizeArea y
+                    indI = (M.!) map1 $ fst sortY
+                    xVal = getValInd x 0               
+
     --now deifne the tensors
 
     interI_Area :: M.Map (Linds_3 4) Uind_20 -> Tensor 1 0 0 0 0 0 0 4 Rational
     interI_Area map1 = mkTensorfromF (1,0,0,0,0,0,0,4) (interF_IArea map1) 
 
+    symI_Area :: M.Map (Linds_3 4) Uind_20 -> Tensor 1 0 0 0 0 0 0 4 Rational
+    symI_Area map1 = mkTensorfromF (1,0,0,0,0,0,0,4) (symF_IArea map1) 
+
     interJ_Area :: M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 0 4 0 Rational
     interJ_Area map1 = mkTensorfromF (0,1,0,0,0,0,4,0) (interF_JArea map1) 
+
+    interJ_AreanoFactor :: M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 0 4 0 Rational
+    interJ_AreanoFactor map1 = mkTensorfromF (0,1,0,0,0,0,4,0) (interF_JAreanoFactor map1) 
 
     --the last step is defining the metric and area metric intertwiner, they booth need the appropriate maps
 
@@ -329,12 +356,27 @@ module BasicTensors (
                 j = interJ_2 jMap
                 prod = tensorProductWith (*) i j 
 
+    interMetricnoFactor ::  M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9  -> Tensor 0 0 0 0 1 1 1 1 Rational 
+    interMetricnoFactor iMap jMap = tensorSMult (-2) $ tensorContractWith_3 (0,0) (+) prod 
+            where 
+                i = interI_2 iMap
+                j = interJ_2noFactor jMap
+                prod = tensorProductWith (*) i j 
+
     interArea ::  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20  -> Tensor 1 1 0 0 0 0 1 1 Rational 
     interArea iMap jMap = tensorSMult (-4) $ tensorContractWith_3 (1,1) (+) 
         $ tensorContractWith_3 (2,2) (+) $ tensorContractWith_3 (3,3) (+) prod 
             where 
                 i = interI_Area iMap
                 j = interJ_Area jMap
+                prod = tensorProductWith (*) i j 
+
+    interAreanoFactor ::  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20  -> Tensor 1 1 0 0 0 0 1 1 Rational 
+    interAreanoFactor iMap jMap = tensorSMult (-4) $ tensorContractWith_3 (1,1) (+) 
+        $ tensorContractWith_3 (2,2) (+) $ tensorContractWith_3 (3,3) (+) prod 
+            where 
+                i = interI_Area iMap
+                j = interJ_AreanoFactor jMap
                 prod = tensorProductWith (*) i j 
 
     --we also need the ivar Tensors (careful where we start with Enums!!)
@@ -417,14 +459,16 @@ module BasicTensors (
     epsilon :: Tensor 0 0 0 0 0 0 0 4 Rational
     epsilon = mkTensorfromF (0,0,0,0,0,0,0,4) epsilon_F
 
-    --the spacetimeform of the flat area metric
+    --the spacetimeform of the flat area metric 
 
+    
     flatAreaST :: Tensor 0 0 0 0 0 0 0 4 Rational
     flatAreaST = tensorSub (tensorSub etaProd1 etaProd2) epsilon 
                 where
                         etaProd = tensorProductWith (*) eta eta
                         etaProd1 = tensorTranspose 8 (1,2) etaProd
                         etaProd2 = tensorTranspose 8 (1,3) $ tensorTranspose 8 (2,3) etaProd
+    
 
     --and the abstract index form
 

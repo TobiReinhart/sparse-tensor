@@ -19,7 +19,7 @@ module EquivarianceEqns (
     eqn1_1, eqn1_2, eqn1_3, eqn1_4, eqn2_2, eqn2_3, eqn3_3,
     index2Sparse1, index2Sparse2, index2Sparse3, index2Sparse4, index2Sparse5, index2Sparse6,index2SparseConst,
     mkEqn1Sparse, mkEqn2Sparse, mkEqn3Sparse, mkEqn4Sparse, mkEqn5Sparse, mkEqn6Sparse, mkEqnConstSparse, showEqns,
-    eqn1_1Flat, eqn2_2Flat, eqn3_3Flat, eqn3_3FlatnoFactor, mkEqnConstSparseFlat, showEqnsFlat
+    eqn1_1Flat, eqn2_2Flat, eqn3_3Flat, mkEqnConstSparseFlat, showEqnsFlat, showEqnsFlatFrac
 
 ) where
 
@@ -57,6 +57,9 @@ module EquivarianceEqns (
     eqn1_4 = delta_3
 
     --there is a problem with the fcators due to symmetrization !!!
+    --
+    --
+    --
 
     eqn2_2 :: M.Map (Linds_3 2) Uind_9 ->  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 1 0 0 2 (Ivar Rational)
     eqn2_2 mapInterI2 map1Area map2Area = tensorContractWith_20 (0,1) addIvar prod 
@@ -195,13 +198,6 @@ module EquivarianceEqns (
     eqn3_3Flat mapInterI3 mapInterJ2 map1Area map2Area = tensorContractWith_20 (0,1) (+) prod
                     where
                         int1 = tensorProductWith (*) (interJ_2 mapInterJ2) (interArea map1Area map2Area)
-                        intTotal = tensorContractWith_3 (0,1) (+) $ tensorContractWith_3 (1,2) (+) $ tensorContractWith_3 (2,3) (+) $ tensorProductWith (*) int1 (symI_3 mapInterI3)
-                        prod = tensorProductWith (*) intTotal (flatArea map2Area)
-
-    eqn3_3FlatnoFactor :: M.Map (Linds_3 3) Uind_19 -> M.Map (Uinds_3 2) Lind_9 -> M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 1 0 0 1 0 1 Rational
-    eqn3_3FlatnoFactor mapInterI3 mapInterJ2 map1Area map2Area = tensorContractWith_20 (0,1) (+) prod
-                    where
-                        int1 = tensorProductWith (*) (interJ_2noFactor mapInterJ2) (interArea map1Area map2Area)
                         intTotal = tensorContractWith_3 (0,1) (+) $ tensorContractWith_3 (1,2) (+) $ tensorContractWith_3 (2,3) (+) $ tensorProductWith (*) int1 (interI_3 mapInterI3)
                         prod = tensorProductWith (*) intTotal (flatArea map2Area)
 
@@ -213,6 +209,13 @@ module EquivarianceEqns (
     showEqnsFlat map1 = "{" ++ (tail (concat list2)) ++ "}"
                         where
                             map2 = M.map (show.truncate) map1 
+                            list1 = M.assocs map2
+                            list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y ++ "\n") list1
+
+    showEqnsFlatFrac :: M.Map (Int,Int) Rational -> String
+    showEqnsFlatFrac map1 = "{" ++ (tail (concat list2)) ++ "}"
+                        where
+                            map2 = M.map (show) map1 
                             list1 = M.assocs map2
                             list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y ++ "\n") list1
 

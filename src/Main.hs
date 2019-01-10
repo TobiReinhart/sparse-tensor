@@ -35,6 +35,7 @@ module Main (
     import System.Random.TF.Gen
     import System.Random.TF.Instances 
     import Integrabillity
+    import Perturbation
      
 
     main = do
@@ -187,6 +188,9 @@ module Main (
 
         let intZero =  mkEqnSparseCond1Zero $ int1Zero map1Area map2Area map1Metric 
 
+        let intTest =  mkEqnSparseCond1Zero $ int1Test map1Area map2Area map1Metric 
+
+
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Integrabillity1Zero.txt" $  showEqnsFlat intZero
 
         let test = mkEqnSparseBlock1Eta $ tensorContractWith_3 (1,0) (+) $ tensorProductWith (*) (eqn1_1Flat map1Area map2Area) invEta  
@@ -227,7 +231,15 @@ module Main (
 
         let trianintCond = M.fromList $ zip intCondIndList [1..]
 
+        let int2_1SymbolPure = mkEqnSparseintCond2_1SymbolPure trianintCond $ intCond2_1SymbolPure map1Area map2Area map1Metric map2Metric 
+
+        let int2_1SymbolRed = mkEqnSparseintCond2_1SymbolRed trianintCond $ intCond2_1SymbolRed map1Area map2Area map1Metric map2Metric 
+
+        let int2_1SymbolRedWrong = mkEqnSparseintCond2_1SymbolRed trianintCond $ intCond2_1SymbolRedWrong map1Area map2Area map1Metric map2Metric 
+        
         let int2_1Symbol = mkEqnSparseintCond2_1Symbol trianintCond $ intCond2_1Symbol map1Area map2Area map1Metric map2Metric 
+        
+        let int2_1SymbolRedFull = mkEqnSparseintCond2_1SymbolRedFull  $ intCond2_1SymbolRed map1Area map2Area map1Metric map2Metric 
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/intCond2_1Symbol_3.txt" $  showEqnsFlatFrac int2_1Symbol
 
@@ -279,8 +291,98 @@ module Main (
 
         let inds2 = getRepInds "abcdefghpq" symAns2
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/AnsatzTest2.txt"  $ inds
+        let pertAns = map mkPertAns ansatz2
 
+        let symPertAns = symAnsSetPert symLabel2 pertAns 
+
+        let symPertAnsInds = getRepIndsPert "abcdefghpq" symPertAns
+
+        let ansatz4 = getAllInds [(1,2),(1,3),(3,4),(5,6)] [] [(1,2),(1,3),(3,4),(3,5),(5,6)]
+
+        let ansatz4Pert = map mkPertAns ansatz4
+
+        let ansatz4Sym = symAnsSetPert ([(5,6)],[(1,2),(3,4)],[([1,2],[3,4])], [], []) ansatz4Pert
+
+        let ansatz4SymInds = getRepIndsPert "abcdpq" ansatz4Sym
+
+        let pertAns1 = map mkPertAns ansatz
+
+        let pertAns1Sym = symAnsSetPert symLabel pertAns1
+
+        let pertAns1SymInds = getRepIndsPert "abcdefghijklpq" pertAns1Sym
+
+        let vals = evalFullAns areaEvalMap14 [pertAns1Sym !! 0]
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/FlatTest1.txt" $ showEqnsFlat $ M.union eqn1Flat eqnConstFlat
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/FlatTest2.txt" $ showEqnsFlat eqn2Flat
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/FlatTest3.txt" $ showEqnsFlat eqn3Flat
+
+        let intTest2 = mkEqnSparseintCond2_1SymbolRedFull  $ int1Test2 map1Area map2Area map1Metric  
+
+        let intTest3 = mkEqnSparseintCond2_1SymbolRedFull  $ int1Test3 map1Area map2Area map1Metric  
 
         
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/IntCond1Test5.txt" $  showEqnsFlatFrac intTest2
+
+        let flatMetric = mkEqnSparseflatMetricInter $ flatMetricInter map1Metric map2Metric 
+
+        let flatMetricPro = mkEqnSparseflatMetricInterProlong $ flatMetricInterProlong map1Metric map2Metric
+
+        let flatMetricProUnSym = mkEqnSparseflatMetricInterProlong $ tensorProductWith (*) delta_9 $ flatMetricInter map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/flatMetricInter.txt" $  showEqnsFlatFrac flatMetric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/flatMetricINterProlong.txt" $  showEqnsFlatFrac flatMetricPro
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/flatMetricINterProlongUnSym.txt" $  showEqnsFlatFrac flatMetricProUnSym
+
+        let rankDef1 = mkEqnSparseintRankDef1 $ intRankDef1 map1Area map2Area map1Metric map2Metric 
+
+        let rankDef2 = mkEqnSparseintCond2_1SymbolRedFull $ intRankDef2 map1Area map2Area map1Metric map2Metric
+
+        let rankDef3 = mkEqnSparseintRankDef3 $ intRankDef3 map1Area map2Area map1Metric map2Metric
+
+        let rankDef5 = mkEqnSparseintRankDef3 $ intRankDef5 map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/RankDef5.txt" $  showEqnsFlatFrac rankDef5
+
+        let intComp = mkEqnSparseintCondComp $ intCondComp map1Area map2Area map1Metric map2Metric 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/RankDef5.txt" $  showEqnsFlatFrac intComp
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/int1_31_12.txt" $  showEqnsFlatFrac totalInt3
+
+        let intCondSymmetrized = mkEqnSparseintCondSym $ intCondSym map1Area map2Area map1Metric map2Metric
+
+        let intCompZero = mkEqnSparseintCondComp $ intCondCompZero map1Area map2Area map1Metric map2Metric 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/int2_1_9_1_19.txt" $  showEqnsFlatFrac int2_1
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/intCondCompZero_9_1_19.txt" $  showEqnsFlatFrac intCompZero
+
+        let intOrd2 = mkEqnSparseintCondOrd2 $ intCondOrd2 map1Area map2Area map1Metric map2Metric 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/intCondOrd2_9_1_19.txt" $ showEqnsFlatFrac  intOrd2 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/intCond1_9_1_19.txt" $ showEqnsFlatFrac  int1 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PdeHaskellFlatProlonged10_1_19.txt" $  evalPdeRand 315 trian flatAreaM pdeTotal 
+
+        let int2_1New = mkEqnSparseintCond2_1New trian $ intCond2_1 map1Area map2Area map1Metric map2Metric 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/AnsatzEqn10er10_1_19.txt" $  showEqnsFlat int2_1New 
+
+        let intCompNew = mkEqnSparseintCondCompNew trian $ intCondComp map1Area map2Area map1Metric map2Metric 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/intCondOrd2New_9_1_19.txt" $ showEqnsFlat  intCompNew
+
+        let intCompNoSym = mkEqnSparseintCondCompNoSym $ intCondCompNoSym map1Area map2Area map1Metric map2Metric 
+
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/intCondCompNoSym_10_1_19.txt" $ showEqnsFlat  intCompNoSym
+
+
+
+
         

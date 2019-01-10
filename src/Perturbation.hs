@@ -1,6 +1,6 @@
 module Perturbation (
 
-
+mkPertAns, PertAnsatz, symAnsSetPert, indexPermSeqPert, getRepIndsPert, evalPertAns, areaList14, areaEvalMap14, evalFullAns, areaEvalMap10
 
 )
 where
@@ -17,8 +17,10 @@ where
 
     type PertAnsatz a = M.Map (S.Seq [Int] ) a
 
+    --write this in 1 Map only ?
+
     swapLabel :: (Eq a, Ord a) => (a,a) -> S.Seq [a] -> S.Seq [a]
-    swapLabel (x,y) seq = fmap f seq 
+    swapLabel (x,y) seq = S.sort $ fmap f seq 
             where
                 f = sort.(map (swapLabelF (x,y)))
 
@@ -152,6 +154,87 @@ where
                 where 
                     chunks = S.chunksOf 2 seq 
                     seqList = (fmap F.toList) chunks 
+
+    mkIndListtoEta :: I.IntMap Char -> [Int] -> String
+    mkIndListtoEta iMap inds = "[" ++ (intersperse ',' eta) ++ "]"
+                where
+                    eta = map (\x -> (I.!) iMap x) inds
+
+    indexPermSeqPert :: S.Seq [Int] -> I.IntMap Char -> String 
+    indexPermSeqPert a b
+                | 2*(S.length a) /= (I.size b) = error "indexList and permutation do  not fit togehter"
+                | otherwise = "[" ++ ( concat (intersperse "," indList) ) ++ "]"  
+                        where
+                            indSeq = fmap (mkIndListtoEta b) a
+                            indList = F.toList indSeq
+
+    getRepPert :: (Fractional a) => [PertAnsatz a] -> [S.Seq [Int]]
+    getRepPert ans = map (\x -> (M.keys x) !! 0) ans 
+
+    getRepIndsPert :: (Fractional a) => String -> [PertAnsatz a] -> String 
+    getRepIndsPert inds ans = "[" ++ (concat (intersperse "," (map (\x -> indexPermSeqPert x iMap) seqList))) ++ "]"
+            where 
+                seqList = getRepPert ans 
+                iMap = mkIndMap inds
+
+    evalSeq :: (Num a) => M.Map Int Int -> S.Seq [Int] -> a
+    evalSeq iMap seq = S.foldlWithIndex (\z ind val -> z * (etaF iMap val)) 1 seq 
+
+    etaF :: (Num a) => M.Map Int Int -> [Int] -> a
+    etaF etaMap [a,b]
+            | (i == j) && (i == 0) = 1
+            | i == j = -1
+            | otherwise = 0
+                where
+                    (i,j) = ((M.!) etaMap a, (M.!) etaMap b)
+    etaF etaMap x = error "wrong list size!"
+
+    evalPertAns :: (Num a) => M.Map Int Int -> PertAnsatz a -> a
+    evalPertAns iMap ans = M.foldrWithKey (\ k v s -> (evalSeq iMap k)*v + s) 0 ans 
+
+    --we need all indices for the 14er are metric tensor
+
+    areaList14 :: [[Int]]
+    areaList14 = list
+        where 
+            list = [[a,b,c,d,e,f,g,h,i,j,k,l,p,q] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+                                                              e <- [0..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
+                                                              i <- [0..2], j <- [i+1..3], k <- [i..2], l <- [k+1..3],
+                                                              p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l) && (p<=q) ]
+    
+    areaList10 :: [[Int]]
+    areaList10 = list
+        where 
+            list = [[a,b,c,d,e,f,g,h,p,q] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+                                                              e <- [0..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
+                                                              p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (p<=q) ]
+    
+    isAreaSorted :: Int -> Int -> Int -> Int -> Bool
+    isAreaSorted a b c d 
+            | a < c || (a == c && b <= d) = True
+            | otherwise = False 
+
+    areaEvalMap14 :: [M.Map Int Int]
+    areaEvalMap14 = map M.fromList l 
+        where 
+            area14 = areaList14 
+            l = map (\x -> zip [1,2,3,4,5,6,7,8,9,10,11,12,13,14] x) area14
+
+    areaEvalMap10 :: [M.Map Int Int]
+    areaEvalMap10 = map M.fromList l 
+        where 
+            area10 = areaList10
+            l = map (\x -> zip [1,2,3,4,5,6,7,8,9,10] x) area10
+
+    evalFullAns :: [M.Map Int Int] -> [PertAnsatz Rational] -> [[Rational]]
+    evalFullAns evalMap ans = map (\f -> map f ans) areaF 
+        where
+            areaF = map (\x -> evalPertAns x) evalMap
+
+    
+            
+
+    
 
     
 

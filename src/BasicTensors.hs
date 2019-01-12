@@ -18,7 +18,8 @@ module BasicTensors (
     triangleMap2, triangleMap3, interI_2, interJ_2, interJ_2noFactor, symI_2, aSymI_2,  interI_3, interJ_3, symI_3, areaDofList, interMetric, interMetricnoFactor, interArea, interAreanoFactor,
     ivar1, ivar2, ivar3, delta_3, delta_9, delta_19, delta_20, triangleMapArea, interI_Area, symI_Area, interJ_Area, interJ_AreanoFactor,
     interF_IArea, canonicalizeArea, isZeroArea, eta, epsilon, flatAreaST, flatArea,
-    ivar1FM, ivar2FM, ivar3FM, ivar1M, ivar2M, ivar3M, invEta, etaAbs, invEtaAbs, flatAreaMap
+    ivar1FM, ivar2FM, ivar3FM, ivar1M, ivar2M, ivar3M, invEta, etaAbs, invEtaAbs, flatAreaMap,
+    interEqn1_2, interEqn1_3
 
 ) where
 
@@ -378,6 +379,22 @@ module BasicTensors (
                 i = interI_Area iMap
                 j = interJ_AreanoFactor jMap
                 prod = tensorProductWith (*) i j 
+
+    --and the two other intertwiners for the first eqn
+
+    interEqn1_2 :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20  -> Tensor 1 1 0 0 0 0 2 2 Rational 
+    interEqn1_2 map1Area map2Area = intTotal
+                        where
+                                int1 = tensorProductWith (*) (interArea map1Area map2Area) delta_3 
+                                int2 = tensorProductWith (*) ( tensorTranspose 8 (0,1) $ tensorProductWith (*) delta_3 delta_3 ) delta_20
+                                intTotal = tensorSub int1 int2 
+
+    interEqn1_3 ::  M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 1 1 0 0 1 1 1 1 Rational
+    interEqn1_3 map1Area map2Area map1Metric map2Metric = intTotal 
+                        where
+                                int1 = tensorProductWith (*) (interArea map1Area map2Area) delta_9
+                                int2 = tensorProductWith (*) (interMetric map1Metric map2Metric) delta_20
+                                intTotal = tensorAdd int1 int2
 
     --we also need the ivar Tensors (careful where we start with Enums!!)
 

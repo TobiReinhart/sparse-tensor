@@ -208,14 +208,14 @@ module EquivarianceEqns (
     showEqnsFlat :: M.Map (Int,Int) Rational -> String
     showEqnsFlat map1 = "{" ++ (tail (concat list2)) ++ "}"
                         where
-                            map2 = M.map (show.truncate) map1 
+                            map2 = M.map (show.truncate) $ M.filter (/=0) map1 
                             list1 = M.assocs map2
                             list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y ++ "\n") list1
 
     showEqnsFlatFrac :: M.Map (Int,Int) Rational -> String
     showEqnsFlatFrac map1 = "{" ++ (tail (concat list2)) ++ "}"
                         where
-                            map2 = M.map (show) map1 
+                            map2 = M.map (show) $ M.filter (/=0) map1 
                             list1 = M.assocs map2
                             list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y ++ "\n") list1
 

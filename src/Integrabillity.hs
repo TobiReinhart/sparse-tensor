@@ -36,7 +36,9 @@ module Integrabillity (
     intCondOrd2, mkEqnSparseintCondOrd2,
     mkEqnSparseintCond2_1New, mkEqnSparseintCondCompNew,
     interProTest,
-    intCondCompNoSym, mkEqnSparseintCondCompNoSym
+    intCondCompNoSym, mkEqnSparseintCondCompNoSym,
+    inter4noFactor, inter4Factor, mkEqnSparseinterMat,
+    inter6noFactor, inter6Factor, mkEqnSparseinter6Mat
     
 ) where
 
@@ -193,7 +195,7 @@ module Integrabillity (
                         prod = tensorProductWith (*) intTotal $ tensorProductWith (*) invEta antiSym
 
     index2SparseCond3 :: Index 1 1 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseCond3 (x1, x2, _, _, x5, _, _, _) = (137+(b-1)*10+(k-1),a+1)
+    index2SparseCond3 (x1, x2, _, _, x5, _, _, _) = ((b-1)*10+k,a)
                          where 
                              b = 1 + (fromEnum $ getValInd x1 0)
                              a = 1 + (fromEnum $ getValInd x2 0)
@@ -843,5 +845,66 @@ module Integrabillity (
     mkEqnSparseintCondCompNoSym :: Tensor 1 2 0 0 1 1 2 2 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseintCondCompNoSym  (Tensor map1) = M.mapKeys index2SparseintCondCompNoSym map1
 
+    --some intertwiner matrices
+
+    
+    inter4noFactor :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 1 1 0 0 0 0 0 0 Rational
+    inter4noFactor map1Area map2Area = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) $ tensorContractWith_3 (2,2) (+) $ tensorContractWith_3 (3,3) (+)  prod
+                where
+                    intI = interI_Area map1Area 
+                    intJnoF = interJ_AreanoFactor  map2Area
+                    prod = tensorProductWith (*) intI intJnoF
+
+    inter4Factor :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 1 1 0 0 0 0 0 0 Rational
+    inter4Factor map1Area map2Area = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) $ tensorContractWith_3 (2,2) (+) $ tensorContractWith_3 (3,3) (+)  prod
+                where
+                    intI = symI_Area map1Area 
+                    intJnoF = interJ_Area  map2Area
+                    prod = tensorProductWith (*) intI intJnoF
+
+    index2SparseinterMat:: Index 1 1 0 0 0 0 0 0 -> (Int,Int) 
+    index2SparseinterMat (x1, x2, _, _, _, _, _, _) = (b,a)
+                         where 
+                             a = 1 + (fromEnum $ getValInd x2 0) 
+                             b = 1 + (fromEnum $ getValInd x1 0) 
+                             
+                
+    mkEqnSparseinterMat :: Tensor 1 1 0 0 0 0 0 0 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseinterMat  (Tensor map1) = M.mapKeys index2SparseinterMat map1
 
 
+    inter6noFactor :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 -> M.Map (Uinds_3 2) Lind_9 ->Tensor 1 1 0 0 1 1 0 0 Rational
+    inter6noFactor map1Area map2Area map1Metric map2Metric = tensorProductWith (*) contr1 contr2 
+                where
+                    intI = interI_Area map1Area 
+                    intJnoF = interJ_AreanoFactor  map2Area
+                    intI2 = interI_2 map1Metric
+                    intJ2noFac = interJ_2noFactor map2Metric 
+                    prod1 = tensorProductWith (*) intI intJnoF
+                    contr1 = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) $ tensorContractWith_3 (2,2) (+) $ tensorContractWith_3 (3,3) (+)  prod1
+                    prod2 = tensorProductWith (*) intI2 intJ2noFac 
+                    contr2 = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) prod2 
+
+    inter6Factor :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 -> M.Map (Uinds_3 2) Lind_9 ->Tensor 1 1 0 0 1 1 0 0 Rational
+    inter6Factor map1Area map2Area map1Metric map2Metric = tensorProductWith (*) contr1 contr2 
+                where
+                    symI = symI_Area map1Area 
+                    intJ = interJ_Area map2Area
+                    symI2 = symI_2 map1Metric
+                    intJ2 = interJ_2 map2Metric 
+                    prod1 = tensorProductWith (*) symI intJ
+                    contr1 = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) $ tensorContractWith_3 (2,2) (+) $ tensorContractWith_3 (3,3) (+)  prod1
+                    prod2 = tensorProductWith (*) symI2 intJ2 
+                    contr2 = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (1,1) (+) prod2 
+
+
+    index2Sparseinter6Mat:: Index 1 1 0 0 1 1 0 0 -> (Int,Int) 
+    index2Sparseinter6Mat (x1, x2, _, _, x5, x6, _, _) = ((b-1)*10+j,(a-1)*10+i)
+                         where 
+                             a = 1 + (fromEnum $ getValInd x2 0) 
+                             b = 1 + (fromEnum $ getValInd x1 0)
+                             i = 1 + (fromEnum $ getValInd x6 0) 
+                             j = 1 + (fromEnum $ getValInd x5 0) 
+
+    mkEqnSparseinter6Mat :: Tensor 1 1 0 0 1 1 0 0 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseinter6Mat  (Tensor map1) = M.mapKeys index2Sparseinter6Mat map1

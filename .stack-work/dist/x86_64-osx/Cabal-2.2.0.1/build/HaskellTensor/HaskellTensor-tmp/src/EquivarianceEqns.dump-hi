@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2018-12-19 11:47:08.101061 UTC
+2019-01-11 10:26:21.361792 UTC
 
 interface main:EquivarianceEqns 8043
-  interface hash: e8c7dbc9057823512feec71b694dd604
-  ABI hash: 14196e4cc9600cb0a989327decc7a1fb
+  interface hash: d67d74d191932df394525fc48696fcf8
+  ABI hash: fbf17c99090e8b0250ffa5ce800c62ed
   export-list hash: 17332bd3a91566b072d1511317ff9a55
   orphan hash: 5a8ea31337cbb9a6102439cfc89b3120
   flag hash: 941ef95016433cfd417a6725e52dbf85
@@ -79,8 +79,9 @@ import  -/  base-4.11.1.0:GHC.Show 73be67392447c974f19c3befd83c46c0
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.Map 0dbdaec812ef695a364aa6c69e7f7d53
 import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
-import  -/  BasicTensors 7da7d9b4111070d0fcb49fe29a885e43
-  exports: ee852659668621914165c2baf135a5c3
+import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
+import  -/  BasicTensors 459e760670e17113d11708f22d917aa1
+  exports: b16000811d6d04867ef2d7f77be3b83b
   delta_20 cc7ac0d02f645bebaef7e7d6a42c65ec
   delta_3 88443abb7d76d02fee3e7a789d30d02a
   delta_9 e75aa262356472dc198559ec7f775732
@@ -89,7 +90,7 @@ import  -/  BasicTensors 7da7d9b4111070d0fcb49fe29a885e43
   interI_2 eb0e312eaf44de854b31148d758e3c06
   interI_3 9ebbcc686d6c1e79936e1e48d95b2145
   interJ_2 2f0595593070d5b724a7c4cfafd49d1c
-  interMetric 6c93f1cf065a9e72cbd51e41cd4d10ce
+  interMetric 7b123234da5bff1e9d5f5bfbd52a6db4
   ivar1 034c4f52b55e2b73d6fdd69ab4e6f3d8
   ivar2 0737557436268459f171275a299eb1a7
   ivar3 7361711a7a126f2952b583b35e396fb6
@@ -683,7 +684,7 @@ fe56b5208dc90c3120021bb4b004c9b9
                          <Index.Ind 1 Index.Uind_3>_N
                          <Index.Ind 2 Index.Lind_3>_N)_N
                       <Ivar.Ivar GHC.Real.Rational>_R)_R } } } } } }) -}
-e59d25b0c0dcf39209c4ecc1f667f1c3
+afa4da799a37da7ca36b9802fce0bac1
   $weqn1_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -2765,6 +2766,22 @@ babe7a71ccdc16e2e5ac704ce56cd56c
                         1#
                         -> (# EquivarianceEqns.eqn1_14,
                               Data.IntMap.Internal.Nil @ GHC.Real.Rational #) } }) -}
+37b08a13167304dcae36cda013a16c34
+  $wlvl6 ::
+    GHC.Integer.Type.Integer
+    -> GHC.Integer.Type.Integer -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><L,1*U>, Inline: [0],
+     Unfolding: (\ (ww :: GHC.Integer.Type.Integer)
+                   (ww1 :: GHC.Integer.Type.Integer) ->
+                 case GHC.Integer.Type.eqInteger#
+                        ww
+                        EquivarianceEqns.$stensorContractWith_4 of wild2 {
+                   DEFAULT -> GHC.Types.True
+                   1#
+                   -> case GHC.Integer.Type.eqInteger#
+                             ww1
+                             GHC.Real.$fEnumRatio1 of wild3 {
+                        DEFAULT -> GHC.Types.True 1# -> GHC.Types.False } }) -}
 3e136ca97434315940e92bf90413256c
   $wmkEqnConstSparse ::
     Data.Map.Internal.Map (Index.Index 0 0 0 0 0 0 1 1) a
@@ -3016,7 +3033,7 @@ e8394ec1ffb131c2d54314f497cd1c97
     -> Data.Map.Internal.Map
          (Index.Index 1 1 0 0 0 0 2 2) GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U> -}
-eb7c72a0611a828b88c83941faccc3be
+7cf932876158292848f4e73c6f589e77
   eqn1_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -3637,7 +3654,7 @@ b3ba756a6c16e2fcf4bcf1bf4471952e
 a3576ca0617a1f7633dada43e733ce16
   showEqns3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("{"#) -}
-19815f52ade9889b0f554ccaacf824be
+398b31dc0bcc4d19993d91abe7d5058f
   showEqnsFlat ::
     Data.Map.Internal.Map
       (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
@@ -3649,14 +3666,30 @@ a3576ca0617a1f7633dada43e733ce16
                    EquivarianceEqns.showEqns3
                    (case EquivarianceEqns.showEqnsFlat_go1
                            (GHC.Types.[] @ GHC.Types.Char)
-                           (EquivarianceEqns.showEqnsFlat_go13 map1) of wild {
+                           (EquivarianceEqns.showEqnsFlat_go13
+                              (Data.Map.Internal.filterWithKey
+                                 @ (GHC.Types.Int, GHC.Types.Int)
+                                 @ GHC.Real.Rational
+                                 EquivarianceEqns.showEqnsFlat1
+                                 map1)) of wild {
                       [] -> case GHC.List.scanl2 ret_ty [GHC.Types.Char] of {}
                       : ds1 xs
                       -> GHC.Base.++
                            @ GHC.Types.Char
                            xs
                            EquivarianceEqns.showEqns1 })) -}
-6e12e74c7995eb9c2fa13f9cd3f30b40
+ca98237ab466a891686435c455990202
+  showEqnsFlat1 ::
+    (GHC.Types.Int, GHC.Types.Int)
+    -> GHC.Real.Rational -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,A><S(SS),1*U(U,U)>,
+     Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: (GHC.Types.Int, GHC.Types.Int))
+                   (w1 :: GHC.Real.Rational) ->
+                 case w1 of ww { GHC.Real.:% ww1 ww2 ->
+                 EquivarianceEqns.$wlvl6 ww1 ww2 }) -}
+f92f2d803c1058cac89f23d86fd6a0d0
   showEqnsFlatFrac ::
     Data.Map.Internal.Map
       (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
@@ -3668,7 +3701,12 @@ a3576ca0617a1f7633dada43e733ce16
                    EquivarianceEqns.showEqns3
                    (case EquivarianceEqns.showEqnsFlatFrac_go1
                            (GHC.Types.[] @ GHC.Types.Char)
-                           (EquivarianceEqns.showEqnsFlatFrac_go13 map1) of wild {
+                           (EquivarianceEqns.showEqnsFlatFrac_go13
+                              (Data.Map.Internal.filterWithKey
+                                 @ (GHC.Types.Int, GHC.Types.Int)
+                                 @ GHC.Real.Rational
+                                 EquivarianceEqns.showEqnsFlat1
+                                 map1)) of wild {
                       [] -> case GHC.List.scanl2 ret_ty [GHC.Types.Char] of {}
                       : ds1 xs
                       -> GHC.Base.++

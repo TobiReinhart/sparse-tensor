@@ -36,6 +36,7 @@ module Main (
     import System.Random.TF.Instances 
     import Integrabillity
     import Perturbation
+    import AnsatzEqns2
      
 
     main = do
@@ -380,9 +381,62 @@ module Main (
 
         let intCompNoSym = mkEqnSparseintCondCompNoSym $ intCondCompNoSym map1Area map2Area map1Metric map2Metric 
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/intCondCompNoSym_10_1_19.txt" $ showEqnsFlat  intCompNoSym
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/intCondCompNoSym_10_1_19.txt" $ showEqnsFlat  intCompNoSym
 
+        let ansAB = mkEqnSparseAnsatzAB trian $ ansatzAB map1Area map2Area map1Metric map2Metric
 
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/ansatzAB_11_1_19.txt" $ showEqnsFlat  ansAB
 
+        let ansABb = mkEqnSparseAnsatzABb trian $ ansatzABb map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/ansatzABb_11_1_19.txt" $ showEqnsFlat  ansABb
+
+        let ansAaBb = mkEqnSparseAnsatzAaBb trian $ ansatzAaBb map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/ansatzAaBb_11_1_19.txt" $ showEqnsFlat  ansAaBb
+
+        let ansAIB = mkEqnSparseAnsatzAIB trian $ ansatzAIB map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/ansatzAIB_11_1_19.txt" $ showEqnsFlat  ansAIB
+
+        let ansAaBI = mkEqnSparseAnsatzAaBI trian $ ansatzAaBI map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/ansatzAaBI_11_1_19.txt" $ showEqnsFlat  ansAaBI
+
+        let ansAIBJ = mkEqnSparseAnsatzAIBJ trian $ ansatzAIBJ map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/ansatzAIBJ_11_1_19.txt" $ showEqnsFlat  ansAIBJ
+
+        let newInt2 = mkEqnSparseintCond2NoSym trian $ intCond2NoSym map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/intCond_11_1_19.txt" $ showEqnsFlat  newInt2
+
+        let rem = mkEqnSparseRemoveAIB trian $ removeAIB 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/removeAIB_11_1_19.txt" $ showEqnsFlat  rem
+
+        let internoFac = mkEqnSparseinterMat $ inter4noFactor map1Area map2Area 
+
+        let interFac = mkEqnSparseinterMat $ inter4Factor map1Area map2Area 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/interMatnoFac_11_1_19.txt" $ showEqnsFlatFrac  internoFac
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/interMatFac_11_1_19.txt" $ showEqnsFlatFrac  interFac
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/IntCond1.txt" $  showEqnsFlat int1
+
+        let internoFac6 = mkEqnSparseinter6Mat $ inter6noFactor map1Area map2Area map1Metric map2Metric
+
+        let interFac6 = mkEqnSparseinter6Mat $ inter6Factor map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/inter6MatnoFac_11_1_19.txt" $ showEqnsFlatFrac  internoFac6
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/inter6MatFac_11_1_19.txt" $ showEqnsFlatFrac  interFac6
+
+        let intFirstOrder = mkEqnSparsefirstOrder $ intCondfirstOrder map1Area map2Area map1Metric map2Metric 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/int3_12_1_19.txt" $ showEqnsFlatFrac  int3
+
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/intFirstOrderTest_12_1_19.txt" $ showEqnsFlatFrac  intFirstOrder
 
         

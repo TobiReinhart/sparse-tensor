@@ -1,13 +1,13 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-14 11:31:09.22123 UTC
+2019-01-14 17:30:49.615735 UTC
 
-interface main:Ivar [hpc] 8043
-  interface hash: 08eaa6bac6f7f95f9d1e32bcc0a244a3
-  ABI hash: 52a8dc212ab2f8456a526e9d381a1784
+interface main:Ivar 8043
+  interface hash: f6068fc064175677b680cb3d32face69
+  ABI hash: 59828d84f4f392dde7d157e78b1e20aa
   export-list hash: 847b7f62b7be31da91814bf314ffd8e5
   orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
-  flag hash: badd6e954112606c59e049e70d21435f
+  flag hash: 707c86cfbee6a9c65f08462953a21ad8
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
   sig of: Nothing
@@ -66,9 +66,9 @@ import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
 import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
 import  -/  tf-random-0.5:System.Random.TF 8abc0839ff798088d7b0fe5da790c9f8
-import  -/  tf-random-0.5:System.Random.TF.Gen 8fa21695e0c1bda98aa67c940256094c
-import  -/  tf-random-0.5:System.Random.TF.Instances 8c4572fd10d56e74d9a1b310cc06013d
-ab6885cb499b09a96006f6f783229377
+import  -/  tf-random-0.5:System.Random.TF.Gen edab7920943edb50441b167dda441e39
+import  -/  tf-random-0.5:System.Random.TF.Instances 38b1c99a14c0f48d6db9f4a900310278
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fEqIvar :: GHC.Classes.Eq a => GHC.Classes.Eq (Ivar.Ivar a)
   DFunId
   {- Arity: 1, HasNoCafRefs, Strictness: <L,U(C(C1(U)),A)>m,
@@ -77,7 +77,7 @@ ab6885cb499b09a96006f6f783229377
                   @ (Ivar.Ivar a)
                   (Ivar.$fEqIvar_$c== @ a v)
                   (Ivar.$fEqIvar_$c/= @ a v) -}
-ab6885cb499b09a96006f6f783229377
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fEqIvar_$c/= ::
     GHC.Classes.Eq a => Ivar.Ivar a -> Ivar.Ivar a -> GHC.Types.Bool
   {- Arity: 3, HasNoCafRefs,
@@ -88,24 +88,15 @@ ab6885cb499b09a96006f6f783229377
                    ($dEq :: GHC.Classes.Eq a)
                    (x :: Ivar.Ivar a)
                    (y :: Ivar.Ivar a) ->
-                 {__scc {main:Ivar.==} True False} case x of wild { Ivar.Ivar a1 a2 ->
-                                                   case y of wild1 { Ivar.Ivar b1 b2 ->
-                                                   case {__scc {main:Ivar.==} False True} GHC.Classes.==
-                                                                                            @ a
-                                                                                            $dEq
-                                                                                            a1
-                                                                                            b1 of wild2 {
-                                                     GHC.Types.False -> GHC.Types.True
-                                                     GHC.Types.True
-                                                     -> case {__scc {main:Ivar.==} False True} Data.IntMap.Internal.equal
-                                                                                                 @ a
-                                                                                                 $dEq
-                                                                                                 a2
-                                                                                                 b2 of wild3 {
-                                                          GHC.Types.False -> GHC.Types.True
-                                                          GHC.Types.True
-                                                          -> GHC.Types.False } } } }) -}
-ab6885cb499b09a96006f6f783229377
+                 case x of wild { Ivar.Ivar a1 a2 ->
+                 case y of wild1 { Ivar.Ivar b1 b2 ->
+                 case GHC.Classes.== @ a $dEq a1 b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True
+                   -> case Data.IntMap.Internal.equal @ a $dEq a2 b2 of wild3 {
+                        GHC.Types.False -> GHC.Types.True
+                        GHC.Types.True -> GHC.Types.False } } } }) -}
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fEqIvar_$c== ::
     GHC.Classes.Eq a => Ivar.Ivar a -> Ivar.Ivar a -> GHC.Types.Bool
   {- Arity: 3, HasNoCafRefs,
@@ -119,13 +110,13 @@ ab6885cb499b09a96006f6f783229377
                  case w1 of ww { Ivar.Ivar ww1 ww2 ->
                  case w2 of ww3 { Ivar.Ivar ww4 ww5 ->
                  Ivar.$w$c== @ a w ww1 ww2 ww4 ww5 } }) -}
-ab6885cb499b09a96006f6f783229377
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fFunctorIvar :: GHC.Base.Functor Ivar.Ivar
   DFunId
   {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
      Unfolding: DFun:.
                   @ Ivar.Ivar Ivar.$fFunctorIvar_$cfmap Ivar.$fFunctorIvar_$c<$ -}
-ab6885cb499b09a96006f6f783229377
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fFunctorIvar_$c<$ :: a -> Ivar.Ivar b -> Ivar.Ivar a
   {- Arity: 2, HasNoCafRefs, Strictness: <L,U><S,1*U(A,1*U)>m,
      Inline: [0],
@@ -134,20 +125,18 @@ ab6885cb499b09a96006f6f783229377
                  case w1 of ww { Ivar.Ivar ww1 ww2 ->
                  case Ivar.$w$c<$ @ a @ b w ww2 of ww3 { (#,#) ww4 ww5 ->
                  Ivar.Ivar @ a ww4 ww5 } }) -}
-ab6885cb499b09a96006f6f783229377
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fFunctorIvar_$cfmap :: (a -> b) -> Ivar.Ivar a -> Ivar.Ivar b
   {- Arity: 2, HasNoCafRefs, Strictness: <L,C(U)><S,1*U(U,1*U)>m,
      Unfolding: InlineRule (2, True, False)
                 (\ @ a @ b (f :: a -> b) (ds :: Ivar.Ivar a) ->
-                 {__scc {main:Ivar.fmap} True True} case ds of wild { Ivar.Ivar a1 map ->
-                                                    Ivar.Ivar
-                                                      @ b
-                                                      (f a1)
-                                                      (Data.IntMap.Strict.map @ a @ b f map) }) -}
-ab6885cb499b09a96006f6f783229377
+                 case ds of wild { Ivar.Ivar a1 map ->
+                 Ivar.Ivar @ b (f a1) (Data.IntMap.Strict.map @ a @ b f map) }) -}
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fShowIvar :: GHC.Show.Show a => GHC.Show.Show (Ivar.Ivar a)
   DFunId
-  {- Arity: 1, Strictness: <L,U(C(C1(C(U))),A,A)>m, Inline: CONLIKE,
+  {- Arity: 1, HasNoCafRefs, Strictness: <L,U(C(C1(C(U))),A,A)>m,
+     Inline: CONLIKE,
      Unfolding: DFun: @ a (v :: GHC.Show.Show a).
                   @ (Ivar.Ivar a)
                   (Ivar.$fShowIvar_$cshowsPrec @ a v)
@@ -156,19 +145,17 @@ ab6885cb499b09a96006f6f783229377
 4bafc420832853c33e7f17a883708a97
   $fShowIvar1 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
-17ad7ca416fb736eef5e6846988c4a37
-  $fShowIvar2 :: [GHC.Types.Char]
-  {- Unfolding: (GHC.CString.unpackCString# Ivar.$fShowIvar3) -}
-3314da7ac15237b8bf22c20c493687f2
-  $fShowIvar3 :: GHC.Prim.Addr#
+2b461e4d0b940b10b6fc6f9027766f83
+  $fShowIvar2 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Ivar "#) -}
-a686dfdcf15f3101be4daea16d17246c
-  $fShowIvar4 :: GHC.Types.Int
+73fadfae94b58371da0ad8561a7251af
+  $fShowIvar3 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 11#) -}
-ab6885cb499b09a96006f6f783229377
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fShowIvar_$cshow ::
     GHC.Show.Show a => Ivar.Ivar a -> GHC.Base.String
-  {- Arity: 2, Strictness: <L,U(C(C1(C(U))),A,A)><S,1*U(U,1*U)>,
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <L,U(C(C1(C(U))),A,A)><S,1*U(U,1*U)>,
      Unfolding: InlineRule (2, True, False)
                 (\ @ a ($dShow :: GHC.Show.Show a) (x :: Ivar.Ivar a) ->
                  Ivar.$fShowIvar_$cshowsPrec
@@ -177,10 +164,11 @@ ab6885cb499b09a96006f6f783229377
                    Ivar.$fShowIvar1
                    x
                    (GHC.Types.[] @ GHC.Types.Char)) -}
-ab6885cb499b09a96006f6f783229377
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fShowIvar_$cshowList ::
     GHC.Show.Show a => [Ivar.Ivar a] -> GHC.Show.ShowS
-  {- Arity: 3, Strictness: <L,U(C(C1(C(U))),A,A)><S,1*U><L,U>,
+  {- Arity: 3, HasNoCafRefs,
+     Strictness: <L,U(C(C1(C(U))),A,A)><S,1*U><L,U>,
      Unfolding: InlineRule (3, True, False)
                 (\ @ a
                    ($dShow :: GHC.Show.Show a)
@@ -191,10 +179,10 @@ ab6885cb499b09a96006f6f783229377
                    (Ivar.$fShowIvar_$cshowsPrec @ a $dShow Ivar.$fShowIvar1)
                    ls
                    s) -}
-ab6885cb499b09a96006f6f783229377
+6fb5b1c62e6ccfd9020c45c8471a027a
   $fShowIvar_$cshowsPrec ::
     GHC.Show.Show a => GHC.Types.Int -> Ivar.Ivar a -> GHC.Show.ShowS
-  {- Arity: 3,
+  {- Arity: 3, HasNoCafRefs,
      Strictness: <L,U(C(C1(C(U))),A,A)><S(S),1*U(U)><S,1*U(U,1*U)>,
      Inline: [0],
      Unfolding: InlineRule (3, True, False)
@@ -253,7 +241,7 @@ f6e6604583332231a2392eeedf44b5f6
 9fbbafbb4acf2283ef4160772ed06205
   $trModule4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("main"#) -}
-a6dde882629ad95e154b5d7ccb8c0df5
+600190208cce4faa24f85e97d5371dbd
   $w$c<$ ::
     a
     -> Data.IntMap.Internal.IntMap b
@@ -263,41 +251,23 @@ a6dde882629ad95e154b5d7ccb8c0df5
                    @ b
                    (w :: a)
                    (ww :: Data.IntMap.Internal.IntMap b) ->
-                 {__scc {main:Ivar.fmap} True False} (# w,
-                                                        {__scc {main:Ivar.fmap} False True} letrec {
-                                                                                              go :: Data.IntMap.Internal.IntMap
-                                                                                                      b
-                                                                                                    -> Data.IntMap.Internal.IntMap
-                                                                                                         a
-                                                                                                {- Arity: 1,
-                                                                                                   Strictness: <S,1*U> -}
-                                                                                              = \ (ds :: Data.IntMap.Internal.IntMap
-                                                                                                           b) ->
-                                                                                                case ds of wild {
-                                                                                                  Data.IntMap.Internal.Bin dt dt1 l r
-                                                                                                  -> case go
-                                                                                                            l of dt2 { DEFAULT ->
-                                                                                                     case go
-                                                                                                            r of dt3 { DEFAULT ->
-                                                                                                     Data.IntMap.Internal.Bin
-                                                                                                       @ a
-                                                                                                       dt
-                                                                                                       dt1
-                                                                                                       dt2
-                                                                                                       dt3 } }
-                                                                                                  Data.IntMap.Internal.Tip dt x
-                                                                                                  -> case w of vx { DEFAULT ->
-                                                                                                     Data.IntMap.Internal.Tip
-                                                                                                       @ a
-                                                                                                       dt
-                                                                                                       vx }
-                                                                                                  Data.IntMap.Internal.Nil
-                                                                                                  -> Data.IntMap.Internal.Nil
-                                                                                                       @ a }
-                                                                                            } in
-                                                                                            go
-                                                                                              ww #)) -}
-2b58d1e08253f144fa2b2d632dc40cde
+                 (# w,
+                    letrec {
+                      go :: Data.IntMap.Internal.IntMap b
+                            -> Data.IntMap.Internal.IntMap a
+                        {- Arity: 1, Strictness: <S,1*U> -}
+                      = \ (ds :: Data.IntMap.Internal.IntMap b) ->
+                        case ds of wild {
+                          Data.IntMap.Internal.Bin dt dt1 l r
+                          -> case go l of dt2 { DEFAULT ->
+                             case go r of dt3 { DEFAULT ->
+                             Data.IntMap.Internal.Bin @ a dt dt1 dt2 dt3 } }
+                          Data.IntMap.Internal.Tip dt x
+                          -> case w of vx { DEFAULT -> Data.IntMap.Internal.Tip @ a dt vx }
+                          Data.IntMap.Internal.Nil -> Data.IntMap.Internal.Nil @ a }
+                    } in
+                    go ww #)) -}
+aeebe53ce285b4d3ec24a0e006c0a77c
   $w$c== ::
     GHC.Classes.Eq a =>
     a
@@ -314,72 +284,47 @@ a6dde882629ad95e154b5d7ccb8c0df5
                    (ww1 :: Data.IntMap.Internal.IntMap a)
                    (ww2 :: a)
                    (ww3 :: Data.IntMap.Internal.IntMap a) ->
-                 {__scc {main:Ivar.==} True True} case GHC.Classes.==
-                                                         @ a
-                                                         w
-                                                         ww
-                                                         ww2 of wild {
-                                                    GHC.Types.False -> GHC.Types.False
-                                                    GHC.Types.True
-                                                    -> Data.IntMap.Internal.equal
-                                                         @ a
-                                                         w
-                                                         ww1
-                                                         ww3 }) -}
-1d2235967cb4c63daf0ba9ecd2fa01e4
+                 case GHC.Classes.== @ a w ww ww2 of wild {
+                   GHC.Types.False -> GHC.Types.False
+                   GHC.Types.True -> Data.IntMap.Internal.equal @ a w ww1 ww3 }) -}
+48f4fb559bcf66591982636b7f12710e
   $w$cshowsPrec ::
     GHC.Show.Show a =>
     GHC.Prim.Int#
     -> a -> Data.IntMap.Internal.IntMap a -> GHC.Show.ShowS
-  {- Arity: 4, Strictness: <L,U(C(C1(C(U))),A,A)><S,U><L,U><L,1*U>,
-     Inline: [0],
+  {- Arity: 4, HasNoCafRefs,
+     Strictness: <L,U(C(C1(C(U))),A,A)><S,U><L,U><L,1*U>, Inline: [0],
      Unfolding: (\ @ a
                    (w :: GHC.Show.Show a)
                    (ww :: GHC.Prim.Int#)
                    (ww1 :: a)
                    (ww2 :: Data.IntMap.Internal.IntMap a) ->
-                 {__scc {main:Ivar.showsPrec} True True} let {
-                                                           f :: GHC.Base.String -> GHC.Base.String
-                                                           = GHC.Show.showsPrec
-                                                               @ a
-                                                               w
-                                                               Ivar.$fShowIvar4
-                                                               ww1
-                                                         } in
-                                                         let {
-                                                           g :: GHC.Base.String -> GHC.Base.String
-                                                           = Data.IntMap.Internal.$w$cshowsPrec
-                                                               @ a
-                                                               w
-                                                               11#
-                                                               ww2
-                                                         } in
-                                                         case GHC.Prim.>=# ww 11# of lwild {
-                                                           DEFAULT
-                                                           -> \ (x :: GHC.Base.String) ->
-                                                              GHC.Base.++
-                                                                @ GHC.Types.Char
-                                                                Ivar.$fShowIvar2
-                                                                (f (GHC.Types.:
-                                                                      @ GHC.Types.Char
-                                                                      GHC.Show.showSpace1
-                                                                      (g x)))
-                                                           1#
-                                                           -> \ (x :: GHC.Base.String) ->
-                                                              GHC.Types.:
-                                                                @ GHC.Types.Char
-                                                                GHC.Show.$fShow(,)4
-                                                                (GHC.Base.++
-                                                                   @ GHC.Types.Char
-                                                                   Ivar.$fShowIvar2
-                                                                   (f (GHC.Types.:
-                                                                         @ GHC.Types.Char
-                                                                         GHC.Show.showSpace1
-                                                                         (g (GHC.Types.:
-                                                                               @ GHC.Types.Char
-                                                                               GHC.Show.$fShow(,)2
-                                                                               x))))) }) -}
-93e5fb3fc5a3e23af94626e612336db6
+                 let {
+                   f :: GHC.Base.String -> GHC.Base.String
+                   = GHC.Show.showsPrec @ a w Ivar.$fShowIvar3 ww1
+                 } in
+                 let {
+                   g :: GHC.Base.String -> GHC.Base.String
+                   = Data.IntMap.Internal.$w$cshowsPrec @ a w 11# ww2
+                 } in
+                 case GHC.Prim.>=# ww 11# of lwild {
+                   DEFAULT
+                   -> \ (x :: GHC.Base.String) ->
+                      GHC.CString.unpackAppendCString#
+                        Ivar.$fShowIvar2
+                        (f (GHC.Types.: @ GHC.Types.Char GHC.Show.showSpace1 (g x)))
+                   1#
+                   -> \ (x :: GHC.Base.String) ->
+                      GHC.Types.:
+                        @ GHC.Types.Char
+                        GHC.Show.$fShow(,)4
+                        (GHC.CString.unpackAppendCString#
+                           Ivar.$fShowIvar2
+                           (f (GHC.Types.:
+                                 @ GHC.Types.Char
+                                 GHC.Show.showSpace1
+                                 (g (GHC.Types.: @ GHC.Types.Char GHC.Show.$fShow(,)2 x))))) }) -}
+4eb03b5b2fcc2458262b6f7ae6997ba1
   $waddIvar ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     a
@@ -397,210 +342,66 @@ a6dde882629ad95e154b5d7ccb8c0df5
                    (ww1 :: Data.IntMap.Internal.IntMap a)
                    (ww2 :: a)
                    (ww3 :: Data.IntMap.Internal.IntMap a) ->
-                 {__scc {main:Ivar.addIvar} True False} (# {__scc {main:Ivar.addIvar} False True} GHC.Num.+
-                                                                                                    @ a
-                                                                                                    w
-                                                                                                    ww
-                                                                                                    ww2,
-                                                           {__scc {main:Ivar.addIvar} False True} let {
-                                                                                                    ds :: a
-                                                                                                    = GHC.Num.fromInteger
-                                                                                                        @ a
-                                                                                                        w
-                                                                                                        Ivar.addIvar1
-                                                                                                  } in
-                                                                                                  Data.IntMap.Internal.filterWithKey
-                                                                                                    @ a
-                                                                                                    (\ (ds1 :: Data.IntSet.Internal.Key)
-                                                                                                       (x :: a)[OneShot] ->
-                                                                                                     GHC.Classes./=
-                                                                                                       @ a
-                                                                                                       w1
-                                                                                                       x
-                                                                                                       ds)
-                                                                                                    (Data.IntMap.Strict.unionWithKey
-                                                                                                       @ a
-                                                                                                       (\ (ds1 :: Data.IntSet.Internal.Key)
-                                                                                                          (x :: a)[OneShot]
-                                                                                                          (y :: a)[OneShot] ->
-                                                                                                        GHC.Num.+
-                                                                                                          @ a
-                                                                                                          w
-                                                                                                          x
-                                                                                                          y)
-                                                                                                       ww1
-                                                                                                       ww3) #)) -}
-a1d84b1a78e6ce78910929ad92958464
+                 (# GHC.Num.+ @ a w ww ww2,
+                    let {
+                      ds :: a = GHC.Num.fromInteger @ a w Ivar.addIvar1
+                    } in
+                    Data.IntMap.Internal.filterWithKey
+                      @ a
+                      (\ (ds1 :: Data.IntSet.Internal.Key) (x :: a)[OneShot] ->
+                       GHC.Classes./= @ a w1 x ds)
+                      (Data.IntMap.Strict.unionWithKey
+                         @ a
+                         (\ (ds1 :: Data.IntSet.Internal.Key)
+                            (x :: a)[OneShot]
+                            (y :: a)[OneShot] ->
+                          GHC.Num.+ @ a w x y)
+                         ww1
+                         ww3) #)) -}
+3ac38b8259b6ae3e5075e4e1e8120003
   $wconstrAllIvars :: GHC.Num.Num a => GHC.Prim.Int# -> [Ivar.Ivar a]
   {- Arity: 2, HasNoCafRefs,
      Strictness: <L,U(A,A,A,A,A,A,C(U))><S,U>, Inline: [0],
      Unfolding: (\ @ a (w :: GHC.Num.Num a) (ww :: GHC.Prim.Int#) ->
-                 let {
-                   lvl :: a
-                   = {__scc {main:Ivar.constrAllIvars} False True} {__scc {main:Ivar.constrAllIvars.\} False True} GHC.Num.fromInteger
-                                                                                                                     @ a
-                                                                                                                     w
-                                                                                                                     Ivar.addIvar1
-                 } in
-                 let {
-                   lvl1 :: a
-                   = {__scc {main:Ivar.constrAllIvars} False True} {__scc {main:Ivar.constrAllIvars.ivarList} False True} GHC.Num.fromInteger
-                                                                                                                            @ a
-                                                                                                                            w
-                                                                                                                            Ivar.constrAllIvars1
-                 } in
-                 {__scc {main:Ivar.constrAllIvars} True True} GHC.Base.map
-                                                                @ [(Data.IntSet.Internal.Key, a)]
-                                                                @ (Ivar.Ivar a)
-                                                                (\ (x :: [(Data.IntSet.Internal.Key,
-                                                                           a)]) ->
-                                                                 {__scc {main:Ivar.constrAllIvars.\} True False} Ivar.Ivar
-                                                                                                                   @ a
-                                                                                                                   lvl
-                                                                                                                   ({__scc {main:Ivar.constrAllIvars.\} False True} Data.IntMap.Strict.fromList
-                                                                                                                                                                      @ a
-                                                                                                                                                                      x))
-                                                                ({__scc {main:Ivar.constrAllIvars.ivarList} True True} case GHC.Prim.>#
-                                                                                                                              1#
-                                                                                                                              ww of lwild {
-                                                                                                                         DEFAULT
-                                                                                                                         -> letrec {
-                                                                                                                              go :: GHC.Prim.Int#
-                                                                                                                                    -> [[(GHC.Types.Int,
-                                                                                                                                          a)]]
-                                                                                                                                {- Arity: 1,
-                                                                                                                                   Strictness: <L,U> -}
-                                                                                                                              = \ (x :: GHC.Prim.Int#) ->
-                                                                                                                                GHC.Types.:
-                                                                                                                                  @ [(GHC.Types.Int,
-                                                                                                                                      a)]
-                                                                                                                                  (GHC.Types.:
-                                                                                                                                     @ (GHC.Types.Int,
-                                                                                                                                        a)
-                                                                                                                                     (GHC.Types.I#
-                                                                                                                                        x,
-                                                                                                                                      lvl1)
-                                                                                                                                     (GHC.Types.[]
-                                                                                                                                        @ (GHC.Types.Int,
-                                                                                                                                           a)))
-                                                                                                                                  (case GHC.Prim.==#
-                                                                                                                                          x
-                                                                                                                                          ww of lwild1 {
-                                                                                                                                     DEFAULT
-                                                                                                                                     -> go
-                                                                                                                                          (GHC.Prim.+#
-                                                                                                                                             x
-                                                                                                                                             1#)
-                                                                                                                                     1#
-                                                                                                                                     -> GHC.Types.[]
-                                                                                                                                          @ [(GHC.Types.Int,
-                                                                                                                                              a)] })
-                                                                                                                            } in
-                                                                                                                            go
-                                                                                                                              1#
-                                                                                                                         1#
-                                                                                                                         -> GHC.Types.[]
-                                                                                                                              @ [(GHC.Types.Int,
-                                                                                                                                  a)] })) -}
-8fd49a3df19adc07aeee6a50cf338d76
-  $wlvl ::
-    Data.IntSet.Internal.Key -> GHC.Real.Rational -> [GHC.Types.Char]
-  {- Arity: 2, Strictness: <L,1*U(U)><L,1*U(U,U)>, Inline: [0],
-     Unfolding: (\ (ww :: Data.IntSet.Internal.Key)
-                   (ww1 :: GHC.Real.Rational) ->
-                 {__scc {main:Ivar.showIvarRational.ivarString.\} True True} GHC.CString.unpackAppendCString#
-                                                                               Ivar.showIvar4
-                                                                               (case ww1 of wild { GHC.Real.:% x1 y ->
-                                                                                case GHC.Integer.Type.eqInteger#
-                                                                                       y
-                                                                                       Ivar.addIvar1 of wild1 {
-                                                                                  DEFAULT
-                                                                                  -> case GHC.Integer.Type.quotRemInteger
-                                                                                            x1
-                                                                                            y of ds { (#,#) ipv ipv1 ->
-                                                                                     case GHC.Show.$w$cshowsPrec4
-                                                                                            0#
-                                                                                            ipv
-                                                                                            (GHC.Types.[]
-                                                                                               @ GHC.Types.Char) of ww2 { (#,#) ww3 ww4 ->
-                                                                                     GHC.Base.++_$s++
-                                                                                       @ GHC.Types.Char
-                                                                                       (GHC.CString.unpackAppendCString#
-                                                                                          Ivar.showIvar3
-                                                                                          (case ww of ww5 { GHC.Types.I# ww6 ->
-                                                                                           case GHC.Show.$wshowSignedInt
-                                                                                                  0#
-                                                                                                  ww6
-                                                                                                  (GHC.Types.[]
-                                                                                                     @ GHC.Types.Char) of ww7 { (#,#) ww8 ww9 ->
-                                                                                           GHC.Base.++_$s++
-                                                                                             @ GHC.Types.Char
-                                                                                             Ivar.showIvar1
-                                                                                             ww8
-                                                                                             ww9 } }))
-                                                                                       ww3
-                                                                                       ww4 } }
-                                                                                  1#
-                                                                                  -> case GHC.Real.divZeroError
-                                                                                     ret_ty [GHC.Types.Char]
-                                                                                     of {} } })) -}
-a269bddde9761c4393f3ad3fc429cf6a
+                 case GHC.Prim.># 1# ww of lwild {
+                   DEFAULT
+                   -> let {
+                        lvl :: a = GHC.Num.fromInteger @ a w Ivar.addIvar1
+                      } in
+                      let {
+                        lvl1 :: a = GHC.Num.fromInteger @ a w Ivar.constrAllIvars1
+                      } in
+                      letrec {
+                        go :: GHC.Prim.Int# -> [Ivar.Ivar a]
+                          {- Arity: 1, Strictness: <L,U> -}
+                        = \ (x :: GHC.Prim.Int#) ->
+                          GHC.Types.:
+                            @ (Ivar.Ivar a)
+                            (Ivar.Ivar
+                               @ a
+                               lvl
+                               (Data.IntMap.Strict.fromList1
+                                  @ a
+                                  (Data.IntMap.Internal.Nil @ a)
+                                  (GHC.Types.:
+                                     @ (GHC.Types.Int, a)
+                                     (GHC.Types.I# x, lvl1)
+                                     (GHC.Types.[] @ (GHC.Types.Int, a)))))
+                            (case GHC.Prim.==# x ww of lwild1 {
+                               DEFAULT -> go (GHC.Prim.+# x 1#)
+                               1# -> GHC.Types.[] @ (Ivar.Ivar a) })
+                      } in
+                      go 1#
+                   1# -> GHC.Types.[] @ (Ivar.Ivar a) }) -}
+d22556021fda48539d9e9960b486be71
   $wmkIvarRandom ::
     GHC.Num.Num a =>
     Data.IntMap.Internal.IntMap GHC.Types.Int
     -> a -> Data.IntMap.Internal.IntMap a -> a
   {- Arity: 4,
      Strictness: <S(C(C(S))LLLLLL),U(C(C1(U)),A,C(C1(U)),A,A,A,C(U))><L,U><L,U><L,1*U>,
-     Inline: [0],
-     Unfolding: (\ @ a
-                   (w :: GHC.Num.Num a)
-                   (w1 :: Data.IntMap.Internal.IntMap GHC.Types.Int)
-                   (ww :: a)
-                   (ww1 :: Data.IntMap.Internal.IntMap a) ->
-                 {__scc {main:Ivar.mkIvarRandom} True True} GHC.Num.+
-                                                              @ a
-                                                              w
-                                                              ww
-                                                              (letrec {
-                                                                 go :: [a] -> a -> a
-                                                                   <join 2> {- Arity: 2,
-                                                                               Strictness: <S,1*U><L,U> -}
-                                                                 = \ (ds :: [a]) (eta :: a) ->
-                                                                   case ds of wild {
-                                                                     [] -> eta
-                                                                     : y ys
-                                                                     -> go
-                                                                          ys
-                                                                          (GHC.Num.+ @ a w eta y) }
-                                                               } in
-                                                               go
-                                                                 ({__scc {main:Ivar.mkIvarRandom.ranList} True True} Data.IntMap.Internal.elems
-                                                                                                                       @ a
-                                                                                                                       (Data.IntMap.Strict.mapWithKey
-                                                                                                                          @ a
-                                                                                                                          @ a
-                                                                                                                          (\ (k :: Data.IntSet.Internal.Key)
-                                                                                                                             (v :: a)[OneShot] ->
-                                                                                                                           {__scc {main:Ivar.mkIvarRandom.ranList.\} True True} GHC.Num.*
-                                                                                                                                                                                  @ a
-                                                                                                                                                                                  w
-                                                                                                                                                                                  v
-                                                                                                                                                                                  (GHC.Num.fromInteger
-                                                                                                                                                                                     @ a
-                                                                                                                                                                                     w
-                                                                                                                                                                                     (case k of ww2 { GHC.Types.I# ww3 ->
-                                                                                                                                                                                      case Data.IntMap.Internal.$w!
-                                                                                                                                                                                             @ GHC.Types.Int
-                                                                                                                                                                                             w1
-                                                                                                                                                                                             ww3 of wild { GHC.Types.I# i ->
-                                                                                                                                                                                      GHC.Integer.Type.smallInteger
-                                                                                                                                                                                        i } })))
-                                                                                                                          ww1))
-                                                                 (GHC.Num.fromInteger
-                                                                    @ a
-                                                                    w
-                                                                    Ivar.addIvar1))) -}
-6cd05b5a8966da221669863df5313a5d
+     Inline: [0] -}
+c97570f62d9e3378f34f5fe53f60bc54
   $wsMultIvar ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     a -> Ivar.Ivar a -> (# a, Data.IntMap.Internal.IntMap a #)
@@ -612,40 +413,21 @@ a269bddde9761c4393f3ad3fc429cf6a
                    (w1 :: GHC.Classes.Eq a)
                    (w2 :: a)
                    (w3 :: Ivar.Ivar a) ->
-                 case {__scc {main:Ivar.sMultIvar} True True} GHC.Classes.==
-                                                                @ a
-                                                                w1
-                                                                w2
-                                                                (GHC.Num.fromInteger
-                                                                   @ a
-                                                                   w
-                                                                   Ivar.addIvar1) of wild {
+                 case GHC.Classes.==
+                        @ a
+                        w1
+                        w2
+                        (GHC.Num.fromInteger @ a w Ivar.addIvar1) of wild {
                    GHC.Types.False
-                   -> case {__scc {main:Ivar.sMultIvar} False True} let {
-                                                                      f :: a -> a
-                                                                      = GHC.Num.* @ a w w2
-                                                                    } in
-                                                                    {__scc {main:Ivar.fmap} True True} case w3 of wild1 { Ivar.Ivar a1 map ->
-                                                                                                       Ivar.Ivar
-                                                                                                         @ a
-                                                                                                         (f a1)
-                                                                                                         (Data.IntMap.Strict.map
-                                                                                                            @ a
-                                                                                                            @ a
-                                                                                                            f
-                                                                                                            map) } of ww { Ivar.Ivar ww1 ww2 ->
-                      (# ww1, ww2 #) }
+                   -> case w3 of wild1 { Ivar.Ivar a1 map ->
+                      let {
+                        f :: a -> a = GHC.Num.* @ a w w2
+                      } in
+                      (# f a1, Data.IntMap.Strict.map @ a @ a f map #) }
                    GHC.Types.True
-                   -> case {__scc {main:Ivar.sMultIvar} False True} {__scc {main:Ivar.mkConstIvar} True False} Ivar.Ivar
-                                                                                                                 @ a
-                                                                                                                 (GHC.Num.fromInteger
-                                                                                                                    @ a
-                                                                                                                    w
-                                                                                                                    Ivar.addIvar1)
-                                                                                                                 (Data.IntMap.Internal.Nil
-                                                                                                                    @ a) of ww { Ivar.Ivar ww1 ww2 ->
-                      (# ww1, ww2 #) } }) -}
-88825141d42a2b398d98350fdc0164cd
+                   -> (# GHC.Num.fromInteger @ a w Ivar.addIvar1,
+                         Data.IntMap.Internal.Nil @ a #) }) -}
+4795d06196203f0e1563aa350355ca8c
   $wshowIvar ::
     GHC.Show.Show a =>
     a -> Data.IntMap.Internal.IntMap a -> GHC.Base.String
@@ -655,47 +437,47 @@ a269bddde9761c4393f3ad3fc429cf6a
                    (w :: GHC.Show.Show a)
                    (ww :: a)
                    (ww1 :: Data.IntMap.Internal.IntMap a) ->
-                 {__scc {main:Ivar.showIvar} True True} GHC.Base.++
-                                                          @ GHC.Types.Char
-                                                          (GHC.Show.show @ a w ww)
-                                                          (let {
-                                                             pairList :: [(Data.IntSet.Internal.Key,
-                                                                           a)]
-                                                             = {__scc {main:Ivar.showIvar.pairList} True True} Data.IntMap.Internal.toAscList
-                                                                                                                 @ a
-                                                                                                                 ww1
-                                                           } in
-                                                           Ivar.showIvar_go
-                                                             ({__scc {main:Ivar.showIvar.ivarString} True True} GHC.Base.map
-                                                                                                                  @ (Data.IntSet.Internal.Key,
-                                                                                                                     a)
-                                                                                                                  @ [GHC.Types.Char]
-                                                                                                                  (\ (ds :: (Data.IntSet.Internal.Key,
-                                                                                                                             a)) ->
-                                                                                                                   case ds of wild { (,) x y ->
-                                                                                                                   {__scc {main:Ivar.showIvar.ivarString.\} True True} GHC.CString.unpackAppendCString#
-                                                                                                                                                                         Ivar.showIvar4
-                                                                                                                                                                         (GHC.Base.++
-                                                                                                                                                                            @ GHC.Types.Char
-                                                                                                                                                                            (GHC.Show.show
-                                                                                                                                                                               @ a
-                                                                                                                                                                               w
-                                                                                                                                                                               y)
-                                                                                                                                                                            (GHC.CString.unpackAppendCString#
-                                                                                                                                                                               Ivar.showIvar3
-                                                                                                                                                                               (case x of ww2 { GHC.Types.I# ww3 ->
-                                                                                                                                                                                case GHC.Show.$wshowSignedInt
-                                                                                                                                                                                       0#
-                                                                                                                                                                                       ww3
-                                                                                                                                                                                       (GHC.Types.[]
-                                                                                                                                                                                          @ GHC.Types.Char) of ww4 { (#,#) ww5 ww6 ->
-                                                                                                                                                                                GHC.Base.++_$s++
-                                                                                                                                                                                  @ GHC.Types.Char
-                                                                                                                                                                                  Ivar.showIvar1
-                                                                                                                                                                                  ww5
-                                                                                                                                                                                  ww6 } }))) })
-                                                                                                                  pairList))) -}
-a575c2e2a2c4044016bedc516877d4a9
+                 GHC.Base.++
+                   @ GHC.Types.Char
+                   (GHC.Show.show @ a w ww)
+                   (letrec {
+                      go :: [GHC.Types.Char]
+                            -> Data.IntMap.Internal.IntMap a -> [GHC.Types.Char]
+                        {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                      = \ (z' :: [GHC.Types.Char])
+                          (ds :: Data.IntMap.Internal.IntMap a) ->
+                        case ds of wild {
+                          Data.IntMap.Internal.Bin dt dt1 l r -> go (go z' r) l
+                          Data.IntMap.Internal.Tip dt x
+                          -> GHC.Base.++
+                               @ GHC.Types.Char
+                               (GHC.CString.unpackAppendCString#
+                                  Ivar.showIvar4
+                                  (GHC.Base.++
+                                     @ GHC.Types.Char
+                                     (GHC.Show.show @ a w x)
+                                     (GHC.CString.unpackAppendCString#
+                                        Ivar.showIvar3
+                                        (case GHC.Show.$wshowSignedInt
+                                                0#
+                                                dt
+                                                (GHC.Types.[]
+                                                   @ GHC.Types.Char) of ww4 { (#,#) ww5 ww6 ->
+                                         GHC.Base.++_$s++
+                                           @ GHC.Types.Char
+                                           Ivar.showIvar1
+                                           ww5
+                                           ww6 }))))
+                               z'
+                          Data.IntMap.Internal.Nil -> z' }
+                    } in
+                    case ww1 of wild {
+                      DEFAULT -> go (GHC.Types.[] @ GHC.Types.Char) wild
+                      Data.IntMap.Internal.Bin dt dt1 l r
+                      -> case GHC.Prim.<# dt1 0# of lwild {
+                           DEFAULT -> go (go (GHC.Types.[] @ GHC.Types.Char) r) l
+                           1# -> go (go (GHC.Types.[] @ GHC.Types.Char) l) r } })) -}
+075793920f2bed1419601500733f4c07
   $wshowIvarRational ::
     GHC.Integer.Type.Integer
     -> GHC.Integer.Type.Integer
@@ -705,44 +487,42 @@ a575c2e2a2c4044016bedc516877d4a9
      Unfolding: (\ (ww :: GHC.Integer.Type.Integer)
                    (ww1 :: GHC.Integer.Type.Integer)
                    (ww2 :: Data.IntMap.Internal.IntMap GHC.Real.Rational) ->
-                 {__scc {main:Ivar.showIvarRational} True False} case {__scc {main:Ivar.showIvarRational} False True} GHC.Integer.Type.eqInteger#
-                                                                                                                        ww1
-                                                                                                                        Ivar.addIvar1 of wild1 {
-                                                                   DEFAULT
-                                                                   -> case {__scc {main:Ivar.showIvarRational} False True} GHC.Integer.Type.quotRemInteger
-                                                                                                                             ww
-                                                                                                                             ww1 of ds { (#,#) ipv ipv1 ->
-                                                                      case {__scc {main:Ivar.showIvarRational} False True} GHC.Show.$w$cshowsPrec4
-                                                                                                                             0#
-                                                                                                                             ipv
-                                                                                                                             (GHC.Types.[]
-                                                                                                                                @ GHC.Types.Char) of ww3 { (#,#) ww4 ww5 ->
-                                                                      case {__scc {main:Ivar.showIvarRational} False True} GHC.Base.++_$s++
-                                                                                                                             @ GHC.Types.Char
-                                                                                                                             (let {
-                                                                                                                                pairList :: [(Data.IntSet.Internal.Key,
-                                                                                                                                              GHC.Real.Rational)]
-                                                                                                                                = {__scc {main:Ivar.showIvarRational.pairList} True True} Data.IntMap.Internal.toAscList
-                                                                                                                                                                                            @ (GHC.Real.Ratio
-                                                                                                                                                                                                 GHC.Integer.Type.Integer)
-                                                                                                                                                                                            ww2
-                                                                                                                              } in
-                                                                                                                              Ivar.showIvar_go
-                                                                                                                                ({__scc {main:Ivar.showIvarRational.ivarString} True True} GHC.Base.map
-                                                                                                                                                                                             @ (Data.IntSet.Internal.Key,
-                                                                                                                                                                                                GHC.Real.Rational)
-                                                                                                                                                                                             @ [GHC.Types.Char]
-                                                                                                                                                                                             Ivar.showIvarRational1
-                                                                                                                                                                                             pairList))
-                                                                                                                             ww4
-                                                                                                                             ww5 of ww6 { : ww7 ww8 ->
-                                                                      (# ww7, ww8 #) } } }
-                                                                   1#
-                                                                   -> case GHC.Real.divZeroError
-                                                                      ret_ty (# GHC.Types.Char,
-                                                                                [GHC.Types.Char] #)
-                                                                      of {} }) -}
-73f9d849d59c056abb8bf55a9535ed8c
+                 case GHC.Integer.Type.eqInteger# ww1 Ivar.addIvar1 of wild1 {
+                   DEFAULT
+                   -> case GHC.Integer.Type.quotRemInteger
+                             ww
+                             ww1 of ds { (#,#) ipv ipv1 ->
+                      case GHC.Show.$w$cshowsPrec4
+                             0#
+                             ipv
+                             (GHC.Types.[] @ GHC.Types.Char) of ww3 { (#,#) ww4 ww5 ->
+                      case GHC.Base.++_$s++
+                             @ GHC.Types.Char
+                             (case ww2 of wild {
+                                DEFAULT
+                                -> Ivar.showIvarRational_go (GHC.Types.[] @ GHC.Types.Char) wild
+                                Data.IntMap.Internal.Bin dt dt1 l r
+                                -> case GHC.Prim.<# dt1 0# of lwild {
+                                     DEFAULT
+                                     -> Ivar.showIvarRational_go
+                                          (Ivar.showIvarRational_go
+                                             (GHC.Types.[] @ GHC.Types.Char)
+                                             r)
+                                          l
+                                     1#
+                                     -> Ivar.showIvarRational_go
+                                          (Ivar.showIvarRational_go
+                                             (GHC.Types.[] @ GHC.Types.Char)
+                                             l)
+                                          r } })
+                             ww4
+                             ww5 of ww6 { : ww7 ww8 ->
+                      (# ww7, ww8 #) } } }
+                   1#
+                   -> case GHC.Real.divZeroError
+                      ret_ty (# GHC.Types.Char, [GHC.Types.Char] #)
+                      of {} }) -}
+813445f91d6c7bb4501e8964d0a94ac4
   $wsubIvar ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     a
@@ -758,29 +538,19 @@ a575c2e2a2c4044016bedc516877d4a9
                    (ww :: a)
                    (ww1 :: Data.IntMap.Internal.IntMap a)
                    (w2 :: Ivar.Ivar a) ->
-                 case {__scc {main:Ivar.subIvar} True True} Ivar.$wsMultIvar
-                                                              @ a
-                                                              w
-                                                              w1
-                                                              (GHC.Num.negate
-                                                                 @ a
-                                                                 w
-                                                                 (GHC.Num.fromInteger
-                                                                    @ a
-                                                                    w
-                                                                    Ivar.constrAllIvars1))
-                                                              w2 of ww2 { (#,#) ww3 ww4 ->
-                 {__scc {main:Ivar.subIvar} False True} Ivar.$waddIvar
-                                                          @ a
-                                                          w
-                                                          w1
-                                                          ww
-                                                          ww1
-                                                          ww3
-                                                          ww4 }) -}
-ab6885cb499b09a96006f6f783229377
+                 case Ivar.$wsMultIvar
+                        @ a
+                        w
+                        w1
+                        (GHC.Num.negate
+                           @ a
+                           w
+                           (GHC.Num.fromInteger @ a w Ivar.constrAllIvars1))
+                        w2 of ww2 { (#,#) ww3 ww4 ->
+                 Ivar.$waddIvar @ a w w1 ww ww1 ww3 ww4 }) -}
+6fb5b1c62e6ccfd9020c45c8471a027a
   data Ivar a = Ivar a (Data.IntMap.Internal.IntMap a)
-67ce428981a403b8506e974c3b8272d4
+d292753012f6d0425a83cacf61d3f780
   addIvar ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     Ivar.Ivar a -> Ivar.Ivar a -> Ivar.Ivar a
@@ -807,7 +577,7 @@ ab6885cb499b09a96006f6f783229377
 84277e0a73651a17868330718fc88423
   addIvar1 :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (0) -}
-126aeb4278ca5c5ba15297a90eea61fc
+46a154f91b1c965fc307b670ffd370b1
   constrAllIvars :: GHC.Num.Num a => GHC.Types.Int -> [Ivar.Ivar a]
   {- Arity: 2, HasNoCafRefs,
      Strictness: <L,U(A,A,A,A,A,A,C(U))><S(S),1*U(U)>, Inline: [0],
@@ -818,16 +588,13 @@ ab6885cb499b09a96006f6f783229377
 fb6cb697ce48ea18dbb61f813d546d75
   constrAllIvars1 :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (1) -}
-4285335702635c5f740738bc036fd6fc
+3e3db0384e6c18ba4849c316c911d6a4
   mkConstIvar :: a -> Ivar.Ivar a
   {- Arity: 1, HasNoCafRefs, Strictness: <L,U>m,
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (a1 :: a) ->
-                 {__scc {main:Ivar.mkConstIvar} True False} Ivar.Ivar
-                                                              @ a
-                                                              a1
-                                                              (Data.IntMap.Internal.Nil @ a)) -}
-c116f6ba0de138c76c908e08482347dd
+                 Ivar.Ivar @ a a1 (Data.IntMap.Internal.Nil @ a)) -}
+5f4c925932a384933962e82d4400d7a2
   mkIvarRandom ::
     GHC.Num.Num a =>
     Data.IntMap.Internal.IntMap GHC.Types.Int -> Ivar.Ivar a -> a
@@ -841,28 +608,22 @@ c116f6ba0de138c76c908e08482347dd
                    (w2 :: Ivar.Ivar a) ->
                  case w2 of ww { Ivar.Ivar ww1 ww2 ->
                  Ivar.$wmkIvarRandom @ a w w1 ww1 ww2 }) -}
-f1b8a1fca14cf15f56d04d728666e427
+fbae32d28cb725e708659381449a4539
   number2Ivar :: GHC.Num.Num a => GHC.Types.Int -> Ivar.Ivar a
   {- Arity: 2, HasNoCafRefs,
      Strictness: <L,U(A,A,A,A,A,A,C(U))><L,1*U(U)>m, Inline: [0],
      Unfolding: InlineRule (2, True, False)
                 (\ @ a (w :: GHC.Num.Num a) (w1 :: GHC.Types.Int) ->
-                 {__scc {main:Ivar.number2Ivar} True False} Ivar.Ivar
-                                                              @ a
-                                                              ({__scc {main:Ivar.number2Ivar} False True} GHC.Num.fromInteger
-                                                                                                            @ a
-                                                                                                            w
-                                                                                                            Ivar.addIvar1)
-                                                              ({__scc {main:Ivar.number2Ivar} False True} case GHC.Num.fromInteger
-                                                                                                                 @ a
-                                                                                                                 w
-                                                                                                                 Ivar.constrAllIvars1 of x1 { DEFAULT ->
-                                                                                                          case w1 of dt { GHC.Types.I# dt1 ->
-                                                                                                          Data.IntMap.Internal.Tip
-                                                                                                            @ a
-                                                                                                            dt1
-                                                                                                            x1 } })) -}
-6fe3f98bfd11ce74b5f6274a48774f32
+                 Ivar.Ivar
+                   @ a
+                   (GHC.Num.fromInteger @ a w Ivar.addIvar1)
+                   (case GHC.Num.fromInteger
+                           @ a
+                           w
+                           Ivar.constrAllIvars1 of x1 { DEFAULT ->
+                    case w1 of dt { GHC.Types.I# dt1 ->
+                    Data.IntMap.Internal.Tip @ a dt1 x1 } })) -}
+9041089729d8e9da4cfe3d58c70439ce
   sMultIvar ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     a -> Ivar.Ivar a -> Ivar.Ivar a
@@ -877,7 +638,7 @@ f1b8a1fca14cf15f56d04d728666e427
                    (w3 :: Ivar.Ivar a) ->
                  case Ivar.$wsMultIvar @ a w w1 w2 w3 of ww { (#,#) ww1 ww2 ->
                  Ivar.Ivar @ a ww1 ww2 }) -}
-7d85bd3d1c2d5f1a864694d103253fb1
+e3fec753e8b667d9480b2863fb5844a3
   showIvar :: GHC.Show.Show a => Ivar.Ivar a -> GHC.Base.String
   {- Arity: 2, Strictness: <S(LC(S)L),U(A,C(U),A)><S,1*U(U,1*U)>,
      Inline: [0],
@@ -897,7 +658,7 @@ f1b8a1fca14cf15f56d04d728666e427
 a020a4b716327e8d93634cdb58f4cc0d
   showIvar4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("+("#) -}
-81569a7fc8cbc713ce37361cbb7fb2a6
+845045f98240ad11356e64a039b10cbc
   showIvarRational :: Ivar.Ivar GHC.Real.Rational -> GHC.Base.String
   {- Arity: 1, Strictness: <S(S(SS)L),1*U(1*U(U,U),1*U)>m2,
      Inline: [0],
@@ -907,17 +668,14 @@ a020a4b716327e8d93634cdb58f4cc0d
                  case ww1 of ww3 { GHC.Real.:% ww4 ww5 ->
                  case Ivar.$wshowIvarRational ww4 ww5 ww2 of ww6 { (#,#) ww7 ww8 ->
                  GHC.Types.: @ GHC.Types.Char ww7 ww8 } } }) -}
-1862242df412cd2eceac605337c5c9bb
-  showIvarRational1 ::
-    (Data.IntSet.Internal.Key, GHC.Real.Rational) -> [GHC.Types.Char]
-  {- Arity: 1, Strictness: <S,1*U(1*U(U),1*U(U,U))>, Inline: [0],
-     Unfolding: InlineRule (1, True, False)
-                (\ (w :: (Data.IntSet.Internal.Key, GHC.Real.Rational)) ->
-                 case w of ww { (,) ww1 ww2 -> Ivar.$wlvl ww1 ww2 }) -}
-5bd3d062938cb33023b4d8601bf1af8f
-  showIvar_go :: [[GHC.Types.Char]] -> [GHC.Types.Char]
-  {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U> -}
-1a4d3119bef030f208bd78be75df5d24
+713fcc34ece56c7f67a674a95eaca337
+  showIvarRational_go ::
+    [GHC.Types.Char]
+    -> Data.IntMap.Internal.IntMap
+         (GHC.Real.Ratio GHC.Integer.Type.Integer)
+    -> [GHC.Types.Char]
+  {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+6cf4ab62521903ec9ba7356be53fa41f
   subIvar ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     Ivar.Ivar a -> Ivar.Ivar a -> Ivar.Ivar a

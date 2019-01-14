@@ -39,13 +39,13 @@ module Order2Int (
                         intArea = interArea map1Area map2Area
                         intMetric = interMetric map1Metric map2Metric
                         antiSym = aSymI_2 map1Metric
-                        block1 = tensorProductWith (*) intArea delta_20 
+                        block1 = tensorProductNumeric intArea delta_20 
                         block2 = tensorTranspose 1 (0,1) block1
                         totalBlock1 = tensorAdd block1 block2
                         totalBlockTrans = tensorTranspose 2 (0,1) totalBlock1
                         tens = tensorAdd totalBlock1 totalBlockTrans
-                        totalBlock2 = tensorContractWith_3 (1,1) (+) $ tensorProductWith (*) invEta antiSym
-                        prod = tensorProductWith (*) tens totalBlock2
+                        totalBlock2 = tensorContractWith_3 (1,1) (+) $ tensorProductNumeric invEta antiSym
+                        prod = tensorProductNumeric tens totalBlock2
 
     index2SparseAnsatzAB2 :: Index 2 2 0 0 1 0 0 0 -> (Int,Int) 
     index2SparseAnsatzAB2  (x1, x2, _, _, x5, _, _, _) = ((e-1)*210+(f-1)*10+j,(b-1)*21+a)
@@ -79,14 +79,14 @@ module Order2Int (
                             where
                         intArea = interArea map1Area map2Area
                         flatA = flatArea map2Area
-                        block1 = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 delta_3
-                        block2 = tensorTranspose 1 (0,1) $ tensorProductWith (*) intArea delta_20 
-                        block3 = tensorProductWith (*) intArea delta_20 
+                        block1 = tensorProductNew delta_20 $ tensorProductNew delta_20 delta_3
+                        block2 = tensorTranspose 1 (0,1) $ tensorProductNew intArea delta_20 
+                        block3 = tensorProductNew intArea delta_20 
                         totalBlock1 = tensorAdd block1 $ tensorAdd block2 block3
                         block1Trans = tensorTranspose 2 (0,1) totalBlock1
                         block1Sym = tensorAdd totalBlock1 block1Trans
-                        totalBlock2 = tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea flatA
-                        totalBlock = tensorContractWith_20 (1,2) (+) $ tensorProductWith (*) block1Sym totalBlock2
+                        totalBlock2 = tensorContractWith_20 (0,1) (+) $ tensorProductNew intArea flatA
+                        totalBlock = tensorContractWith_20 (1,2) (+) $ tensorProductNew block1Sym totalBlock2
                         totalBlockTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) totalBlock
 
     index2SparseIntAB :: Index 1 2 0 0 0 0 2 2 -> (Int,Int) 

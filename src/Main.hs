@@ -499,6 +499,9 @@ module Main (
 
         let flat = evalTensorVals $ tensorContractWith_3 (1,1) (+) $ tensorProductWith (*) flatAreaST $ interJ_Area map2Area  
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzAB3_12_1_19.txt" $ showEqnsFlat ansAB 
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzAB4_12_1_19.txt" $ showEqnsFlat intCondAB2 
+
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/3rdOrderInt/ansatzABC3_14_1_19.txt" $ showEqnsFlatFrac ansatzCondABC
+
 
 

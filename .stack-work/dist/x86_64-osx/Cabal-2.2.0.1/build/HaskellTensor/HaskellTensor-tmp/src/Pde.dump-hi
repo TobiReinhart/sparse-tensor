@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-14 11:31:10.288864 UTC
+2019-01-14 16:35:52.004257 UTC
 
 interface main:Pde [hpc] 8043
-  interface hash: 9fcc9f7812f964576e579dfe824834c7
-  ABI hash: 6cb99ff48b3771dcca3d3397050c4c62
+  interface hash: 84339091ed7826d0a6fd20035019a18d
+  ABI hash: b92175fce91f57663f8ae536903ce926
   export-list hash: cfda6ba989dea29b657cfa7f1b7972bc
   orphan hash: 1ffa5d69da127221a755d7bd47673a56
   flag hash: badd6e954112606c59e049e70d21435f
@@ -77,14 +77,14 @@ import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
 import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
 import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
-import  -/  Ivar 52a8dc212ab2f8456a526e9d381a1784
+import  -/  Ivar 40f81219a01d4a021d2869f9c4ec8065
   exports: 847b7f62b7be31da91814bf314ffd8e5
-  Ivar f4885325f73264731659552a50824d1b
-  Ivar ab6885cb499b09a96006f6f783229377
-  addIvar 67ce428981a403b8506e974c3b8272d4
-  mkIvarRandom c116f6ba0de138c76c908e08482347dd
-  showIvarRational 81569a7fc8cbc713ce37361cbb7fb2a6
-09244e62bbea09edcecaadbe2e88f25f
+  Ivar ea86bc395013afd41210991436fc712d
+  Ivar d9681c195fa242e7d5d49d12895d614f
+  addIvar 8fbb3c436aba9d6a12321dce4d5ee059
+  mkIvarRandom 9420092a0a8f0ad20d40fae798caaf01
+  showIvarRational 89360616d91377574b5657c02e124edb
+114869729e88cbd05f4d31766e9bb4ab
   $fEqMultiIndex :: GHC.Classes.Eq Pde.MultiIndex
   DFunId
   {- Strictness: m, Inline: CONLIKE,
@@ -100,7 +100,7 @@ import  -/  Ivar 52a8dc212ab2f8456a526e9d381a1784
                   (Sym (Pde.N:MultiIndex[0])
                    ->_R Sym (Pde.N:MultiIndex[0])
                    ->_R <GHC.Types.Bool>_R) -}
-12f726aafbf26bdf9569ec01a023833e
+ddd90ab0c965b2a19bc807c8c45b989e
   $fEqMultiIndex1 ::
     Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
@@ -114,7 +114,7 @@ import  -/  Ivar 52a8dc212ab2f8456a526e9d381a1784
                                                                                      GHC.Natural.$fEqNatural
                                                                                      t1
                                                                                      t2) -}
-3bebf012aacc81c330f073b406215d04
+a82713198c8732015ab2be462ccb2bc3
   $fEqMultiIndex2 ::
     Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
@@ -128,7 +128,7 @@ import  -/  Ivar 52a8dc212ab2f8456a526e9d381a1784
                                                                                      GHC.Natural.$fEqNatural
                                                                                      t1
                                                                                      t2) -}
-09244e62bbea09edcecaadbe2e88f25f
+114869729e88cbd05f4d31766e9bb4ab
   $fOrdMultiIndex :: GHC.Classes.Ord Pde.MultiIndex
   DFunId
   {- Strictness: m, Inline: CONLIKE,
@@ -170,7 +170,7 @@ import  -/  Ivar 52a8dc212ab2f8456a526e9d381a1784
                   (Sym (Pde.N:MultiIndex[0])
                    ->_R Sym (Pde.N:MultiIndex[0])
                    ->_R Sym (Pde.N:MultiIndex[0])) -}
-da802f446563c84b27ce0ac1d0554215
+419e6b02592f8a2cfd0606294d1e7d24
   $fOrdMultiIndex1 ::
     Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
@@ -178,7 +178,7 @@ da802f446563c84b27ce0ac1d0554215
   {- Unfolding: ({__scc {main:Pde.min} True True} Data.IntMap.Internal.$fOrdIntMap_$cmin
                                                     @ GHC.Natural.Natural
                                                     GHC.Natural.$fOrdNatural) -}
-4c5cbbfdeb70a807d1458f97d2c202b2
+6c9fe42f763c5dfef05e5bfbf894a05c
   $fOrdMultiIndex2 ::
     Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
@@ -186,7 +186,7 @@ da802f446563c84b27ce0ac1d0554215
   {- Unfolding: ({__scc {main:Pde.max} True True} Data.IntMap.Internal.$fOrdIntMap_$cmax
                                                     @ GHC.Natural.Natural
                                                     GHC.Natural.$fOrdNatural) -}
-e0b253a4ab745790f19859e3fd1345ea
+fb5c0a62f00d47b46a70705bee389231
   $fOrdMultiIndex3 ::
     Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
@@ -194,7 +194,7 @@ e0b253a4ab745790f19859e3fd1345ea
   {- Unfolding: ({__scc {main:Pde.>=} True True} Data.IntMap.Internal.$fOrdIntMap_$c>=
                                                    @ GHC.Natural.Natural
                                                    GHC.Natural.$fOrdNatural) -}
-2dffcd6f84462e72e819b620cce47c45
+4e241d3fdf12266d12e2e960ab99fd02
   $fOrdMultiIndex4 ::
     Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
@@ -202,7 +202,7 @@ e0b253a4ab745790f19859e3fd1345ea
   {- Unfolding: ({__scc {main:Pde.>} True True} Data.IntMap.Internal.$fOrdIntMap_$c>
                                                   @ GHC.Natural.Natural
                                                   GHC.Natural.$fOrdNatural) -}
-3aab34b66b1a4a6c4b560f261be4ab2a
+eeb3eef3645ab9af7dd1fe7b58bcfb40
   $fOrdMultiIndex5 ::
     Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
@@ -210,7 +210,7 @@ e0b253a4ab745790f19859e3fd1345ea
   {- Unfolding: ({__scc {main:Pde.<=} True True} Data.IntMap.Internal.$fOrdIntMap_$c<=
                                                    @ GHC.Natural.Natural
                                                    GHC.Natural.$fOrdNatural) -}
-a23f34b22d66763c52ebcc6d7794787b
+36788ee67fac68af46ef1d3aa8816f70
   $fOrdMultiIndex6 ::
     Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
@@ -218,7 +218,7 @@ a23f34b22d66763c52ebcc6d7794787b
   {- Unfolding: ({__scc {main:Pde.<} True True} Data.IntMap.Internal.$fOrdIntMap_$c<
                                                   @ GHC.Natural.Natural
                                                   GHC.Natural.$fOrdNatural) -}
-1f1b43db175d2996029f8f76cfd9464f
+8b40ccd24b6cf25afd7355a24c329b89
   $fOrdMultiIndex7 ::
     Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
@@ -226,7 +226,7 @@ a23f34b22d66763c52ebcc6d7794787b
   {- Unfolding: ({__scc {main:Pde.compare} True True} Data.IntMap.Internal.$fOrdIntMap_$ccompare
                                                         @ GHC.Natural.Natural
                                                         GHC.Natural.$fOrdNatural) -}
-09244e62bbea09edcecaadbe2e88f25f
+114869729e88cbd05f4d31766e9bb4ab
   $fShowMultiIndex :: GHC.Show.Show Pde.MultiIndex
   DFunId
   {- Strictness: m, Inline: CONLIKE,
@@ -235,7 +235,7 @@ a23f34b22d66763c52ebcc6d7794787b
                   Pde.$fShowMultiIndex_$cshowsPrec
                   Pde.$fShowMultiIndex_$cshow
                   Pde.$fShowMultiIndex_$cshowList -}
-09244e62bbea09edcecaadbe2e88f25f
+114869729e88cbd05f4d31766e9bb4ab
   $fShowMultiIndex1 :: Pde.MultiIndex -> GHC.Show.ShowS
   {- Arity: 1, Strictness: <L,1*U>,
      Unfolding: (\ (w :: Pde.MultiIndex) -> Pde.$w$cshowsPrec 0# w) -}
@@ -245,7 +245,7 @@ a23f34b22d66763c52ebcc6d7794787b
 54f3ce15a4ac6c27473c23173657a3eb
   $fShowMultiIndex3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("MultiIndex "#) -}
-09244e62bbea09edcecaadbe2e88f25f
+114869729e88cbd05f4d31766e9bb4ab
   $fShowMultiIndex_$cshow :: Pde.MultiIndex -> GHC.Base.String
   {- Arity: 1, Strictness: <L,1*U>,
      Unfolding: InlineRule (1, True, False)
@@ -271,20 +271,20 @@ a23f34b22d66763c52ebcc6d7794787b
                                                                                                       (Pde.N:MultiIndex[0])
                                                                                                       (GHC.Types.[]
                                                                                                          @ GHC.Types.Char))) -}
-09244e62bbea09edcecaadbe2e88f25f
+114869729e88cbd05f4d31766e9bb4ab
   $fShowMultiIndex_$cshowList :: [Pde.MultiIndex] -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S,1*U><L,U>,
      Unfolding: InlineRule (2, True, False)
                 (\ (ls :: [Pde.MultiIndex]) (s :: GHC.Base.String) ->
                  GHC.Show.showList__ @ Pde.MultiIndex Pde.$fShowMultiIndex1 ls s) -}
-09244e62bbea09edcecaadbe2e88f25f
+114869729e88cbd05f4d31766e9bb4ab
   $fShowMultiIndex_$cshowsPrec ::
     GHC.Types.Int -> Pde.MultiIndex -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S(S),1*U(U)><L,1*U>, Inline: [0],
      Unfolding: InlineRule (2, True, False)
                 (\ (w :: GHC.Types.Int) (w1 :: Pde.MultiIndex) ->
                  case w of ww { GHC.Types.I# ww1 -> Pde.$w$cshowsPrec ww1 w1 }) -}
-99a418906cf9afd51293d9b8d5a476b6
+97074a681e807c25f6dc456fc436c08f
   $fShowPde :: GHC.Show.Show a => GHC.Show.Show (Pde.Pde a)
   DFunId
   {- Arity: 1, Strictness: <L,U(C(C1(C1(U))),A,A)>m, Inline: CONLIKE,
@@ -302,7 +302,7 @@ c05f2926b9f68eda2f75e6fda574f483
 b502243e0c86ef687c996766e656b8b5
   $fShowPde3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Pde "#) -}
-99a418906cf9afd51293d9b8d5a476b6
+97074a681e807c25f6dc456fc436c08f
   $fShowPde_$cshow :: GHC.Show.Show a => Pde.Pde a -> GHC.Base.String
   {- Arity: 2, Strictness: <L,U(C(C1(C1(U))),A,A)><L,1*U>,
      Unfolding: InlineRule (2, True, False)
@@ -331,7 +331,7 @@ b502243e0c86ef687c996766e656b8b5
                                                                                                       (Pde.N:Pde[0] <a>_N)
                                                                                                       (GHC.Types.[]
                                                                                                          @ GHC.Types.Char))) -}
-99a418906cf9afd51293d9b8d5a476b6
+97074a681e807c25f6dc456fc436c08f
   $fShowPde_$cshowList ::
     GHC.Show.Show a => [Pde.Pde a] -> GHC.Show.ShowS
   {- Arity: 3, Strictness: <L,U(C(C1(C1(U))),A,A)><S,1*U><L,U>,
@@ -345,7 +345,7 @@ b502243e0c86ef687c996766e656b8b5
                    (Pde.$fShowPde_$cshowsPrec @ a $dShow Pde.$fShowPde1)
                    ls
                    s) -}
-99a418906cf9afd51293d9b8d5a476b6
+97074a681e807c25f6dc456fc436c08f
   $fShowPde_$cshowsPrec ::
     GHC.Show.Show a => GHC.Types.Int -> Pde.Pde a -> GHC.Show.ShowS
   {- Arity: 3,
@@ -358,7 +358,7 @@ b502243e0c86ef687c996766e656b8b5
                    (w2 :: Pde.Pde a) ->
                  case w1 of ww { GHC.Types.I# ww1 ->
                  Pde.$w$cshowsPrec1 @ a w ww1 w2 }) -}
-63c4046b66549536ed7db413092d9eb3
+bb0ee0e4d859feca6e207a2ba1aea3e6
   $fShowPde_$s$fShow(,) ::
     GHC.Show.Show (GHC.Types.Int, Pde.MultiIndex)
   {- Strictness: m, Inline: CONLIKE,
@@ -390,7 +390,7 @@ b502243e0c86ef687c996766e656b8b5
                         GHC.Show.$fShow(,)1)
                      ls
                      s) -}
-79ddf63aac857a7735c73fda93d1d52a
+256c9977eb2a608a61f2aaeb6b8c81f0
   $s$fEq(,) :: GHC.Classes.Eq (GHC.Types.Int, Pde.MultiIndex)
   {- Strictness: m, Inline: CONLIKE,
      Unfolding: DFun:.
@@ -401,7 +401,7 @@ b502243e0c86ef687c996766e656b8b5
                      GHC.Classes.$fEqInt
                      Pde.$fEqMultiIndex)
                   Pde.$s$fEq(,)_$s$fEq(,)_$c/= -}
-52db29e3a289e6c143e1732e5d633468
+b142a54e44670e90f16e44d99b01e0c9
   $s$fEq(,)_$s$fEq(,)_$c/= ::
     (GHC.Types.Int, Pde.MultiIndex)
     -> (GHC.Types.Int, Pde.MultiIndex) -> GHC.Types.Bool
@@ -421,7 +421,7 @@ b502243e0c86ef687c996766e656b8b5
                              b2 `cast` (Pde.N:MultiIndex[0]) of wild3 {
                         GHC.Types.False -> GHC.Types.True
                         GHC.Types.True -> GHC.Types.False } } } }) -}
-d5ba0ccdd691fa2b07fd706a14050f6e
+ee04d8973aba6e2737734e2fd92990fa
   $s$fOrd(,) :: GHC.Classes.Ord (GHC.Types.Int, Pde.MultiIndex)
   {- Strictness: m, Inline: CONLIKE,
      Unfolding: DFun:.
@@ -529,7 +529,7 @@ a1e378fb4db7f83d66325a3c97af3fa5
     -> [([GHC.Types.Int], a)]
     -> Data.Map.Internal.Map [GHC.Types.Int] a
   {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
-5f8c3c023d10ce6fdb8a0b8093040823
+308c46b43ee033169da4ba62be53f206
   $sfromList2 ::
     [((GHC.Types.Int, Pde.MultiIndex), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
@@ -625,7 +625,7 @@ a1e378fb4db7f83d66325a3c97af3fa5
                                      (Data.Map.Internal.Tip @ (GHC.Types.Int, Pde.MultiIndex) @ a)
                                      (Data.Map.Internal.Tip @ (GHC.Types.Int, Pde.MultiIndex) @ a))
                                   wild2 } } } } } } } } }) -}
-8768ff94b6e09c4379b7305ba2b2d2be
+269c5aba8688e9933ac14a7caa8bffba
   $sfromList3 ::
     Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
     -> [((GHC.Types.Int, Pde.MultiIndex), a)]
@@ -638,13 +638,13 @@ e2397924aaa41f91eb4bab198b537224
     -> Data.Map.Internal.Map [GHC.Types.Int] a1
     -> Data.Map.Internal.Map [GHC.Types.Int] a1
   {- Arity: 3, Strictness: <S,1*U><S,1*U><S,1*U> -}
-70ff953079f9b41d65c45c82875ea305
+45a58ffc4d9563488f16046486cdae54
   $sunion ::
     Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
     -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
     -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
   {- Arity: 2, Strictness: <S,1*U><S,1*U>, Inline: [~] -}
-1242272b2bb300d2115028b3a390698e
+7bb71ef0d15823beef93922e40fbac75
   $sunionWith ::
     (a -> a -> a)
     -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
@@ -736,7 +736,7 @@ a036a957cc1ecdedde4df8b5eb239ef1
 2583ff2a794963509d38a6d5bfed7059
   $trModule4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("main"#) -}
-09244e62bbea09edcecaadbe2e88f25f
+114869729e88cbd05f4d31766e9bb4ab
   $w$cshowsPrec :: GHC.Prim.Int# -> Pde.MultiIndex -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S,U><L,1*U>, Inline: [0],
      Unfolding: (\ (ww :: GHC.Prim.Int#) (w :: Pde.MultiIndex) ->
@@ -767,7 +767,7 @@ a036a957cc1ecdedde4df8b5eb239ef1
                                                                         @ GHC.Types.Char
                                                                         GHC.Show.$fShow(,)2
                                                                         x))) }) -}
-99a418906cf9afd51293d9b8d5a476b6
+97074a681e807c25f6dc456fc436c08f
   $w$cshowsPrec1 ::
     GHC.Show.Show a => GHC.Prim.Int# -> Pde.Pde a -> GHC.Show.ShowS
   {- Arity: 3, Strictness: <L,U(C(C1(C1(U))),A,A)><S,U><L,1*U>,
@@ -805,7 +805,7 @@ a036a957cc1ecdedde4df8b5eb239ef1
                                                                         @ GHC.Types.Char
                                                                         GHC.Show.$fShow(,)2
                                                                         x))) }) -}
-91b4d19580c1e04b7d817bc377d375c4
+ffaefaa74c8d2acd0609aa8cdf78ebc4
   $w$sgo13 ::
     (GHC.Types.Int, Pde.MultiIndex)
     -> GHC.Types.Int
@@ -815,7 +815,7 @@ a036a957cc1ecdedde4df8b5eb239ef1
     -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a1
   {- Arity: 5, Strictness: <L,U><L,1*U(U)><L,U><L,U><S,1*U>,
      Inline: [0] -}
-02e9a89c28fda4c8f28252a3c8a9b37d
+4e6e01f96270ba62a3eb82a4932646e5
   $wdiffOrder :: Pde.MultiIndex -> GHC.Prim.Int#
   {- Arity: 1, Strictness: <S,1*U>, Inline: [0],
      Unfolding: (\ (w :: Pde.MultiIndex) ->
@@ -865,7 +865,7 @@ a036a957cc1ecdedde4df8b5eb239ef1
                                                                      -> {__scc {main:Pde.diffOrder} False True} GHC.Integer.Type.integerToInt
                                                                                                                   (GHC.Integer.Type.Jp#
                                                                                                                      dt2) } } }) -}
-9a3598ded5c9b38d921b885d753ec1bd
+7ada6761c06784c8dab5036c9d3e5139
   $wisDerivableIvar1 ::
     Pde.MultiIndex -> Data.IntMap.Internal.IntMap a -> GHC.Types.Bool
   {- Arity: 2, Strictness: <S,U><S,1*U>, Inline: [0],
@@ -887,7 +887,7 @@ a036a957cc1ecdedde4df8b5eb239ef1
                                                                       @ a
                                                                       ww3
                                                                       ww } }) -}
-b55a2bf945707b6a6115b59d41ecd956
+7eef523ac052eff93056850f7e7a4e1f
   $wlvl ::
     Data.IntSet.Internal.Key
     -> GHC.Natural.Natural -> [Data.IntSet.Internal.Key]
@@ -952,7 +952,7 @@ b55a2bf945707b6a6115b59d41ecd956
                                                                          wild1
                                                                          (GHC.Types.I#
                                                                             wild1) } }) -}
-4ce313b38764485d14f3cd05b2d985a0
+d914f04098affce7c4157387df6fde21
   $wlvl1 ::
     GHC.Types.Int
     -> Pde.MultiIndex
@@ -1011,7 +1011,7 @@ b55a2bf945707b6a6115b59d41ecd956
                                                                                                                                            ww16 } }) }))
                                                                                                                              ww10
                                                                                                                              ww11 } } }) #)) -}
-6fb357f4a3fd89f38150d80695d7e589
+0c7e19038e5a85d5edab4805ede72c65
   $wmkAllMultInds :: GHC.Prim.Int# -> [Pde.MultiIndex]
   {- Arity: 1, Strictness: <S,U>, Inline: [0],
      Unfolding: (\ (ww :: GHC.Prim.Int#) ->
@@ -1040,7 +1040,7 @@ b55a2bf945707b6a6115b59d41ecd956
                                                                  go1 1#
                                                               1#
                                                               -> GHC.Types.[] @ Pde.MultiIndex }) -}
-b2154b4179373173ec3112ad4cd4932e
+d67e2e5cbc34f5d115ec9ad1157411cc
   $wmultInd2MatrixNr ::
     Pde.MultiIndex
     -> GHC.Types.Int
@@ -1072,7 +1072,7 @@ b2154b4179373173ec3112ad4cd4932e
                       {__scc {main:Pde.multInd2MatrixNr} False True} GHC.Prim.+#
                                                                        (GHC.Prim.+# 1# y)
                                                                        y1 } } } }) -}
-2ba70d3af1d61b4cb3d96880f09dba11
+80a48b6115b5e016362ad5bf74efca6b
   $wnumber2MultInd :: GHC.Prim.Int# -> Pde.MultiIndex
   {- Arity: 1, Strictness: <S,1*U>, Inline: [0],
      Unfolding: (\ (ww :: GHC.Prim.Int#) ->
@@ -1136,7 +1136,7 @@ b2154b4179373173ec3112ad4cd4932e
                                                                      @ GHC.Natural.Natural)
                                                                     `cast`
                                                                   (Sym (Pde.N:MultiIndex[0])) }) -}
-571aed1b403d1f39fc433c7dbe0c4d92
+c224178e1f73942974dba3b8fee8c82e
   $wpoly_go13 ::
     GHC.Prim.Int#
     -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
@@ -1150,7 +1150,7 @@ b7ad0ad0a9657e3d735d9c0ef662dddb
     -> [([GHC.Types.Int], a)]
     -> Data.Map.Internal.Map [GHC.Types.Int] a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-c33b0207c62b3ea9fcbb7a5616ca7df3
+f8a5a42fc169ec09cbcd3128dde9a553
   $wprolongPdeIvar ::
     Pde.MultiIndex -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
   {- Arity: 2, Strictness: <L,U><S,1*U>, Inline: [0],
@@ -1321,7 +1321,7 @@ c33b0207c62b3ea9fcbb7a5616ca7df3
   $wshowl ::
     [GHC.Types.Int] -> (# GHC.Types.Char, [GHC.Types.Char] #)
   {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U>, Inline: [0] -}
-aa3ffbf578f0f4580da2d6d1218320d0
+655b1a2383d4d3cd96b936049b8e8ded
   $wtriangleMap ::
     GHC.Prim.Int#
     -> Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
@@ -1404,13 +1404,13 @@ aa3ffbf578f0f4580da2d6d1218320d0
                                                                                                              -> GHC.Types.[]
                                                                                                                   @ [GHC.Types.Int] })
                                                                ({__scc {main:Pde.triangleMap.k} True False} Pde.triangleMap1))) -}
-09244e62bbea09edcecaadbe2e88f25f
+114869729e88cbd05f4d31766e9bb4ab
   newtype MultiIndex
     = MultiIndex (Data.IntMap.Internal.IntMap GHC.Natural.Natural)
-99a418906cf9afd51293d9b8d5a476b6
+97074a681e807c25f6dc456fc436c08f
   newtype Pde a
     = Pde (Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a)
-438fdbd98acedba01781cefe08e437cb
+1fec8f7f17a1ab838d3f51447d2dea75
   addMultiInds :: Pde.MultiIndex -> Pde.MultiIndex -> Pde.MultiIndex
   {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><S,1*U>,
      Unfolding: InlineRule (0, True, True)
@@ -1419,7 +1419,7 @@ aa3ffbf578f0f4580da2d6d1218320d0
                 (<Pde.MultiIndex>_R
                  ->_R <Pde.MultiIndex>_R
                  ->_R Sym (Pde.N:MultiIndex[0])) -}
-53e575da4b349ee22217508aec77337c
+34fa8f74c11a444552a9304461f4019c
   addMultiInds1 ::
     Pde.MultiIndex
     -> Pde.MultiIndex
@@ -1444,7 +1444,7 @@ aa3ffbf578f0f4580da2d6d1218320d0
                    (x :: GHC.Natural.Natural)[OneShot]
                    (y :: GHC.Natural.Natural)[OneShot] ->
                  GHC.Natural.plusNatural x y) -}
-a6dd12d0bf88d67c729bee565040b5db
+815dbfb0cc72d1abcefb0138db826401
   combinePdes :: Pde.Pde a -> Pde.Pde a -> Pde.Pde a
   {- Arity: 2, Strictness: <S,1*U><S,1*U>,
      Unfolding: InlineRule (0, True, True)
@@ -1452,7 +1452,7 @@ a6dd12d0bf88d67c729bee565040b5db
                   `cast`
                 (forall (a :: <*>_N).
                  <Pde.Pde a>_R ->_R <Pde.Pde a>_R ->_R Sym (Pde.N:Pde[0]) <a>_N) -}
-6bf612c8574469b14cca28e09d2239a7
+7e5d0845c43bd130f3db8f7a31fb6a93
   combinePdes1 ::
     Pde.Pde a
     -> Pde.Pde a
@@ -1464,7 +1464,7 @@ a6dd12d0bf88d67c729bee565040b5db
                                                             @ a
                                                             ds `cast` (Pde.N:Pde[0] <a>_N)
                                                             ds1 `cast` (Pde.N:Pde[0] <a>_N)) -}
-3bd77ce1c0b0e73fff93384c67af60b5
+12a82d31aafdc089a82b980539c84fd9
   deriveIvar1 ::
     GHC.Num.Num a => Pde.MultiIndex -> Ivar.Ivar a -> Ivar.Ivar a
   {- Arity: 3, Strictness: <L,A><L,1*U><S,1*U(A,1*U)>m, Inline: [0],
@@ -1489,13 +1489,13 @@ a6dd12d0bf88d67c729bee565040b5db
                                                                                                                                                      ww2
                                                                                                                                                      ww4 })
                                                              (Data.IntMap.Internal.Nil @ a) }) -}
-44520f2685343c1da24fefdb7e911faa
+ca7e0a8fe0ab36dcc7241c8e01b831dd
   diffOrder :: Pde.MultiIndex -> GHC.Types.Int
   {- Arity: 1, Strictness: <S,1*U>m, Inline: [0],
      Unfolding: InlineRule (1, True, False)
                 (\ (w :: Pde.MultiIndex) ->
                  case Pde.$wdiffOrder w of ww { DEFAULT -> GHC.Types.I# ww }) -}
-6ad80e69e26979bab98114c64bfdf5c7
+84da18ecf83a5c79df7472a3a07f0d69
   evalPdeRand ::
     GHC.Types.Int
     -> Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
@@ -1503,7 +1503,7 @@ a6dd12d0bf88d67c729bee565040b5db
     -> Pde.Pde (Ivar.Ivar GHC.Real.Rational)
     -> GHC.Base.String
   {- Arity: 4, Strictness: <L,U(U)><L,U><L,U><L,1*U> -}
-2d473432f3ed764b907bf4ea3bd26e3b
+1fb28b433a48d2a5bd11e75980552596
   isDerivableIvar1 :: Pde.MultiIndex -> Ivar.Ivar a -> GHC.Types.Bool
   {- Arity: 2, Strictness: <S,U><S(LS),1*U(A,1*U)>, Inline: [0],
      Unfolding: InlineRule (2, True, False)
@@ -1516,7 +1516,7 @@ a6dd12d0bf88d67c729bee565040b5db
     -> Data.IntMap.Internal.IntMap GHC.Natural.Natural
     -> GHC.Natural.Natural
   {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,1*U> -}
-19a55879416e61f443367e38b8a46577
+6a6f57dfcf863274a33593b3fade9cda
   isDerivableIvar1_z :: GHC.Natural.Natural
   {- Unfolding: ({__scc {main:Pde.diffOrder} False True} case Pde.isDerivableIvar3 of wild {
                                                            GHC.Integer.Type.S# i#
@@ -1552,13 +1552,13 @@ a6dd12d0bf88d67c729bee565040b5db
 9b914b682cb0833ee8a3d0c7b6735b6f
   isDerivableIvar3 :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (0) -}
-accafa7e536bac8a3252e41cd329aac1
+790283bee7f1d4e232eeabb0b05caf81
   mkAllMultInds :: GHC.Types.Int -> [Pde.MultiIndex]
   {- Arity: 1, Strictness: <S(S),1*U(U)>, Inline: [0],
      Unfolding: InlineRule (1, True, False)
                 (\ (w :: GHC.Types.Int) ->
                  case w of ww { GHC.Types.I# ww1 -> Pde.$wmkAllMultInds ww1 }) -}
-3c26c965406e0f55f076c45bad744b9e
+c20e07f5b38f3466f1012a8e493e95e9
   mkPdefromTens ::
     Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a -> Pde.Pde a
   {- Arity: 1, Strictness: <S,1*U>,
@@ -1568,7 +1568,7 @@ accafa7e536bac8a3252e41cd329aac1
                 (forall (a :: <*>_N).
                  <Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a>_R
                  ->_R Sym (Pde.N:Pde[0]) <a>_N) -}
-a6ec6942809bf9903fe5d607cf829368
+83a0342a9397f51982c0e0ea6c27c52e
   mkPdefromTens1 ::
     Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
     -> Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) a
@@ -1585,13 +1585,13 @@ a6ec6942809bf9903fe5d607cf829368
                                                                                                                         Pde.MultiIndex),
                                                                                                                        a))
                                                                                                                  map1)) -}
-47c021b7f75580620e5c493c56f1a5a1
+548817ccb6a90be5e1d2faeb04beaca7
   mkPdefromTens2 ::
     [((GHC.Types.Int, Pde.MultiIndex), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
     -> [((GHC.Types.Int, Pde.MultiIndex), a)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-514f5242a5d66995656258b2521b9ea4
+10122fc09f53d3a54e3a6173e3c9aea8
   multInd2Number :: Pde.MultiIndex -> [GHC.Types.Int]
   {- Arity: 1, Strictness: <S,1*U>,
      Unfolding: (\ (ds :: Pde.MultiIndex) ->
@@ -1611,7 +1611,7 @@ a6ec6942809bf9903fe5d607cf829368
                                                                                                                  @ [Data.IntSet.Internal.Key]
                                                                                                                  Pde.multInd2Number2
                                                                                                                  l)) -}
-8e423df2d20e98aa34df8e9c2348118c
+ef8e5bad76f0dfec31ea32ca6cf11f71
   multInd2Number1 :: Pde.MultiIndex -> GHC.Types.Int
   {- Arity: 1, Strictness: <S,U>,
      Unfolding: (\ (mult :: Pde.MultiIndex) ->
@@ -1645,7 +1645,7 @@ a004364860f6b6283921aa358a61639f
   multInd2Number1_go ::
     [[Data.IntSet.Internal.Key]] -> [Data.IntSet.Internal.Key]
   {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U> -}
-b8a7c2312ed29f5bf85340e6216c4756
+b7ff14ab1454dd2f2bd98e0487f0c884
   multInd2Number2 ::
     (Data.IntSet.Internal.Key, GHC.Natural.Natural)
     -> [Data.IntSet.Internal.Key]
@@ -1656,13 +1656,13 @@ b8a7c2312ed29f5bf85340e6216c4756
 45a7f94aa672f0e0a447bafc64286b74
   multInd2Number3 :: GHC.Types.Int
   {- Strictness: x -}
-219a5c5771264440ba0154a2586e46cf
+b282c7f112673659b59a9b07cadbebae
   number2MultInd :: GHC.Types.Int -> Pde.MultiIndex
   {- Arity: 1, Strictness: <S(S),1*U(1*U)>, Inline: [0],
      Unfolding: InlineRule (1, True, False)
                 (\ (w :: GHC.Types.Int) ->
                  case w of ww { GHC.Types.I# ww1 -> Pde.$wnumber2MultInd ww1 }) -}
-b646baef487cc3770c0850756f58e03f
+6614301e0065dc27c88080324ec45acb
   print2Maple ::
     GHC.Types.Int
     -> Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
@@ -1790,7 +1790,7 @@ dc6abccb456a0a8dde86b72c677fc3d4
 2695bb83ff396ce00a198bf5c4f57125
   print2Maple9 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("{"#) -}
-0fd6fbac487e01df1bb7592e3f5084b2
+b11ceda808d7171e4c587767f56e871e
   print2MaplePde ::
     Pde.Pde (Ivar.Ivar GHC.Real.Rational) -> GHC.Base.String
   {- Arity: 1, Strictness: <L,U>,
@@ -1895,7 +1895,7 @@ e0bbf4533a9e8974aa16c20febd19117
 7cad6db8332bf7bad42ce7132c9de9b1
   print2MaplePde4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: (" "#) -}
-33e67a6b245914a2db68a658b3290c55
+f392d36354245ee95bb6bfecd3a96e8b
   print2MaplePde5 ::
     Data.IntSet.Internal.Key
     -> [GHC.Types.Char] -> [GHC.Types.Char] -> [GHC.Types.Char]
@@ -1919,7 +1919,7 @@ e0bbf4533a9e8974aa16c20febd19117
                                                                       (GHC.CString.unpackAppendCString#
                                                                          "+"#
                                                                          y)) -}
-ef2a52edd08e158bade75dfece0df7bd
+ec52af8b41ff9a5ebd074204abc8e3ba
   print2MaplePde6 ::
     ((GHC.Types.Int, Pde.MultiIndex), Ivar.Ivar GHC.Real.Rational)
     -> (GHC.Types.Int, [GHC.Types.Char])
@@ -1933,13 +1933,13 @@ ef2a52edd08e158bade75dfece0df7bd
                  case ww1 of ww3 { (,) ww4 ww5 ->
                  case Pde.$wlvl1 ww4 ww5 ww2 of ww6 { (#,#) ww7 ww8 ->
                  (ww7, ww8) } } }) -}
-c5838bab4ab1961d219c0407c0b7b6e8
+25fa34e1e8a82db294f23da27985417e
   print2MaplePde7 :: [GHC.Types.Char]
   {- Unfolding: ({__scc {main:Pde.print2MaplePde.l2.\} False True} GHC.Base.++
                                                                      @ GHC.Types.Char
                                                                      Pde.print2MaplePde8
                                                                      Pde.print2Maple5) -}
-94e8515cd73e0928af739a821eb224ba
+5771ed98fff1b8e8635faef1251e8ff3
   print2MaplePde8 :: [GHC.Types.Char]
   {- Unfolding: ({__scc {main:Pde.print2MaplePde} False True} {__scc {main:Pde.print2MaplePde.l2} False True} {__scc {main:Pde.print2MaplePde.l2.\} False True} GHC.CString.unpackAppendCString#
                                                                                                                                                                   GHC.Show.showList__4
@@ -1968,10 +1968,10 @@ c5838bab4ab1961d219c0407c0b7b6e8
 bb51a8cc0e329e647c0c820387b56dae
   print2Maple_go :: [[GHC.Types.Char]] -> [GHC.Types.Char]
   {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U> -}
-3d51b7db1d3454150ec004f9719f0383
+6f8483e930ec9814fa81b9a76e3c2803
   printConstPde :: GHC.Show.Show a => Pde.Pde a -> GHC.Base.String
   {- Arity: 2, Strictness: <L,U(A,C(U),A)><L,U> -}
-3e3a3c1f2f0d211aaa2368c6186da28b
+d9dc1b3ab34ba93df03c895f6e48c4b0
   prolongPde ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     Pde.MultiIndex -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
@@ -2007,7 +2007,7 @@ bb51a8cc0e329e647c0c820387b56dae
                                                                                                                                                              a>_N))
                    `cast`
                  (Sym (Pde.N:Pde[0]) <Ivar.Ivar a>_N)) -}
-895f8278143cfb446f086f967405c273
+bbeac318fe84a14484bb3df94fbcab73
   prolongPdeAll ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     [Pde.MultiIndex] -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
@@ -2022,7 +2022,7 @@ bb51a8cc0e329e647c0c820387b56dae
                  ->_R <[Pde.MultiIndex]>_R
                  ->_R <Pde.Pde (Ivar.Ivar a)>_R
                  ->_R Sym (Pde.N:Pde[0]) <Ivar.Ivar a>_N) -}
-856283ed497778ecc83de180fb925d23
+3e1034676344185444895cd4a79012e4
   prolongPdeAll1 ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     [Pde.MultiIndex]
@@ -2060,7 +2060,7 @@ bb51a8cc0e329e647c0c820387b56dae
                                                                                                                         ->_R Pde.N:Pde[0] <Ivar.Ivar
                                                                                                                                              a>_N)
                                                                                                                        mults)) -}
-16144f7857b0dac13c04586391b08d64
+9dc5258e6fd81d5d05dd7b46516ff6bd
   prolongPdeAll2 ::
     Data.Map.Internal.Map (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
     -> [Data.Map.Internal.Map
@@ -2068,13 +2068,13 @@ bb51a8cc0e329e647c0c820387b56dae
     -> Data.Map.Internal.Map
          (GHC.Types.Int, Pde.MultiIndex) (Ivar.Ivar a)
   {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
-d057fa7291138fa67c4ba12c62a13808
+91e1d3b68b7ed7bead6466973958a18a
   prolongPdeAllBlock1 ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     [Pde.MultiIndex] -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
   {- Arity: 4,
      Strictness: <L,U(C(C1(U)),A,A,A,A,A,C(U))><L,U(A,C(C1(U)))><S,1*U><L,U> -}
-3567e70b1757adba4797212ab0ccf1ab
+06628ef30ae92dc51b1c226447fb57d7
   prolongPdeConst :: Pde.MultiIndex -> Pde.Pde a -> Pde.Pde a
   {- Arity: 2, Strictness: <L,U><S,1*U>,
      Unfolding: (\ @ a (mult :: Pde.MultiIndex) (ds :: Pde.Pde a) ->
@@ -2139,7 +2139,7 @@ d057fa7291138fa67c4ba12c62a13808
                                                                     ds `cast` (Pde.N:Pde[0] <a>_N)))
                                                                 `cast`
                                                               (Sym (Pde.N:Pde[0]) <a>_N)) -}
-29bcecffd29ef2a21e5821d97eff1c00
+361672fba09b880f85f1d19dd8cabe12
   prolongPdeIvar ::
     GHC.Num.Num a =>
     Pde.MultiIndex -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
@@ -2150,7 +2150,7 @@ d057fa7291138fa67c4ba12c62a13808
                    (w1 :: Pde.MultiIndex)
                    (w2 :: Pde.Pde (Ivar.Ivar a)) ->
                  Pde.$wprolongPdeIvar @ a w1 w2) -}
-0be6ba7c614affd658c3cb53c0c3fc2f
+9633f7f29bc217f45b7f3bed9b6cb248
   prolongSymbolAll ::
     GHC.Num.Num a =>
     [Pde.MultiIndex] -> Pde.Pde (Ivar.Ivar a) -> Pde.Pde (Ivar.Ivar a)
@@ -2163,7 +2163,7 @@ d057fa7291138fa67c4ba12c62a13808
                  ->_R <[Pde.MultiIndex]>_R
                  ->_R <Pde.Pde (Ivar.Ivar a)>_R
                  ->_R Sym (Pde.N:Pde[0]) <Ivar.Ivar a>_N) -}
-a997bf747f605db5db4d9c11411bdf0c
+07b3c403a8810259885bfd2b306518b4
   prolongSymbolAll1 ::
     GHC.Num.Num a =>
     [Pde.MultiIndex]
@@ -2173,7 +2173,7 @@ a997bf747f605db5db4d9c11411bdf0c
   {- Arity: 3, Strictness: <L,A>,
      Unfolding: InlineRule (1, True, True)
                 (\ @ a ($dNum :: GHC.Num.Num a) -> Pde.prolongSymbolAll2 @ a) -}
-e0273f8e46b35629046b004961bc81b2
+6f89c9e83ec5a9dd92ae07048ed5bad2
   prolongSymbolAll2 ::
     [Pde.MultiIndex]
     -> Pde.Pde (Ivar.Ivar a)
@@ -2207,7 +2207,7 @@ e0273f8e46b35629046b004961bc81b2
                                                                                                                               ->_R Pde.N:Pde[0] <Ivar.Ivar
                                                                                                                                                    a>_N)
                                                                                                                              mults)) -}
-73062c09bc2add55bf7a854dc1427954
+4d0d7195084e526c7ae7afff34c73366
   triangleMap ::
     GHC.Types.Int
     -> Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
@@ -2215,7 +2215,7 @@ e0273f8e46b35629046b004961bc81b2
      Unfolding: InlineRule (1, True, False)
                 (\ (w :: GHC.Types.Int) ->
                  case w of ww { GHC.Types.I# ww1 -> Pde.$wtriangleMap ww1 }) -}
-eef8485129acd1dfc39ac58bf9035c4a
+0638670f5b0b8264a9e7c28a403ce3b7
   triangleMap1 :: [GHC.Types.Int]
   {- Unfolding: ({__scc {main:Pde.triangleMap} False True} {__scc {main:Pde.triangleMap.k} False True} GHC.Enum.eftInt
                                                                                                          1#

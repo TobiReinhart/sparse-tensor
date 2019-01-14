@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-14 17:30:58.244008 UTC
+2019-01-14 18:10:04.398998 UTC
 
 interface main:Order3Int 8043
-  interface hash: 175f98c9e107edb7d8b9611a7330757a
-  ABI hash: ec6fc33e1785c6168bc7397b0b6eccad
-  export-list hash: 6b8ceb1f2f8fdecdbd1f1ef14bc4fb79
+  interface hash: b057331583301cf0f8ca05068a932ba3
+  ABI hash: b85ff3c064f5c2351e89700220d73d92
+  export-list hash: 7e167d7bb7b7c243fac9153bac94e8cc
   orphan hash: f98783e0cf6201fc4faf0436e010042b
   flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
@@ -15,6 +15,7 @@ interface main:Order3Int 8043
   where
 exports:
   Order3Int.ansatzABC
+  Order3Int.ansatzABC2
   Order3Int.intABC
   Order3Int.mkEqnSparseAnsatzABC2
   Order3Int.mkEqnSparseIntABC2
@@ -85,7 +86,6 @@ import  -/  Tensor 176e25c77f5f937264699042a39a34a2
   tensorContractWith_20 6cf282d64edd6c9ec712d855bb38e06a
   tensorContractWith_3 529107206dcaa10693fc48c26137b94b
   tensorProductNumeric 0a352647ad8349c5cc4ef731b863771f
-  tensorProductWith 6e1300f3b6ea8f7dd056901f69230be2
   tensorSub 5ae6e28292f5ee5e3aebc88142b4d18f
   tensorTranspose 3f7c7309fc31e499e4e26c886fbf7b4a
 5d8326a4186576bff5e37039e72b7c53
@@ -362,6 +362,14 @@ b8b65fdad3ccc588208c10a4e2e1e1d6
     -> (# Data.Map.Internal.Map
             (Index.Index 3 3 0 0 1 0 0 0) GHC.Real.Rational #)
   {- Arity: 3, Strictness: <L,U><L,U><L,U>, Inline: [0] -}
+47f8d54bb34e75242133faf6b0def725
+  $wansatzABC2 ::
+    Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
+    -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
+    -> Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
+    -> (# Data.Map.Internal.Map
+            (Index.Index 3 3 0 0 1 0 0 0) GHC.Real.Rational #)
+  {- Arity: 3, Strictness: <L,U><L,U><L,U>, Inline: [0] -}
 10dc7c3bc9dbfbbf6457ade6c9008a64
   $wintABC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
@@ -390,6 +398,31 @@ a99641929880b77786ceaad82ecaad40
                    (w2 :: Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9)
                    (w3 :: Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9) ->
                  case Order3Int.$wansatzABC w w1 w2 of ww { Unit# ww1 ->
+                 Tensor.Tensor
+                   @ 3
+                   @ 3
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ GHC.Real.Rational
+                   ww1 }) -}
+3b32102ced10fd4ad365476a695df784
+  ansatzABC2 ::
+    Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
+    -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
+    -> Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
+    -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
+    -> Tensor.Tensor 3 3 0 0 1 0 0 0 GHC.Real.Rational
+  {- Arity: 4, Strictness: <L,U><L,U><L,U><L,A>m, Inline: [0],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20)
+                   (w1 :: Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20)
+                   (w2 :: Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9)
+                   (w3 :: Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9) ->
+                 case Order3Int.$wansatzABC2 w w1 w2 of ww { Unit# ww1 ->
                  Tensor.Tensor
                    @ 3
                    @ 3

@@ -489,19 +489,18 @@ module Main (
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzAI_13_1_19.txt" $ showEqnsFlatFrac ansatzAI
 
-        let ansatzCondABC = mkEqnSparseAnsatzABC2 $ ansatzABC map1Area map2Area map1Metric map2Metric
+        let ansatzCondABC = mkEqnSparseAnsatzABC2 $ ansatzABC2 map1Area map2Area map1Metric map2Metric
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/3rdOrderInt/ansatzABC2_14_1_19.txt" $ showEqnsFlatFrac ansatzCondABC
 
-        --let intCondABC = mkEqnSparseIntABC2 $ intABC map1Area map2Area map1Metric map2Metric
+        let intCondABC = mkEqnSparseIntABC2 $ intABC map1Area map2Area map1Metric map2Metric
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/3rdOrderInt/intABC_14_1_19.txt" $ showEqnsFlatFrac intCondABC
 
-        let flat = evalTensorVals $ tensorContractWith_3 (1,1) (+) $ tensorProductWith (*) flatAreaST $ interJ_Area map2Area  
-
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzAB4_12_1_19.txt" $ showEqnsFlat intCondAB2 
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/3rdOrderInt/ansatzABC3_14_1_19.txt" $ showEqnsFlatFrac ansatzCondABC
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/3rdOrderInt/intABC_14_1_19.txt" $ showEqnsFlatFrac intCondABC
 
+        writeFile "intABC_14_1_19.txt" $ showEqnsFlatFrac intCondABC 
 
 

@@ -15,7 +15,8 @@
 
 module Order3Int (
     ansatzABC, mkEqnSparseAnsatzABC2,
-    intABC, mkEqnSparseIntABC2
+    intABC, mkEqnSparseIntABC2,
+    ansatzABC2
     
 ) where
 
@@ -49,6 +50,27 @@ module Order3Int (
                         totalBlock2 = tensorContractWith_3 (1,1) (+) $ tensorProductNumeric invEta antiSym
                         prod = tensorProductNumeric tens totalBlock2
 
+    ansatzABC2 :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 3 3 0 0 1 0 0 0 Rational 
+    ansatzABC2 map1Area map2Area map1Metric map2Metric = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (0,1) (+) $ 
+        tensorProductNumeric 
+        (tensorAdd totalBlock1 
+            $ tensorAdd (tensorTranspose 2 (0,1) totalBlock1)
+            $ tensorAdd (tensorTranspose 2 (0,2) totalBlock1) 
+            $ tensorAdd (tensorTranspose 2 (1,2) totalBlock1) 
+            $ tensorAdd (tensorTranspose 2 (0,2) $ tensorTranspose 2 (0,1) totalBlock1) 
+            (tensorTranspose 2 (1,2) $ tensorTranspose 2 (0,1) totalBlock1))
+            (tensorContractWith_3 (1,1) (+) $ tensorProductNumeric invEta antiSym)
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        antiSym = aSymI_2 map1Metric
+                        block1 = tensorProductNumeric intArea $ tensorProductNumeric delta_20 delta_20 
+                        block2 = tensorTranspose 1 (0,2) block1
+                        block3 = tensorTranspose 1 (0,1) block2 
+                        totalBlock1 = tensorAdd block1 $ tensorAdd block2 block3 
+                        
+
+
     index2SparseAnsatzABC :: Index 3 3 0 0 1 0 0 0 -> (Int,Int) 
     index2SparseAnsatzABC  (x1, x2, _, _, x5, _, _, _) = ((g-1)*21^2*10+(e-1)*210+(f-1)*10+j,(c-1)*21^2+(b-1)*21+a)
                                                   where 
@@ -69,9 +91,9 @@ module Order3Int (
                         intArea = interArea map1Area map2Area
                         intMetric = interMetric map1Metric map2Metric
                         flatA = flatArea map2Area
-                        flatInt = tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea flatA 
-                        block0 = tensorTranspose 1 (0,2) $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 delta_3
-                        block1 = tensorProductWith (*) intArea $ tensorProductWith (*) delta_20 delta_20 
+                        flatInt = tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea flatA 
+                        block0 = tensorTranspose 1 (0,2) $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 delta_3
+                        block1 = tensorProductNumeric intArea $ tensorProductNumeric delta_20 delta_20 
                         block2 = tensorTranspose 1 (0,2) block1
                         block3 = tensorTranspose 1 (0,1) block2 
                         totalBlock1 = tensorAdd block0 $ tensorAdd block1 $ tensorAdd block2 block3 
@@ -81,7 +103,7 @@ module Order3Int (
                         totalBlockTrans4 = tensorTranspose 2 (0,2) totalBlockTrans1
                         totalBlockTrans5 = tensorTranspose 2 (1,2) totalBlockTrans1
                         tens = tensorAdd totalBlock1 $ tensorAdd totalBlockTrans1 $ tensorAdd totalBlockTrans2 $ tensorAdd totalBlockTrans3 $ tensorAdd totalBlockTrans4 totalBlockTrans5
-                        prod = tensorContractWith_20 (1,3) (+) $ tensorProductWith (*) tens flatInt
+                        prod = tensorContractWith_20 (1,3) (+) $ tensorProductNumeric tens flatInt
                         prodTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) prod 
 
     index2SparseIntABC :: Index 2 3 0 0 0 0 2 2 -> (Int,Int) 

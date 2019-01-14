@@ -1,13 +1,13 @@
 
 ==================== FINAL INTERFACE ====================
-2018-12-22 19:09:01.316008 UTC
+2019-01-14 11:31:12.838569 UTC
 
-interface main:Perturbation 8043
-  interface hash: 94de515e377fa32b5a7300fdd2bc22ff
-  ABI hash: 86ade4a35031a7923795650af6c4ad33
+interface main:Perturbation [hpc] 8043
+  interface hash: 1ac9c9d90dc42d3f592bbcae7f2c7233
+  ABI hash: 9cd3173f7dda3eefe87038fd2e336b85
   export-list hash: 2151821fea7fdcfba530bb109075c579
   orphan hash: fd32531c54dc7aa768bba348542be920
-  flag hash: 707c86cfbee6a9c65f08462953a21ad8
+  flag hash: badd6e954112606c59e049e70d21435f
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
   sig of: Nothing
@@ -64,10 +64,10 @@ import  -/  containers-0.5.11.0:Data.Sequence.Internal.Sorting 481f0d31b76dfcad9
 import  -/  containers-0.5.11.0:Data.Set 7d3c64a641be4cacbcd8119445bab919
 import  -/  containers-0.5.11.0:Data.Set.Internal 93fa3ef95853aa2a7aadf32d693bd451
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
-import  -/  Ansatz fceab4c3109e895058fcc6810ff83fa5
+import  -/  Ansatz feb006ea34150c9f561fce99c96513c5
   exports: 59de763b5ed7159158b40cd802183e31
-  mkIndMap 7a1883f6d2f07bda88482cc980b808dc
-import  -/  Symmetrize b5f0b4927f9e36a72e9b4cc67721e63e
+  mkIndMap 6791acc2cf31656762d52fb03a1b3fa5
+import  -/  Symmetrize 66145e28705a6a21f2f4a17b4eadd368
   exports: c79a0ef965b8f406eb0b9e72ceb58ef0
   Symmetry f51775b478da3c80f3a4963df025dc97
 f7389b902888e93b7f110ae4a9a0f722
@@ -179,6 +179,16 @@ ebb54f6591f1336fde50b15fbf414a1a
                       (\ (x :: [a]) (y :: b)[OneShot] -> GHC.Base.foldr @ a @ b c y x)
                       n
                       xs)) -}
+25d24dfae1f5bfa57d8156c692172beb
+  $sfind1 ::
+    GHC.Types.Int -> Data.Map.Internal.Map GHC.Types.Int a -> a
+  {- Arity: 2, Strictness: <S(S),1*U(U)><S,1*U>, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a
+                   (w :: GHC.Types.Int)
+                   (w1 :: Data.Map.Internal.Map GHC.Types.Int a) ->
+                 case w of ww { GHC.Types.I# ww1 ->
+                 Perturbation.$wpoly_go13 @ a ww1 w1 }) -}
 2f14e84ee084bfc368a708e64848048b
   $sfromList ::
     [(Data.Sequence.Internal.Seq [GHC.Types.Int], a)]
@@ -440,16 +450,6 @@ bf194dbcaf3a570c5e72794481bb264e
     -> Data.Map.Internal.Map k1 a1
   {- Arity: 5,
      Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><L,1*C1(C1(C1(U)))><S,1*U><L,U><S,1*U> -}
-53ccf9da010cad7cec584d4ff92a666a
-  $sinsert_go13 ::
-    GHC.Classes.Ord k1 =>
-    k1
-    -> k1
-    -> a1
-    -> Data.Map.Internal.Map k1 a1
-    -> Data.Map.Internal.Map k1 a1
-  {- Arity: 5,
-     Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><L,U><S,1*U><L,U><S,1*U> -}
 f5e043ba356efb7218196bff74fa7131
   $sintersection ::
     Data.Set.Internal.Set (Data.Sequence.Internal.Seq [GHC.Types.Int])
@@ -513,49 +513,51 @@ f5766357f6e87561267ea7695b034d40
     -> Data.Map.Internal.Map GHC.Types.Int a1
     -> Data.Map.Internal.Map GHC.Types.Int a1
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-be2c0255a015de5e3193d0008914dfa6
+911cdc23358942eb5f9ebf314da46040
   $wgetRepIndsPert ::
     GHC.Base.String -> [Perturbation.PertAnsatz a] -> [GHC.Types.Char]
   {- Arity: 2, Strictness: <L,1*U><L,1*U>, Inline: [0],
      Unfolding: (\ @ a
                    (w :: GHC.Base.String)
                    (w1 :: [Perturbation.PertAnsatz a]) ->
-                 GHC.CString.unpackAppendCString#
-                   Perturbation.indexPermSeqPert3
-                   (let {
-                      iMap :: Data.IntMap.Internal.IntMap GHC.Types.Char
-                      = Data.IntMap.Strict.fromList1
-                          @ GHC.Types.Char
-                          (Data.IntMap.Internal.Nil @ GHC.Types.Char)
-                          (Ansatz.getAllIndsLabel_go1 1# w)
-                    } in
-                    case GHC.Base.map
-                           @ (Data.Map.Internal.Map
-                                (Data.Sequence.Internal.Seq [GHC.Types.Int]) a)
-                           @ [GHC.Types.Char]
-                           (\ (x :: Data.Map.Internal.Map
-                                      (Data.Sequence.Internal.Seq [GHC.Types.Int]) a) ->
-                            Perturbation.indexPermSeqPert
-                              (GHC.List.$w!!
-                                 @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                 (Data.Map.Internal.keys_go
-                                    @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                    @ a
-                                    (GHC.Types.[] @ (Data.Sequence.Internal.Seq [GHC.Types.Int]))
-                                    x)
-                                 0#)
-                              iMap)
-                           w1 of wild {
-                      [] -> Perturbation.getRepIndsPert3
-                      : x xs
-                      -> Perturbation.getRepIndsPert_go
-                           (GHC.Types.:
-                              @ [GHC.Types.Char]
-                              x
-                              (Data.OldList.prependToAll
-                                 @ [GHC.Types.Char]
-                                 Perturbation.getRepIndsPert1
-                                 xs)) })) -}
+                 {__scc {main:Perturbation.getRepIndsPert} True True} GHC.CString.unpackAppendCString#
+                                                                        Perturbation.indexPermSeqPert3
+                                                                        (let {
+                                                                           iMap :: Data.IntMap.Internal.IntMap
+                                                                                     GHC.Types.Char
+                                                                           = {__scc {main:Perturbation.getRepIndsPert.iMap} True True} Ansatz.mkIndMap
+                                                                                                                                         w
+                                                                         } in
+                                                                         case GHC.Base.map
+                                                                                @ (Data.Sequence.Internal.Seq
+                                                                                     [GHC.Types.Int])
+                                                                                @ [GHC.Types.Char]
+                                                                                (\ (x :: Data.Sequence.Internal.Seq
+                                                                                           [GHC.Types.Int]) ->
+                                                                                 {__scc {main:Perturbation.getRepIndsPert.\} True True} Perturbation.indexPermSeqPert
+                                                                                                                                          x
+                                                                                                                                          iMap)
+                                                                                ({__scc {main:Perturbation.getRepIndsPert.seqList} True True} {__scc {main:Perturbation.getRepPert} True True} GHC.Base.map
+                                                                                                                                                                                                 @ (Data.Map.Internal.Map
+                                                                                                                                                                                                      (Data.Sequence.Internal.Seq
+                                                                                                                                                                                                         [GHC.Types.Int])
+                                                                                                                                                                                                      a)
+                                                                                                                                                                                                 @ (Data.Sequence.Internal.Seq
+                                                                                                                                                                                                      [GHC.Types.Int])
+                                                                                                                                                                                                 (Perturbation.getRepIndsPert5
+                                                                                                                                                                                                    @ a)
+                                                                                                                                                                                                 w1) of wild {
+                                                                           []
+                                                                           -> Perturbation.getRepIndsPert3
+                                                                           : x xs
+                                                                           -> Perturbation.getRepIndsPert_go
+                                                                                (GHC.Types.:
+                                                                                   @ [GHC.Types.Char]
+                                                                                   x
+                                                                                   (Data.OldList.prependToAll
+                                                                                      @ [GHC.Types.Char]
+                                                                                      Perturbation.getRepIndsPert1
+                                                                                      xs)) })) -}
 3214d3802526be338b15af5f3c6f23cf
   $wpoly_go1 ::
     GHC.Prim.Int#
@@ -594,216 +596,376 @@ b77ddef605d95270047e5cf8472cec81
   type PertAnsatz a =
     Data.Map.Internal.Map
       (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
-67345f5d1a490d72f3f9761f045dee22
-  areaEvalMap1 ::
-    [GHC.Types.Int]
-    -> Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int
-  {- Arity: 1, Strictness: <S,1*U>,
+fa96f150649dd24dc94b7d07d2d09165
+  areaEvalMap1 :: [GHC.Types.Int] -> [(GHC.Types.Int, GHC.Types.Int)]
+  {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U>,
      Unfolding: (\ (x :: [GHC.Types.Int]) ->
-                 case x of wild {
-                   [] -> Perturbation.areaEvalMap18
-                   : y ys
-                   -> Perturbation.$sfromList4
-                        @ GHC.Types.Int
-                        (GHC.Types.:
-                           @ (GHC.Types.Int, GHC.Types.Int)
-                           (Perturbation.areaEvalMap17, y)
-                           (case ys of wild1 {
-                              [] -> GHC.Types.[] @ (GHC.Types.Int, GHC.Types.Int)
-                              : y1 ys1
-                              -> GHC.Types.:
-                                   @ (GHC.Types.Int, GHC.Types.Int)
-                                   (Perturbation.areaEvalMap16, y1)
-                                   (case ys1 of wild2 {
-                                      [] -> GHC.Types.[] @ (GHC.Types.Int, GHC.Types.Int)
-                                      : y2 ys2
-                                      -> GHC.Types.:
-                                           @ (GHC.Types.Int, GHC.Types.Int)
-                                           (Perturbation.areaEvalMap15, y2)
-                                           (case ys2 of wild3 {
-                                              [] -> GHC.Types.[] @ (GHC.Types.Int, GHC.Types.Int)
-                                              : y3 ys3
-                                              -> GHC.Types.:
-                                                   @ (GHC.Types.Int, GHC.Types.Int)
-                                                   (Perturbation.areaEvalMap13, y3)
-                                                   (case ys3 of wild4 {
-                                                      []
-                                                      -> GHC.Types.[]
-                                                           @ (GHC.Types.Int, GHC.Types.Int)
-                                                      : y4 ys4
-                                                      -> GHC.Types.:
-                                                           @ (GHC.Types.Int, GHC.Types.Int)
-                                                           (Perturbation.areaEvalMap12, y4)
-                                                           (case ys4 of wild5 {
-                                                              []
-                                                              -> GHC.Types.[]
-                                                                   @ (GHC.Types.Int, GHC.Types.Int)
-                                                              : y5 ys5
-                                                              -> GHC.Types.:
-                                                                   @ (GHC.Types.Int, GHC.Types.Int)
-                                                                   (Perturbation.areaEvalMap11, y5)
-                                                                   (case ys5 of wild6 {
-                                                                      []
-                                                                      -> GHC.Types.[]
-                                                                           @ (GHC.Types.Int,
-                                                                              GHC.Types.Int)
-                                                                      : y6 ys6
-                                                                      -> GHC.Types.:
-                                                                           @ (GHC.Types.Int,
-                                                                              GHC.Types.Int)
-                                                                           (Perturbation.areaEvalMap9,
-                                                                            y6)
-                                                                           (case ys6 of wild7 {
-                                                                              []
-                                                                              -> GHC.Types.[]
-                                                                                   @ (GHC.Types.Int,
-                                                                                      GHC.Types.Int)
-                                                                              : y7 ys7
-                                                                              -> GHC.Types.:
-                                                                                   @ (GHC.Types.Int,
-                                                                                      GHC.Types.Int)
-                                                                                   (Perturbation.areaEvalMap8,
-                                                                                    y7)
-                                                                                   (case ys7 of wild8 {
-                                                                                      []
-                                                                                      -> GHC.Types.[]
-                                                                                           @ (GHC.Types.Int,
-                                                                                              GHC.Types.Int)
-                                                                                      : y8 ys8
-                                                                                      -> GHC.Types.:
-                                                                                           @ (GHC.Types.Int,
-                                                                                              GHC.Types.Int)
-                                                                                           (Perturbation.areaEvalMap7,
-                                                                                            y8)
-                                                                                           (case ys8 of wild9 {
-                                                                                              []
-                                                                                              -> GHC.Types.[]
-                                                                                                   @ (GHC.Types.Int,
-                                                                                                      GHC.Types.Int)
-                                                                                              : y9 ys9
-                                                                                              -> GHC.Types.:
-                                                                                                   @ (GHC.Types.Int,
-                                                                                                      GHC.Types.Int)
-                                                                                                   (Perturbation.areaEvalMap6,
-                                                                                                    y9)
-                                                                                                   (case ys9 of wild10 {
-                                                                                                      []
-                                                                                                      -> GHC.Types.[]
-                                                                                                           @ (GHC.Types.Int,
-                                                                                                              GHC.Types.Int)
-                                                                                                      : y10 ys10
-                                                                                                      -> GHC.Types.:
-                                                                                                           @ (GHC.Types.Int,
-                                                                                                              GHC.Types.Int)
-                                                                                                           (Perturbation.areaEvalMap5,
-                                                                                                            y10)
-                                                                                                           (case ys10 of wild11 {
-                                                                                                              []
-                                                                                                              -> GHC.Types.[]
-                                                                                                                   @ (GHC.Types.Int,
-                                                                                                                      GHC.Types.Int)
-                                                                                                              : y11 ys11
-                                                                                                              -> GHC.Types.:
-                                                                                                                   @ (GHC.Types.Int,
-                                                                                                                      GHC.Types.Int)
-                                                                                                                   (Perturbation.areaEvalMap4,
-                                                                                                                    y11)
-                                                                                                                   (case ys11 of wild12 {
-                                                                                                                      []
-                                                                                                                      -> GHC.Types.[]
-                                                                                                                           @ (GHC.Types.Int,
-                                                                                                                              GHC.Types.Int)
-                                                                                                                      : y12 ys12
-                                                                                                                      -> GHC.Types.:
-                                                                                                                           @ (GHC.Types.Int,
-                                                                                                                              GHC.Types.Int)
-                                                                                                                           (Perturbation.areaEvalMap3,
-                                                                                                                            y12)
-                                                                                                                           (case ys12 of wild13 {
-                                                                                                                              []
-                                                                                                                              -> GHC.Types.[]
-                                                                                                                                   @ (GHC.Types.Int,
-                                                                                                                                      GHC.Types.Int)
-                                                                                                                              : y13 ys13
-                                                                                                                              -> GHC.Types.:
-                                                                                                                                   @ (GHC.Types.Int,
-                                                                                                                                      GHC.Types.Int)
-                                                                                                                                   (Perturbation.areaEvalMap2,
-                                                                                                                                    y13)
-                                                                                                                                   (GHC.Types.[]
-                                                                                                                                      @ (GHC.Types.Int,
-                                                                                                                                         GHC.Types.Int)) }) }) }) }) }) }) }) }) }) }) }) }) })) }) -}
-4e2df46b64592f64cd10a4e436145a25
+                 {__scc {main:Perturbation.areaEvalMap10.l.\} True True} case x of wild {
+                                                                           []
+                                                                           -> GHC.Types.[]
+                                                                                @ (GHC.Types.Int,
+                                                                                   GHC.Types.Int)
+                                                                           : y ys
+                                                                           -> GHC.Types.:
+                                                                                @ (GHC.Types.Int,
+                                                                                   GHC.Types.Int)
+                                                                                (Perturbation.areaEvalMap12,
+                                                                                 y)
+                                                                                (case ys of wild1 {
+                                                                                   []
+                                                                                   -> GHC.Types.[]
+                                                                                        @ (GHC.Types.Int,
+                                                                                           GHC.Types.Int)
+                                                                                   : y1 ys1
+                                                                                   -> GHC.Types.:
+                                                                                        @ (GHC.Types.Int,
+                                                                                           GHC.Types.Int)
+                                                                                        (Perturbation.areaEvalMap11,
+                                                                                         y1)
+                                                                                        (case ys1 of wild2 {
+                                                                                           []
+                                                                                           -> GHC.Types.[]
+                                                                                                @ (GHC.Types.Int,
+                                                                                                   GHC.Types.Int)
+                                                                                           : y2 ys2
+                                                                                           -> GHC.Types.:
+                                                                                                @ (GHC.Types.Int,
+                                                                                                   GHC.Types.Int)
+                                                                                                (Perturbation.areaEvalMap9,
+                                                                                                 y2)
+                                                                                                (case ys2 of wild3 {
+                                                                                                   []
+                                                                                                   -> GHC.Types.[]
+                                                                                                        @ (GHC.Types.Int,
+                                                                                                           GHC.Types.Int)
+                                                                                                   : y3 ys3
+                                                                                                   -> GHC.Types.:
+                                                                                                        @ (GHC.Types.Int,
+                                                                                                           GHC.Types.Int)
+                                                                                                        (Perturbation.areaEvalMap8,
+                                                                                                         y3)
+                                                                                                        (case ys3 of wild4 {
+                                                                                                           []
+                                                                                                           -> GHC.Types.[]
+                                                                                                                @ (GHC.Types.Int,
+                                                                                                                   GHC.Types.Int)
+                                                                                                           : y4 ys4
+                                                                                                           -> GHC.Types.:
+                                                                                                                @ (GHC.Types.Int,
+                                                                                                                   GHC.Types.Int)
+                                                                                                                (Perturbation.areaEvalMap7,
+                                                                                                                 y4)
+                                                                                                                (case ys4 of wild5 {
+                                                                                                                   []
+                                                                                                                   -> GHC.Types.[]
+                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                           GHC.Types.Int)
+                                                                                                                   : y5 ys5
+                                                                                                                   -> GHC.Types.:
+                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                           GHC.Types.Int)
+                                                                                                                        (Perturbation.areaEvalMap6,
+                                                                                                                         y5)
+                                                                                                                        (case ys5 of wild6 {
+                                                                                                                           []
+                                                                                                                           -> GHC.Types.[]
+                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                   GHC.Types.Int)
+                                                                                                                           : y6 ys6
+                                                                                                                           -> GHC.Types.:
+                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                   GHC.Types.Int)
+                                                                                                                                (Perturbation.areaEvalMap5,
+                                                                                                                                 y6)
+                                                                                                                                (case ys6 of wild7 {
+                                                                                                                                   []
+                                                                                                                                   -> GHC.Types.[]
+                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                           GHC.Types.Int)
+                                                                                                                                   : y7 ys7
+                                                                                                                                   -> GHC.Types.:
+                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                           GHC.Types.Int)
+                                                                                                                                        (Perturbation.areaEvalMap4,
+                                                                                                                                         y7)
+                                                                                                                                        (case ys7 of wild8 {
+                                                                                                                                           []
+                                                                                                                                           -> GHC.Types.[]
+                                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                                   GHC.Types.Int)
+                                                                                                                                           : y8 ys8
+                                                                                                                                           -> GHC.Types.:
+                                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                                   GHC.Types.Int)
+                                                                                                                                                (Perturbation.areaEvalMap3,
+                                                                                                                                                 y8)
+                                                                                                                                                (case ys8 of wild9 {
+                                                                                                                                                   []
+                                                                                                                                                   -> GHC.Types.[]
+                                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                                           GHC.Types.Int)
+                                                                                                                                                   : y9 ys9
+                                                                                                                                                   -> GHC.Types.:
+                                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                                           GHC.Types.Int)
+                                                                                                                                                        (Perturbation.areaEvalMap2,
+                                                                                                                                                         y9)
+                                                                                                                                                        (GHC.Types.[]
+                                                                                                                                                           @ (GHC.Types.Int,
+                                                                                                                                                              GHC.Types.Int)) }) }) }) }) }) }) }) }) }) }) -}
+8bd01c3598ef80abbe268fe024af2366
   areaEvalMap10 ::
     [Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int]
-  {- Unfolding: (Perturbation.areaEvalMap10_go 0#) -}
-192857ad8dd9916215a5b3dc987d95be
-  areaEvalMap10_go ::
-    GHC.Prim.Int#
-    -> [Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int]
-  {- Arity: 1, Strictness: <S,U> -}
-36005e69d67d1f01925fa57f0346834d
+  {- Unfolding: ({__scc {main:Perturbation.areaEvalMap10} True True} GHC.Base.map
+                                                                       @ [(GHC.Types.Int,
+                                                                           GHC.Types.Int)]
+                                                                       @ (Data.Map.Internal.Map
+                                                                            GHC.Types.Int
+                                                                            GHC.Types.Int)
+                                                                       (Perturbation.$sfromList4
+                                                                          @ GHC.Types.Int)
+                                                                       ({__scc {main:Perturbation.areaEvalMap10.l} True True} GHC.Base.map
+                                                                                                                                @ [GHC.Types.Int]
+                                                                                                                                @ [(GHC.Types.Int,
+                                                                                                                                    GHC.Types.Int)]
+                                                                                                                                Perturbation.areaEvalMap1
+                                                                                                                                ({__scc {main:Perturbation.areaEvalMap10} False True} {__scc {main:Perturbation.areaEvalMap10.area10} True False} Perturbation.areaList10))) -}
+91416c20e37a6ae80a9f02fcb2ac8546
+  areaEvalMap10_go :: GHC.Prim.Int# -> [[GHC.Types.Int]]
+  {- Arity: 1, HasNoCafRefs, Strictness: <S,U> -}
+006745085a56650ddf9dc32398973e6a
   areaEvalMap11 :: GHC.Types.Int
-  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 6#) -}
-e904d889d3c9e49664dacde3fb6a7ae1
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 2#) -}
+5eb2e3073d7d7109b115ce039a73d7b2
   areaEvalMap12 :: GHC.Types.Int
-  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 5#) -}
-1b483ea4718341111d17ae49eaed2451
-  areaEvalMap13 :: GHC.Types.Int
-  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 4#) -}
-9785e41a4a69641d2e2862c1ae367f7f
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 1#) -}
+8c3018d08eae21f3aac80cd1223520b0
+  areaEvalMap13 ::
+    [GHC.Types.Int] -> [(GHC.Types.Int, GHC.Types.Int)]
+  {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U>,
+     Unfolding: (\ (x :: [GHC.Types.Int]) ->
+                 {__scc {main:Perturbation.areaEvalMap14.l.\} True True} case x of wild {
+                                                                           []
+                                                                           -> GHC.Types.[]
+                                                                                @ (GHC.Types.Int,
+                                                                                   GHC.Types.Int)
+                                                                           : y ys
+                                                                           -> GHC.Types.:
+                                                                                @ (GHC.Types.Int,
+                                                                                   GHC.Types.Int)
+                                                                                (Perturbation.areaEvalMap12,
+                                                                                 y)
+                                                                                (case ys of wild1 {
+                                                                                   []
+                                                                                   -> GHC.Types.[]
+                                                                                        @ (GHC.Types.Int,
+                                                                                           GHC.Types.Int)
+                                                                                   : y1 ys1
+                                                                                   -> GHC.Types.:
+                                                                                        @ (GHC.Types.Int,
+                                                                                           GHC.Types.Int)
+                                                                                        (Perturbation.areaEvalMap11,
+                                                                                         y1)
+                                                                                        (case ys1 of wild2 {
+                                                                                           []
+                                                                                           -> GHC.Types.[]
+                                                                                                @ (GHC.Types.Int,
+                                                                                                   GHC.Types.Int)
+                                                                                           : y2 ys2
+                                                                                           -> GHC.Types.:
+                                                                                                @ (GHC.Types.Int,
+                                                                                                   GHC.Types.Int)
+                                                                                                (Perturbation.areaEvalMap9,
+                                                                                                 y2)
+                                                                                                (case ys2 of wild3 {
+                                                                                                   []
+                                                                                                   -> GHC.Types.[]
+                                                                                                        @ (GHC.Types.Int,
+                                                                                                           GHC.Types.Int)
+                                                                                                   : y3 ys3
+                                                                                                   -> GHC.Types.:
+                                                                                                        @ (GHC.Types.Int,
+                                                                                                           GHC.Types.Int)
+                                                                                                        (Perturbation.areaEvalMap8,
+                                                                                                         y3)
+                                                                                                        (case ys3 of wild4 {
+                                                                                                           []
+                                                                                                           -> GHC.Types.[]
+                                                                                                                @ (GHC.Types.Int,
+                                                                                                                   GHC.Types.Int)
+                                                                                                           : y4 ys4
+                                                                                                           -> GHC.Types.:
+                                                                                                                @ (GHC.Types.Int,
+                                                                                                                   GHC.Types.Int)
+                                                                                                                (Perturbation.areaEvalMap7,
+                                                                                                                 y4)
+                                                                                                                (case ys4 of wild5 {
+                                                                                                                   []
+                                                                                                                   -> GHC.Types.[]
+                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                           GHC.Types.Int)
+                                                                                                                   : y5 ys5
+                                                                                                                   -> GHC.Types.:
+                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                           GHC.Types.Int)
+                                                                                                                        (Perturbation.areaEvalMap6,
+                                                                                                                         y5)
+                                                                                                                        (case ys5 of wild6 {
+                                                                                                                           []
+                                                                                                                           -> GHC.Types.[]
+                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                   GHC.Types.Int)
+                                                                                                                           : y6 ys6
+                                                                                                                           -> GHC.Types.:
+                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                   GHC.Types.Int)
+                                                                                                                                (Perturbation.areaEvalMap5,
+                                                                                                                                 y6)
+                                                                                                                                (case ys6 of wild7 {
+                                                                                                                                   []
+                                                                                                                                   -> GHC.Types.[]
+                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                           GHC.Types.Int)
+                                                                                                                                   : y7 ys7
+                                                                                                                                   -> GHC.Types.:
+                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                           GHC.Types.Int)
+                                                                                                                                        (Perturbation.areaEvalMap4,
+                                                                                                                                         y7)
+                                                                                                                                        (case ys7 of wild8 {
+                                                                                                                                           []
+                                                                                                                                           -> GHC.Types.[]
+                                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                                   GHC.Types.Int)
+                                                                                                                                           : y8 ys8
+                                                                                                                                           -> GHC.Types.:
+                                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                                   GHC.Types.Int)
+                                                                                                                                                (Perturbation.areaEvalMap3,
+                                                                                                                                                 y8)
+                                                                                                                                                (case ys8 of wild9 {
+                                                                                                                                                   []
+                                                                                                                                                   -> GHC.Types.[]
+                                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                                           GHC.Types.Int)
+                                                                                                                                                   : y9 ys9
+                                                                                                                                                   -> GHC.Types.:
+                                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                                           GHC.Types.Int)
+                                                                                                                                                        (Perturbation.areaEvalMap2,
+                                                                                                                                                         y9)
+                                                                                                                                                        (case ys9 of wild10 {
+                                                                                                                                                           []
+                                                                                                                                                           -> GHC.Types.[]
+                                                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                                                   GHC.Types.Int)
+                                                                                                                                                           : y10 ys10
+                                                                                                                                                           -> GHC.Types.:
+                                                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                                                   GHC.Types.Int)
+                                                                                                                                                                (Perturbation.areaEvalMap18,
+                                                                                                                                                                 y10)
+                                                                                                                                                                (case ys10 of wild11 {
+                                                                                                                                                                   []
+                                                                                                                                                                   -> GHC.Types.[]
+                                                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                                                           GHC.Types.Int)
+                                                                                                                                                                   : y11 ys11
+                                                                                                                                                                   -> GHC.Types.:
+                                                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                                                           GHC.Types.Int)
+                                                                                                                                                                        (Perturbation.areaEvalMap17,
+                                                                                                                                                                         y11)
+                                                                                                                                                                        (case ys11 of wild12 {
+                                                                                                                                                                           []
+                                                                                                                                                                           -> GHC.Types.[]
+                                                                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                                                                   GHC.Types.Int)
+                                                                                                                                                                           : y12 ys12
+                                                                                                                                                                           -> GHC.Types.:
+                                                                                                                                                                                @ (GHC.Types.Int,
+                                                                                                                                                                                   GHC.Types.Int)
+                                                                                                                                                                                (Perturbation.areaEvalMap16,
+                                                                                                                                                                                 y12)
+                                                                                                                                                                                (case ys12 of wild13 {
+                                                                                                                                                                                   []
+                                                                                                                                                                                   -> GHC.Types.[]
+                                                                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                                                                           GHC.Types.Int)
+                                                                                                                                                                                   : y13 ys13
+                                                                                                                                                                                   -> GHC.Types.:
+                                                                                                                                                                                        @ (GHC.Types.Int,
+                                                                                                                                                                                           GHC.Types.Int)
+                                                                                                                                                                                        (Perturbation.areaEvalMap15,
+                                                                                                                                                                                         y13)
+                                                                                                                                                                                        (GHC.Types.[]
+                                                                                                                                                                                           @ (GHC.Types.Int,
+                                                                                                                                                                                              GHC.Types.Int)) }) }) }) }) }) }) }) }) }) }) }) }) }) }) -}
+ad6f19cda87e442aff95308d4843fa89
   areaEvalMap14 ::
     [Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int]
-  {- Unfolding: (GHC.Base.map
-                   @ [GHC.Types.Int]
-                   @ (Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int)
-                   Perturbation.areaEvalMap1
-                   Perturbation.areaList14) -}
-989f4d5c37094637f55d9b44142f6c9a
+  {- Unfolding: ({__scc {main:Perturbation.areaEvalMap14} True True} GHC.Base.map
+                                                                       @ [(GHC.Types.Int,
+                                                                           GHC.Types.Int)]
+                                                                       @ (Data.Map.Internal.Map
+                                                                            GHC.Types.Int
+                                                                            GHC.Types.Int)
+                                                                       (Perturbation.$sfromList4
+                                                                          @ GHC.Types.Int)
+                                                                       ({__scc {main:Perturbation.areaEvalMap14.l} True True} GHC.Base.map
+                                                                                                                                @ [GHC.Types.Int]
+                                                                                                                                @ [(GHC.Types.Int,
+                                                                                                                                    GHC.Types.Int)]
+                                                                                                                                Perturbation.areaEvalMap13
+                                                                                                                                ({__scc {main:Perturbation.areaEvalMap14} False True} {__scc {main:Perturbation.areaEvalMap14.area14} True False} Perturbation.areaList14))) -}
+9b4128c1c9f10f5fb015f8e7970e2370
   areaEvalMap15 :: GHC.Types.Int
-  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 3#) -}
-32caf99953b194b94089a34c68072082
-  areaEvalMap16 :: GHC.Types.Int
-  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 2#) -}
-5e8f4510bf447acb4d1bca5cb155e706
-  areaEvalMap17 :: GHC.Types.Int
-  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 1#) -}
-f229161f738bf53297a5a028d9a0dced
-  areaEvalMap18 :: Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int
-  {- Unfolding: (Perturbation.$sfromList4
-                   @ GHC.Types.Int
-                   (GHC.Types.[] @ (GHC.Types.Int, GHC.Types.Int))) -}
-c6fce343e5a4bf050806cfaf31ae90d0
-  areaEvalMap2 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 14#) -}
-f97301c1282c7a994eefe5e294412d28
-  areaEvalMap3 :: GHC.Types.Int
+10f30b0d15066678366f3f412650b293
+  areaEvalMap16 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 13#) -}
-c8dc5b9c09458411b97b09caeb133d14
-  areaEvalMap4 :: GHC.Types.Int
+f9c64c7cef9bca6d8440abb3decb5605
+  areaEvalMap17 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 12#) -}
-7a8f9c9701d4169ff30069f9f989890e
-  areaEvalMap5 :: GHC.Types.Int
+83cb624f49b1d61971c4f67b97255fa2
+  areaEvalMap18 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 11#) -}
-2c8839c23d700afaebc9b3e25d31ced7
-  areaEvalMap6 :: GHC.Types.Int
+8218364b3496a4135cd1d1049eeaf77b
+  areaEvalMap2 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 10#) -}
-d99bca686c3f8d8f6df128898c822f5f
-  areaEvalMap7 :: GHC.Types.Int
+835256db81732bb1ffa64ae6f32227ba
+  areaEvalMap3 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 9#) -}
-c64e4d51da30dacc19ef04befd1e5cf6
-  areaEvalMap8 :: GHC.Types.Int
+cc8db98e914de3b35b5329a77af73b5c
+  areaEvalMap4 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 8#) -}
-5374d0559a870f0764d6d8e46f16019e
-  areaEvalMap9 :: GHC.Types.Int
+999c4c16c171a8bc47240cd6aed3492b
+  areaEvalMap5 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 7#) -}
-0f54261ad6ff46fd6ec5a105dfdfe0f8
+550cfab8f9364bc2689b189bfa018b99
+  areaEvalMap6 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 6#) -}
+11dac2f3cbf0deaab2dc1ca5de04345c
+  areaEvalMap7 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 5#) -}
+104b6f7a33cf4ba53888626dad2ae4c7
+  areaEvalMap8 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 4#) -}
+b7a9f57389473f6717460e5774586e24
+  areaEvalMap9 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 3#) -}
+644be544f1b439859a6d9212c7011fbd
+  areaList10 :: [[GHC.Types.Int]]
+  {- Unfolding: ({__scc {main:Perturbation.areaList10} True True} {__scc {main:Perturbation.areaList10.list} True True} Perturbation.areaEvalMap10_go
+                                                                                                                          0#) -}
+ba5f0d70444e801ed4f2ca937550d7d9
   areaList14 :: [[GHC.Types.Int]]
-  {- Unfolding: (Perturbation.areaList14_go 0#) -}
+  {- Unfolding: ({__scc {main:Perturbation.areaList14} True True} {__scc {main:Perturbation.areaList14.list} True True} Perturbation.areaList14_go
+                                                                                                                          0#) -}
 5a04785cafc1a533c362d791a1d59564
   areaList14_go :: GHC.Prim.Int# -> [[GHC.Types.Int]]
   {- Arity: 1, HasNoCafRefs, Strictness: <S,U> -}
-2d20900e5382b0af4462bec02b4eb33b
+3f5bd82e41bdec92688ebde96bf23b81
   evalFullAns ::
     [Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int]
     -> [Perturbation.PertAnsatz GHC.Real.Rational]
@@ -812,18 +974,41 @@ c64e4d51da30dacc19ef04befd1e5cf6
      Unfolding: (\ (evalMap :: [Data.Map.Internal.Map
                                   GHC.Types.Int GHC.Types.Int])
                    (ans :: [Perturbation.PertAnsatz GHC.Real.Rational]) ->
-                 GHC.Base.map
-                   @ (Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int)
-                   @ [GHC.Real.Rational]
-                   (\ (x :: Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int) ->
-                    GHC.Base.map
-                      @ (Data.Map.Internal.Map
-                           (Data.Sequence.Internal.Seq [GHC.Types.Int]) GHC.Real.Rational)
-                      @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
-                      (\ (eta :: Perturbation.PertAnsatz GHC.Real.Rational) ->
-                       Perturbation.evalFullAns_$sevalPertAns x eta)
-                      ans)
-                   evalMap) -}
+                 {__scc {main:Perturbation.evalFullAns} True True} GHC.Base.map
+                                                                     @ (Perturbation.PertAnsatz
+                                                                          GHC.Real.Rational
+                                                                        -> GHC.Real.Rational)
+                                                                     @ [GHC.Real.Rational]
+                                                                     (\ (f :: Perturbation.PertAnsatz
+                                                                                GHC.Real.Rational
+                                                                              -> GHC.Real.Rational) ->
+                                                                      {__scc {main:Perturbation.evalFullAns.\} True True} GHC.Base.map
+                                                                                                                            @ (Data.Map.Internal.Map
+                                                                                                                                 (Data.Sequence.Internal.Seq
+                                                                                                                                    [GHC.Types.Int])
+                                                                                                                                 GHC.Real.Rational)
+                                                                                                                            @ (GHC.Real.Ratio
+                                                                                                                                 GHC.Integer.Type.Integer)
+                                                                                                                            f
+                                                                                                                            ans)
+                                                                     ({__scc {main:Perturbation.evalFullAns.areaF} True True} GHC.Base.map
+                                                                                                                                @ (Data.Map.Internal.Map
+                                                                                                                                     GHC.Types.Int
+                                                                                                                                     GHC.Types.Int)
+                                                                                                                                @ (Perturbation.PertAnsatz
+                                                                                                                                     GHC.Real.Rational
+                                                                                                                                   -> GHC.Real.Rational)
+                                                                                                                                Perturbation.evalFullAns1
+                                                                                                                                evalMap)) -}
+a1cfbcfc75a5410fb3e541ac8ecb31a4
+  evalFullAns1 ::
+    Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int
+    -> Perturbation.PertAnsatz GHC.Real.Rational -> GHC.Real.Rational
+  {- Arity: 1, Strictness: <L,U>,
+     Unfolding: InlineRule (1, True, True)
+                (\ (x :: Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int) ->
+                 {__scc {main:Perturbation.evalFullAns.areaF.\} True True} Perturbation.evalFullAns_$sevalPertAns
+                                                                             x) -}
 1914549bfa2fe90bf8a5e81eb0675111
   evalFullAns_$sevalPertAns ::
     Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int
@@ -841,7 +1026,7 @@ c64e4d51da30dacc19ef04befd1e5cf6
     -> Perturbation.PertAnsatz a -> a
   {- Arity: 3,
      Strictness: <L,U(C(C1(U)),A,C(C1(U)),1*C1(U),A,A,C(U))><L,U><S,1*U> -}
-0b0f504db262da94ad7657bee44c2907
+13b6d55c805d5dbacccc6a3141a813e7
   getRepIndsPert ::
     GHC.Real.Fractional a =>
     GHC.Base.String -> [Perturbation.PertAnsatz a] -> GHC.Base.String
@@ -866,10 +1051,32 @@ c714eb39200017a2740e32ec6c36673c
 c4a98a510cf06ae5043d67dce073a9e3
   getRepIndsPert4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("]"#) -}
+2ffa7b159c75a380bb9120bf05b597dd
+  getRepIndsPert5 ::
+    Data.Map.Internal.Map
+      (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+    -> Data.Sequence.Internal.Seq [GHC.Types.Int]
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: InlineRule (1, True, False)
+                (\ @ a
+                   (x :: Data.Map.Internal.Map
+                           (Data.Sequence.Internal.Seq [GHC.Types.Int]) a) ->
+                 {__scc {main:Perturbation.getRepPert.\} True True} GHC.List.$w!!
+                                                                      @ (Data.Sequence.Internal.Seq
+                                                                           [GHC.Types.Int])
+                                                                      (Data.Map.Internal.keys_go
+                                                                         @ (Data.Sequence.Internal.Seq
+                                                                              [GHC.Types.Int])
+                                                                         @ a
+                                                                         (GHC.Types.[]
+                                                                            @ (Data.Sequence.Internal.Seq
+                                                                                 [GHC.Types.Int]))
+                                                                         x)
+                                                                      0#) -}
 f4654c5ea812983dc988f8511fa8442a
   getRepIndsPert_go :: [[GHC.Types.Char]] -> [GHC.Types.Char]
   {- Arity: 1, Strictness: <S,1*U> -}
-64b9f9ceed8ca808cd472764dc12ddc0
+2d10c49bdd2ed1b004eec037df12e4e3
   indexPermSeqPert ::
     Data.Sequence.Internal.Seq [GHC.Types.Int]
     -> Data.IntMap.Internal.IntMap GHC.Types.Char -> GHC.Base.String
@@ -877,79 +1084,104 @@ f4654c5ea812983dc988f8511fa8442a
      Unfolding: (\ (a :: Data.Sequence.Internal.Seq [GHC.Types.Int])
                    (b :: Data.IntMap.Internal.IntMap GHC.Types.Char) ->
                  let {
-                   $j :: GHC.Prim.Int# -> GHC.Base.String
-                     <join 1> {- Arity: 1, Strictness: <S,U> -}
-                   = \ (y :: GHC.Prim.Int#)[OneShot] ->
-                     case Data.IntMap.Internal.$wgo
-                            @ GHC.Types.Char
-                            0#
-                            b of ww { DEFAULT ->
-                     case GHC.Prim./=# (GHC.Prim.*# 2# y) ww of lwild {
-                       DEFAULT
-                       -> GHC.CString.unpackAppendCString#
-                            Perturbation.indexPermSeqPert3
-                            (let {
-                               lvl59 :: Data.IntSet.Internal.Key -> GHC.Types.Char
-                                 {- Arity: 1, Strictness: <S(S),1*U(U)>,
-                                    Unfolding: InlineRule (1, True, False)
-                                               (\ (x :: Data.IntSet.Internal.Key) ->
-                                                Data.IntMap.Internal.! @ GHC.Types.Char b x) -}
-                               = \ (x :: Data.IntSet.Internal.Key) ->
-                                 Data.IntMap.Internal.! @ GHC.Types.Char b x
-                             } in
-                             case Data.Sequence.Internal.$fEq1Seq_$cfoldr
-                                    @ (Data.Sequence.Internal.Elem GHC.Base.String)
-                                    @ [GHC.Base.String]
-                                    (GHC.Types.: @ GHC.Base.String)
-                                      `cast`
-                                    (Sym (Data.Sequence.Internal.N:Elem[0] <GHC.Base.String>_R)
-                                     ->_R <[GHC.Base.String] -> [GHC.Base.String]>_R)
-                                    (GHC.Types.[] @ GHC.Base.String)
-                                    (Data.Sequence.Internal.$fFunctorSeq_$cfmap
-                                       @ (Data.Sequence.Internal.Elem [GHC.Types.Int])
-                                       @ (Data.Sequence.Internal.Elem GHC.Base.String)
-                                       (\ (inds :: [GHC.Types.Int]) ->
-                                        GHC.CString.unpackAppendCString#
-                                          Perturbation.indexPermSeqPert3
-                                          (case GHC.Base.map
-                                                  @ GHC.Types.Int
-                                                  @ GHC.Types.Char
-                                                  lvl59
-                                                  inds of wild {
-                                             [] -> Perturbation.getRepIndsPert3
-                                             : x xs
-                                             -> GHC.Base.++_$s++
-                                                  @ GHC.Types.Char
-                                                  Perturbation.getRepIndsPert3
-                                                  x
-                                                  (Data.OldList.prependToAll
-                                                     @ GHC.Types.Char
-                                                     Perturbation.indexPermSeqPert2
-                                                     xs) }))
-                                         `cast`
-                                       (Sym (Data.Sequence.Internal.N:Elem[0] <[GHC.Types.Int]>_R)
-                                        ->_R Sym (Data.Sequence.Internal.N:Elem[0]
-                                                      <GHC.Base.String>_R))
-                                       a `cast`
-                                       (Data.Sequence.Internal.N:Seq[0]
-                                            <[GHC.Types.Int]>_R)) of wild {
-                               [] -> Perturbation.getRepIndsPert3
-                               : x xs
-                               -> Perturbation.getRepIndsPert_go
-                                    (GHC.Types.:
-                                       @ [GHC.Types.Char]
-                                       x
-                                       (Data.OldList.prependToAll
-                                          @ [GHC.Types.Char]
-                                          Perturbation.getRepIndsPert1
-                                          xs)) })
-                       1# -> Perturbation.indexPermSeqPert1 } }
+                   lvl42 :: Data.IntSet.Internal.Key -> GHC.Types.Char
+                     {- Arity: 1, Strictness: <S(S),1*U(U)>,
+                        Unfolding: InlineRule (1, True, False)
+                                   (\ (x :: Data.IntSet.Internal.Key) ->
+                                    {__scc {main:Perturbation.mkIndListtoEta.eta.\} True True} Data.IntMap.Internal.!
+                                                                                                 @ GHC.Types.Char
+                                                                                                 b
+                                                                                                 x) -}
+                   = \ (x :: Data.IntSet.Internal.Key) ->
+                     {__scc {main:Perturbation.mkIndListtoEta.eta.\} True True} Data.IntMap.Internal.!
+                                                                                  @ GHC.Types.Char
+                                                                                  b
+                                                                                  x
                  } in
-                 case a `cast`
-                      (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R) of wild {
-                   Data.Sequence.Internal.EmptyT -> $j 0#
-                   Data.Sequence.Internal.Single x -> $j 1#
-                   Data.Sequence.Internal.Deep dt1 ds1 ds2 ds3 -> $j dt1 }) -}
+                 {__scc {main:Perturbation.indexPermSeqPert} True True} let {
+                                                                          $j :: GHC.Prim.Int#
+                                                                                -> GHC.Base.String
+                                                                            <join 1> {- Arity: 1,
+                                                                                        Strictness: <S,U> -}
+                                                                          = \ (y :: GHC.Prim.Int#)[OneShot] ->
+                                                                            case Data.IntMap.Internal.$wgo
+                                                                                   @ GHC.Types.Char
+                                                                                   0#
+                                                                                   b of ww { DEFAULT ->
+                                                                            case GHC.Prim./=#
+                                                                                   (GHC.Prim.*#
+                                                                                      2#
+                                                                                      y)
+                                                                                   ww of lwild {
+                                                                              DEFAULT
+                                                                              -> GHC.CString.unpackAppendCString#
+                                                                                   Perturbation.indexPermSeqPert3
+                                                                                   (let {
+                                                                                      indSeq :: Data.Sequence.Internal.FingerTree
+                                                                                                  (Data.Sequence.Internal.Elem
+                                                                                                     GHC.Base.String)
+                                                                                      = {__scc {main:Perturbation.indexPermSeqPert.indSeq} True True} Data.Sequence.Internal.$fFunctorSeq_$cfmap
+                                                                                                                                                        @ (Data.Sequence.Internal.Elem
+                                                                                                                                                             [GHC.Types.Int])
+                                                                                                                                                        @ (Data.Sequence.Internal.Elem
+                                                                                                                                                             GHC.Base.String)
+                                                                                                                                                        (\ (inds :: [GHC.Types.Int]) ->
+                                                                                                                                                         {__scc {main:Perturbation.mkIndListtoEta} True True} GHC.CString.unpackAppendCString#
+                                                                                                                                                                                                                Perturbation.indexPermSeqPert3
+                                                                                                                                                                                                                (case {__scc {main:Perturbation.mkIndListtoEta.eta} True True} GHC.Base.map
+                                                                                                                                                                                                                                                                                 @ GHC.Types.Int
+                                                                                                                                                                                                                                                                                 @ GHC.Types.Char
+                                                                                                                                                                                                                                                                                 lvl42
+                                                                                                                                                                                                                                                                                 inds of wild {
+                                                                                                                                                                                                                   []
+                                                                                                                                                                                                                   -> Perturbation.getRepIndsPert3
+                                                                                                                                                                                                                   : x xs
+                                                                                                                                                                                                                   -> GHC.Base.++_$s++
+                                                                                                                                                                                                                        @ GHC.Types.Char
+                                                                                                                                                                                                                        Perturbation.getRepIndsPert3
+                                                                                                                                                                                                                        x
+                                                                                                                                                                                                                        (Data.OldList.prependToAll
+                                                                                                                                                                                                                           @ GHC.Types.Char
+                                                                                                                                                                                                                           Perturbation.indexPermSeqPert2
+                                                                                                                                                                                                                           xs) }))
+                                                                                                                                                          `cast`
+                                                                                                                                                        (Sym (Data.Sequence.Internal.N:Elem[0]
+                                                                                                                                                                  <[GHC.Types.Int]>_R)
+                                                                                                                                                         ->_R Sym (Data.Sequence.Internal.N:Elem[0]
+                                                                                                                                                                       <GHC.Base.String>_R))
+                                                                                                                                                        a `cast`
+                                                                                                                                                        (Data.Sequence.Internal.N:Seq[0]
+                                                                                                                                                             <[GHC.Types.Int]>_R)
+                                                                                    } in
+                                                                                    case {__scc {main:Perturbation.indexPermSeqPert.indList} True True} Data.Sequence.Internal.$fFoldableSeq_$ctoList
+                                                                                                                                                          @ GHC.Base.String
+                                                                                                                                                          indSeq
+                                                                                                                                                            `cast`
+                                                                                                                                                          (Sym (Data.Sequence.Internal.N:Seq[0]
+                                                                                                                                                                    <GHC.Base.String>_R)) of wild {
+                                                                                      []
+                                                                                      -> Perturbation.getRepIndsPert3
+                                                                                      : x xs
+                                                                                      -> Perturbation.getRepIndsPert_go
+                                                                                           (GHC.Types.:
+                                                                                              @ [GHC.Types.Char]
+                                                                                              x
+                                                                                              (Data.OldList.prependToAll
+                                                                                                 @ [GHC.Types.Char]
+                                                                                                 Perturbation.getRepIndsPert1
+                                                                                                 xs)) })
+                                                                              1#
+                                                                              -> Perturbation.indexPermSeqPert1 } }
+                                                                        } in
+                                                                        case a `cast`
+                                                                             (Data.Sequence.Internal.N:Seq[0]
+                                                                                  <[GHC.Types.Int]>_R) of wild {
+                                                                          Data.Sequence.Internal.EmptyT
+                                                                          -> $j 0#
+                                                                          Data.Sequence.Internal.Single x
+                                                                          -> $j 1#
+                                                                          Data.Sequence.Internal.Deep dt1 ds1 ds2 ds3
+                                                                          -> $j dt1 }) -}
 b5c4373d11442986b006eac08cf2f665
   indexPermSeqPert1 :: GHC.Base.String
   {- Strictness: x -}
@@ -959,7 +1191,7 @@ b5c4373d11442986b006eac08cf2f665
 d122972fa71c0cfb78d0fa3e5d7072d7
   indexPermSeqPert3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("["#) -}
-7de5bb19932085d89984fecca65953b8
+1c94df5eff2db4d14fa401f01010dfb7
   mkPertAns ::
     GHC.Real.Fractional a =>
     Data.Sequence.Internal.Seq GHC.Types.Int
@@ -967,45 +1199,68 @@ d122972fa71c0cfb78d0fa3e5d7072d7
   {- Arity: 1, Strictness: <L,1*U(1*U(A,A,A,A,A,A,1*C1(U)),A,A,A)>,
      Unfolding: (\ @ a ($dFractional :: GHC.Real.Fractional a) ->
                  let {
-                   lvl59 :: a
-                   = GHC.Num.fromInteger
-                       @ a
-                       (GHC.Real.$p1Fractional @ a $dFractional)
-                       Perturbation.mkPertAns1
+                   lvl42 :: a
+                   = let {
+                       $dNum :: GHC.Num.Num a = GHC.Real.$p1Fractional @ a $dFractional
+                     } in
+                     {__scc {main:Perturbation.mkPertAns} False True} GHC.Num.fromInteger
+                                                                        @ a
+                                                                        $dNum
+                                                                        Perturbation.mkPertAns1
                  } in
                  \ (seq :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
-                 Perturbation.$sfromList2
-                   @ a
-                   (GHC.Types.:
-                      @ (Data.Sequence.Internal.Seq [GHC.Types.Int], a)
-                      ((Data.Sequence.Internal.$fFunctorSeq_$cfmap
-                          @ (Data.Sequence.Internal.Elem
-                               (Data.Sequence.Internal.Seq GHC.Types.Int))
-                          @ (Data.Sequence.Internal.Elem [GHC.Types.Int])
-                          (Data.Sequence.Internal.$fFoldableSeq_$ctoList @ GHC.Types.Int)
-                            `cast`
-                          (Sym (Data.Sequence.Internal.N:Elem[0]
-                                    <Data.Sequence.Internal.Seq GHC.Types.Int>_R)
-                           ->_R Sym (Data.Sequence.Internal.N:Elem[0] <[GHC.Types.Int]>_R))
-                          (Data.Sequence.Internal.$wchunksOf @ GHC.Types.Int 2# seq)
-                            `cast`
-                          (Data.Sequence.Internal.N:Seq[0]
-                               <Data.Sequence.Internal.Seq GHC.Types.Int>_R))
-                         `cast`
-                       (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R)),
-                       lvl59)
-                      (GHC.Types.[]
-                         @ (Data.Sequence.Internal.Seq [GHC.Types.Int], a)))) -}
+                 {__scc {main:Perturbation.mkPertAns} True True} let {
+                                                                   chunks :: Data.Sequence.Internal.Seq
+                                                                               (Data.Sequence.Internal.Seq
+                                                                                  GHC.Types.Int)
+                                                                   = {__scc {main:Perturbation.mkPertAns.chunks} True True} Data.Sequence.Internal.$wchunksOf
+                                                                                                                              @ GHC.Types.Int
+                                                                                                                              2#
+                                                                                                                              seq
+                                                                 } in
+                                                                 Perturbation.$sfromList2
+                                                                   @ a
+                                                                   (GHC.Types.:
+                                                                      @ (Data.Sequence.Internal.Seq
+                                                                           [GHC.Types.Int],
+                                                                         a)
+                                                                      (({__scc {main:Perturbation.mkPertAns.seqList} True True} Data.Sequence.Internal.$fFunctorSeq_$cfmap
+                                                                                                                                  @ (Data.Sequence.Internal.Elem
+                                                                                                                                       (Data.Sequence.Internal.Seq
+                                                                                                                                          GHC.Types.Int))
+                                                                                                                                  @ (Data.Sequence.Internal.Elem
+                                                                                                                                       [GHC.Types.Int])
+                                                                                                                                  (Data.Sequence.Internal.$fFoldableSeq_$ctoList
+                                                                                                                                     @ GHC.Types.Int)
+                                                                                                                                    `cast`
+                                                                                                                                  (Sym (Data.Sequence.Internal.N:Elem[0]
+                                                                                                                                            <Data.Sequence.Internal.Seq
+                                                                                                                                               GHC.Types.Int>_R)
+                                                                                                                                   ->_R Sym (Data.Sequence.Internal.N:Elem[0]
+                                                                                                                                                 <[GHC.Types.Int]>_R))
+                                                                                                                                  chunks
+                                                                                                                                    `cast`
+                                                                                                                                  (Data.Sequence.Internal.N:Seq[0]
+                                                                                                                                       <Data.Sequence.Internal.Seq
+                                                                                                                                          GHC.Types.Int>_R))
+                                                                         `cast`
+                                                                       (Sym (Data.Sequence.Internal.N:Seq[0]
+                                                                                 <[GHC.Types.Int]>_R)),
+                                                                       lvl42)
+                                                                      (GHC.Types.[]
+                                                                         @ (Data.Sequence.Internal.Seq
+                                                                              [GHC.Types.Int],
+                                                                            a)))) -}
 804c1a1c6e0816f609d79be364085180
   mkPertAns1 :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (1) -}
-2dc22dcb1b0de462f8027f9a29873628
+2a4b458e30b9b27870a28d777b5e3934
   symAnsSetPert ::
     (GHC.Classes.Eq a, GHC.Real.Fractional a) =>
     Symmetrize.Symmetry
     -> [Perturbation.PertAnsatz a] -> [Perturbation.PertAnsatz a]
   {- Arity: 4,
-     Strictness: <L,U(C(C1(U)),A)><L,U(U(C(C1(U)),A,C(C1(U)),C(U),A,A,C(U)),C(C1(U)),A,A)><L,1*U(U,U,U,U,U)><S,1*U> -}
+     Strictness: <L,U(C(C1(U)),A)><L,U(U(C(C1(U)),A,C(C1(U)),C(U),A,A,C(U)),C(C1(U)),A,A)><L,U(U,U,U,U,U)><S,1*U> -}
 "SPEC evalPertAns @ Rational" forall ($dNum :: GHC.Num.Num
                                                  GHC.Real.Rational)
   Perturbation.evalPertAns @ (GHC.Real.Ratio

@@ -1,0 +1,650 @@
+	Mon Jan 14 13:48 2019 Time and Allocation Profiling Report  (Final)
+
+	   HaskellTensor +RTS -p -RTS
+
+	total time  =        1.54 secs   (1539 ticks @ 1000 us, 1 processor)
+	total alloc = 1,620,276,176 bytes  (excludes profiling overheads)
+
+COST CENTRE                  MODULE           SRC                                       %time %alloc
+
+compare                      Index            src/Index.hs:38:64-66                      50.2   67.6
+tensorProductWith.newMap     Tensor           src/Tensor.hs:160:25-49                    15.1    5.0
+tensorContractWith_3.map2    Tensor           src/Tensor.hs:194:25-83                     7.7    4.2
+combineInd                   Index            src/Index.hs:132:5-77                       5.3    6.4
+tensorProductF.map3          Tensor           src/Tensor.hs:151:25-98                     3.6    3.2
+compare                      Index            src/Index.hs:161:217-219                    1.8    0.0
+compare                      Index            src/Index.hs:163:217-219                    1.6    0.0
+tensorTranspose              Tensor           src/Tensor.hs:110:5-88                      1.5    0.8
+tensorContractWith_3.mapFilt Tensor           src/Tensor.hs:193:25-92                     1.4    0.4
+isContractionInd             Index            src/Index.hs:(256,5)-(259,62)               1.0    0.0
+combineIndex                 Index            src/Index.hs:(249,5)-(250,152)              1.0    4.1
+showEqnsFlatFrac.list2.\     EquivarianceEqns src/EquivarianceEqns.hs:220:52-84           0.5    1.1
+showEqnsFlatFrac             EquivarianceEqns src/EquivarianceEqns.hs:(216,5)-(220,91)    0.3    1.5
+
+
+                                                                                                                              individual      inherited
+COST CENTRE                             MODULE                SRC                                         no.      entries  %time %alloc   %time %alloc
+
+MAIN                                    MAIN                  <built-in>                                   788          0    0.0    0.0   100.0  100.0
+ CAF                                    GHC.Conc.Signal       <entire-module>                              884          0    0.0    0.0     0.0    0.0
+ CAF                                    GHC.IO.Encoding       <entire-module>                              866          0    0.0    0.0     0.0    0.0
+ CAF                                    GHC.IO.Encoding.Iconv <entire-module>                              864          0    0.0    0.0     0.0    0.0
+ CAF                                    GHC.IO.FD             <entire-module>                              857          0    0.0    0.0     0.0    0.0
+ CAF                                    GHC.IO.Handle.FD      <entire-module>                              855          0    0.0    0.0     0.0    0.0
+ CAF:$smkTensorfromFZeros1              BasicTensors          <no location info>                          1258          0    0.0    0.0     0.0    0.0
+ CAF:$smkTensorfromFZeros3              BasicTensors          <no location info>                          1259          0    0.0    0.0     0.0    0.0
+ CAF:$smkTensorfromFZeros6              BasicTensors          <no location info>                          1257          0    0.0    0.0     0.0    0.0
+ CAF:$stensorContractWith_1             BasicTensors          <no location info>                          1255          0    0.0    0.0     0.0    0.0
+ CAF:$stensorContractWith_1             Order2Int             <no location info>                          1219          0    0.0    0.0     0.0    0.0
+ CAF:aSymTensor3                        Tensor                <no location info>                          1334          0    0.0    0.0     0.0    0.0
+ CAF:aSymTensor4                        Tensor                <no location info>                          1333          0    0.0    0.0     0.0    0.0
+ CAF:delta_20                           BasicTensors          src/BasicTensors.hs:72:5-12                 1324          0    0.0    0.0     0.1    0.0
+  delta_20                              BasicTensors          src/BasicTensors.hs:72:5-56                 1615          1    0.0    0.0     0.1    0.0
+   mkTensorfromF                        Tensor                src/Tensor.hs:(63,5)-(66,41)                1617          1    0.0    0.0     0.1    0.0
+    compare                             Index                 src/Index.hs:38:64-66                       1772        860    0.0    0.0     0.0    0.0
+     compare                            Index                 src/Index.hs:161:217-219                    1775        440    0.0    0.0     0.0    0.0
+     compare                            Index                 src/Index.hs:163:217-219                    1776        420    0.0    0.0     0.0    0.0
+    mkTensorfromF.indList               Tensor                src/Tensor.hs:65:17-44                      1762          1    0.0    0.0     0.1    0.0
+     tensorIndList                      Tensor                src/Tensor.hs:(52,5)-(55,124)               1763          1    0.0    0.0     0.1    0.0
+      tensorIndList.\                   Tensor                src/Tensor.hs:52:83-178                     1771        441    0.0    0.0     0.0    0.0
+       mkInd                            Index                 src/Index.hs:(43,5)-(47,58)                 1773       1008    0.0    0.0     0.0    0.0
+        mkInd.nat                       Index                 src/Index.hs:47:21-58                       1774       1008    0.0    0.0     0.0    0.0
+      tensorIndList.list                Tensor                src/Tensor.hs:(54,17)-(55,124)              1764          1    0.1    0.0     0.1    0.0
+       getRangeList                     Index                 src/Index.hs:(70,5)-(73,96)                 1765          8    0.0    0.0     0.0    0.0
+        toEnum                          Index                 src/Index.hs:163:207-210                    1769         23    0.0    0.0     0.0    0.0
+        toEnum                          Index                 src/Index.hs:161:207-210                    1767         23    0.0    0.0     0.0    0.0
+        fromEnum                        Index                 src/Index.hs:163:207-210                    1768          2    0.0    0.0     0.0    0.0
+        fromEnum                        Index                 src/Index.hs:161:207-210                    1766          2    0.0    0.0     0.0    0.0
+    mkTensorfromF.valueList             Tensor                src/Tensor.hs:66:17-41                      1770          1    0.0    0.0     0.0    0.0
+     delta_20F                          BasicTensors          src/BasicTensors.hs:(67,5)-(69,27)          1777        441    0.0    0.0     0.0    0.0
+      getValInd                         Index                 src/Index.hs:52:5-57                        1779        882    0.0    0.0     0.0    0.0
+      fromEnum                          Index                 src/Index.hs:163:207-210                    1780        441    0.0    0.0     0.0    0.0
+      fromEnum                          Index                 src/Index.hs:161:207-210                    1778        441    0.0    0.0     0.0    0.0
+ CAF:delta_7                            BasicTensors          <no location info>                          1323          0    0.0    0.0     0.0    0.0
+  delta_20                              BasicTensors          src/BasicTensors.hs:72:5-56                 1616          0    0.0    0.0     0.0    0.0
+   mkTensorfromF                        Tensor                src/Tensor.hs:(63,5)-(66,41)                1781          0    0.0    0.0     0.0    0.0
+ CAF:epsilon6                           BasicTensors          <no location info>                          1256          0    0.0    0.0     0.0    0.0
+ CAF:initTFGen1                         System.Random.TF.Init <no location info>                          1116          0    0.0    0.0     0.0    0.0
+  initTFGen                             System.Random.TF.Init src/System/Random/TF/Init.hs:(66,1)-(72,22) 1581          1    0.0    0.0     0.0    0.0
+ CAF:initTFGen2                         System.Random.TF.Init <no location info>                          1114          0    0.0    0.0     0.0    0.0
+  mkSeedTime                            System.Random.TF.Init src/System/Random/TF/Init.hs:(33,1)-(45,25) 1583          1    0.0    0.0     0.0    0.0
+ CAF:interI_Area2                       BasicTensors          <no location info>                          1310          0    0.0    0.0     0.0    0.0
+  interI_Area                           BasicTensors          src/BasicTensors.hs:340:5-74                1605          0    0.0    0.0     0.0    0.0
+   mkTensorfromF                        Tensor                src/Tensor.hs:(63,5)-(66,41)                2014          0    0.0    0.0     0.0    0.0
+ CAF:invEta                             BasicTensors          src/BasicTensors.hs:444:5-10                1293          0    0.0    0.0     0.0    0.0
+  invEta                                BasicTensors          src/BasicTensors.hs:444:5-53                1626          1    0.0    0.0     0.0    0.0
+   mkTensorfromF                        Tensor                src/Tensor.hs:(63,5)-(66,41)                1628          1    0.0    0.0     0.0    0.0
+    compare                             Index                 src/Index.hs:38:64-66                       1715        105    0.0    0.0     0.0    0.0
+     compare                            Index                 src/Index.hs:143:65-67                      1718         27    0.0    0.0     0.0    0.0
+    mkTensorfromF.indList               Tensor                src/Tensor.hs:65:17-44                      1707          1    0.0    0.0     0.0    0.0
+     tensorIndList                      Tensor                src/Tensor.hs:(52,5)-(55,124)               1708          1    0.0    0.0     0.0    0.0
+      tensorIndList.\                   Tensor                src/Tensor.hs:52:83-178                     1714         16    0.0    0.0     0.0    0.0
+       mkInd                            Index                 src/Index.hs:(43,5)-(47,58)                 1716        116    0.0    0.0     0.0    0.0
+        mkInd.nat                       Index                 src/Index.hs:47:21-58                       1717        116    0.0    0.0     0.0    0.0
+      tensorIndList.list                Tensor                src/Tensor.hs:(54,17)-(55,124)              1709          1    0.0    0.0     0.0    0.0
+       getRangeList                     Index                 src/Index.hs:(70,5)-(73,96)                 1710          9    0.0    0.0     0.0    0.0
+        toEnum                          Index                 src/Index.hs:143:55-58                      1712         12    0.0    0.0     0.0    0.0
+        fromEnum                        Index                 src/Index.hs:143:55-58                      1711          4    0.0    0.0     0.0    0.0
+    mkTensorfromF.valueList             Tensor                src/Tensor.hs:66:17-41                      1713          1    0.0    0.0     0.0    0.0
+     invEta_F                           BasicTensors          src/BasicTensors.hs:(432,5)-(438,53)        1719         16    0.0    0.0     0.0    0.0
+      invEta_F.x                        BasicTensors          src/BasicTensors.hs:437:26-53               1720         16    0.0    0.0     0.0    0.0
+       fromEnum                         Index                 src/Index.hs:143:55-58                      1722         16    0.0    0.0     0.0    0.0
+       getValInd                        Index                 src/Index.hs:52:5-57                        1721         16    0.0    0.0     0.0    0.0
+      invEta_F.y                        BasicTensors          src/BasicTensors.hs:438:26-53               1723         16    0.0    0.0     0.0    0.0
+       fromEnum                         Index                 src/Index.hs:143:55-58                      1725         16    0.0    0.0     0.0    0.0
+       getValInd                        Index                 src/Index.hs:52:5-57                        1724         16    0.0    0.0     0.0    0.0
+ CAF:invEta2                            BasicTensors          <no location info>                          1292          0    0.0    0.0     0.0    0.0
+  invEta                                BasicTensors          src/BasicTensors.hs:444:5-53                1627          0    0.0    0.0     0.0    0.0
+   mkTensorfromF                        Tensor                src/Tensor.hs:(63,5)-(66,41)                1726          0    0.0    0.0     0.0    0.0
+ CAF:lvl14_rbXk                         Main                  <no location info>                          1171          0    0.0    0.0     1.0    3.1
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1585          0    0.0    0.0     1.0    3.1
+   main.ansatzCondAB                    Main                  src/Main.hs:448:13-99                       1589          1    0.0    0.0     0.0    0.0
+   showEqnsFlatFrac                     EquivarianceEqns      src/EquivarianceEqns.hs:(216,5)-(220,91)    1586          1    0.3    1.5     1.0    3.1
+    showEqnsFlatFrac.list1              EquivarianceEqns      src/EquivarianceEqns.hs:219:29-49           1587          1    0.1    0.1     0.1    0.1
+    showEqnsFlatFrac.list2              EquivarianceEqns      src/EquivarianceEqns.hs:220:29-91           2145          1    0.0    0.1     0.5    1.1
+     showEqnsFlatFrac.list2.\           EquivarianceEqns      src/EquivarianceEqns.hs:220:52-84           2146      11520    0.5    1.1     0.5    1.1
+    showEqnsFlatFrac.map2               EquivarianceEqns      src/EquivarianceEqns.hs:218:29-69           1588          1    0.2    0.4     0.2    0.4
+ CAF:lvl36_r1mso                        BasicTensors          <no location info>                          1271          0    0.0    0.0     0.0    0.0
+  canonicalizeArea                      BasicTensors          src/BasicTensors.hs:(288,5)-(292,34)        2001          0    0.0    0.0     0.0    0.0
+   canonicalizeArea.pSort               BasicTensors          src/BasicTensors.hs:290:21-45               2002          0    0.0    0.0     0.0    0.0
+    aPairSortArea                       BasicTensors          src/BasicTensors.hs:(275,5)-(284,39)        2003          0    0.0    0.0     0.0    0.0
+     mkInd                              Index                 src/Index.hs:(43,5)-(47,58)                 2006          0    0.0    0.0     0.0    0.0
+      mkInd.nat                         Index                 src/Index.hs:47:21-58                       2007          0    0.0    0.0     0.0    0.0
+ CAF:lvl37_r1msp                        BasicTensors          <no location info>                          1272          0    0.0    0.0     0.0    0.0
+  canonicalizeArea                      BasicTensors          src/BasicTensors.hs:(288,5)-(292,34)        2008          0    0.0    0.0     0.0    0.0
+   blockSortArea                        BasicTensors          src/BasicTensors.hs:(265,5)-(272,39)        2009          0    0.0    0.0     0.0    0.0
+    mkInd                               Index                 src/Index.hs:(43,5)-(47,58)                 2012          0    0.0    0.0     0.0    0.0
+     mkInd.nat                          Index                 src/Index.hs:47:21-58                       2013          0    0.0    0.0     0.0    0.0
+ CAF:lvl38_r1msq                        BasicTensors          <no location info>                          1273          0    0.0    0.0     0.0    0.0
+  canonicalizeArea                      BasicTensors          src/BasicTensors.hs:(288,5)-(292,34)        1890          0    0.0    0.0     0.0    0.0
+   canonicalizeArea.pSort               BasicTensors          src/BasicTensors.hs:290:21-45               1891          0    0.0    0.0     0.0    0.0
+    aPairSortArea                       BasicTensors          src/BasicTensors.hs:(275,5)-(284,39)        1892          0    0.0    0.0     0.0    0.0
+     mkInd                              Index                 src/Index.hs:(43,5)-(47,58)                 1895          0    0.0    0.0     0.0    0.0
+      mkInd.nat                         Index                 src/Index.hs:47:21-58                       1896          0    0.0    0.0     0.0    0.0
+ CAF:lvl39_r1msr                        BasicTensors          <no location info>                          1274          0    0.0    0.0     0.0    0.0
+  canonicalizeArea                      BasicTensors          src/BasicTensors.hs:(288,5)-(292,34)        1897          0    0.0    0.0     0.0    0.0
+   blockSortArea                        BasicTensors          src/BasicTensors.hs:(265,5)-(272,39)        1898          0    0.0    0.0     0.0    0.0
+    mkInd                               Index                 src/Index.hs:(43,5)-(47,58)                 1901          0    0.0    0.0     0.0    0.0
+     mkInd.nat                          Index                 src/Index.hs:47:21-58                       1902          0    0.0    0.0     0.0    0.0
+ CAF:lvl43_r1msv                        BasicTensors          <no location info>                          1277          0    0.0    0.0     0.0    0.0
+  jMultArea                             BasicTensors          src/BasicTensors.hs:(243,5)-(250,39)        1903          0    0.0    0.0     0.0    0.0
+ CAF:lvl44_r1msw                        BasicTensors          <no location info>                          1278          0    0.0    0.0     0.0    0.0
+  jMultArea                             BasicTensors          src/BasicTensors.hs:(243,5)-(250,39)        1887          0    0.0    0.0     0.0    0.0
+ CAF:lvl50_r1msF                        BasicTensors          <no location info>                          1313          0    0.0    0.0     0.0    0.0
+  interJ_Area                           BasicTensors          src/BasicTensors.hs:346:5-74                1609          0    0.0    0.0     0.0    0.0
+   mkTensorfromF                        Tensor                src/Tensor.hs:(63,5)-(66,41)                1904          0    0.0    0.0     0.0    0.0
+ CAF:lvl55_r1msN                        BasicTensors          <no location info>                          1318          0    0.0    0.0     0.0    0.0
+  aSymI_2                               BasicTensors          src/BasicTensors.hs:221:5-66                1631          0    0.0    0.0     0.0    0.0
+   mkTensorfromF                        Tensor                src/Tensor.hs:(63,5)-(66,41)                1702          0    0.0    0.0     0.0    0.0
+ CAF:main1                              Main                  <no location info>                          1172          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1576          1    0.0    0.0     0.0    0.0
+ CAF:main10                             Main                  <no location info>                          1161          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1854          0    0.0    0.0     0.0    0.0
+   main.map2Area                        Main                  src/Main.hs:47:13-83                        1855          0    0.0    0.0     0.0    0.0
+    triangleMapArea                     BasicTensors          src/BasicTensors.hs:240:5-65                1856          0    0.0    0.0     0.0    0.0
+     enumFrom                           Index                 src/Index.hs:163:207-210                    1857          0    0.0    0.0     0.0    0.0
+ CAF:main11                             Main                  <no location info>                          1159          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1865          0    0.0    0.0     0.0    0.0
+   main.map2Area                        Main                  src/Main.hs:47:13-83                        1866          0    0.0    0.0     0.0    0.0
+    mkInd                               Index                 src/Index.hs:(43,5)-(47,58)                 1869          0    0.0    0.0     0.0    0.0
+     mkInd.nat                          Index                 src/Index.hs:47:21-58                       1870          0    0.0    0.0     0.0    0.0
+ CAF:main12                             Main                  <no location info>                          1158          0    0.0    0.0     0.0    0.0
+ CAF:main14                             Main                  <no location info>                          1165          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1976          0    0.0    0.0     0.0    0.0
+   main.map1Area                        Main                  src/Main.hs:46:13-83                        1977          0    0.0    0.0     0.0    0.0
+    triangleMapArea                     BasicTensors          src/BasicTensors.hs:240:5-65                1978          0    0.0    0.0     0.0    0.0
+     enumFrom                           Index                 src/Index.hs:161:207-210                    1979          0    0.0    0.0     0.0    0.0
+ CAF:main15                             Main                  <no location info>                          1160          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1987          0    0.0    0.0     0.0    0.0
+   main.map1Area                        Main                  src/Main.hs:46:13-83                        1988          0    0.0    0.0     0.0    0.0
+    mkInd                               Index                 src/Index.hs:(43,5)-(47,58)                 1991          0    0.0    0.0     0.0    0.0
+     mkInd.nat                          Index                 src/Index.hs:47:21-58                       1992          0    0.0    0.0     0.0    0.0
+ CAF:main16                             Main                  <no location info>                          1150          0    0.0    0.0     0.0    0.0
+ CAF:main3                              Main                  <no location info>                          1170          0    0.0    0.0     0.8    0.8
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1590          0    0.0    0.0     0.8    0.8
+   main.ansatzCondAB                    Main                  src/Main.hs:448:13-99                       1591          0    0.0    0.0     0.8    0.8
+    mkEqnSparseAnsatzAB2                Order2Int             src/Order2Int.hs:60:5-77                    1592          1    0.5    0.7     0.8    0.8
+     index2SparseAnsatzAB2              Order2Int             src/Order2Int.hs:(51,5)-(57,90)             2129      11520    0.1    0.0     0.3    0.1
+      index2SparseAnsatzAB2.a           Order2Int             src/Order2Int.hs:55:55-89                   2142      11520    0.0    0.0     0.0    0.0
+       fromEnum                         Index                 src/Index.hs:163:207-210                    2143      11520    0.0    0.0     0.0    0.0
+       getValInd                        Index                 src/Index.hs:52:5-57                        2144      11520    0.0    0.0     0.0    0.0
+      index2SparseAnsatzAB2.b           Order2Int             src/Order2Int.hs:56:55-89                   2139      11520    0.0    0.0     0.0    0.0
+       fromEnum                         Index                 src/Index.hs:163:207-210                    2140      11520    0.0    0.0     0.0    0.0
+       getValInd                        Index                 src/Index.hs:52:5-57                        2141      11520    0.0    0.0     0.0    0.0
+      index2SparseAnsatzAB2.e           Order2Int             src/Order2Int.hs:53:55-89                   2130      11520    0.0    0.0     0.2    0.0
+       fromEnum                         Index                 src/Index.hs:161:207-210                    2131      11520    0.0    0.0     0.0    0.0
+       getValInd                        Index                 src/Index.hs:52:5-57                        2132      11520    0.2    0.0     0.2    0.0
+      index2SparseAnsatzAB2.f           Order2Int             src/Order2Int.hs:54:55-89                   2133      11520    0.0    0.0     0.0    0.0
+       fromEnum                         Index                 src/Index.hs:161:207-210                    2134      11520    0.0    0.0     0.0    0.0
+       getValInd                        Index                 src/Index.hs:52:5-57                        2135      11520    0.0    0.0     0.0    0.0
+      index2SparseAnsatzAB2.j           Order2Int             src/Order2Int.hs:57:55-90                   2136      11520    0.0    0.0     0.0    0.0
+       fromEnum                         Index                 src/Index.hs:149:97-100                     2137      11520    0.0    0.0     0.0    0.0
+       getValInd                        Index                 src/Index.hs:52:5-57                        2138      11520    0.0    0.0     0.0    0.0
+ CAF:main6                              Main                  <no location info>                          1155          0    0.0    0.0     0.0    0.0
+ CAF:main8                              Main                  <no location info>                          1167          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1670          0    0.0    0.0     0.0    0.0
+   main.map1Metric                      Main                  src/Main.hs:49:13-81                        1671          0    0.0    0.0     0.0    0.0
+    triangleMap2                        BasicTensors          src/BasicTensors.hs:91:5-65                 1672          0    0.0    0.0     0.0    0.0
+     enumFrom                           Index                 src/Index.hs:149:97-100                     1673          0    0.0    0.0     0.0    0.0
+ CAF:main9                              Main                  <no location info>                          1157          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1681          0    0.0    0.0     0.0    0.0
+   main.map1Metric                      Main                  src/Main.hs:49:13-81                        1682          0    0.0    0.0     0.0    0.0
+    mkInd                               Index                 src/Index.hs:(43,5)-(47,58)                 1685          0    0.0    0.0     0.0    0.0
+     mkInd.nat                          Index                 src/Index.hs:47:21-58                       1686          0    0.0    0.0     0.0    0.0
+ CAF:main_a1                            Main                  <no location info>                          1152          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1674          0    0.0    0.0     0.0    0.0
+   main.map1Metric                      Main                  src/Main.hs:49:13-81                        1675          0    0.0    0.0     0.0    0.0
+    triangleMap2                        BasicTensors          src/BasicTensors.hs:91:5-65                 1676          0    0.0    0.0     0.0    0.0
+     toEnum                             Index                 src/Index.hs:149:97-100                     1677          1    0.0    0.0     0.0    0.0
+ CAF:main_a2                            Main                  <no location info>                          1153          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1858          0    0.0    0.0     0.0    0.0
+   main.map2Area                        Main                  src/Main.hs:47:13-83                        1859          0    0.0    0.0     0.0    0.0
+    triangleMapArea                     BasicTensors          src/BasicTensors.hs:240:5-65                1860          0    0.0    0.0     0.0    0.0
+     toEnum                             Index                 src/Index.hs:163:207-210                    1861          1    0.0    0.0     0.0    0.0
+ CAF:main_a3                            Main                  <no location info>                          1154          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1980          0    0.0    0.0     0.0    0.0
+   main.map1Area                        Main                  src/Main.hs:46:13-83                        1981          0    0.0    0.0     0.0    0.0
+    triangleMapArea                     BasicTensors          src/BasicTensors.hs:240:5-65                1982          0    0.0    0.0     0.0    0.0
+     toEnum                             Index                 src/Index.hs:161:207-210                    1983          1    0.0    0.0     0.0    0.0
+ CAF:main_ds                            Main                  <no location info>                          1169          0    0.0    0.0    97.9   96.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1593          0    0.0    0.0    97.9   96.0
+   main.ansatzCondAB                    Main                  src/Main.hs:448:13-99                       1594          0    0.0    0.0    97.9   96.0
+    ansatzAB2                           Order2Int             src/Order2Int.hs:(37,5)-(48,69)             1595          1    0.0    0.0    97.9   96.0
+     tensorContractWith_3               Tensor                src/Tensor.hs:(191,5)-(194,83)              1636          2    0.0    0.0    26.3   27.3
+      tensorContractWith_3.map2         Tensor                src/Tensor.hs:194:25-83                     2119          2    6.9    3.9    22.1   26.5
+       compare                          Index                 src/Index.hs:38:64-66                       2121    1598818   12.3   21.4    13.5   21.4
+        compare                         Index                 src/Index.hs:161:217-219                    2122    1762093    0.6    0.0     0.6    0.0
+        compare                         Index                 src/Index.hs:163:217-219                    2123     521656    0.5    0.0     0.5    0.0
+        compare                         Index                 src/Index.hs:149:107-109                    2124      60495    0.1    0.0     0.1    0.0
+        compare                         Index                 src/Index.hs:143:65-67                      2128       4380    0.0    0.0     0.0    0.0
+       delContractionIndex_3            Index                 src/Index.hs:287:5-94                       2120      55620    0.5    0.5     1.7    1.3
+        delInd                          Index                 src/Index.hs:121:5-53                       2125      88200    0.9    0.5     1.2    0.7
+         mkInd                          Index                 src/Index.hs:(43,5)-(47,58)                 2126      88200    0.1    0.1     0.3    0.3
+          mkInd.nat                     Index                 src/Index.hs:47:21-58                       2127      88200    0.2    0.2     0.2    0.2
+      tensorContractWith_3.mapFilt      Tensor                src/Tensor.hs:193:25-92                     1637          2    1.2    0.4     4.2    0.8
+       tensorContractWith_3.mapFilt.\   Tensor                src/Tensor.hs:193:60-86                     2112     220500    0.1    0.0     2.9    0.4
+        isContractionIndex              Index                 src/Index.hs:(266,5)-(271,70)               2113     220500    0.8    0.0     2.8    0.4
+         isContractionInd               Index                 src/Index.hs:(256,5)-(259,62)               2114     220500    1.0    0.0     2.0    0.4
+          isContractionInd.val1         Index                 src/Index.hs:258:21-62                      2115     220500    0.7    0.2     0.7    0.2
+           fromEnum                     Index                 src/Index.hs:143:55-58                      2116     220500    0.0    0.0     0.0    0.0
+          isContractionInd.val2         Index                 src/Index.hs:259:21-62                      2117     220500    0.3    0.2     0.3    0.2
+           fromEnum                     Index                 src/Index.hs:145:55-58                      2118     220500    0.0    0.0     0.0    0.0
+     ansatzAB2.antiSym                  Order2Int             src/Order2Int.hs:41:25-52                   1629          1    0.0    0.0     0.1    0.0
+      aSymI_2                           BasicTensors          src/BasicTensors.hs:221:5-66                1630          1    0.0    0.0     0.1    0.0
+       mkTensorfromF                    Tensor                src/Tensor.hs:(63,5)-(66,41)                1632          1    0.0    0.0     0.1    0.0
+        compare                         Index                 src/Index.hs:38:64-66                       1651       1095    0.0    0.0     0.0    0.0
+         compare                        Index                 src/Index.hs:149:107-109                    1654        159    0.0    0.0     0.0    0.0
+        <                               Index                 src/Index.hs:38:64-66                       1655        150    0.0    0.0     0.0    0.0
+         compare                        Index                 src/Index.hs:145:65-67                      1656        270    0.0    0.0     0.0    0.0
+        mkTensorfromF.indList           Tensor                src/Tensor.hs:65:17-44                      1641          1    0.0    0.0     0.1    0.0
+         tensorIndList                  Tensor                src/Tensor.hs:(52,5)-(55,124)               1642          1    0.1    0.0     0.1    0.0
+          tensorIndList.\               Tensor                src/Tensor.hs:52:83-178                     1650        160    0.0    0.0     0.0    0.0
+           mkInd                        Index                 src/Index.hs:(43,5)-(47,58)                 1652       1280    0.0    0.0     0.0    0.0
+            mkInd.nat                   Index                 src/Index.hs:47:21-58                       1653       1280    0.0    0.0     0.0    0.0
+          tensorIndList.list            Tensor                src/Tensor.hs:(54,17)-(55,124)              1643          1    0.0    0.0     0.0    0.0
+           getRangeList                 Index                 src/Index.hs:(70,5)-(73,96)                 1644          9    0.0    0.0     0.0    0.0
+            toEnum                      Index                 src/Index.hs:145:55-58                      1648         12    0.0    0.0     0.0    0.0
+            toEnum                      Index                 src/Index.hs:149:97-100                     1646         12    0.0    0.0     0.0    0.0
+            fromEnum                    Index                 src/Index.hs:145:55-58                      1647          4    0.0    0.0     0.0    0.0
+            fromEnum                    Index                 src/Index.hs:149:97-100                     1645          2    0.0    0.0     0.0    0.0
+        mkTensorfromF.valueList         Tensor                src/Tensor.hs:66:17-41                      1649          1    0.0    0.0     0.0    0.0
+         aSymF_I2                       BasicTensors          src/BasicTensors.hs:(155,5)-(161,52)        1657        160    0.0    0.0     0.0    0.0
+          ==                            Index                 src/Index.hs:149:103-104                    1658        160    0.0    0.0     0.0    0.0
+          aSymF_I2.indI                 BasicTensors          src/BasicTensors.hs:159:21-49               1659        160    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:38:64-66                       1688        450    0.0    0.0     0.0    0.0
+            compare                     Index                 src/Index.hs:145:65-67                      1689        740    0.0    0.0     0.0    0.0
+           sortInd                      Index                 src/Index.hs:55:5-52                        1660        160    0.0    0.0     0.0    0.0
+            compare                     Index                 src/Index.hs:145:65-67                      1661        160    0.0    0.0     0.0    0.0
+          aSymF_I2.xVal                 BasicTensors          src/BasicTensors.hs:160:21-40               1690        160    0.0    0.0     0.0    0.0
+           getValInd                    Index                 src/Index.hs:52:5-57                        1691        160    0.0    0.0     0.0    0.0
+          aSymF_I2.sign                 BasicTensors          src/BasicTensors.hs:161:21-52               1692         16    0.0    0.0     0.0    0.0
+           indSign2                     Index                 src/Index.hs:(58,5)-(64,35)                 1693         16    0.0    0.0     0.0    0.0
+            <                           Index                 src/Index.hs:145:65-67                      1694         16    0.0    0.0     0.0    0.0
+            indSign2.i                  Index                 src/Index.hs:63:17-35                       1695         16    0.0    0.0     0.0    0.0
+             getValInd                  Index                 src/Index.hs:52:5-57                        1696         16    0.0    0.0     0.0    0.0
+            indSign2.j                  Index                 src/Index.hs:64:17-35                       1697         16    0.0    0.0     0.0    0.0
+             getValInd                  Index                 src/Index.hs:52:5-57                        1698         16    0.0    0.0     0.0    0.0
+            ==                          Index                 src/Index.hs:145:61-62                      1699         10    0.0    0.0     0.0    0.0
+            >                           Index                 src/Index.hs:145:65-67                      1700          6    0.0    0.0     0.0    0.0
+             <                          Index                 src/Index.hs:145:65-67                      1701          6    0.0    0.0     0.0    0.0
+     ansatzAB2.block1                   Order2Int             src/Order2Int.hs:42:25-71                   1599          1    0.0    0.0     0.5    0.7
+      tensorProductWith                 Tensor                src/Tensor.hs:(156,5)-(160,49)              1618          1    0.0    0.0     0.5    0.7
+       tensorProductWith.indList        Tensor                src/Tensor.hs:158:25-45                     1761          1    0.0    0.0     0.0    0.0
+       tensorProductWith.mapList        Tensor                src/Tensor.hs:159:25-74                     1782          1    0.0    0.0     0.1    0.4
+        tensorProductF                  Tensor                src/Tensor.hs:(148,5)-(151,98)              1784         21    0.0    0.0     0.1    0.4
+         tensorProductF.map3            Tensor                src/Tensor.hs:151:25-98                     1785         21    0.0    0.1     0.1    0.4
+          compare                       Index                 src/Index.hs:38:64-66                       2052      12201    0.1    0.1     0.1    0.1
+           compare                      Index                 src/Index.hs:161:217-219                    2054       8106    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:163:217-219                    2055       4662    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:143:65-67                      2056        819    0.0    0.0     0.0    0.0
+          tensorProductF.map3.\         Tensor                src/Tensor.hs:151:45-51                     2057       4284    0.0    0.0     0.0    0.0
+          tensorProductF.map3.\         Tensor                src/Tensor.hs:151:73-92                     2050       4284    0.0    0.0     0.1    0.2
+           combineIndex                 Index                 src/Index.hs:(249,5)-(250,152)              2051       4284    0.0    0.1     0.1    0.2
+            combineInd                  Index                 src/Index.hs:132:5-77                       2053      34272    0.1    0.1     0.1    0.1
+         tensorProductF.val             Tensor                src/Tensor.hs:150:25-46                     2058         21    0.0    0.0     0.0    0.0
+          compare                       Index                 src/Index.hs:38:64-66                       2059        226    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:161:217-219                    2060         79    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:163:217-219                    2061         21    0.0    0.0     0.0    0.0
+       tensorProductWith.newMap         Tensor                src/Tensor.hs:160:25-49                     1783          1    0.1    0.1     0.3    0.3
+        compare                         Index                 src/Index.hs:38:64-66                       2062      12031    0.2    0.2     0.3    0.2
+         compare                        Index                 src/Index.hs:161:217-219                    2063      21101    0.1    0.0     0.1    0.0
+     ansatzAB2.block2                   Order2Int             src/Order2Int.hs:43:25-63                   1619          1    0.0    0.0     1.0    1.2
+      tensorTranspose                   Tensor                src/Tensor.hs:110:5-88                      1620          1    0.4    0.3     1.0    1.2
+       compare                          Index                 src/Index.hs:38:64-66                       2065      69073    0.6    0.9     0.6    0.9
+        compare                         Index                 src/Index.hs:161:217-219                    2068      87550    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:163:217-219                    2071      11394    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:143:65-67                      2072       1108    0.0    0.0     0.0    0.0
+       swapPosIndex                     Index                 src/Index.hs:(207,5)-(216,93)               2064       4284    0.0    0.0     0.1    0.1
+        swapPosInd                      Index                 src/Index.hs:93:5-69                        2066       4284    0.0    0.0     0.1    0.1
+         swapPosSeq                     Index                 src/Index.hs:(78,5)-(81,44)                 2067       4284    0.0    0.0     0.1    0.1
+          swapPosSeq.x1                 Index                 src/Index.hs:80:17-44                       2070       4284    0.0    0.0     0.0    0.0
+          swapPosSeq.x2                 Index                 src/Index.hs:81:17-44                       2069       4284    0.1    0.0     0.1    0.0
+     ansatzAB2.intArea                  Order2Int             src/Order2Int.hs:39:25-61                   1600          1    0.0    0.0     9.0    7.5
+      interArea                         BasicTensors          src/BasicTensors.hs:(368,5)-(373,48)        1601          1    0.0    0.0     9.0    7.5
+       tensorContractWith_3             Tensor                src/Tensor.hs:(191,5)-(194,83)              1612          3    0.0    0.0     2.5    1.6
+        tensorContractWith_3.map2       Tensor                src/Tensor.hs:194:25-83                     2040          3    0.8    0.4     2.0    1.5
+         compare                        Index                 src/Index.hs:38:64-66                       2042     250227    1.0    0.9     1.2    0.9
+          compare                       Index                 src/Index.hs:161:217-219                    2043      97766    0.1    0.0     0.1    0.0
+          compare                       Index                 src/Index.hs:163:217-219                    2044      54683    0.1    0.0     0.1    0.0
+          compare                       Index                 src/Index.hs:143:65-67                      2048      34950    0.1    0.0     0.1    0.0
+          compare                       Index                 src/Index.hs:145:65-67                      2049       6924    0.0    0.0     0.0    0.0
+         delContractionIndex_3          Index                 src/Index.hs:287:5-94                       2041       7128    0.1    0.1     0.1    0.2
+          delInd                        Index                 src/Index.hs:121:5-53                       2045      14256    0.0    0.1     0.0    0.2
+           mkInd                        Index                 src/Index.hs:(43,5)-(47,58)                 2046      14256    0.0    0.0     0.0    0.0
+            mkInd.nat                   Index                 src/Index.hs:47:21-58                       2047      14256    0.0    0.0     0.0    0.0
+        tensorContractWith_3.mapFilt    Tensor                src/Tensor.hs:193:25-92                     1786          3    0.1    0.0     0.5    0.1
+         tensorContractWith_3.mapFilt.\ Tensor                src/Tensor.hs:193:60-86                     2033      26784    0.0    0.0     0.3    0.1
+          isContractionIndex            Index                 src/Index.hs:(266,5)-(271,70)               2034      26784    0.2    0.0     0.3    0.1
+           isContractionInd             Index                 src/Index.hs:(256,5)-(259,62)               2035      26784    0.1    0.0     0.1    0.1
+            isContractionInd.val1       Index                 src/Index.hs:258:21-62                      2036      26784    0.1    0.0     0.1    0.0
+             fromEnum                   Index                 src/Index.hs:143:55-58                      2037      26784    0.0    0.0     0.0    0.0
+            isContractionInd.val2       Index                 src/Index.hs:259:21-62                      2038      26784    0.0    0.0     0.0    0.0
+             fromEnum                   Index                 src/Index.hs:145:55-58                      2039      26784    0.0    0.0     0.0    0.0
+       interArea.i                      BasicTensors          src/BasicTensors.hs:371:17-36               1603          1    0.0    0.0     1.0    0.9
+        interI_Area                     BasicTensors          src/BasicTensors.hs:340:5-74                1604          1    0.1    0.0     1.0    0.9
+         mkTensorfromF                  Tensor                src/Tensor.hs:(63,5)-(66,41)                1606          1    0.1    0.1     1.0    0.9
+          compare                       Index                 src/Index.hs:38:64-66                       1919      37505    0.1    0.0     0.1    0.0
+           compare                      Index                 src/Index.hs:161:217-219                    1922       5375    0.0    0.0     0.0    0.0
+          <                             Index                 src/Index.hs:38:64-66                       1923       5355    0.2    0.2     0.2    0.2
+           compare                      Index                 src/Index.hs:145:65-67                      1924      19719    0.0    0.0     0.0    0.0
+          mkTensorfromF.indList         Tensor                src/Tensor.hs:65:17-44                      1909          1    0.0    0.0     0.1    0.2
+           tensorIndList                Tensor                src/Tensor.hs:(52,5)-(55,124)               1910          1    0.1    0.1     0.1    0.2
+            tensorIndList.\             Tensor                src/Tensor.hs:52:83-178                     1918       5376    0.0    0.0     0.0    0.0
+             mkInd                      Index                 src/Index.hs:(43,5)-(47,58)                 1920      43008    0.0    0.0     0.0    0.0
+              mkInd.nat                 Index                 src/Index.hs:47:21-58                       1921      43008    0.0    0.0     0.0    0.0
+            tensorIndList.list          Tensor                src/Tensor.hs:(54,17)-(55,124)              1911          1    0.0    0.0     0.0    0.0
+             getRangeList               Index                 src/Index.hs:(70,5)-(73,96)                 1912         11    0.0    0.0     0.0    0.0
+              toEnum                    Index                 src/Index.hs:145:55-58                      1916         24    0.0    0.0     0.0    0.0
+              toEnum                    Index                 src/Index.hs:161:207-210                    1914         23    0.0    0.0     0.0    0.0
+              fromEnum                  Index                 src/Index.hs:145:55-58                      1915          8    0.0    0.0     0.0    0.0
+              fromEnum                  Index                 src/Index.hs:161:207-210                    1913          2    0.0    0.0     0.0    0.0
+          mkTensorfromF.valueList       Tensor                src/Tensor.hs:66:17-41                      1917          1    0.0    0.0     0.5    0.5
+           interF_IArea                 BasicTensors          src/BasicTensors.hs:(297,5)-(304,40)        1925       5376    0.0    0.0     0.5    0.4
+            isZeroArea                  BasicTensors          src/BasicTensors.hs:(255,5)-(262,39)        1926       5376    0.1    0.0     0.1    0.0
+             ==                         Index                 src/Index.hs:145:61-62                      1927       9408    0.0    0.0     0.0    0.0
+             isZeroArea.a               BasicTensors          src/BasicTensors.hs:259:21-39               1928       5376    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1929       5376    0.0    0.0     0.0    0.0
+             isZeroArea.b               BasicTensors          src/BasicTensors.hs:260:21-39               1930       5376    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1931       5376    0.0    0.0     0.0    0.0
+             isZeroArea.c               BasicTensors          src/BasicTensors.hs:261:21-39               1932       4032    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1933       4032    0.0    0.0     0.0    0.0
+             isZeroArea.d               BasicTensors          src/BasicTensors.hs:262:21-39               1934       4032    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1935       4032    0.0    0.0     0.0    0.0
+            ==                          Index                 src/Index.hs:161:213-214                    1938       3024    0.1    0.0     0.1    0.0
+            interF_IArea.indI           BasicTensors          src/BasicTensors.hs:303:21-49               1939       3024    0.0    0.0     0.2    0.3
+             compare                    Index                 src/Index.hs:38:64-66                       1994      11844    0.1    0.3     0.2    0.3
+              compare                   Index                 src/Index.hs:145:65-67                      1995      31836    0.1    0.0     0.1    0.0
+            interF_IArea.sortY          BasicTensors          src/BasicTensors.hs:302:21-46               1936       3024    0.0    0.0     0.1    0.1
+             canonicalizeArea           BasicTensors          src/BasicTensors.hs:(288,5)-(292,34)        1937       3024    0.0    0.0     0.1    0.1
+              blockSortArea             BasicTensors          src/BasicTensors.hs:(265,5)-(272,39)        1952       3024    0.0    0.0     0.0    0.0
+               <                        Index                 src/Index.hs:145:65-67                      1957       3024    0.0    0.0     0.0    0.0
+               blockSortArea.a          BasicTensors          src/BasicTensors.hs:269:21-39               1953       3024    0.0    0.0     0.0    0.0
+                getValInd               Index                 src/Index.hs:52:5-57                        1954       3024    0.0    0.0     0.0    0.0
+               blockSortArea.c          BasicTensors          src/BasicTensors.hs:271:21-39               1955       3024    0.0    0.0     0.0    0.0
+                getValInd               Index                 src/Index.hs:52:5-57                        1956       3024    0.0    0.0     0.0    0.0
+               ==                       Index                 src/Index.hs:145:61-62                      1958       2100    0.0    0.0     0.0    0.0
+               blockSortArea.b          BasicTensors          src/BasicTensors.hs:270:21-39               1963       2100    0.0    0.0     0.0    0.0
+                getValInd               Index                 src/Index.hs:52:5-57                        1964       2100    0.0    0.0     0.0    0.0
+               blockSortArea.d          BasicTensors          src/BasicTensors.hs:272:21-39               1961       2100    0.0    0.0     0.0    0.0
+                getValInd               Index                 src/Index.hs:52:5-57                        1962       2100    0.0    0.0     0.0    0.0
+               mkInd                    Index                 src/Index.hs:(43,5)-(47,58)                 2010       1260    0.0    0.0     0.0    0.0
+                mkInd.nat               Index                 src/Index.hs:47:21-58                       2011       1260    0.0    0.0     0.0    0.0
+               <=                       Index                 src/Index.hs:145:65-67                      1959       1176    0.0    0.0     0.0    0.0
+                <                       Index                 src/Index.hs:145:65-67                      1960       1176    0.0    0.0     0.0    0.0
+              canonicalizeArea.p1       BasicTensors          src/BasicTensors.hs:291:21-34               1940       3024    0.0    0.0     0.0    0.0
+              canonicalizeArea.pSort    BasicTensors          src/BasicTensors.hs:290:21-45               1941       3024    0.0    0.0     0.1    0.1
+               aPairSortArea            BasicTensors          src/BasicTensors.hs:(275,5)-(284,39)        1942       3024    0.0    0.1     0.1    0.1
+                <                       Index                 src/Index.hs:145:65-67                      1947       8316    0.0    0.0     0.0    0.0
+                aPairSortArea.a         BasicTensors          src/BasicTensors.hs:281:21-39               1943       3024    0.0    0.0     0.0    0.0
+                 getValInd              Index                 src/Index.hs:52:5-57                        1944       3024    0.0    0.0     0.0    0.0
+                aPairSortArea.b         BasicTensors          src/BasicTensors.hs:282:21-39               1945       3024    0.0    0.0     0.0    0.0
+                 getValInd              Index                 src/Index.hs:52:5-57                        1946       3024    0.0    0.0     0.0    0.0
+                aPairSortArea.c         BasicTensors          src/BasicTensors.hs:283:21-39               1948       3024    0.0    0.0     0.1    0.0
+                 getValInd              Index                 src/Index.hs:52:5-57                        1949       3024    0.1    0.0     0.1    0.0
+                aPairSortArea.d         BasicTensors          src/BasicTensors.hs:284:21-39               1950       3024    0.0    0.0     0.0    0.0
+                 getValInd              Index                 src/Index.hs:52:5-57                        1951       3024    0.0    0.0     0.0    0.0
+                >                       Index                 src/Index.hs:145:65-67                      1999       2268    0.0    0.0     0.0    0.0
+                 <                      Index                 src/Index.hs:145:65-67                      2000       2268    0.0    0.0     0.0    0.0
+                mkInd                   Index                 src/Index.hs:(43,5)-(47,58)                 2004       2268    0.0    0.0     0.0    0.0
+                 mkInd.nat              Index                 src/Index.hs:47:21-58                       2005       2268    0.0    0.0     0.0    0.0
+              canonicalizeArea.p2       BasicTensors          src/BasicTensors.hs:292:21-34               1998        144    0.0    0.0     0.0    0.0
+            interF_IArea.xVal           BasicTensors          src/BasicTensors.hs:304:21-40               1996       3024    0.0    0.0     0.0    0.0
+             getValInd                  Index                 src/Index.hs:52:5-57                        1997       3024    0.0    0.0     0.0    0.0
+       interArea.j                      BasicTensors          src/BasicTensors.hs:372:17-36               1607          1    0.0    0.0     1.1    1.0
+        interJ_Area                     BasicTensors          src/BasicTensors.hs:346:5-74                1608          1    0.1    0.0     1.1    1.0
+         mkTensorfromF                  Tensor                src/Tensor.hs:(63,5)-(66,41)                1610          1    0.1    0.1     1.0    1.0
+          compare                       Index                 src/Index.hs:38:64-66                       1798      37525    0.2    0.2     0.3    0.2
+           compare                      Index                 src/Index.hs:143:65-67                      1802      19719    0.1    0.0     0.1    0.0
+           compare                      Index                 src/Index.hs:163:217-219                    1801       5375    0.0    0.0     0.0    0.0
+          mkTensorfromF.indList         Tensor                src/Tensor.hs:65:17-44                      1788          1    0.0    0.0     0.2    0.2
+           tensorIndList                Tensor                src/Tensor.hs:(52,5)-(55,124)               1789          1    0.1    0.1     0.2    0.2
+            tensorIndList.\             Tensor                src/Tensor.hs:52:83-178                     1797       5376    0.0    0.0     0.0    0.0
+             mkInd                      Index                 src/Index.hs:(43,5)-(47,58)                 1799      37776    0.0    0.0     0.0    0.0
+              mkInd.nat                 Index                 src/Index.hs:47:21-58                       1800      37776    0.0    0.0     0.0    0.0
+            tensorIndList.list          Tensor                src/Tensor.hs:(54,17)-(55,124)              1790          1    0.1    0.1     0.1    0.1
+             getRangeList               Index                 src/Index.hs:(70,5)-(73,96)                 1791         11    0.0    0.0     0.0    0.0
+              toEnum                    Index                 src/Index.hs:143:55-58                      1795         24    0.0    0.0     0.0    0.0
+              toEnum                    Index                 src/Index.hs:163:207-210                    1793         23    0.0    0.0     0.0    0.0
+              fromEnum                  Index                 src/Index.hs:143:55-58                      1794          8    0.0    0.0     0.0    0.0
+              fromEnum                  Index                 src/Index.hs:163:207-210                    1792          2    0.0    0.0     0.0    0.0
+          mkTensorfromF.valueList       Tensor                src/Tensor.hs:66:17-41                      1796          1    0.0    0.0     0.5    0.5
+           interF_JArea                 BasicTensors          src/BasicTensors.hs:(318,5)-(325,40)        1803       5376    0.1    0.0     0.5    0.4
+            isZeroArea                  BasicTensors          src/BasicTensors.hs:(255,5)-(262,39)        1804       5376    0.1    0.0     0.1    0.0
+             ==                         Index                 src/Index.hs:143:61-62                      1805       9408    0.0    0.0     0.0    0.0
+             isZeroArea.a               BasicTensors          src/BasicTensors.hs:259:21-39               1806       5376    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1807       5376    0.0    0.0     0.0    0.0
+             isZeroArea.b               BasicTensors          src/BasicTensors.hs:260:21-39               1808       5376    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1809       5376    0.0    0.0     0.0    0.0
+             isZeroArea.c               BasicTensors          src/BasicTensors.hs:261:21-39               1810       4032    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1811       4032    0.0    0.0     0.0    0.0
+             isZeroArea.d               BasicTensors          src/BasicTensors.hs:262:21-39               1812       4032    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1813       4032    0.0    0.0     0.0    0.0
+            ==                          Index                 src/Index.hs:163:213-214                    1841       3024    0.0    0.0     0.0    0.0
+            interF_JArea.indI           BasicTensors          src/BasicTensors.hs:324:21-49               1842       3024    0.1    0.0     0.2    0.3
+             compare                    Index                 src/Index.hs:38:64-66                       1872      11844    0.1    0.3     0.1    0.3
+              compare                   Index                 src/Index.hs:143:65-67                      1873      31836    0.1    0.0     0.1    0.0
+            interF_JArea.sortY          BasicTensors          src/BasicTensors.hs:323:21-46               1814       3024    0.0    0.0     0.1    0.1
+             canonicalizeArea           BasicTensors          src/BasicTensors.hs:(288,5)-(292,34)        1815       3024    0.0    0.0     0.1    0.1
+              blockSortArea             BasicTensors          src/BasicTensors.hs:(265,5)-(272,39)        1828       3024    0.0    0.0     0.1    0.0
+               <                        Index                 src/Index.hs:143:65-67                      1833       3024    0.0    0.0     0.0    0.0
+               blockSortArea.a          BasicTensors          src/BasicTensors.hs:269:21-39               1829       3024    0.0    0.0     0.0    0.0
+                getValInd               Index                 src/Index.hs:52:5-57                        1830       3024    0.0    0.0     0.0    0.0
+               blockSortArea.c          BasicTensors          src/BasicTensors.hs:271:21-39               1831       3024    0.0    0.0     0.0    0.0
+                getValInd               Index                 src/Index.hs:52:5-57                        1832       3024    0.0    0.0     0.0    0.0
+               ==                       Index                 src/Index.hs:143:61-62                      1834       2100    0.0    0.0     0.0    0.0
+               blockSortArea.b          BasicTensors          src/BasicTensors.hs:270:21-39               1839       2100    0.0    0.0     0.0    0.0
+                getValInd               Index                 src/Index.hs:52:5-57                        1840       2100    0.0    0.0     0.0    0.0
+               blockSortArea.d          BasicTensors          src/BasicTensors.hs:272:21-39               1837       2100    0.1    0.0     0.1    0.0
+                getValInd               Index                 src/Index.hs:52:5-57                        1838       2100    0.0    0.0     0.0    0.0
+               mkInd                    Index                 src/Index.hs:(43,5)-(47,58)                 1899       1260    0.1    0.0     0.1    0.0
+                mkInd.nat               Index                 src/Index.hs:47:21-58                       1900       1260    0.0    0.0     0.0    0.0
+               <=                       Index                 src/Index.hs:143:65-67                      1835       1176    0.0    0.0     0.0    0.0
+                <                       Index                 src/Index.hs:143:65-67                      1836       1176    0.0    0.0     0.0    0.0
+              canonicalizeArea.p1       BasicTensors          src/BasicTensors.hs:291:21-34               1816       3024    0.0    0.0     0.0    0.0
+              canonicalizeArea.pSort    BasicTensors          src/BasicTensors.hs:290:21-45               1817       3024    0.0    0.0     0.0    0.1
+               aPairSortArea            BasicTensors          src/BasicTensors.hs:(275,5)-(284,39)        1818       3024    0.0    0.1     0.0    0.1
+                <                       Index                 src/Index.hs:143:65-67                      1823       8316    0.0    0.0     0.0    0.0
+                aPairSortArea.a         BasicTensors          src/BasicTensors.hs:281:21-39               1819       3024    0.0    0.0     0.0    0.0
+                 getValInd              Index                 src/Index.hs:52:5-57                        1820       3024    0.0    0.0     0.0    0.0
+                aPairSortArea.b         BasicTensors          src/BasicTensors.hs:282:21-39               1821       3024    0.0    0.0     0.0    0.0
+                 getValInd              Index                 src/Index.hs:52:5-57                        1822       3024    0.0    0.0     0.0    0.0
+                aPairSortArea.c         BasicTensors          src/BasicTensors.hs:283:21-39               1824       3024    0.0    0.0     0.0    0.0
+                 getValInd              Index                 src/Index.hs:52:5-57                        1825       3024    0.0    0.0     0.0    0.0
+                aPairSortArea.d         BasicTensors          src/BasicTensors.hs:284:21-39               1826       3024    0.0    0.0     0.0    0.0
+                 getValInd              Index                 src/Index.hs:52:5-57                        1827       3024    0.0    0.0     0.0    0.0
+                >                       Index                 src/Index.hs:143:65-67                      1888       2268    0.0    0.0     0.0    0.0
+                 <                      Index                 src/Index.hs:143:65-67                      1889       2268    0.0    0.0     0.0    0.0
+                mkInd                   Index                 src/Index.hs:(43,5)-(47,58)                 1893       2268    0.0    0.0     0.0    0.0
+                 mkInd.nat              Index                 src/Index.hs:47:21-58                       1894       2268    0.0    0.0     0.0    0.0
+              canonicalizeArea.p2       BasicTensors          src/BasicTensors.hs:292:21-34               1876        144    0.0    0.0     0.0    0.0
+            interF_JArea.xVal           BasicTensors          src/BasicTensors.hs:325:21-40               1874       3024    0.0    0.0     0.0    0.0
+             getValInd                  Index                 src/Index.hs:52:5-57                        1875       3024    0.0    0.0     0.0    0.0
+            jMultArea                   BasicTensors          src/BasicTensors.hs:(243,5)-(250,39)        1877        144    0.0    0.0     0.0    0.0
+             ==                         Index                 src/Index.hs:143:61-62                      1878        200    0.0    0.0     0.0    0.0
+             jMultArea.a                BasicTensors          src/BasicTensors.hs:247:21-39               1879        144    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1880        144    0.0    0.0     0.0    0.0
+             jMultArea.c                BasicTensors          src/BasicTensors.hs:249:21-39               1881        144    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1882        144    0.0    0.0     0.0    0.0
+             jMultArea.b                BasicTensors          src/BasicTensors.hs:248:21-39               1883         56    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1884         56    0.0    0.0     0.0    0.0
+             jMultArea.d                BasicTensors          src/BasicTensors.hs:250:21-39               1885         56    0.0    0.0     0.0    0.0
+              getValInd                 Index                 src/Index.hs:52:5-57                        1886         56    0.0    0.0     0.0    0.0
+       interArea.prod                   BasicTensors          src/BasicTensors.hs:373:17-48               1602          1    0.0    0.0     4.4    4.0
+        tensorProductWith               Tensor                src/Tensor.hs:(156,5)-(160,49)              1611          1    0.0    0.0     4.4    4.0
+         tensorProductWith.indList      Tensor                src/Tensor.hs:158:25-45                     1787          1    0.0    0.0     0.0    0.0
+         tensorProductWith.mapList      Tensor                src/Tensor.hs:159:25-74                     1905          1    0.0    0.0     1.7    2.4
+          tensorProductF                Tensor                src/Tensor.hs:(148,5)-(151,98)              1907        144    0.0    0.0     1.7    2.4
+           tensorProductF.map3          Tensor                src/Tensor.hs:151:25-98                     1908        144    0.5    0.3     1.7    2.4
+            compare                     Index                 src/Index.hs:38:64-66                       2017     126864    0.5    0.7     0.6    0.7
+             compare                    Index                 src/Index.hs:143:65-67                      2021      70848    0.0    0.0     0.0    0.0
+             compare                    Index                 src/Index.hs:161:217-219                    2019      20592    0.0    0.0     0.0    0.0
+             compare                    Index                 src/Index.hs:163:217-219                    2020      17712    0.1    0.0     0.1    0.0
+            tensorProductF.map3.\       Tensor                src/Tensor.hs:151:45-51                     2024      20736    0.1    0.0     0.1    0.0
+            tensorProductF.map3.\       Tensor                src/Tensor.hs:151:73-92                     2015      20736    0.0    0.0     0.5    0.9
+             combineIndex               Index                 src/Index.hs:(249,5)-(250,152)              2016      20736    0.1    0.4     0.5    0.9
+              combineInd                Index                 src/Index.hs:132:5-77                       2018     165888    0.3    0.5     0.3    0.5
+            <                           Index                 src/Index.hs:38:64-66                       2022      17712    0.1    0.4     0.1    0.4
+             compare                    Index                 src/Index.hs:145:65-67                      2023      40176    0.0    0.0     0.0    0.0
+           tensorProductF.val           Tensor                src/Tensor.hs:150:25-46                     2025        144    0.0    0.0     0.0    0.0
+            compare                     Index                 src/Index.hs:38:64-66                       2026       4208    0.0    0.0     0.0    0.0
+             compare                    Index                 src/Index.hs:143:65-67                      2028       1064    0.0    0.0     0.0    0.0
+             compare                    Index                 src/Index.hs:163:217-219                    2027        922    0.0    0.0     0.0    0.0
+         tensorProductWith.newMap       Tensor                src/Tensor.hs:160:25-49                     1906          1    1.1    0.6     2.7    1.6
+          compare                       Index                 src/Index.hs:38:64-66                       2029     308418    1.4    1.0     1.6    1.0
+           compare                      Index                 src/Index.hs:161:217-219                    2030     103818    0.1    0.0     0.1    0.0
+           compare                      Index                 src/Index.hs:163:217-219                    2031      77220    0.1    0.0     0.1    0.0
+           compare                      Index                 src/Index.hs:143:65-67                      2032      42580    0.0    0.0     0.0    0.0
+       tensorSMult                      Tensor                src/Tensor.hs:101:5-33                      1613          1    0.0    0.0     0.0    0.0
+        fmap                            Tensor                src/Tensor.hs:37:9-52                       1614          1    0.0    0.0     0.0    0.0
+     ansatzAB2.prod                     Order2Int             src/Order2Int.hs:48:25-69                   1596          1    0.0    0.0    57.6   55.3
+      tensorProductWith                 Tensor                src/Tensor.hs:(156,5)-(160,49)              1635          1    0.0    0.0    57.6   55.3
+       tensorProductWith.indList        Tensor                src/Tensor.hs:158:25-45                     1638          1    0.0    0.0     0.0    0.0
+       tensorProductWith.mapList        Tensor                src/Tensor.hs:159:25-74                     1757          1    0.0    0.0    14.0   18.7
+        tensorProductF                  Tensor                src/Tensor.hs:(148,5)-(151,98)              1759         12    0.0    0.0    14.0   18.7
+         tensorProductF.map3            Tensor                src/Tensor.hs:151:25-98                     1760         12    3.1    2.8    14.0   18.7
+          compare                       Index                 src/Index.hs:38:64-66                       2095     486636    3.8    6.2     4.3    6.2
+           compare                      Index                 src/Index.hs:161:217-219                    2097     352536    0.3    0.0     0.3    0.0
+           compare                      Index                 src/Index.hs:163:217-219                    2098     280728    0.1    0.0     0.1    0.0
+           compare                      Index                 src/Index.hs:143:65-67                      2100      27828    0.1    0.0     0.1    0.0
+           compare                      Index                 src/Index.hs:149:107-109                    2099      27828    0.0    0.0     0.0    0.0
+          tensorProductF.map3.\         Tensor                src/Tensor.hs:151:45-51                     2101     176400    0.9    0.4     0.9    0.4
+          tensorProductF.map3.\         Tensor                src/Tensor.hs:151:73-92                     2093     176400    0.1    0.0     5.8    9.3
+           combineIndex                 Index                 src/Index.hs:(249,5)-(250,152)              2094     176400    0.8    3.6     5.7    9.3
+            combineInd                  Index                 src/Index.hs:132:5-77                       2096    1411200    4.9    5.7     4.9    5.7
+         tensorProductF.val             Tensor                src/Tensor.hs:150:25-46                     2102         12    0.0    0.0     0.0    0.0
+          compare                       Index                 src/Index.hs:38:64-66                       2103        238    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:149:107-109                    2104         38    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:143:65-67                      2105         18    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:145:65-67                      2106         12    0.0    0.0     0.0    0.0
+       tensorProductWith.newMap         Tensor                src/Tensor.hs:160:25-49                     1758          1   14.0    4.4    43.5   36.6
+        compare                         Index                 src/Index.hs:38:64-66                       2107    3503185   27.9   32.2    29.6   32.2
+         compare                        Index                 src/Index.hs:161:217-219                    2108    1596250    0.6    0.0     0.6    0.0
+         compare                        Index                 src/Index.hs:163:217-219                    2109    1463226    0.8    0.0     0.8    0.0
+         compare                        Index                 src/Index.hs:149:107-109                    2110     570708    0.3    0.0     0.3    0.0
+         compare                        Index                 src/Index.hs:143:65-67                      2111     194744    0.1    0.0     0.1    0.0
+     ansatzAB2.tens                     Order2Int             src/Order2Int.hs:46:25-68                   1597          1    0.0    0.0     0.6    0.6
+      tensorAdd                         Tensor                src/Tensor.hs:104:5-78                      1624          1    0.3    0.1     0.6    0.6
+       compare                          Index                 src/Index.hs:38:64-66                       2088      49190    0.3    0.5     0.3    0.5
+        compare                         Index                 src/Index.hs:161:217-219                    2089      31257    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:163:217-219                    2090      20389    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:143:65-67                      2091       3562    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:145:65-67                      2092       2028    0.0    0.0     0.0    0.0
+     ansatzAB2.totalBlock1              Order2Int             src/Order2Int.hs:44:25-61                   1598          1    0.0    0.0     0.4    0.3
+      tensorAdd                         Tensor                src/Tensor.hs:104:5-78                      1621          1    0.1    0.1     0.4    0.3
+       compare                          Index                 src/Index.hs:38:64-66                       2073      17912    0.3    0.3     0.3    0.3
+        compare                         Index                 src/Index.hs:161:217-219                    2074      18759    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:163:217-219                    2075       8876    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:143:65-67                      2076        208    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:145:65-67                      2077        204    0.0    0.0     0.0    0.0
+     ansatzAB2.totalBlock2              Order2Int             src/Order2Int.hs:47:25-107                  1625          1    0.0    0.0     0.0    0.0
+      tensorContractWith_3              Tensor                src/Tensor.hs:(191,5)-(194,83)              1634          1    0.0    0.0     0.0    0.0
+       tensorContractWith_3.map2        Tensor                src/Tensor.hs:194:25-83                     1749          1    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:38:64-66                       1751        177    0.0    0.0     0.0    0.0
+         compare                        Index                 src/Index.hs:149:107-109                    1752         33    0.0    0.0     0.0    0.0
+         compare                        Index                 src/Index.hs:143:65-67                      1756          6    0.0    0.0     0.0    0.0
+        delContractionIndex_3           Index                 src/Index.hs:287:5-94                       1750         12    0.0    0.0     0.0    0.0
+         delInd                         Index                 src/Index.hs:121:5-53                       1753         24    0.0    0.0     0.0    0.0
+          mkInd                         Index                 src/Index.hs:(43,5)-(47,58)                 1754         24    0.0    0.0     0.0    0.0
+           mkInd.nat                    Index                 src/Index.hs:47:21-58                       1755         24    0.0    0.0     0.0    0.0
+       tensorContractWith_3.mapFilt     Tensor                src/Tensor.hs:193:25-92                     1639          1    0.0    0.0     0.0    0.0
+        tensorContractWith_3.mapFilt.\  Tensor                src/Tensor.hs:193:60-86                     1742         48    0.0    0.0     0.0    0.0
+         isContractionIndex             Index                 src/Index.hs:(266,5)-(271,70)               1743         48    0.0    0.0     0.0    0.0
+          isContractionInd              Index                 src/Index.hs:(256,5)-(259,62)               1744         48    0.0    0.0     0.0    0.0
+           isContractionInd.val1        Index                 src/Index.hs:258:21-62                      1745         48    0.0    0.0     0.0    0.0
+            fromEnum                    Index                 src/Index.hs:143:55-58                      1746         48    0.0    0.0     0.0    0.0
+           isContractionInd.val2        Index                 src/Index.hs:259:21-62                      1747         48    0.0    0.0     0.0    0.0
+            fromEnum                    Index                 src/Index.hs:145:55-58                      1748         48    0.0    0.0     0.0    0.0
+      tensorProductWith                 Tensor                src/Tensor.hs:(156,5)-(160,49)              1633          1    0.0    0.0     0.0    0.0
+       tensorProductWith.indList        Tensor                src/Tensor.hs:158:25-45                     1640          1    0.0    0.0     0.0    0.0
+       tensorProductWith.mapList        Tensor                src/Tensor.hs:159:25-74                     1703          1    0.0    0.0     0.0    0.0
+        tensorProductF                  Tensor                src/Tensor.hs:(148,5)-(151,98)              1705         12    0.0    0.0     0.0    0.0
+         tensorProductF.map3            Tensor                src/Tensor.hs:151:25-98                     1706         12    0.0    0.0     0.0    0.0
+          compare                       Index                 src/Index.hs:38:64-66                       1729        252    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:143:65-67                      1732         36    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:149:107-109                    1731         36    0.0    0.0     0.0    0.0
+          tensorProductF.map3.\         Tensor                src/Tensor.hs:151:45-51                     1733         48    0.0    0.0     0.0    0.0
+          tensorProductF.map3.\         Tensor                src/Tensor.hs:151:73-92                     1727         48    0.0    0.0     0.0    0.0
+           combineIndex                 Index                 src/Index.hs:(249,5)-(250,152)              1728         48    0.0    0.0     0.0    0.0
+            combineInd                  Index                 src/Index.hs:132:5-77                       1730        384    0.0    0.0     0.0    0.0
+         tensorProductF.val             Tensor                src/Tensor.hs:150:25-46                     1734         12    0.0    0.0     0.0    0.0
+          compare                       Index                 src/Index.hs:38:64-66                       1735        239    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:149:107-109                    1736         37    0.0    0.0     0.0    0.0
+           compare                      Index                 src/Index.hs:145:65-67                      1737         30    0.0    0.0     0.0    0.0
+       tensorProductWith.newMap         Tensor                src/Tensor.hs:160:25-49                     1704          1    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:38:64-66                       1738        678    0.0    0.0     0.0    0.0
+         compare                        Index                 src/Index.hs:149:107-109                    1739        114    0.0    0.0     0.0    0.0
+         compare                        Index                 src/Index.hs:143:65-67                      1740         66    0.0    0.0     0.0    0.0
+         compare                        Index                 src/Index.hs:145:65-67                      1741         24    0.0    0.0     0.0    0.0
+     ansatzAB2.totalBlockTrans          Order2Int             src/Order2Int.hs:45:25-77                   1622          1    0.0    0.0     2.6    3.1
+      tensorTranspose                   Tensor                src/Tensor.hs:110:5-88                      1623          1    1.1    0.6     2.6    3.1
+       compare                          Index                 src/Index.hs:38:64-66                       2080     168847    1.3    2.4     1.4    2.4
+        compare                         Index                 src/Index.hs:161:217-219                    2081     205701    0.1    0.0     0.1    0.0
+        compare                         Index                 src/Index.hs:163:217-219                    2084      52014    0.0    0.0     0.0    0.0
+        compare                         Index                 src/Index.hs:143:65-67                      2087       2394    0.0    0.0     0.0    0.0
+       swapPosIndex                     Index                 src/Index.hs:(207,5)-(216,93)               2079       8364    0.0    0.0     0.1    0.1
+        swapPosInd                      Index                 src/Index.hs:93:5-69                        2082       8364    0.0    0.0     0.1    0.1
+         swapPosSeq                     Index                 src/Index.hs:(78,5)-(81,44)                 2083       8364    0.1    0.1     0.1    0.1
+          swapPosSeq.x1                 Index                 src/Index.hs:80:17-44                       2086       8364    0.0    0.0     0.0    0.0
+          swapPosSeq.x2                 Index                 src/Index.hs:81:17-44                       2085       8364    0.0    0.0     0.0    0.0
+ CAF:main_map1Area                      Main                  src/Main.hs:46:13-20                        1166          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1965          0    0.0    0.0     0.0    0.0
+   main.map1Area                        Main                  src/Main.hs:46:13-83                        1966          1    0.0    0.0     0.0    0.0
+    mkInd                               Index                 src/Index.hs:(43,5)-(47,58)                 1989         21    0.0    0.0     0.0    0.0
+     mkInd.nat                          Index                 src/Index.hs:47:21-58                       1990         21    0.0    0.0     0.0    0.0
+    >=                                  Index                 src/Index.hs:38:64-66                       1985         20    0.0    0.0     0.0    0.0
+     <                                  Index                 src/Index.hs:38:64-66                       1986         20    0.0    0.0     0.0    0.0
+      compare                           Index                 src/Index.hs:145:65-67                      1993         60    0.0    0.0     0.0    0.0
+    triangleMapArea                     BasicTensors          src/BasicTensors.hs:240:5-65                1967          1    0.0    0.0     0.0    0.0
+     compare                            Index                 src/Index.hs:145:65-67                      1984         60    0.0    0.0     0.0    0.0
+     areaDofList                        BasicTensors          src/BasicTensors.hs:237:5-167               1968          1    0.0    0.0     0.0    0.0
+      toEnum                            Index                 src/Index.hs:145:55-58                      1970         44    0.0    0.0     0.0    0.0
+      fromEnum                          Index                 src/Index.hs:145:55-58                      1969         42    0.0    0.0     0.0    0.0
+      succ                              Index                 src/Index.hs:145:55-58                      1971         17    0.0    0.0     0.0    0.0
+      ==                                Index                 src/Index.hs:145:61-62                      1972         14    0.0    0.0     0.0    0.0
+      >                                 Index                 src/Index.hs:145:65-67                      1973         14    0.0    0.0     0.0    0.0
+       <                                Index                 src/Index.hs:145:65-67                      1974         14    0.0    0.0     0.0    0.0
+     enumFrom                           Index                 src/Index.hs:161:207-210                    1975          1    0.0    0.0     0.0    0.0
+ CAF:main_map1Metric                    Main                  src/Main.hs:49:13-22                        1168          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1662          0    0.0    0.0     0.0    0.0
+   main.map1Metric                      Main                  src/Main.hs:49:13-81                        1663          1    0.0    0.0     0.0    0.0
+    mkInd                               Index                 src/Index.hs:(43,5)-(47,58)                 1683         10    0.0    0.0     0.0    0.0
+     mkInd.nat                          Index                 src/Index.hs:47:21-58                       1684         10    0.0    0.0     0.0    0.0
+    >=                                  Index                 src/Index.hs:38:64-66                       1679          9    0.0    0.0     0.0    0.0
+     <                                  Index                 src/Index.hs:38:64-66                       1680          9    0.0    0.0     0.0    0.0
+      compare                           Index                 src/Index.hs:145:65-67                      1687         15    0.0    0.0     0.0    0.0
+    triangleMap2                        BasicTensors          src/BasicTensors.hs:91:5-65                 1664          1    0.0    0.0     0.0    0.0
+     compare                            Index                 src/Index.hs:145:65-67                      1678         15    0.0    0.0     0.0    0.0
+     symIndList                         BasicTensors          src/BasicTensors.hs:(82,5)-(85,101)         1665          2    0.0    0.0     0.0    0.0
+      toEnum                            Index                 src/Index.hs:145:55-58                      1667         17    0.0    0.0     0.0    0.0
+      fromEnum                          Index                 src/Index.hs:145:55-58                      1666         10    0.0    0.0     0.0    0.0
+      getLastSeq                        BasicTensors          src/BasicTensors.hs:(77,5)-(78,33)          1668          4    0.0    0.0     0.0    0.0
+     enumFrom                           Index                 src/Index.hs:149:97-100                     1669          1    0.0    0.0     0.0    0.0
+ CAF:main_map2Area                      Main                  src/Main.hs:47:13-20                        1162          0    0.0    0.0     0.0    0.0
+  main                                  Main                  src/Main.hs:(44,5)-(500,156)                1843          0    0.0    0.0     0.0    0.0
+   main.map2Area                        Main                  src/Main.hs:47:13-83                        1844          1    0.0    0.0     0.0    0.0
+    mkInd                               Index                 src/Index.hs:(43,5)-(47,58)                 1867         21    0.0    0.0     0.0    0.0
+     mkInd.nat                          Index                 src/Index.hs:47:21-58                       1868         21    0.0    0.0     0.0    0.0
+    >=                                  Index                 src/Index.hs:38:64-66                       1863         20    0.0    0.0     0.0    0.0
+     <                                  Index                 src/Index.hs:38:64-66                       1864         20    0.0    0.0     0.0    0.0
+      compare                           Index                 src/Index.hs:143:65-67                      1871         60    0.0    0.0     0.0    0.0
+    triangleMapArea                     BasicTensors          src/BasicTensors.hs:240:5-65                1845          1    0.0    0.0     0.0    0.0
+     compare                            Index                 src/Index.hs:143:65-67                      1862         60    0.0    0.0     0.0    0.0
+     areaDofList                        BasicTensors          src/BasicTensors.hs:237:5-167               1846          1    0.0    0.0     0.0    0.0
+      toEnum                            Index                 src/Index.hs:143:55-58                      1848         44    0.0    0.0     0.0    0.0
+      fromEnum                          Index                 src/Index.hs:143:55-58                      1847         42    0.0    0.0     0.0    0.0
+      succ                              Index                 src/Index.hs:143:55-58                      1849         17    0.0    0.0     0.0    0.0
+      ==                                Index                 src/Index.hs:143:61-62                      1850         14    0.0    0.0     0.0    0.0
+      >                                 Index                 src/Index.hs:143:65-67                      1851         14    0.0    0.0     0.0    0.0
+       <                                Index                 src/Index.hs:143:65-67                      1852         14    0.0    0.0     0.0    0.0
+     enumFrom                           Index                 src/Index.hs:163:207-210                    1853          1    0.0    0.0     0.0    0.0
+ CAF:newTFGen1                          System.Random.TF.Init <no location info>                          1119          0    0.0    0.0     0.0    0.0
+  newTFGen                              System.Random.TF.Init src/System/Random/TF/Init.hs:82:1-43        1578          1    0.0    0.0     0.0    0.0
+ CAF:showEqns1                          EquivarianceEqns      <no location info>                          1233          0    0.0    0.0     0.0    0.0
+ CAF:showEqns5                          EquivarianceEqns      <no location info>                          1232          0    0.0    0.0     0.0    0.0
+ CAF:tensorProductWith2                 Tensor                <no location info>                          1335          0    0.0    0.0     0.0    0.0
+ CAF:theTFGen                           System.Random.TF.Init src/System/Random/TF/Init.hs:86:1-8         1118          0    0.0    0.0     0.0    0.0
+  theTFGen                              System.Random.TF.Init src/System/Random/TF/Init.hs:(86,1)-(88,15) 1580          1    0.0    0.0     0.0    0.0
+   initTFGen                            System.Random.TF.Init src/System/Random/TF/Init.hs:(66,1)-(72,22) 1582          0    0.0    0.0     0.0    0.0
+    mkSeedTime                          System.Random.TF.Init src/System/Random/TF/Init.hs:(33,1)-(45,25) 1584          0    0.0    0.0     0.0    0.0
+ main                                   Main                  src/Main.hs:(44,5)-(500,156)                1577          0    0.1    0.0     0.1    0.0
+  newTFGen                              System.Random.TF.Init src/System/Random/TF/Init.hs:82:1-43        1579          0    0.0    0.0     0.0    0.0

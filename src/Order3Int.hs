@@ -14,7 +14,8 @@
 {-# LANGUAGE TypeApplications #-}
 
 module Order3Int (
-    
+    ansatzABC, mkEqnSparseAnsatzABC2,
+    intABC, mkEqnSparseIntABC2
     
 ) where
 
@@ -59,5 +60,43 @@ module Order3Int (
                                                       c = 1 + (fromEnum $ getValInd x2 2)
                                                       j = 1 +  (fromEnum $ getValInd x5 0)
 
-    mkEqnSparseAnsatzABC :: Tensor 3 3 0 0 1 0 0 0 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseAnsatzABC (Tensor map1) = M.mapKeys index2SparseAnsatzABC map1
+    mkEqnSparseAnsatzABC2 :: Tensor 3 3 0 0 1 0 0 0 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseAnsatzABC2 (Tensor map1) = M.mapKeys index2SparseAnsatzABC map1
+
+    intABC :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 2 3 0 0 0 0 2 2 Rational 
+    intABC map1Area map2Area map1Metric map2Metric = tensorSub prod prodTrans 
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        flatA = flatArea map2Area
+                        flatInt = tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea flatA 
+                        block0 = tensorTranspose 1 (0,2) $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 delta_3
+                        block1 = tensorProductWith (*) intArea $ tensorProductWith (*) delta_20 delta_20 
+                        block2 = tensorTranspose 1 (0,2) block1
+                        block3 = tensorTranspose 1 (0,1) block2 
+                        totalBlock1 = tensorAdd block0 $ tensorAdd block1 $ tensorAdd block2 block3 
+                        totalBlockTrans1 = tensorTranspose 2 (0,1) totalBlock1
+                        totalBlockTrans2 = tensorTranspose 2 (0,2) totalBlock1
+                        totalBlockTrans3 = tensorTranspose 2 (1,2) totalBlock1
+                        totalBlockTrans4 = tensorTranspose 2 (0,2) totalBlockTrans1
+                        totalBlockTrans5 = tensorTranspose 2 (1,2) totalBlockTrans1
+                        tens = tensorAdd totalBlock1 $ tensorAdd totalBlockTrans1 $ tensorAdd totalBlockTrans2 $ tensorAdd totalBlockTrans3 $ tensorAdd totalBlockTrans4 totalBlockTrans5
+                        prod = tensorContractWith_20 (1,3) (+) $ tensorProductWith (*) tens flatInt
+                        prodTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) prod 
+
+    index2SparseIntABC :: Index 2 3 0 0 0 0 2 2 -> (Int,Int) 
+    index2SparseIntABC  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^4+(f-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,(c-1)*21^2+(b-1)*21+a)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      c = 1 + (fromEnum $ getValInd x2 2)
+                                                      m = 1 + (fromEnum $ getValInd x7 0)
+                                                      r = 1 + (fromEnum $ getValInd x7 1)
+                                                      n = 1 + (fromEnum $ getValInd x8 0)
+                                                      s = 1 + (fromEnum $ getValInd x8 1)
+
+
+    mkEqnSparseIntABC2 :: Tensor 2 3 0 0 0 0 2 2 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseIntABC2 (Tensor map1) = M.mapKeys index2SparseIntABC map1

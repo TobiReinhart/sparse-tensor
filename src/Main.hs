@@ -38,6 +38,7 @@ module Main (
     import Perturbation
     import AnsatzEqns2
     import Order2Int
+    import Order3Int
      
 
     main = do
@@ -486,10 +487,16 @@ module Main (
 
         let ansatzAI = mkEqnSparseAnsatzAI2 $ ansatzAI2 map1Area map2Area map1Metric map2Metric
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzAI_13_1_19.txt" $ showEqnsFlatFrac ansatzAI
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzAI_13_1_19.txt" $ showEqnsFlatFrac ansatzAI
 
+        let ansatzCondABC = mkEqnSparseAnsatzABC2 $ ansatzABC map1Area map2Area map1Metric map2Metric
 
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/3rdOrderInt/ansatzABC2_14_1_19.txt" $ showEqnsFlatFrac ansatzCondABC
 
+        --let intCondABC = mkEqnSparseIntABC2 $ intABC map1Area map2Area map1Metric map2Metric
 
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/3rdOrderInt/intABC_14_1_19.txt" $ showEqnsFlatFrac intCondABC
+
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzAB2_12_1_19.txt" $ showEqnsFlatFrac  ansatzCondAB
 
 

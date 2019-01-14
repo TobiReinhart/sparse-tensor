@@ -37,6 +37,7 @@ module Main (
     import Integrabillity
     import Perturbation
     import AnsatzEqns2
+    import Order2Int
      
 
     main = do
@@ -437,6 +438,58 @@ module Main (
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/int3_12_1_19.txt" $ showEqnsFlatFrac  int3
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/intFirstOrderTest_12_1_19.txt" $ showEqnsFlatFrac  intFirstOrder
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/intFirstOrderTest_12_1_19.txt" $ showEqnsFlatFrac  intFirstOrder
 
-        
+        ---now the 2nd order integrabillity conditions 
+
+        --start with the A:B conditions
+
+        let ansatzCondAB = mkEqnSparseAnsatzAB2 $ ansatzAB2 map1Area map2Area map1Metric map2Metric
+
+        let intCondAB1 = mkEqnSparseIntAB $ intAB1 map1Area map2Area map1Metric map2Metric
+
+        let intCondAB2 = mkEqnSparseIntAB $ intAB2 map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzAB_12_1_19.txt" $ showEqnsFlatFrac  ansatzCondAB
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/int1AB_12_1_19.txt" $ showEqnsFlatFrac  intCondAB1
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/int2AB_12_1_19.txt" $ showEqnsFlatFrac  intCondAB2
+
+        let ansatzCondABb = mkEqnSparseAnsatzABb2 $ ansatzABb2 map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzABb_13_1_19.txt" $ showEqnsFlatFrac  ansatzCondABb
+
+        let intCondABI = mkEqnSparseIntAIB $ intAIB map1Area map2Area map1Metric map2Metric
+
+        let ansatzCondAIB = mkEqnSparseAnsatzAIB2 $ ansatzAIB2 map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/intABI_13_1_19.txt" $ showEqnsFlatFrac  intCondABI
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzABI_13_1_19.txt" $ showEqnsFlatFrac  ansatzCondAIB
+
+        let intCondABIsym = mkEqnSparseIntAIBsym $ intAIBsym map1Area map2Area map1Metric map2Metric
+
+        let intCondABIsymRed = mkEqnSparseIntAIBsym $ intAIBsymRed map1Area map2Area map1Metric map2Metric
+
+        let intCondABIsymZero = evalTensorVals $ intAIBsymZero map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/intABISym_13_1_19.txt" $ showEqnsFlatFrac  intCondABIsym
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/intABISymZero_13_1_19.txt" $ show intCondABIsymZero
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/intABISymRed_13_1_19.txt" $ showEqnsFlatFrac  intCondABIsymRed
+
+        let intCondAI = mkEqnSparseIntAI $ intAI map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/intAI_13_1_19.txt" $ showEqnsFlatFrac intCondAI
+
+        let ansatzAI = mkEqnSparseAnsatzAI2 $ ansatzAI2 map1Area map2Area map1Metric map2Metric
+
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/2ndOrderInt/ansatzAI_13_1_19.txt" $ showEqnsFlatFrac ansatzAI
+
+
+
+
+
+

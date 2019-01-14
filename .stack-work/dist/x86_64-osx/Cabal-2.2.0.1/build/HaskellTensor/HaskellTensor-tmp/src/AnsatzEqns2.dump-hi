@@ -1,12 +1,12 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-12 11:17:58.239405 UTC
+2019-01-12 15:05:20.53583 UTC
 
 interface main:AnsatzEqns2 8043
-  interface hash: ce8bdd4c5c96d540a86e30e7ffc3009f
-  ABI hash: b743d30efbb5400914c1c9c4bcc00caa
-  export-list hash: 6eb77b4349abfaf1333dea0a4d6c7f24
-  orphan hash: 14214c76a05f83b32863c5b560b594e7
+  interface hash: c76d145488fd55e6cdde2b680a2bb81e
+  ABI hash: 4f47a1b78e0e4e4edc836cc76a4e88b3
+  export-list hash: 143dfa14ee31a97893027160ceec4cc4
+  orphan hash: 7d6d69d66d99a3276b876b69566809a1
   flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
@@ -213,26 +213,35 @@ ee2248d8e8dd9de75316f397e4cc267e
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
   {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
-64b20f62b0d322f65acfa8f3c9bb1032
+d0adeb6ea4afdfe40e4f4960a9c6d56d
   $sinsertWithR_$sgo1 ::
     (a1 -> a1 -> a1)
-    -> Index.Index 2 2 0 0 3 2 0 0
+    -> Index.Index 1 2 0 0 1 1 2 2
     -> a1
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1
+    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a1
+    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-649785f06bd7aa24a5d4a0891f4c458c
+22983b403e92bedb26599c9c7ab92560
   $sinsertWithR_$sgo2 ::
     (a1 -> a1 -> a1)
+    -> Index.Index 2 2 0 0 3 2 0 0
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+21f3257600a25c7a5fb0ffe174e1bd0c
+  $sinsertWithR_$sgo3 ::
+    (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 1 1 2 2
     -> a1
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 2 2) a1
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 2 2) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-d0ea9e57027e6ef9dea2b1aa27c4746f
-  $sinsertWithR_$sgo3 ::
+591e45f2faa0555dec832e68e85e9cb1
+  $sinsertWithR_$sgo4 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 0 0 3 3
     -> a1
@@ -240,8 +249,8 @@ d0ea9e57027e6ef9dea2b1aa27c4746f
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 3 3) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-1899461df00d71f0734a43133840fa37
-  $sinsertWithR_$sgo4 ::
+9346870bb4b162c12391dc3fddcd6545
+  $sinsertWithR_$sgo5 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 0 0 2 2
     -> a1
@@ -249,8 +258,8 @@ d0ea9e57027e6ef9dea2b1aa27c4746f
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 2 2) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-d61f17ec00751c20474a802432e56fe2
-  $sinsertWithR_$sgo5 ::
+d6e1ef18afd0ae8d5c8e1132be45be9d
+  $sinsertWithR_$sgo6 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 0 0 1 1
     -> a1
@@ -258,8 +267,8 @@ d61f17ec00751c20474a802432e56fe2
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 1 1) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-16d44170c65a9f82d600636a3beac225
-  $sinsertWithR_$sgo6 ::
+dfd6d8a25bbf327a76fdde547e85a62a
+  $sinsertWithR_$sgo7 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 1 1 1 1
     -> a1
@@ -267,8 +276,17 @@ d61f17ec00751c20474a802432e56fe2
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 1 1) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-cbcdc9e3a7d998d6cca24d3fc8d53484
+d5ff08a59259e9ae809f12f0832dc14c
   $sinsertWithR_$sgo8 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 1 1 0 0 0 0 1 1
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a1
+    -> Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+5d9317bcd8dc774fdff35f7bd9399d1d
+  $sinsertWith_$sgo1 ::
     (a1 -> a1 -> a1)
     -> Index.Index 1 2 0 0 1 1 2 2
     -> a1
@@ -276,8 +294,8 @@ cbcdc9e3a7d998d6cca24d3fc8d53484
     -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-264b8b092e0a29d1cc0c5e9207be4431
-  $sinsertWith_$sgo1 ::
+26026778b34077c1b38756e55ae584f7
+  $sinsertWith_$sgo2 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 3 2 0 0
     -> a1
@@ -285,8 +303,8 @@ cbcdc9e3a7d998d6cca24d3fc8d53484
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-74ec72735d09ac9896b1d3fa7e779542
-  $sinsertWith_$sgo2 ::
+e4af0e4a0fa42f44e0bdaa900f3f87bb
+  $sinsertWith_$sgo3 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 1 1 2 2
     -> a1
@@ -294,8 +312,8 @@ cbcdc9e3a7d998d6cca24d3fc8d53484
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 2 2) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-d5f632d11fa2995bd5f3c909693e0017
-  $sinsertWith_$sgo3 ::
+adb1afa8e41c0b4778022b350568fe82
+  $sinsertWith_$sgo4 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 0 0 3 3
     -> a1
@@ -303,8 +321,8 @@ d5f632d11fa2995bd5f3c909693e0017
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 3 3) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-4289c8182add2e28e89b12ed48e2095e
-  $sinsertWith_$sgo4 ::
+532c2bbff48f2dc0976a2fc168321d2c
+  $sinsertWith_$sgo5 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 0 0 2 2
     -> a1
@@ -312,8 +330,8 @@ d5f632d11fa2995bd5f3c909693e0017
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 2 2) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-772e695dbc3d917337788b32f236e738
-  $sinsertWith_$sgo5 ::
+6095040ca7b5a851f6d32f2ac3b1d007
+  $sinsertWith_$sgo6 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 0 0 1 1
     -> a1
@@ -321,8 +339,8 @@ d5f632d11fa2995bd5f3c909693e0017
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 1 1) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-92c0ef4adbf06327d8fac7eb4e7758e4
-  $sinsertWith_$sgo6 ::
+44f88570c1d134c5c64b0f4f2c4758aa
+  $sinsertWith_$sgo7 ::
     (a1 -> a1 -> a1)
     -> Index.Index 2 2 0 0 1 1 1 1
     -> a1
@@ -330,13 +348,13 @@ d5f632d11fa2995bd5f3c909693e0017
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 1 1) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
-e35f9df421400406f48c3172ce000087
+5e9c64293c474f13ff94c78d06d7e785
   $sinsertWith_$sgo8 ::
     (a1 -> a1 -> a1)
-    -> Index.Index 1 2 0 0 1 1 2 2
+    -> Index.Index 1 1 0 0 0 0 1 1
     -> a1
-    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a1
-    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a1
+    -> Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a1
+    -> Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
 619b3c4d831b7fe390b7e5daf83d0061
@@ -431,50 +449,57 @@ e6a6f45cdc77301bd05c4a6690a8160a
 8b7bc482700ab6689f78beb8cadb5f64
   $stensorContractWith_7 :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (2) -}
-ee5b0f44d3e804c8499f01d1ab094d22
+6c6d587c502a6f8ada778e6a414cc5fe
   $sunionWith ::
     (a -> a -> a)
-    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a
-    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a
-    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a
+    -> Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a
+    -> Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a
   {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
-e85b598f0cf7191b6f7cc90d0032448c
+8cb8ffb4e50e52d3027d39cec49770c4
   $sunionWith1 ::
     (a -> a -> a)
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a
+    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 1 2 0 0 1 1 2 2) a
   {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
-4f9630c32c0cd97536522025e1f7856a
+08ac4335f0379a6c39ed2684199dcb82
   $sunionWith2 ::
     (a -> a -> a)
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 2 2) a
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 2 2) a
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a
   {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
-5bae44b9e38d8621b35ec0b86fc239bf
+4010f2da6a3d28165484fef050d6fd25
   $sunionWith3 ::
     (a -> a -> a)
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 3 3) a
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 3 3) a
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 3 3) a
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 2 2) a
   {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
-bcaca5b15167bc56d29f70b289809892
+d19b2a755fcaa57b4a45e815ab4ccad6
   $sunionWith4 ::
     (a -> a -> a)
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 3 3) a
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 3 3) a
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 3 3) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+4609fa28b59a842bf81edfb9b21be1ea
+  $sunionWith5 ::
+    (a -> a -> a)
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 2 2) a
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 2 2) a
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 2 2) a
   {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
-ac3af7e3845239740ed3d7b7d3945fea
-  $sunionWith5 ::
+5995c0c9df9c8c8707cda1f0f9b58ba1
+  $sunionWith6 ::
     (a -> a -> a)
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 1 1) a
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 1 1) a
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 0 0 1 1) a
   {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
-d43afd68d8406bd4edc9f16289e00fa4
-  $sunionWith6 ::
+e29e4ea52cd04d81081152f14fd44bda
+  $sunionWith7 ::
     (a -> a -> a)
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 1 1) a
     -> Data.Map.Internal.Map (Index.Index 2 2 0 0 1 1 1 1) a
@@ -500,25 +525,8 @@ d43afd68d8406bd4edc9f16289e00fa4
 b98c1ae838a14aa63083a999e9f54140
   $trModule4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("main"#) -}
-0f5074d142d25d0e4b7a7db6397c6b6a
+cec582dd50014d66f911a3b1963986bf
   $w$sgo1 ::
-    Index.Uinds_20 2
-    -> Index.Linds_20 2
-    -> Index.Uinds_19 0
-    -> Index.Linds_19 0
-    -> Index.Uinds_9 3
-    -> Index.Linds_9 2
-    -> Index.Uinds_3 0
-    -> Index.Linds_3 0
-    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1
-    -> (# Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1,
-          GHC.Base.Maybe a1,
-          Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1 #)
-  {- Arity: 9,
-     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
-     Inline: [0] -}
-64529157d7935333278369a5d90eed06
-  $w$sgo13 ::
     Index.Uinds_20 1
     -> Index.Linds_20 2
     -> Index.Uinds_19 0
@@ -534,8 +542,42 @@ b98c1ae838a14aa63083a999e9f54140
   {- Arity: 9,
      Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
      Inline: [0] -}
-b73ba57cba2e8ab5c3e84c1e7d97bda2
+cd1afc71335b0094584c078fcc33aa38
+  $w$sgo13 ::
+    Index.Uinds_20 1
+    -> Index.Linds_20 1
+    -> Index.Uinds_19 0
+    -> Index.Linds_19 0
+    -> Index.Uinds_9 0
+    -> Index.Linds_9 0
+    -> Index.Uinds_3 1
+    -> Index.Linds_3 1
+    -> Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a1
+    -> (# Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a1,
+          GHC.Base.Maybe a1,
+          Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a1 #)
+  {- Arity: 9,
+     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
+     Inline: [0] -}
+05f399bceee687ae36322524863d6a28
   $w$sgo2 ::
+    Index.Uinds_20 2
+    -> Index.Linds_20 2
+    -> Index.Uinds_19 0
+    -> Index.Linds_19 0
+    -> Index.Uinds_9 3
+    -> Index.Linds_9 2
+    -> Index.Uinds_3 0
+    -> Index.Linds_3 0
+    -> Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1
+    -> (# Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1,
+          GHC.Base.Maybe a1,
+          Data.Map.Internal.Map (Index.Index 2 2 0 0 3 2 0 0) a1 #)
+  {- Arity: 9,
+     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
+     Inline: [0] -}
+c0149fb70fd173a66ea5d454d74ddad2
+  $w$sgo3 ::
     Index.Uinds_20 2
     -> Index.Linds_20 2
     -> Index.Uinds_19 0
@@ -551,8 +593,8 @@ b73ba57cba2e8ab5c3e84c1e7d97bda2
   {- Arity: 9,
      Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
      Inline: [0] -}
-fa480cfb4fc0c768b71d57080695659f
-  $w$sgo3 ::
+1d8ffb8b1e27099fb4bc31ba4444ec0c
+  $w$sgo4 ::
     Index.Uinds_20 2
     -> Index.Linds_20 2
     -> Index.Uinds_19 0
@@ -568,8 +610,8 @@ fa480cfb4fc0c768b71d57080695659f
   {- Arity: 9,
      Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
      Inline: [0] -}
-41ee446a5258dcd1ae8f2247b0daa336
-  $w$sgo4 ::
+f16788cf55e25bb76ed6886a2410d06d
+  $w$sgo5 ::
     Index.Uinds_20 2
     -> Index.Linds_20 2
     -> Index.Uinds_19 0
@@ -585,8 +627,8 @@ fa480cfb4fc0c768b71d57080695659f
   {- Arity: 9,
      Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
      Inline: [0] -}
-46220917d38994636d982cc4bce60875
-  $w$sgo5 ::
+9e976d5076b14b26a5c2d0f08e08839b
+  $w$sgo6 ::
     Index.Uinds_20 2
     -> Index.Linds_20 2
     -> Index.Uinds_19 0
@@ -602,8 +644,8 @@ fa480cfb4fc0c768b71d57080695659f
   {- Arity: 9,
      Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
      Inline: [0] -}
-89b11eacfe2c3005e03ea54ac142d1f0
-  $w$sgo6 ::
+a4da2741379a970b97a6872cb6bab219
+  $w$sgo7 ::
     Index.Uinds_20 2
     -> Index.Linds_20 2
     -> Index.Uinds_19 0
@@ -619,8 +661,8 @@ fa480cfb4fc0c768b71d57080695659f
   {- Arity: 9,
      Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
      Inline: [0] -}
-97fc621794143ef31000ef084b0a911e
-  $w$sgo7 ::
+57fadad8e14d095130851b908e078787
+  $w$sgo8 ::
     (GHC.Types.Int, GHC.Types.Int)
     -> GHC.Types.Int
     -> GHC.Types.Int
@@ -629,7 +671,7 @@ fa480cfb4fc0c768b71d57080695659f
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
   {- Arity: 5, Strictness: <L,U><L,1*U(U)><L,U(U)><L,U><S,1*U>,
      Inline: [0] -}
-b4f7023fc303c92aab4c7389e08f37bd
+fc0c6ff32761973601b6dcdeece66add
   $wansatzAB ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -694,7 +736,7 @@ b4f7023fc303c92aab4c7389e08f37bd
                  let {
                    map1 :: Data.Map.Internal.Map
                              (Index.Index 2 2 0 0 0 0 1 1) GHC.Real.Rational
-                   = AnsatzEqns2.$sunionWith5
+                   = AnsatzEqns2.$sunionWith6
                        @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                        GHC.Real.$fEnumRatio_$s$c+
                        ww5
@@ -807,7 +849,7 @@ b4f7023fc303c92aab4c7389e08f37bd
                         @ 1
                         @ 1
                         GHC.Real.$fFractionalRatio_$s$c*
-                        (AnsatzEqns2.$sunionWith5
+                        (AnsatzEqns2.$sunionWith6
                            @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                            GHC.Real.$fEnumRatio_$s$c+
                            map1
@@ -879,7 +921,7 @@ b4f7023fc303c92aab4c7389e08f37bd
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Uind_3>_N)_N
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Lind_3>_N)_N)_N
                       <GHC.Real.Rational>_R)_R } } } } } } } } } } }) -}
-d03ac754c5842563891fccccdf65aafd
+561061ae0e1f0d13212893e3ffe4132d
   $wansatzABb ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -1034,7 +1076,7 @@ d03ac754c5842563891fccccdf65aafd
                         @ 1
                         @ 1
                         GHC.Real.$fFractionalRatio_$s$c*
-                        (AnsatzEqns2.$sunionWith4
+                        (AnsatzEqns2.$sunionWith5
                            @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                            GHC.Real.$fEnumRatio_$s$c+
                            ww5
@@ -1130,7 +1172,7 @@ d03ac754c5842563891fccccdf65aafd
                          (Index.Ind (Sym (AddDef (<1>_N, <1>_N))) <Index.Uind_3>_N)_N
                          (Index.Ind (Sym (AddDef (<1>_N, <1>_N))) <Index.Lind_3>_N)_N)_N
                       <GHC.Real.Rational>_R)_R } } } } } } } } } } } }) -}
-b26a556ac3fd85e4a5af6b6182e9f733
+cfa6052c6ec86db05d8005da67290f18
   $wansatzAIB ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -1287,7 +1329,7 @@ b26a556ac3fd85e4a5af6b6182e9f733
                         @ 1
                         @ 1
                         GHC.Real.$fFractionalRatio_$s$c*
-                        (AnsatzEqns2.$sunionWith6
+                        (AnsatzEqns2.$sunionWith7
                            @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                            GHC.Real.$fEnumRatio_$s$c+
                            ww5
@@ -1383,7 +1425,7 @@ b26a556ac3fd85e4a5af6b6182e9f733
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Uind_3>_N)_N
                          (Index.Ind (Sym (Add0L (<1>_N))) <Index.Lind_3>_N)_N)_N
                       <GHC.Real.Rational>_R)_R } } } } } } } } } } } }) -}
-d5904c1245dd762083812a807dab32fb
+e75484f896d304431be2919511993bfb
   $wansatzAIBJ ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -1625,7 +1667,7 @@ d5904c1245dd762083812a807dab32fb
                  let {
                    map1 :: Data.Map.Internal.Map
                              (Index.Index 2 2 0 0 3 2 0 0) GHC.Real.Rational
-                   = AnsatzEqns2.$sunionWith1
+                   = AnsatzEqns2.$sunionWith2
                        @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                        GHC.Real.$fEnumRatio_$s$c+
                        ww21
@@ -1657,12 +1699,12 @@ d5904c1245dd762083812a807dab32fb
                         AnsatzEqns2.ansatzAIBJ1
                         AnsatzEqns2.ansatzAB6
                         ww27 of ww28 { Unit# ww29 ->
-                 (# AnsatzEqns2.$sunionWith1
+                 (# AnsatzEqns2.$sunionWith2
                       @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                       GHC.Real.$fEnumRatio_$s$c+
                       map1
                       ww29 #) } } } } } } } } } } } } } }) -}
-a6a47eeb035e97c8a609a2d104a061a9
+91594df0f5bdcd39104985e4325cb80e
   $wansatzAaBI ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -1855,7 +1897,7 @@ a6a47eeb035e97c8a609a2d104a061a9
                         @ 1
                         @ 1
                         GHC.Real.$fFractionalRatio_$s$c*
-                        (AnsatzEqns2.$sunionWith2
+                        (AnsatzEqns2.$sunionWith3
                            @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                            GHC.Real.$fEnumRatio_$s$c+
                            ww5
@@ -1951,7 +1993,7 @@ a6a47eeb035e97c8a609a2d104a061a9
                          (Index.Ind (Sym (AddDef (<1>_N, <1>_N))) <Index.Uind_3>_N)_N
                          (Index.Ind (Sym (AddDef (<1>_N, <1>_N))) <Index.Lind_3>_N)_N)_N
                       <GHC.Real.Rational>_R)_R } } } } } } } } } } } } } }) -}
-051d27d982b2c379771b268056b27bff
+199651593e3acd5d33fe78b61ae851c3
   $wansatzAaBb ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -2040,7 +2082,7 @@ a6a47eeb035e97c8a609a2d104a061a9
                  let {
                    map1 :: Data.Map.Internal.Map
                              (Index.Index 2 2 0 0 0 0 3 3) GHC.Real.Rational
-                   = AnsatzEqns2.$sunionWith3
+                   = AnsatzEqns2.$sunionWith4
                        @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                        GHC.Real.$fEnumRatio_$s$c+
                        ww5
@@ -2166,7 +2208,7 @@ a6a47eeb035e97c8a609a2d104a061a9
                         @ 1
                         @ 1
                         GHC.Real.$fFractionalRatio_$s$c*
-                        (AnsatzEqns2.$sunionWith3
+                        (AnsatzEqns2.$sunionWith4
                            @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
                            GHC.Real.$fEnumRatio_$s$c+
                            map1
@@ -2247,7 +2289,7 @@ f0266494cd8fabebe383e69eae3217ca
     -> (# Data.Map.Internal.Map
             (Index.Index 1 2 0 0 1 1 2 2) GHC.Real.Rational #)
   {- Arity: 4, Strictness: <L,U><L,U><L,U><L,U>, Inline: [0] -}
-9764913ac7b1830305ac24b7f2cc3073
+fae07c650e63c22715d4538b0b5ba409
   $wintCondfirstOrder ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -2257,6 +2299,18 @@ f0266494cd8fabebe383e69eae3217ca
      Unfolding: (\ (w :: Data.Map.Internal.Map
                            (Index.Linds_3 4) Index.Uind_20)
                    (w1 :: Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20) ->
+                 case AnsatzEqns2.ansatzABb3
+                        `cast`
+                      (Tensor.Tensor
+                         (Add0R (<1>_N))
+                         (Add0R (<1>_N))
+                         (Add0L (<0>_N))
+                         (Add0L (<0>_N))
+                         (Add0L (<0>_N))
+                         (Add0L (<0>_N))
+                         (Add0L (<1>_N))
+                         (Add0L (<1>_N))
+                         <GHC.Real.Rational>_R)_R of wild { Tensor.Tensor map1 ->
                  case BasicTensors.$winterArea w w1 of ww { Unit# ww2 ->
                  case BasicTensors.$wflatArea w1 of ww1 { Unit# ww3 ->
                  case Tensor.$wtensorProductWith
@@ -2337,7 +2391,11 @@ f0266494cd8fabebe383e69eae3217ca
                         @ 1
                         @ 1
                         GHC.Real.$fFractionalRatio_$s$c*
-                        ww2
+                        (AnsatzEqns2.$sunionWith
+                           @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                           GHC.Real.$fEnumRatio_$s$c+
+                           map1
+                           ww2)
                         ww8 of ww9 { Unit# ww10 ->
                  case Tensor.$wtensorContractWith_20
                         @ 0
@@ -2405,7 +2463,7 @@ f0266494cd8fabebe383e69eae3217ca
                       (Tensor.aSymTensor3 @ 0 @ 1 @ 0 @ 0 @ 0 @ 0 @ 2 @ 2)
                       GHC.Real.$fEnumRatio_$s$c+
                       ww12
-                      (AnsatzEqns2.intCondfirstOrder_go8 ww16) #) } } } } } } } }) -}
+                      (AnsatzEqns2.intCondfirstOrder_go8 ww16) #) } } } } } } } } }) -}
 c6af19c64ad2d709d169338df8eeb43d
   $wmkEqnSparseAnsatzAB ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
@@ -2868,7 +2926,7 @@ ddaf924acfbb066aa3063b0ee9a52de7
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-ea87f2dac4b7795ca0f8f4de5eaafaf9
+fae7acd10a0487cab8723ed17b206572
   ansatzAB ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -2914,7 +2972,7 @@ c0cb52b3f769530ed7a7183d2298ddc8
   ansatzAB6 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
      Unfolding: ((AnsatzEqns2.ansatzAB2, AnsatzEqns2.ansatzAB4)) -}
-7393700d86a61a2f1836d314ea118ebe
+be060eb98cc35975fbff967d86cf45f1
   ansatzABb ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -2995,7 +3053,7 @@ c0cb52b3f769530ed7a7183d2298ddc8
                    @ (0 GHC.TypeNats.+ 1)
                    @ GHC.Real.Rational
                    ww5 } } }) -}
-4ad72bd6b1ccac6c93269d09781bb9fc
+e707c07833c661f78a365b5faaf5d037
   ansatzAIB ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -3068,7 +3126,7 @@ c0cb52b3f769530ed7a7183d2298ddc8
                    @ (0 GHC.TypeNats.+ 0)
                    @ GHC.Real.Rational
                    ww5 } } }) -}
-79da99d88d4a925f8326da269f2b894c
+6c2c61cc2df8b5320781fb01bafdb09d
   ansatzAIBJ ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -3099,7 +3157,7 @@ c681d89286d71da6a326679bb8c72319
 a0e05f3312b535059d1fb987562e89fb
   ansatzAIBJ2 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 5#) -}
-e1be3457de5b7bd3582e8a5d5542914e
+05cd312bc73ebd6101fdebf520f69f00
   ansatzAaBI ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -3124,7 +3182,7 @@ e1be3457de5b7bd3582e8a5d5542914e
                    @ 1
                    @ GHC.Real.Rational
                    ww1 }) -}
-99a9e26892367cf5282752b9c5b73f4f
+49935f6a038581eb36a0e82a123cd587
   ansatzAaBb ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -3195,7 +3253,7 @@ a227c8b008f75c5235615f93a9b5c4c1
                    @ 2
                    @ GHC.Real.Rational
                    ww1 }) -}
-523dfefeac2d3256a8532703a479db2e
+bfd28ca3e964fa0f0ab3748976381624
   intCondfirstOrder ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -3451,6 +3509,24 @@ c79a79e5ff4f133fb6c4989d23b0bf08
                              @ a
                              $dOrd
   = AnsatzEqns2.$sfromList @ a
+"SPEC/AnsatzEqns2 unionWith @ (Index 1 1 0 0 0 0 1 1) _" [orphan] forall @ a
+                                                                         ($dOrd :: GHC.Classes.Ord
+                                                                                     (Index.Index
+                                                                                        1
+                                                                                        1
+                                                                                        0
+                                                                                        0
+                                                                                        0
+                                                                                        0
+                                                                                        1
+                                                                                        1))
+  Data.Map.Strict.Internal.unionWith @ (Index.Uinds_20 1,
+                                        Index.Linds_20 1, Index.Uinds_19 0, Index.Linds_19 0,
+                                        Index.Uinds_9 0, Index.Linds_9 0, Index.Uinds_3 1,
+                                        Index.Linds_3 1)
+                                     @ a
+                                     $dOrd
+  = AnsatzEqns2.$sunionWith @ a
 "SPEC/AnsatzEqns2 unionWith @ (Index 1 2 0 0 1 1 2 2) _" [orphan] forall @ a
                                                                          ($dOrd :: GHC.Classes.Ord
                                                                                      (Index.Index
@@ -3468,7 +3544,7 @@ c79a79e5ff4f133fb6c4989d23b0bf08
                                         Index.Linds_3 2)
                                      @ a
                                      $dOrd
-  = AnsatzEqns2.$sunionWith @ a
+  = AnsatzEqns2.$sunionWith1 @ a
 "SPEC/AnsatzEqns2 unionWith @ (Index 2 2 0 0 0 0 1 1) _" [orphan] forall @ a
                                                                          ($dOrd :: GHC.Classes.Ord
                                                                                      (Index.Index
@@ -3486,7 +3562,7 @@ c79a79e5ff4f133fb6c4989d23b0bf08
                                         Index.Linds_3 1)
                                      @ a
                                      $dOrd
-  = AnsatzEqns2.$sunionWith5 @ a
+  = AnsatzEqns2.$sunionWith6 @ a
 "SPEC/AnsatzEqns2 unionWith @ (Index 2 2 0 0 0 0 2 2) _" [orphan] forall @ a
                                                                          ($dOrd :: GHC.Classes.Ord
                                                                                      (Index.Index
@@ -3504,7 +3580,7 @@ c79a79e5ff4f133fb6c4989d23b0bf08
                                         Index.Linds_3 2)
                                      @ a
                                      $dOrd
-  = AnsatzEqns2.$sunionWith4 @ a
+  = AnsatzEqns2.$sunionWith5 @ a
 "SPEC/AnsatzEqns2 unionWith @ (Index 2 2 0 0 0 0 3 3) _" [orphan] forall @ a
                                                                          ($dOrd :: GHC.Classes.Ord
                                                                                      (Index.Index
@@ -3522,7 +3598,7 @@ c79a79e5ff4f133fb6c4989d23b0bf08
                                         Index.Linds_3 3)
                                      @ a
                                      $dOrd
-  = AnsatzEqns2.$sunionWith3 @ a
+  = AnsatzEqns2.$sunionWith4 @ a
 "SPEC/AnsatzEqns2 unionWith @ (Index 2 2 0 0 1 1 1 1) _" [orphan] forall @ a
                                                                          ($dOrd :: GHC.Classes.Ord
                                                                                      (Index.Index
@@ -3540,7 +3616,7 @@ c79a79e5ff4f133fb6c4989d23b0bf08
                                         Index.Linds_3 1)
                                      @ a
                                      $dOrd
-  = AnsatzEqns2.$sunionWith6 @ a
+  = AnsatzEqns2.$sunionWith7 @ a
 "SPEC/AnsatzEqns2 unionWith @ (Index 2 2 0 0 1 1 2 2) _" [orphan] forall @ a
                                                                          ($dOrd :: GHC.Classes.Ord
                                                                                      (Index.Index
@@ -3558,7 +3634,7 @@ c79a79e5ff4f133fb6c4989d23b0bf08
                                         Index.Linds_3 2)
                                      @ a
                                      $dOrd
-  = AnsatzEqns2.$sunionWith2 @ a
+  = AnsatzEqns2.$sunionWith3 @ a
 "SPEC/AnsatzEqns2 unionWith @ (Index 2 2 0 0 3 2 0 0) _" [orphan] forall @ a
                                                                          ($dOrd :: GHC.Classes.Ord
                                                                                      (Index.Index
@@ -3576,7 +3652,7 @@ c79a79e5ff4f133fb6c4989d23b0bf08
                                         Index.Linds_3 0)
                                      @ a
                                      $dOrd
-  = AnsatzEqns2.$sunionWith1 @ a
+  = AnsatzEqns2.$sunionWith2 @ a
 vectorised variables:
 vectorised tycons:
 vectorised reused tycons:

@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-14 11:31:22.102095 UTC
+2019-01-14 15:48:15.57904 UTC
 
 interface main:EquivarianceEqns [hpc] 8043
-  interface hash: 58c288cc1e4912a722ec163aa0910305
-  ABI hash: 328105ba29cf8bbc07964656fa9d8b53
+  interface hash: 270f15584cf5036d0ddc88b1b2d80d25
+  ABI hash: 944da51003f384ade1029a7d52cf5384
   export-list hash: 84062590276b987b26bd45d594b7213f
   orphan hash: f652871fd98e1d3ac53d97e3ce61f2f6
   flag hash: 034627c3e6816f7545a7b63584c609bb
@@ -80,31 +80,31 @@ import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.Map 0dbdaec812ef695a364aa6c69e7f7d53
 import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
-import  -/  BasicTensors d4363735d8d89b5596a5cfb59fbaa771
-  exports: 867791133ab0dbc401ec9d976534d4e5
-  delta_20 a12e0bf55fbca556e82591a334e54a64
-  delta_3 f8623c08b91ede6b0091299a725d4ab7
-  delta_9 e9324645d3138b43f168fb5d060d9a92
-  flatArea bbf091d9addc9a92105b91e0f02cc79f
-  interArea 1b6b8bad098e65d425eee3f6f4818547
-  interI_2 a312564a95110470c4f2745710d59689
-  interI_3 79b7d807d559a622673827f93c22be35
-  interJ_2 9b79bc13ca20b85449870e1022aff4c3
-  interMetric 6dcab690508dd8b81188385a28f8e287
-  ivar1 cf972eb167147cb80cfd7947853138d8
-  ivar2 e08f22b10e9305c52cd4b52ac27970a7
-  ivar3 7028031b481a685623cb77dbc8aceda9
-import  -/  Index 4e45ffe97a9e3350beda6ba6fddd508e
+import  -/  BasicTensors 0df78451cdb64d61e6036444805588ff
+  exports: e3eb46cbf5e0ff0a91078b17412e1317
+  delta_20 b77804eb482505214a8985e4180aefe4
+  delta_3 746fafc3bda1c359b0397abeed82111a
+  delta_9 d22b99ceb5d7fccaba80523aeb233ebd
+  flatArea dafe102fa9e82f4531fea855a20ac749
+  interArea 1e922b70f8b8767391aca79280ddd758
+  interI_2 c8752b46a2fc2f04c0a3069d6d1c6ce8
+  interI_3 c1f77ae09fc7268af2bcc60cec1b5e02
+  interJ_2 362b1aa162de63a16d8e4ffc4dc03f56
+  interMetric b140de30bf770a3116b03bc7af40f1a6
+  ivar1 8b471a502ffac0852153477c861d9c1f
+  ivar2 aea9be9d36fe75d738a156f5e656bb7a
+  ivar3 8bcbbf6641dbd4732fdfc4c1fe79b2d4
+import  -/  Index e389b597f52dbfefe3745bcba1949c62
   exports: 02acfc58131cc32506762c89c9bc64b7
-  Index 20ea1ce731123e1c4a29c95a066e5a72
-  Lind_20 e4ac8c6f7ebef7ec8e61c4d2cfb1eb39
-  Lind_9 4aee189fe42e76ae12f56b446871f579
-  Linds_3 d96a0ea977d5e85b62cd5a4bb306555b
-  Uind_19 5617b560a7323420bf5fc6665a89c5da
-  Uind_20 48afc3e8961cc0b26810f59a3ecd189e
-  Uind_9 56099c3d674cbe5024bf0cce617d25f7
-  Uinds_3 1dd738c5bf5e3d67af91d29761e9a9ea
-  getValInd 532498a9d05dd6bfa58ced3cada61264
+  Index a01a9190ec51cc115d3358a99c063fe2
+  Lind_20 9976c80afe3129a8da6eeef509cd939d
+  Lind_9 199ec47d455794929a9c39c4489984a9
+  Linds_3 b7f25c6c6ec24e0defe93a5bf531b4b2
+  Uind_19 d671ee312bb9cf797ac44fea3cd70c8f
+  Uind_20 b5e99ed389304ee9c82083925596c8cb
+  Uind_9 8fce60bf392f1d712124e42ff35dcfc1
+  Uinds_3 311b0a992b6841d7d23b3d8756aed0ef
+  getValInd b1c032a982e0f73608bad6b7953c3ea2
 import  -/  Ivar 52a8dc212ab2f8456a526e9d381a1784
   exports: 847b7f62b7be31da91814bf314ffd8e5
   Ivar ab6885cb499b09a96006f6f783229377
@@ -114,18 +114,18 @@ import  -/  Ivar 52a8dc212ab2f8456a526e9d381a1784
   showIvarRational 81569a7fc8cbc713ce37361cbb7fb2a6
 import  -/  Pde 6cb99ff48b3771dcca3d3397050c4c62
   exports: cfda6ba989dea29b657cfa7f1b7972bc
-import  -/  Tensor 88b99fd1b88cbea55a626a90a73dd2b2
-  exports: 1f9546fa9c961086005dc0c53843135a
-  Tensor 61e35ef6c9a6611fa135938208248967
-  Tensor 3ab1a6a46c1592b826cacc18b7d3183c
-  tensorAdd 4349b34508e930ef1dea91c900812cb6
-  tensorContractWith_20 0ed633e005cddd886e47ee44a729ae97
-  tensorContractWith_3 32b1524ea23a0fe2397cbf4893bf7082
-  tensorContractWith_9 50d1dc79c4d8b26159393b0de556f618
-  tensorProductWith cffa20a3309e88d9f99b616ada68e984
-  tensorSMult 9dff6de0dd0a75bddc7cc8f0cd7eca2d
-  tensorSub b3ba3aa7428b7472f46218743de635c8
-  tensorTranspose abf7043c548be68c6d28ead296b47924
+import  -/  Tensor 70d6952dea62d47ab6f2d598c8b571ec
+  exports: cc1f578937ee3122bbbb4f8cf3eb8582
+  Tensor 9baff54d5c983efc9b4dd7dd14f4d579
+  Tensor 6b5aa7fabc304949e9aed286ed95183b
+  tensorAdd 3f2d80707436db7c861987a2763b8ae6
+  tensorContractWith_20 0d2a4af00084d1d61ca64810a39ab9ae
+  tensorContractWith_3 d4730f4187bd6ebe8b3dd0280edaf514
+  tensorContractWith_9 8930e2e4933f3ae0d2c7678e040aa484
+  tensorProductWith 1110039333b95adaab3b9466e9a23aae
+  tensorSMult 87ac1fc931fedd0d8cbb4f13a3cf68b2
+  tensorSub 631c1c57b5264eed0ff22494ec87ff89
+  tensorTranspose 317a8f2f993e8cc2a39a39388f3629fe
 898ed50c8dfef9764aa4a10d47443c26
   $sfromList ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
@@ -350,7 +350,7 @@ df3fb35d6696e12cc3c026791a008ba8
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
   {- Arity: 5, Strictness: <L,U><L,1*U(U)><L,U(U)><L,U><S,1*U>,
      Inline: [0] -}
-7d32cda590eda47f0b65073823fe6ba1
+89ce2aee2a00ed9dc8d61d3978f2c0ce
   $weqn1_1 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -439,7 +439,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                               <Index.Lind_3>_N)_N)_N
                                                                         <Ivar.Ivar
                                                                            GHC.Real.Rational>_R)_R } } }) -}
-774c5656c63d12c27a575b7833272f24
+411a53849a025fe0a2f14e854336b7a1
   $weqn1_1Flat ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -527,7 +527,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                   (Add0R (<1>_N))
                                                                                   <Index.Lind_3>_N)_N)_N
                                                                             <GHC.Real.Rational>_R)_R } } }) -}
-6b6e44f0ede8a70f320605f41f794576
+fd6b2ff42909765f064a582bb425ca21
   $weqn1_2 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -576,82 +576,62 @@ df3fb35d6696e12cc3c026791a008ba8
                          (Add0R (<2>_N))
                          (Add0R (<2>_N))
                          <GHC.Real.Rational>_R)_R of ww7 { Tensor.Tensor ww8 ->
-                 case {__scc {main:EquivarianceEqns.eqn1_2} False True} {__scc {main:EquivarianceEqns.eqn1_2.intTotal} False True} {__scc {main:Tensor.tensorSub} True True} {__scc {main:Tensor.tensorSMult} True False} {__scc {main:Tensor.tensorSMult} False True} {__scc {main:Tensor.fmap} True False} Tensor.Tensor
-                                                                                                                                                                                                                                                                                                               @ 1
-                                                                                                                                                                                                                                                                                                               @ 1
-                                                                                                                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                                                                                                                               @ 2
-                                                                                                                                                                                                                                                                                                               @ 2
-                                                                                                                                                                                                                                                                                                               @ GHC.Real.Rational
-                                                                                                                                                                                                                                                                                                               ({__scc {main:Tensor.fmap} False True} EquivarianceEqns.eqn1_2_go8
-                                                                                                                                                                                                                                                                                                                                                        ww8) of ww9 { Tensor.Tensor ww10 ->
-                 case {__scc {main:EquivarianceEqns.eqn1_2} False True} {__scc {main:EquivarianceEqns.eqn1_2.intTotal} False True} {__scc {main:Tensor.tensorSub} False True} {__scc {main:Tensor.tensorAdd} True False} Tensor.Tensor
-                                                                                                                                                                                                                           @ 1
-                                                                                                                                                                                                                           @ 1
-                                                                                                                                                                                                                           @ 0
-                                                                                                                                                                                                                           @ 0
-                                                                                                                                                                                                                           @ 0
-                                                                                                                                                                                                                           @ 0
-                                                                                                                                                                                                                           @ 2
-                                                                                                                                                                                                                           @ 2
-                                                                                                                                                                                                                           @ GHC.Real.Rational
-                                                                                                                                                                                                                           ({__scc {main:Tensor.tensorAdd} False True} Data.Map.Strict.Internal.unionWith
-                                                                                                                                                                                                                                                                         @ (Index.Index
-                                                                                                                                                                                                                                                                              1
-                                                                                                                                                                                                                                                                              1
-                                                                                                                                                                                                                                                                              0
-                                                                                                                                                                                                                                                                              0
-                                                                                                                                                                                                                                                                              0
-                                                                                                                                                                                                                                                                              0
-                                                                                                                                                                                                                                                                              2
-                                                                                                                                                                                                                                                                              2)
-                                                                                                                                                                                                                                                                         @ GHC.Real.Rational
-                                                                                                                                                                                                                                                                         (Tensor.aSymTensor3
-                                                                                                                                                                                                                                                                            @ 1
-                                                                                                                                                                                                                                                                            @ 1
-                                                                                                                                                                                                                                                                            @ 0
-                                                                                                                                                                                                                                                                            @ 0
-                                                                                                                                                                                                                                                                            @ 0
-                                                                                                                                                                                                                                                                            @ 0
-                                                                                                                                                                                                                                                                            @ 2
-                                                                                                                                                                                                                                                                            @ 2)
-                                                                                                                                                                                                                                                                         EquivarianceEqns.eqn1_2_lvl19
-                                                                                                                                                                                                                                                                         ww5
-                                                                                                                                                                                                                                                                           `cast`
-                                                                                                                                                                                                                                                                         (Data.Map.Internal.Map
-                                                                                                                                                                                                                                                                            ((,,,,,,,)
-                                                                                                                                                                                                                                                                               (Index.Ind
-                                                                                                                                                                                                                                                                                  (Add0R (<1>_N))
-                                                                                                                                                                                                                                                                                  <Index.Uind_20>_N)_N
-                                                                                                                                                                                                                                                                               (Index.Ind
-                                                                                                                                                                                                                                                                                  (Add0R (<1>_N))
-                                                                                                                                                                                                                                                                                  <Index.Lind_20>_N)_N
-                                                                                                                                                                                                                                                                               (Index.Ind
-                                                                                                                                                                                                                                                                                  (Add0L (<0>_N))
-                                                                                                                                                                                                                                                                                  <Index.Uind_19>_N)_N
-                                                                                                                                                                                                                                                                               (Index.Ind
-                                                                                                                                                                                                                                                                                  (Add0L (<0>_N))
-                                                                                                                                                                                                                                                                                  <Index.Lind_19>_N)_N
-                                                                                                                                                                                                                                                                               (Index.Ind
-                                                                                                                                                                                                                                                                                  (Add0L (<0>_N))
-                                                                                                                                                                                                                                                                                  <Index.Uind_9>_N)_N
-                                                                                                                                                                                                                                                                               (Index.Ind
-                                                                                                                                                                                                                                                                                  (Add0L (<0>_N))
-                                                                                                                                                                                                                                                                                  <Index.Lind_9>_N)_N
-                                                                                                                                                                                                                                                                               (Index.Ind
-                                                                                                                                                                                                                                                                                  (AddDef (<1>_N,
-                                                                                                                                                                                                                                                                                           <1>_N))
-                                                                                                                                                                                                                                                                                  <Index.Uind_3>_N)_N
-                                                                                                                                                                                                                                                                               (Index.Ind
-                                                                                                                                                                                                                                                                                  (AddDef (<1>_N,
-                                                                                                                                                                                                                                                                                           <1>_N))
-                                                                                                                                                                                                                                                                                  <Index.Lind_3>_N)_N)_N
-                                                                                                                                                                                                                                                                            <GHC.Real.Rational>_R)_R
-                                                                                                                                                                                                                                                                         ww10) of ww11 { Tensor.Tensor ww12 ->
-                 case BasicTensors.ivar2 of ww13 { Tensor.Tensor ww14 ->
+                 case {__scc {main:EquivarianceEqns.eqn1_2} False True} {__scc {main:EquivarianceEqns.eqn1_2.intTotal} False True} {__scc {main:Tensor.tensorSub} True True} {__scc {main:Tensor.tensorSMult} True False} {__scc {main:Tensor.tensorSMult} False True} {__scc {main:Tensor.fmap} True True} EquivarianceEqns.eqn1_2_go8
+                                                                                                                                                                                                                                                                                                              ww8 of dt1 { DEFAULT ->
+                 case {__scc {main:EquivarianceEqns.eqn1_2} False True} {__scc {main:EquivarianceEqns.eqn1_2.intTotal} False True} {__scc {main:Tensor.tensorSub} False True} {__scc {main:Tensor.tensorAdd} True False} {__scc {main:Tensor.tensorAdd} False True} Data.Map.Strict.Internal.unionWith
+                                                                                                                                                                                                                                                                      @ (Index.Index
+                                                                                                                                                                                                                                                                           1
+                                                                                                                                                                                                                                                                           1
+                                                                                                                                                                                                                                                                           0
+                                                                                                                                                                                                                                                                           0
+                                                                                                                                                                                                                                                                           0
+                                                                                                                                                                                                                                                                           0
+                                                                                                                                                                                                                                                                           2
+                                                                                                                                                                                                                                                                           2)
+                                                                                                                                                                                                                                                                      @ GHC.Real.Rational
+                                                                                                                                                                                                                                                                      (Tensor.aSymTensor3
+                                                                                                                                                                                                                                                                         @ 1
+                                                                                                                                                                                                                                                                         @ 1
+                                                                                                                                                                                                                                                                         @ 0
+                                                                                                                                                                                                                                                                         @ 0
+                                                                                                                                                                                                                                                                         @ 0
+                                                                                                                                                                                                                                                                         @ 0
+                                                                                                                                                                                                                                                                         @ 2
+                                                                                                                                                                                                                                                                         @ 2)
+                                                                                                                                                                                                                                                                      EquivarianceEqns.eqn1_2_lvl19
+                                                                                                                                                                                                                                                                      ww5
+                                                                                                                                                                                                                                                                        `cast`
+                                                                                                                                                                                                                                                                      (Data.Map.Internal.Map
+                                                                                                                                                                                                                                                                         ((,,,,,,,)
+                                                                                                                                                                                                                                                                            (Index.Ind
+                                                                                                                                                                                                                                                                               (Add0R (<1>_N))
+                                                                                                                                                                                                                                                                               <Index.Uind_20>_N)_N
+                                                                                                                                                                                                                                                                            (Index.Ind
+                                                                                                                                                                                                                                                                               (Add0R (<1>_N))
+                                                                                                                                                                                                                                                                               <Index.Lind_20>_N)_N
+                                                                                                                                                                                                                                                                            (Index.Ind
+                                                                                                                                                                                                                                                                               (Add0L (<0>_N))
+                                                                                                                                                                                                                                                                               <Index.Uind_19>_N)_N
+                                                                                                                                                                                                                                                                            (Index.Ind
+                                                                                                                                                                                                                                                                               (Add0L (<0>_N))
+                                                                                                                                                                                                                                                                               <Index.Lind_19>_N)_N
+                                                                                                                                                                                                                                                                            (Index.Ind
+                                                                                                                                                                                                                                                                               (Add0L (<0>_N))
+                                                                                                                                                                                                                                                                               <Index.Uind_9>_N)_N
+                                                                                                                                                                                                                                                                            (Index.Ind
+                                                                                                                                                                                                                                                                               (Add0L (<0>_N))
+                                                                                                                                                                                                                                                                               <Index.Lind_9>_N)_N
+                                                                                                                                                                                                                                                                            (Index.Ind
+                                                                                                                                                                                                                                                                               (AddDef (<1>_N,
+                                                                                                                                                                                                                                                                                        <1>_N))
+                                                                                                                                                                                                                                                                               <Index.Uind_3>_N)_N
+                                                                                                                                                                                                                                                                            (Index.Ind
+                                                                                                                                                                                                                                                                               (AddDef (<1>_N,
+                                                                                                                                                                                                                                                                                        <1>_N))
+                                                                                                                                                                                                                                                                               <Index.Lind_3>_N)_N)_N
+                                                                                                                                                                                                                                                                         <GHC.Real.Rational>_R)_R
+                                                                                                                                                                                                                                                                      dt1 of dt2 { DEFAULT ->
+                 case BasicTensors.ivar2 of ww9 { Tensor.Tensor ww10 ->
                  case {__scc {main:EquivarianceEqns.eqn1_2} False True} {__scc {main:EquivarianceEqns.eqn1_2.prod} False True} Tensor.$wtensorProductWith
                                                                                                                                  @ GHC.Real.Rational
                                                                                                                                  @ (Ivar.Ivar
@@ -675,8 +655,8 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                                                                  @ 0
                                                                                                                                  @ 1
                                                                                                                                  EquivarianceEqns.eqn1_18
-                                                                                                                                 ww12
-                                                                                                                                 ww14 of ww15 { Unit# ww16 ->
+                                                                                                                                 dt2
+                                                                                                                                 ww10 of ww11 { Unit# ww12 ->
                  case {__scc {main:EquivarianceEqns.eqn1_2} False True} Tensor.$wtensorContractWith_3
                                                                           @ 1
                                                                           @ 2
@@ -698,7 +678,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                     <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
                                                                           EquivarianceEqns.eqn1_16
                                                                           EquivarianceEqns.eqn1_7
-                                                                          ww16
+                                                                          ww12
                                                                             `cast`
                                                                           (Data.Map.Internal.Map
                                                                              ((,,,,,,,)
@@ -730,7 +710,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                     GHC.TypeNats.+ 1)
                                                                                    Index.Lind_3>_N)_N
                                                                              <Ivar.Ivar
-                                                                                GHC.Real.Rational>_R)_R of ww17 { Unit# ww18 ->
+                                                                                GHC.Real.Rational>_R)_R of ww13 { Unit# ww14 ->
                  {__scc {main:EquivarianceEqns.eqn1_2} False True} Tensor.$wtensorContractWith_20
                                                                      @ 0
                                                                      @ 1
@@ -751,7 +731,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
                                                                      EquivarianceEqns.eqn1_10
                                                                      EquivarianceEqns.eqn1_7
-                                                                     ww18
+                                                                     ww14
                                                                        `cast`
                                                                      (Data.Map.Internal.Map
                                                                         ((,,,,,,,)
@@ -776,7 +756,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                               2 Index.Lind_3>_N)_N
                                                                         <Ivar.Ivar
                                                                            GHC.Real.Rational>_R)_R } } } } } } } } }) -}
-593c0f2d9e722b330adefa08d34f1596
+d4a2159e91b53151a18b3f64be8feebe
   $weqn1_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -844,96 +824,86 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                                                                  GHC.Real.$fFractionalRatio_$s$c*
                                                                                                                                  ww8
                                                                                                                                  ww10 of ww11 { Unit# ww12 ->
-                 case {__scc {main:EquivarianceEqns.eqn1_3} False True} {__scc {main:EquivarianceEqns.eqn1_3.intTotal} False True} {__scc {main:Tensor.tensorAdd} True False} Tensor.Tensor
-                                                                                                                                                                                @ 1
-                                                                                                                                                                                @ 1
-                                                                                                                                                                                @ 0
-                                                                                                                                                                                @ 0
-                                                                                                                                                                                @ 1
-                                                                                                                                                                                @ 1
-                                                                                                                                                                                @ 1
-                                                                                                                                                                                @ 1
-                                                                                                                                                                                @ GHC.Real.Rational
-                                                                                                                                                                                ({__scc {main:Tensor.tensorAdd} False True} Data.Map.Strict.Internal.unionWith
-                                                                                                                                                                                                                              @ (Index.Index
-                                                                                                                                                                                                                                   1
-                                                                                                                                                                                                                                   1
-                                                                                                                                                                                                                                   0
-                                                                                                                                                                                                                                   0
-                                                                                                                                                                                                                                   1
-                                                                                                                                                                                                                                   1
-                                                                                                                                                                                                                                   1
-                                                                                                                                                                                                                                   1)
-                                                                                                                                                                                                                              @ GHC.Real.Rational
-                                                                                                                                                                                                                              (Tensor.aSymTensor3
-                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                 @ 0
-                                                                                                                                                                                                                                 @ 0
-                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                 @ 1)
-                                                                                                                                                                                                                              EquivarianceEqns.eqn1_2_lvl19
-                                                                                                                                                                                                                              ww5
-                                                                                                                                                                                                                                `cast`
-                                                                                                                                                                                                                              (Data.Map.Internal.Map
-                                                                                                                                                                                                                                 ((,,,,,,,)
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0R (<1>_N))
-                                                                                                                                                                                                                                       <Index.Uind_20>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0R (<1>_N))
-                                                                                                                                                                                                                                       <Index.Lind_20>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0L (<0>_N))
-                                                                                                                                                                                                                                       <Index.Uind_19>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0L (<0>_N))
-                                                                                                                                                                                                                                       <Index.Lind_19>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0L (<1>_N))
-                                                                                                                                                                                                                                       <Index.Uind_9>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0L (<1>_N))
-                                                                                                                                                                                                                                       <Index.Lind_9>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0R (<1>_N))
-                                                                                                                                                                                                                                       <Index.Uind_3>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0R (<1>_N))
-                                                                                                                                                                                                                                       <Index.Lind_3>_N)_N)_N
-                                                                                                                                                                                                                                 <GHC.Real.Rational>_R)_R
-                                                                                                                                                                                                                              ww12
-                                                                                                                                                                                                                                `cast`
-                                                                                                                                                                                                                              (Data.Map.Internal.Map
-                                                                                                                                                                                                                                 ((,,,,,,,)
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0L (<1>_N))
-                                                                                                                                                                                                                                       <Index.Uind_20>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0L (<1>_N))
-                                                                                                                                                                                                                                       <Index.Lind_20>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0L (<0>_N))
-                                                                                                                                                                                                                                       <Index.Uind_19>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0L (<0>_N))
-                                                                                                                                                                                                                                       <Index.Lind_19>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0R (<1>_N))
-                                                                                                                                                                                                                                       <Index.Uind_9>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0R (<1>_N))
-                                                                                                                                                                                                                                       <Index.Lind_9>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0R (<1>_N))
-                                                                                                                                                                                                                                       <Index.Uind_3>_N)_N
-                                                                                                                                                                                                                                    (Index.Ind
-                                                                                                                                                                                                                                       (Add0R (<1>_N))
-                                                                                                                                                                                                                                       <Index.Lind_3>_N)_N)_N
-                                                                                                                                                                                                                                 <GHC.Real.Rational>_R)_R) of ww13 { Tensor.Tensor ww14 ->
-                 case BasicTensors.ivar3 of ww15 { Tensor.Tensor ww16 ->
+                 case {__scc {main:EquivarianceEqns.eqn1_3} False True} {__scc {main:EquivarianceEqns.eqn1_3.intTotal} False True} {__scc {main:Tensor.tensorAdd} True False} {__scc {main:Tensor.tensorAdd} False True} Data.Map.Strict.Internal.unionWith
+                                                                                                                                                                                                                           @ (Index.Index
+                                                                                                                                                                                                                                1
+                                                                                                                                                                                                                                1
+                                                                                                                                                                                                                                0
+                                                                                                                                                                                                                                0
+                                                                                                                                                                                                                                1
+                                                                                                                                                                                                                                1
+                                                                                                                                                                                                                                1
+                                                                                                                                                                                                                                1)
+                                                                                                                                                                                                                           @ GHC.Real.Rational
+                                                                                                                                                                                                                           (Tensor.aSymTensor3
+                                                                                                                                                                                                                              @ 1
+                                                                                                                                                                                                                              @ 1
+                                                                                                                                                                                                                              @ 0
+                                                                                                                                                                                                                              @ 0
+                                                                                                                                                                                                                              @ 1
+                                                                                                                                                                                                                              @ 1
+                                                                                                                                                                                                                              @ 1
+                                                                                                                                                                                                                              @ 1)
+                                                                                                                                                                                                                           EquivarianceEqns.eqn1_2_lvl19
+                                                                                                                                                                                                                           ww5
+                                                                                                                                                                                                                             `cast`
+                                                                                                                                                                                                                           (Data.Map.Internal.Map
+                                                                                                                                                                                                                              ((,,,,,,,)
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0R (<1>_N))
+                                                                                                                                                                                                                                    <Index.Uind_20>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0R (<1>_N))
+                                                                                                                                                                                                                                    <Index.Lind_20>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0L (<0>_N))
+                                                                                                                                                                                                                                    <Index.Uind_19>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0L (<0>_N))
+                                                                                                                                                                                                                                    <Index.Lind_19>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0L (<1>_N))
+                                                                                                                                                                                                                                    <Index.Uind_9>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0L (<1>_N))
+                                                                                                                                                                                                                                    <Index.Lind_9>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0R (<1>_N))
+                                                                                                                                                                                                                                    <Index.Uind_3>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0R (<1>_N))
+                                                                                                                                                                                                                                    <Index.Lind_3>_N)_N)_N
+                                                                                                                                                                                                                              <GHC.Real.Rational>_R)_R
+                                                                                                                                                                                                                           ww12
+                                                                                                                                                                                                                             `cast`
+                                                                                                                                                                                                                           (Data.Map.Internal.Map
+                                                                                                                                                                                                                              ((,,,,,,,)
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0L (<1>_N))
+                                                                                                                                                                                                                                    <Index.Uind_20>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0L (<1>_N))
+                                                                                                                                                                                                                                    <Index.Lind_20>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0L (<0>_N))
+                                                                                                                                                                                                                                    <Index.Uind_19>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0L (<0>_N))
+                                                                                                                                                                                                                                    <Index.Lind_19>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0R (<1>_N))
+                                                                                                                                                                                                                                    <Index.Uind_9>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0R (<1>_N))
+                                                                                                                                                                                                                                    <Index.Lind_9>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0R (<1>_N))
+                                                                                                                                                                                                                                    <Index.Uind_3>_N)_N
+                                                                                                                                                                                                                                 (Index.Ind
+                                                                                                                                                                                                                                    (Add0R (<1>_N))
+                                                                                                                                                                                                                                    <Index.Lind_3>_N)_N)_N
+                                                                                                                                                                                                                              <GHC.Real.Rational>_R)_R of dt1 { DEFAULT ->
+                 case BasicTensors.ivar3 of ww13 { Tensor.Tensor ww14 ->
                  case {__scc {main:EquivarianceEqns.eqn1_3} False True} {__scc {main:EquivarianceEqns.eqn1_3.prod} False True} Tensor.$wtensorProductWith
                                                                                                                                  @ GHC.Real.Rational
                                                                                                                                  @ (Ivar.Ivar
@@ -957,8 +927,8 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                                                                  @ 0
                                                                                                                                  @ 0
                                                                                                                                  EquivarianceEqns.eqn1_21
-                                                                                                                                 ww14
-                                                                                                                                 ww16 of ww17 { Unit# ww18 ->
+                                                                                                                                 dt1
+                                                                                                                                 ww14 of ww15 { Unit# ww16 ->
                  case {__scc {main:EquivarianceEqns.eqn1_3} False True} Tensor.$wtensorContractWith_9
                                                                           @ 0
                                                                           @ 1
@@ -980,7 +950,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                     <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
                                                                           EquivarianceEqns.eqn1_10
                                                                           EquivarianceEqns.eqn1_7
-                                                                          ww18
+                                                                          ww16
                                                                             `cast`
                                                                           (Data.Map.Internal.Map
                                                                              ((,,,,,,,)
@@ -1011,7 +981,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                    (Add0R (<1>_N))
                                                                                    <Index.Lind_3>_N)_N)_N
                                                                              <Ivar.Ivar
-                                                                                GHC.Real.Rational>_R)_R of ww19 { Unit# ww20 ->
+                                                                                GHC.Real.Rational>_R)_R of ww17 { Unit# ww18 ->
                  {__scc {main:EquivarianceEqns.eqn1_3} False True} Tensor.$wtensorContractWith_20
                                                                      @ 0
                                                                      @ 1
@@ -1032,7 +1002,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
                                                                      EquivarianceEqns.eqn1_10
                                                                      EquivarianceEqns.eqn1_7
-                                                                     ww20
+                                                                     ww18
                                                                        `cast`
                                                                      (Data.Map.Internal.Map
                                                                         ((,,,,,,,)
@@ -1057,7 +1027,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                               1 Index.Lind_3>_N)_N
                                                                         <Ivar.Ivar
                                                                            GHC.Real.Rational>_R)_R } } } } } } } } } }) -}
-576041204165166be93b739f70fb5c1a
+e3f55cd7b2dffe0a026401a97837a8fc
   $weqn2_2 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
@@ -1224,7 +1194,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                               <Index.Lind_3>_N)_N)_N
                                                                         <Ivar.Ivar
                                                                            GHC.Real.Rational>_R)_R } } } } } }) -}
-5e7fc99ddce58a46a22a396fc198143b
+612c9a29b9da64449f66c655c7a61dc7
   $weqn2_2Flat ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
@@ -1390,7 +1360,7 @@ df3fb35d6696e12cc3c026791a008ba8
                                                                                   (Add0R (<2>_N))
                                                                                   <Index.Lind_3>_N)_N)_N
                                                                             <GHC.Real.Rational>_R)_R } } } } } }) -}
-ad1c9b8d469abd918c2f88d652b963f1
+b6b47b5d3d7b1fdbf525b59ecc7f352d
   $weqn2_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -1583,6 +1553,8 @@ ad1c9b8d469abd918c2f88d652b963f1
                                                                               ww14
                                                                         } in
                                                                         {__scc {main:EquivarianceEqns.eqn2_3.prod} True False} {__scc {main:EquivarianceEqns.eqn2_3.interTotal} True False} {__scc {main:EquivarianceEqns.eqn2_3.int1} True True} {__scc {main:Tensor.tensorSMult} True False} {__scc {main:Tensor.tensorSMult} False True} {__scc {main:Tensor.fmap} True False} int1_4 of wild { Tensor.Tensor tMap ->
+                 case {__scc {main:EquivarianceEqns.eqn2_3} False True} {__scc {main:EquivarianceEqns.eqn2_3.int1} False True} {__scc {main:Tensor.tensorSMult} False True} {__scc {main:Tensor.fmap} False True} EquivarianceEqns.eqn2_3_go1
+                                                                                                                                                                                                                    tMap of dt1 { DEFAULT ->
                  case EquivarianceEqns.eqn2_6
                         `cast`
                       (Tensor.Tensor
@@ -1595,67 +1567,32 @@ ad1c9b8d469abd918c2f88d652b963f1
                          (Add0L (<1>_N))
                          (Add0L (<1>_N))
                          <GHC.Real.Rational>_R)_R of ww15 { Tensor.Tensor ww16 ->
-                 case {__scc {main:EquivarianceEqns.eqn2_3} False True} {__scc {main:EquivarianceEqns.eqn2_3.interTotal} False True} {__scc {main:Tensor.tensorSub} True True} {__scc {main:Tensor.tensorSMult} True False} {__scc {main:Tensor.tensorSMult} False True} {__scc {main:Tensor.fmap} True False} Tensor.Tensor
-                                                                                                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                                                                                                 @ 0
-                                                                                                                                                                                                                                                                                                                 @ 0
-                                                                                                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                                                                                                 @ 1
-                                                                                                                                                                                                                                                                                                                 @ GHC.Real.Rational
-                                                                                                                                                                                                                                                                                                                 ({__scc {main:Tensor.fmap} False True} EquivarianceEqns.eqn2_3_go1
-                                                                                                                                                                                                                                                                                                                                                          ww16) of ww17 { Tensor.Tensor ww18 ->
-                 case {__scc {main:EquivarianceEqns.eqn2_3} False True} let {
-                                                                          ww19 :: Data.Map.Internal.Map
-                                                                                    (Index.Index
-                                                                                       1
-                                                                                       1
-                                                                                       0
-                                                                                       0
-                                                                                       1
-                                                                                       1
-                                                                                       1
-                                                                                       1)
-                                                                                    GHC.Real.Rational
-                                                                          = {__scc {main:EquivarianceEqns.eqn2_3.int1} False True} {__scc {main:Tensor.tensorSMult} False True} {__scc {main:Tensor.fmap} False True} EquivarianceEqns.eqn2_3_go8
-                                                                                                                                                                                                                        tMap
-                                                                        } in
-                                                                        {__scc {main:EquivarianceEqns.eqn2_3.interTotal} False True} {__scc {main:Tensor.tensorSub} False True} {__scc {main:Tensor.tensorAdd} True False} Tensor.Tensor
-                                                                                                                                                                                                                             @ 1
-                                                                                                                                                                                                                             @ 1
-                                                                                                                                                                                                                             @ 0
-                                                                                                                                                                                                                             @ 0
-                                                                                                                                                                                                                             @ 1
-                                                                                                                                                                                                                             @ 1
-                                                                                                                                                                                                                             @ 1
-                                                                                                                                                                                                                             @ 1
-                                                                                                                                                                                                                             @ GHC.Real.Rational
-                                                                                                                                                                                                                             ({__scc {main:Tensor.tensorAdd} False True} Data.Map.Strict.Internal.unionWith
-                                                                                                                                                                                                                                                                           @ (Index.Index
-                                                                                                                                                                                                                                                                                1
-                                                                                                                                                                                                                                                                                1
-                                                                                                                                                                                                                                                                                0
-                                                                                                                                                                                                                                                                                0
-                                                                                                                                                                                                                                                                                1
-                                                                                                                                                                                                                                                                                1
-                                                                                                                                                                                                                                                                                1
-                                                                                                                                                                                                                                                                                1)
-                                                                                                                                                                                                                                                                           @ GHC.Real.Rational
-                                                                                                                                                                                                                                                                           (Tensor.aSymTensor3
-                                                                                                                                                                                                                                                                              @ 1
-                                                                                                                                                                                                                                                                              @ 1
-                                                                                                                                                                                                                                                                              @ 0
-                                                                                                                                                                                                                                                                              @ 0
-                                                                                                                                                                                                                                                                              @ 1
-                                                                                                                                                                                                                                                                              @ 1
-                                                                                                                                                                                                                                                                              @ 1
-                                                                                                                                                                                                                                                                              @ 1)
-                                                                                                                                                                                                                                                                           EquivarianceEqns.eqn1_2_lvl19
-                                                                                                                                                                                                                                                                           ww19
-                                                                                                                                                                                                                                                                           ww18) of ww19 { Tensor.Tensor ww20 ->
-                 case BasicTensors.ivar2 of ww21 { Tensor.Tensor ww22 ->
+                 case {__scc {main:EquivarianceEqns.eqn2_3} False True} {__scc {main:EquivarianceEqns.eqn2_3.interTotal} False True} {__scc {main:Tensor.tensorSub} True True} {__scc {main:Tensor.tensorSMult} True False} {__scc {main:Tensor.tensorSMult} False True} {__scc {main:Tensor.fmap} True True} EquivarianceEqns.eqn2_3_go8
+                                                                                                                                                                                                                                                                                                                ww16 of dt2 { DEFAULT ->
+                 case {__scc {main:EquivarianceEqns.eqn2_3} False True} {__scc {main:EquivarianceEqns.eqn2_3.interTotal} False True} {__scc {main:Tensor.tensorSub} False True} {__scc {main:Tensor.tensorAdd} True False} {__scc {main:Tensor.tensorAdd} False True} Data.Map.Strict.Internal.unionWith
+                                                                                                                                                                                                                                                                        @ (Index.Index
+                                                                                                                                                                                                                                                                             1
+                                                                                                                                                                                                                                                                             1
+                                                                                                                                                                                                                                                                             0
+                                                                                                                                                                                                                                                                             0
+                                                                                                                                                                                                                                                                             1
+                                                                                                                                                                                                                                                                             1
+                                                                                                                                                                                                                                                                             1
+                                                                                                                                                                                                                                                                             1)
+                                                                                                                                                                                                                                                                        @ GHC.Real.Rational
+                                                                                                                                                                                                                                                                        (Tensor.aSymTensor3
+                                                                                                                                                                                                                                                                           @ 1
+                                                                                                                                                                                                                                                                           @ 1
+                                                                                                                                                                                                                                                                           @ 0
+                                                                                                                                                                                                                                                                           @ 0
+                                                                                                                                                                                                                                                                           @ 1
+                                                                                                                                                                                                                                                                           @ 1
+                                                                                                                                                                                                                                                                           @ 1
+                                                                                                                                                                                                                                                                           @ 1)
+                                                                                                                                                                                                                                                                        EquivarianceEqns.eqn1_2_lvl19
+                                                                                                                                                                                                                                                                        dt1
+                                                                                                                                                                                                                                                                        dt2 of dt3 { DEFAULT ->
+                 case BasicTensors.ivar2 of ww17 { Tensor.Tensor ww18 ->
                  case {__scc {main:EquivarianceEqns.eqn2_3} False True} {__scc {main:EquivarianceEqns.eqn2_3.prod} False True} Tensor.$wtensorProductWith
                                                                                                                                  @ GHC.Real.Rational
                                                                                                                                  @ (Ivar.Ivar
@@ -1679,8 +1616,8 @@ ad1c9b8d469abd918c2f88d652b963f1
                                                                                                                                  @ 0
                                                                                                                                  @ 1
                                                                                                                                  EquivarianceEqns.eqn2_5
-                                                                                                                                 ww20
-                                                                                                                                 ww22 of ww23 { Unit# ww24 ->
+                                                                                                                                 dt3
+                                                                                                                                 ww18 of ww19 { Unit# ww20 ->
                  case {__scc {main:EquivarianceEqns.eqn2_3} False True} Tensor.$wtensorContractWith_20
                                                                           @ 0
                                                                           @ 1
@@ -1702,7 +1639,7 @@ ad1c9b8d469abd918c2f88d652b963f1
                                                                                     <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
                                                                           EquivarianceEqns.eqn1_10
                                                                           EquivarianceEqns.eqn1_7
-                                                                          ww24
+                                                                          ww20
                                                                             `cast`
                                                                           (Data.Map.Internal.Map
                                                                              ((,,,,,,,)
@@ -1733,7 +1670,7 @@ ad1c9b8d469abd918c2f88d652b963f1
                                                                                             <1>_N))
                                                                                    <Index.Lind_3>_N)_N)_N
                                                                              <Ivar.Ivar
-                                                                                GHC.Real.Rational>_R)_R of ww25 { Unit# ww26 ->
+                                                                                GHC.Real.Rational>_R)_R of ww21 { Unit# ww22 ->
                  {__scc {main:EquivarianceEqns.eqn2_3} False True} Tensor.$wtensorContractWith_3
                                                                      @ 0
                                                                      @ 1
@@ -1754,7 +1691,7 @@ ad1c9b8d469abd918c2f88d652b963f1
                                                                                <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
                                                                      EquivarianceEqns.eqn1_10
                                                                      EquivarianceEqns.eqn1_7
-                                                                     ww26
+                                                                     ww22
                                                                        `cast`
                                                                      (Data.Map.Internal.Map
                                                                         ((,,,,,,,)
@@ -1778,8 +1715,8 @@ ad1c9b8d469abd918c2f88d652b963f1
                                                                                             <1>_N)))
                                                                               <Index.Lind_3>_N)_N)_N
                                                                         <Ivar.Ivar
-                                                                           GHC.Real.Rational>_R)_R } } } } } } } } } } } } } }) -}
-47ddfa01ae095611e9155a9ac0a321d6
+                                                                           GHC.Real.Rational>_R)_R } } } } } } } } } } } } } } }) -}
+c0a24a7ea7a55c00175a6f62e39cf195
   $weqn3_3 ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -2104,7 +2041,7 @@ ad1c9b8d469abd918c2f88d652b963f1
                                                                               <Index.Lind_3>_N)_N)_N
                                                                         <Ivar.Ivar
                                                                            GHC.Real.Rational>_R)_R } } } } } } } } } }) -}
-b6b9cf6d9d513a75edd50adc2c98793e
+4dd13775def1406fe1775e84f12e1a41
   $weqn3_3Flat ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -2428,7 +2365,7 @@ b6b9cf6d9d513a75edd50adc2c98793e
                                                                                   (Add0R (<1>_N))
                                                                                   <Index.Lind_3>_N)_N)_N
                                                                             <GHC.Real.Rational>_R)_R } } } } } } } } } }) -}
-105d82bf7015b4840a9b6bd58c398ebd
+00999b6349c2f1125a8fce98977f3ccc
   $windex2Sparse1 ::
     Index.Linds_20 1
     -> Index.Uinds_3 1
@@ -2543,7 +2480,7 @@ b6b9cf6d9d513a75edd50adc2c98793e
                                                                                                                                                                                                               1#
                                                                                                                                                                                                               a#)
                                                                                                                                                 1#) } } } #)) -}
-6b4f011e9eea3d8f1368cbc7b5cc854a
+986b929b3968ea313e69c499a80bc74a
   $windex2Sparse2 ::
     Index.Linds_20 1
     -> Index.Uinds_3 1
@@ -2722,7 +2659,7 @@ b6b9cf6d9d513a75edd50adc2c98793e
                                                                                                                                                                    4#))
                                                                                                                                                              4#)
                                                                                                                                                           1#) } } } } } } #)) -}
-8b28bfad0e3d01317e11c68a4ba8e281
+d5d9afecb7c48cece245313625e57c55
   $windex2Sparse3 ::
     Index.Linds_20 1
     -> Index.Linds_9 1
@@ -2862,7 +2799,7 @@ b6b9cf6d9d513a75edd50adc2c98793e
                                                                                                                                                                                                                       1#
                                                                                                                                                                                                                       a#1))
                                                                                                                                                      1#) } } } } } } #)) -}
-837fea1a4d7293a0bc729e0c618aa7c5
+c6d6b6c436ddceca478053e0de9e0016
   $windex2Sparse4 ::
     Index.Linds_20 1
     -> Index.Uinds_9 1
@@ -3032,7 +2969,7 @@ b6b9cf6d9d513a75edd50adc2c98793e
                                                                                                                                                                    4#))
                                                                                                                                                              4#)
                                                                                                                                                           1#) } } } } } } #)) -}
-f0d827318db6599c5e3dce4be76f40ba
+99169ffba90edee19260abea5cdc3ae9
   $windex2Sparse5 ::
     Index.Linds_20 1
     -> Index.Uinds_9 1
@@ -3163,7 +3100,7 @@ f0d827318db6599c5e3dce4be76f40ba
                                                                                                                                                                                                                       1#
                                                                                                                                                                                                                       a#1))
                                                                                                                                                      1#) } } } } } } #)) -}
-45ca7ccd1e3570d167a5c55cc5e1911d
+f311ff9140f0d2e01be8eeafd020a19a
   $windex2Sparse6 ::
     Index.Linds_20 1
     -> Index.Uinds_19 1
@@ -3294,7 +3231,7 @@ f0d827318db6599c5e3dce4be76f40ba
                                                                                                                                                                                                                       1#
                                                                                                                                                                                                                       a#1))
                                                                                                                                                      1#) } } } } } } #)) -}
-ce39c4d0f4dca553d59bf5a02968f5b9
+dd5c8b5936cc66ae48b89ec4145aec07
   $windex2SparseConst ::
     Index.Uinds_3 1
     -> Index.Linds_3 1 -> (# GHC.Types.Int, GHC.Types.Int #)
@@ -3914,7 +3851,7 @@ ebca50a515b6f0dab1b4c36185f11c27
                                                                  GHC.Types.True
                                                                  -> case {__scc {main:Ivar.sMultIvar} False True} {__scc {main:Ivar.mkConstIvar} True False} EquivarianceEqns.eqn1_14 of ww2 { Ivar.Ivar ww3 ww4 ->
                                                                     (# ww3, ww4 #) } } } }) -}
-27cb6db36d17bc22b6790a6944727c2f
+bcc639d9b04ccdb76420feb5c49081ad
   $wlvl6 ::
     (GHC.Types.Int, GHC.Types.Int)
     -> [GHC.Types.Char] -> [GHC.Types.Char]
@@ -3959,7 +3896,7 @@ ebca50a515b6f0dab1b4c36185f11c27
                                                                                     @ GHC.Types.Char
                                                                                     ww8
                                                                                     ww9 } }) })) -}
-040e3ab7efc4edec1eae74df79c556e6
+57105ee809e89a0b398c9fd11c8923f9
   $wlvl7 ::
     (GHC.Types.Int, GHC.Types.Int)
     -> [GHC.Types.Char] -> [GHC.Types.Char]
@@ -4020,7 +3957,7 @@ df8c64f97819cdb5ceb8670754b6800f
                              ww1
                              GHC.Real.$fEnumRatio1 of wild3 {
                         DEFAULT -> GHC.Types.True 1# -> GHC.Types.False } }) -}
-1728ab29ad976cb8b2ae2d96a401e199
+0d4bb9656f9cb395a10de0445dfb3398
   $wlvl9 ::
     (GHC.Types.Int, GHC.Types.Int)
     -> [GHC.Types.Char] -> [GHC.Types.Char]
@@ -4065,25 +4002,6 @@ df8c64f97819cdb5ceb8670754b6800f
                                                                                             @ GHC.Types.Char
                                                                                             ww8
                                                                                             ww9 } }) })) -}
-1f0a98da43dc017b2eb40aa034e5db4b
-  $wmkEqnConstSparse ::
-    Data.Map.Internal.Map (Index.Index 0 0 0 0 0 0 1 1) a
-    -> Data.Map.Internal.Map
-         (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar a)
-  {- Arity: 1, Strictness: <S,1*U>, Inline: [0],
-     Unfolding: (\ @ a
-                   (ww :: Data.Map.Internal.Map (Index.Index 0 0 0 0 0 0 1 1) a) ->
-                 {__scc {main:EquivarianceEqns.mkEqnConstSparse} True True} EquivarianceEqns.mkEqnConstSparse2
-                                                                              @ a
-                                                                              (EquivarianceEqns.$sfromList
-                                                                                 @ a
-                                                                                 (EquivarianceEqns.mkEqnConstSparse1
-                                                                                    @ a
-                                                                                    (GHC.Types.[]
-                                                                                       @ ((GHC.Types.Int,
-                                                                                           GHC.Types.Int),
-                                                                                          a))
-                                                                                    ww))) -}
 3db7ca8c59c89c780b4cf0c8b8524b69
   $wpoly_go13 ::
     GHC.Prim.Int#
@@ -4091,7 +4009,7 @@ df8c64f97819cdb5ceb8670754b6800f
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-5a4bb51d41e25fa521e3ab2fde17bb5d
+cfea6f1d752366f2a694172dd697db52
   eqn1_1 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -4167,7 +4085,7 @@ a454f1e6561677e0d6d019938247dcbd
                  case w of ww { GHC.Real.:% ww1 ww2 ->
                  case EquivarianceEqns.$wlvl1 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
                  Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
-1d4575935860aa32f5b436f43cfb7101
+d2105a84e91eec23d5463c489109039b
   eqn1_19 ::
     Tensor.Tensor
       (0 GHC.TypeNats.+ 1)
@@ -4289,7 +4207,7 @@ a454f1e6561677e0d6d019938247dcbd
                                                                                                                               GHC.TypeNats.+ 0)
                                                                                                                            @ GHC.Real.Rational
                                                                                                                            ww10 } } } } }) -}
-0a770c9c41cea44fb468087c8ec0c870
+0e1c7f9fde7827589fd1255121fdee68
   eqn1_1Flat ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -4310,7 +4228,7 @@ a454f1e6561677e0d6d019938247dcbd
                    @ 1
                    @ GHC.Real.Rational
                    ww1 }) -}
-50f4a8da96b054038964e122bc53cd55
+8db1bef3c0b209cf69772716c8306582
   eqn1_2 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -4345,18 +4263,18 @@ a1fafe507379e0b64ea2f16064bae38a
                  case w of ww { GHC.Real.:% ww1 ww2 ->
                  case EquivarianceEqns.$wlvl2 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
                  Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
-0aa0920000a1d0996d25e51eedfb1be8
+da5764dba47dd0d8a1b78c50730967f0
   eqn1_2_go8 ::
     Data.Map.Internal.Map
       (Index.Index 1 1 0 0 0 0 2 2) GHC.Real.Rational
     -> Data.Map.Internal.Map
          (Index.Index 1 1 0 0 0 0 2 2) GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U> -}
-19945ba722dbaf9ac2ea986e0d079f50
+7da115f180109d9171e46dae35b93c08
   eqn1_2_lvl19 ::
     GHC.Real.Rational -> GHC.Real.Rational -> GHC.Real.Rational
   {- Unfolding: ({__scc {main:Tensor.tensorAdd} False True} GHC.Real.$fEnumRatio_$s$c+) -}
-ce53fb4f5e444e62fe355768f6721af9
+3012751b5e579f7d29952691f08d8853
   eqn1_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -4381,7 +4299,7 @@ ce53fb4f5e444e62fe355768f6721af9
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-c48cd4b7a36f44c63ec523d175956fbb
+0fbabe0b70c787e400c2b97386bbda72
   eqn1_4 :: Tensor.Tensor 0 0 0 0 0 0 1 1 GHC.Real.Rational
   {- Unfolding: ({__scc {main:EquivarianceEqns.eqn1_4} True False} BasicTensors.delta_3) -}
 8c9c7f538e9c812f49e2c6ee67b6488a
@@ -4445,7 +4363,7 @@ ece2f442842a7f7abf4d868bd20c010c
                  case w of ww { GHC.Real.:% ww1 ww2 ->
                  case EquivarianceEqns.$wlvl3 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
                  Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
-1953564dacb7e2ee7a0f9cd76faf366a
+c3c7607c457de98113e2d565cf023fa8
   eqn2_2 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
@@ -4468,7 +4386,7 @@ ece2f442842a7f7abf4d868bd20c010c
                    @ 2
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-ee56c3cfff82e8a4916b8a7f40e24b2e
+20781707fce10622ed22644052cf3520
   eqn2_2Flat ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
@@ -4491,7 +4409,7 @@ ee56c3cfff82e8a4916b8a7f40e24b2e
                    @ 2
                    @ GHC.Real.Rational
                    ww1 }) -}
-50acd07f2a10652644ef1663bc2eee52
+fff13002fcb42b766d3346c43665adf9
   eqn2_3 ::
     Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -4516,14 +4434,14 @@ ee56c3cfff82e8a4916b8a7f40e24b2e
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-d1033421000200090f99e01785ff244f
+685c98b6f34c55cc7c0239273834e3e3
   eqn2_3_go1 ::
     Data.Map.Internal.Map
       (Index.Index 1 1 0 0 1 1 1 1) GHC.Real.Rational
     -> Data.Map.Internal.Map
          (Index.Index 1 1 0 0 1 1 1 1) GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U> -}
-d28ea0edd6eab0c5d58c9c356df2a5ef
+ce2d6e7d1da13067dc05f9b1f22c6958
   eqn2_3_go8 ::
     Data.Map.Internal.Map
       (Index.Index 1 1 0 0 1 1 1 1) GHC.Real.Rational
@@ -4541,7 +4459,7 @@ d28ea0edd6eab0c5d58c9c356df2a5ef
                  case w of ww { GHC.Real.:% ww1 ww2 ->
                  case EquivarianceEqns.$wlvl4 ww1 ww2 w1 of ww3 { (#,#) ww4 ww5 ->
                  Ivar.Ivar @ GHC.Real.Rational ww4 ww5 } }) -}
-c22521c341021e6134e8e6d6c415abf3
+e7351e701a51b0a0382733b5c3116e0b
   eqn2_6 ::
     Tensor.Tensor
       (1 GHC.TypeNats.+ 0)
@@ -4669,7 +4587,7 @@ eeb735c4d022e46cb4b4ca98e71c983b
   eqn3_2 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
      Unfolding: ((EquivarianceEqns.eqn1_17, EquivarianceEqns.eqn3_4)) -}
-2709920bc48a9859bf2b10aa98cbf3db
+dec6abd25d17c60f850264513a6c4f4c
   eqn3_3 ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -4694,7 +4612,7 @@ eeb735c4d022e46cb4b4ca98e71c983b
                    @ 1
                    @ (Ivar.Ivar GHC.Real.Rational)
                    ww1 }) -}
-f0723cb90d5da35bc6e53edac3faa02d
+410774d14af19ecc8c1461ef22e4d938
   eqn3_3Flat ::
     Data.Map.Internal.Map (Index.Linds_3 3) Index.Uind_19
     -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
@@ -4722,7 +4640,7 @@ f0723cb90d5da35bc6e53edac3faa02d
 47e6b68c5513567b454aba75d3f64169
   eqn3_4 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 3#) -}
-1a1b10e4152558a6b5b1d0f819b2e16e
+ead2d5e51e7fd380b2e76f9082cbe121
   index2Sparse1 ::
     Index.Index 0 1 0 0 0 0 1 1 -> (GHC.Types.Int, GHC.Types.Int)
   {- Arity: 1, Strictness: <S,1*U(A,1*U(U),A,A,A,A,1*U(U),1*U(U))>m,
@@ -4735,7 +4653,7 @@ f0723cb90d5da35bc6e53edac3faa02d
                         ww7
                         ww8 of ww9 { (#,#) ww10 ww11 ->
                  (ww10, ww11) } }) -}
-8b6eb4554293f19bb410c37d78a65231
+23a378b927e005e6c4caa998808ecd4f
   index2Sparse2 ::
     Index.Index 0 1 0 0 0 0 1 2 -> (GHC.Types.Int, GHC.Types.Int)
   {- Arity: 1, Strictness: <S,1*U(A,1*U(U),A,A,A,A,1*U(U),U(U))>m,
@@ -4748,7 +4666,7 @@ f0723cb90d5da35bc6e53edac3faa02d
                         ww7
                         ww8 of ww9 { (#,#) ww10 ww11 ->
                  (ww10, ww11) } }) -}
-3ce12f69602c18d2a162308ce3be3c11
+e14f2d6306f84afca921a7d90267c3f0
   index2Sparse3 ::
     Index.Index 0 1 0 0 0 1 1 1 -> (GHC.Types.Int, GHC.Types.Int)
   {- Arity: 1,
@@ -4763,7 +4681,7 @@ f0723cb90d5da35bc6e53edac3faa02d
                         ww7
                         ww8 of ww9 { (#,#) ww10 ww11 ->
                  (ww10, ww11) } }) -}
-a5227d1bb3feb7aa2bca81a93c9dde2a
+2a19f0fb5dc9c698509b0574f8b8c1ae
   index2Sparse4 ::
     Index.Index 0 1 0 0 1 0 0 2 -> (GHC.Types.Int, GHC.Types.Int)
   {- Arity: 1, Strictness: <S,1*U(A,1*U(U),A,A,1*U(U),A,A,U(U))>m,
@@ -4776,7 +4694,7 @@ a5227d1bb3feb7aa2bca81a93c9dde2a
                         ww5
                         ww8 of ww9 { (#,#) ww10 ww11 ->
                  (ww10, ww11) } }) -}
-e5571ed916ce7f505381a729cb2b3a44
+07310c86f32e85c9213d8c77dfb86b56
   index2Sparse5 ::
     Index.Index 0 1 0 0 1 1 0 1 -> (GHC.Types.Int, GHC.Types.Int)
   {- Arity: 1,
@@ -4791,7 +4709,7 @@ e5571ed916ce7f505381a729cb2b3a44
                         ww6
                         ww8 of ww9 { (#,#) ww10 ww11 ->
                  (ww10, ww11) } }) -}
-6da147ca83de46ef1e5fd5c810841278
+065e6ecf7558fd862641be49f72f583d
   index2Sparse6 ::
     Index.Index 0 1 1 0 0 1 0 1 -> (GHC.Types.Int, GHC.Types.Int)
   {- Arity: 1,
@@ -4806,7 +4724,7 @@ e5571ed916ce7f505381a729cb2b3a44
                         ww6
                         ww8 of ww9 { (#,#) ww10 ww11 ->
                  (ww10, ww11) } }) -}
-3619228d6e00b33f0ffa469424f91f6b
+c6e157eea4657ca1a819364c7adf1775
   index2SparseConst ::
     Index.Index 0 0 0 0 0 0 1 1 -> (GHC.Types.Int, GHC.Types.Int)
   {- Arity: 1, Strictness: <S,1*U(A,A,A,A,A,A,1*U(U),1*U(U))>m,
@@ -4818,11 +4736,11 @@ e5571ed916ce7f505381a729cb2b3a44
                         ww7
                         ww8 of ww9 { (#,#) ww10 ww11 ->
                  (ww10, ww11) } }) -}
-d1e15bd48da7724912dd5994b6ffee29
+8bca361bcce797f067421dec5062fd07
   mkEqn1Sparse ::
     Tensor.Tensor 0 1 0 0 0 0 1 1 a
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (ds :: Tensor.Tensor 0 1 0 0 0 0 1 1 a) ->
                  {__scc {main:EquivarianceEqns.mkEqn1Sparse} True True} case ds of wild { Tensor.Tensor map1 ->
@@ -4835,17 +4753,17 @@ d1e15bd48da7724912dd5994b6ffee29
                                                                                     GHC.Types.Int),
                                                                                    a))
                                                                              map1) }) -}
-9afd38b43099a57170b20879ce4e79a7
+f0a86d90ba2101de70218ba819cdb0cd
   mkEqn1Sparse1 ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (Index.Index 0 1 0 0 0 0 1 1) a
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-7059feda71ed742d497c0a4854dba48b
+66597f1af55a0c42b993f5dfe28e1b07
   mkEqn2Sparse ::
     Tensor.Tensor 0 1 0 0 0 0 1 2 a
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (ds :: Tensor.Tensor 0 1 0 0 0 0 1 2 a) ->
                  {__scc {main:EquivarianceEqns.mkEqn2Sparse} True True} case ds of wild { Tensor.Tensor map1 ->
@@ -4858,17 +4776,17 @@ d1e15bd48da7724912dd5994b6ffee29
                                                                                     GHC.Types.Int),
                                                                                    a))
                                                                              map1) }) -}
-1bbe2fa8fa5538ba0793421acfd65399
+4c0636b38ceef074c1bc7942b98e80fb
   mkEqn2Sparse1 ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (Index.Index 0 1 0 0 0 0 1 2) a
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-86e4890f5fa7e6fc3beb2c5833f79611
+6d6fd4568024fc220bdc68d17e333ffa
   mkEqn3Sparse ::
     Tensor.Tensor 0 1 0 0 0 1 1 1 a
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (ds :: Tensor.Tensor 0 1 0 0 0 1 1 1 a) ->
                  {__scc {main:EquivarianceEqns.mkEqn3Sparse} True True} case ds of wild { Tensor.Tensor map1 ->
@@ -4881,17 +4799,17 @@ d1e15bd48da7724912dd5994b6ffee29
                                                                                     GHC.Types.Int),
                                                                                    a))
                                                                              map1) }) -}
-ff3c8a8ac965192ae5849e207f9d5dce
+0918c715057319af21d6b9ec9ff081ad
   mkEqn3Sparse1 ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (Index.Index 0 1 0 0 0 1 1 1) a
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-800bfbec51c5d861f20acb7d0abe611d
+e9936e6dfe897344a56df1f56eb3e1d3
   mkEqn4Sparse ::
     Tensor.Tensor 0 1 0 0 1 0 0 2 a
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (ds :: Tensor.Tensor 0 1 0 0 1 0 0 2 a) ->
                  {__scc {main:EquivarianceEqns.mkEqn4Sparse} True True} case ds of wild { Tensor.Tensor map1 ->
@@ -4904,17 +4822,17 @@ ff3c8a8ac965192ae5849e207f9d5dce
                                                                                     GHC.Types.Int),
                                                                                    a))
                                                                              map1) }) -}
-46f55c8bea0606853db22ae898b729be
+0a61a911d47a057d78b40e15d3a81fc6
   mkEqn4Sparse1 ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (Index.Index 0 1 0 0 1 0 0 2) a
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-5ac1c8113f0aa213287691fd4c432930
+acda8d2bb2e7882f91ce37465ad4852a
   mkEqn5Sparse ::
     Tensor.Tensor 0 1 0 0 1 1 0 1 a
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (ds :: Tensor.Tensor 0 1 0 0 1 1 0 1 a) ->
                  {__scc {main:EquivarianceEqns.mkEqn5Sparse} True True} case ds of wild { Tensor.Tensor map1 ->
@@ -4927,17 +4845,17 @@ ff3c8a8ac965192ae5849e207f9d5dce
                                                                                     GHC.Types.Int),
                                                                                    a))
                                                                              map1) }) -}
-d43b061ca554ae0da3c55eb81a195e5a
+5d8adfdd92f1fb2abe0184f6b2f7872f
   mkEqn5Sparse1 ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (Index.Index 0 1 0 0 1 1 0 1) a
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-2cf22545f1e3d892f299ae213fba13ec
+7a259c81cded6a74e60fa028b69a9de8
   mkEqn6Sparse ::
     Tensor.Tensor 0 1 1 0 0 1 0 1 a
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (ds :: Tensor.Tensor 0 1 1 0 0 1 0 1 a) ->
                  {__scc {main:EquivarianceEqns.mkEqn6Sparse} True True} case ds of wild { Tensor.Tensor map1 ->
@@ -4950,23 +4868,33 @@ d43b061ca554ae0da3c55eb81a195e5a
                                                                                     GHC.Types.Int),
                                                                                    a))
                                                                              map1) }) -}
-091065d2a2bb1aeaf7a980d63830a93f
+f914dcf39b5bdab53287fe35bd2163cf
   mkEqn6Sparse1 ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (Index.Index 0 1 1 0 0 1 0 1) a
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-9c1fb85bf1611eb3dbc3c8d8b9a4f120
+6027d8bd7b985e36b8a128c2af5066d1
   mkEqnConstSparse ::
     Tensor.Tensor 0 0 0 0 0 0 1 1 a
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar a)
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>, Inline: [0],
+  {- Arity: 1, Strictness: <S(S),1*U(U)>, Inline: [0],
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (w :: Tensor.Tensor 0 0 0 0 0 0 1 1 a) ->
                  case w of ww { Tensor.Tensor ww1 ->
-                 EquivarianceEqns.$wmkEqnConstSparse @ a ww1 }) -}
-3251a2c836e0d41b1d482bbdbccc567c
+                 {__scc {main:EquivarianceEqns.mkEqnConstSparse} True True} EquivarianceEqns.mkEqnConstSparse2
+                                                                              @ a
+                                                                              (EquivarianceEqns.$sfromList
+                                                                                 @ a
+                                                                                 (EquivarianceEqns.mkEqnConstSparse1
+                                                                                    @ a
+                                                                                    (GHC.Types.[]
+                                                                                       @ ((GHC.Types.Int,
+                                                                                           GHC.Types.Int),
+                                                                                          a))
+                                                                                    ww1)) }) -}
+b5af1ee53092dd106b47530219aa0a49
   mkEqnConstSparse1 ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (Index.Index 0 0 0 0 0 0 1 1) a
@@ -4978,11 +4906,11 @@ d43b061ca554ae0da3c55eb81a195e5a
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar a)
   {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U> -}
-d75cefda29dbb74183e4ba3208881e10
+c5092da7fc6566c34aef64adcdcaeb22
   mkEqnConstSparseFlat ::
     Tensor.Tensor 0 0 0 0 0 0 1 1 a
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ @ a (ds :: Tensor.Tensor 0 0 0 0 0 0 1 1 a) ->
                  {__scc {main:EquivarianceEqns.mkEqnConstSparseFlat} True True} case ds of wild { Tensor.Tensor map1 ->
@@ -4995,7 +4923,7 @@ d75cefda29dbb74183e4ba3208881e10
                                                                                             GHC.Types.Int),
                                                                                            a))
                                                                                      map1) }) -}
-b247323b72246bc9214fd1a700eb3124
+c088a09a02663c70a0313c1fab9053d5
   showEqns ::
     Data.Map.Internal.Map
       (GHC.Types.Int, GHC.Types.Int) (Ivar.Ivar GHC.Real.Rational)
@@ -5047,7 +4975,7 @@ b247323b72246bc9214fd1a700eb3124
 b3ba756a6c16e2fcf4bcf1bf4471952e
   showEqns2 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("}"#) -}
-a1198b3f874b187bdde344005c15f7f2
+a15c3ffe6823f8cf972061d4f52d92f4
   showEqns3 ::
     ((GHC.Types.Int, GHC.Types.Int), [GHC.Types.Char])
     -> [GHC.Types.Char]
@@ -5079,7 +5007,7 @@ a1198b3f874b187bdde344005c15f7f2
 d5469d1483518d42f9e37f565e83fd21
   showEqns9 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("{"#) -}
-bc14222622a296c3ca12f064779cb47f
+ddb372e5f3886126823df96ac3b14c18
   showEqnsFlat ::
     Data.Map.Internal.Map
       (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
@@ -5129,7 +5057,7 @@ bc14222622a296c3ca12f064779cb47f
                                                                                   @ GHC.Types.Char
                                                                                   xs
                                                                                   EquivarianceEqns.showEqns1 })) -}
-ae9fae91242c4316b874a508fdb47286
+1bcdcfbff60e15e1be6e2779e81ff753
   showEqnsFlat1 ::
     ((GHC.Types.Int, GHC.Types.Int), [GHC.Types.Char])
     -> [GHC.Types.Char]
@@ -5149,7 +5077,7 @@ ae9fae91242c4316b874a508fdb47286
                    (w1 :: GHC.Real.Rational) ->
                  case w1 of ww { GHC.Real.:% ww1 ww2 ->
                  EquivarianceEqns.$wlvl8 ww1 ww2 }) -}
-76210a89123250eb6e7932df62c08784
+a59a37a8e237e76acee1a8399d20e94f
   showEqnsFlatFrac ::
     Data.Map.Internal.Map
       (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
@@ -5199,7 +5127,7 @@ ae9fae91242c4316b874a508fdb47286
                                                                                       @ GHC.Types.Char
                                                                                       xs
                                                                                       EquivarianceEqns.showEqns1 })) -}
-eeb89824b98236f1246253fe7e3554d1
+99744ca06fbcf04da9039066c989a2d4
   showEqnsFlatFrac1 ::
     ((GHC.Types.Int, GHC.Types.Int), [GHC.Types.Char])
     -> [GHC.Types.Char]

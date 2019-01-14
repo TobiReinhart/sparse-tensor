@@ -16,7 +16,7 @@
 
 
 module IndexMap (
-    Ind, mkInd, getValInd, getRangeList, indSign2, 
+    Ind, mkInd, getValInd, getRangeList, indSign2, sortInd,
     Uind_3(..), Lind_3(..), Uind_9(..), Lind_9(..), Uind_19(..), Lind_19(..), Uind_20(..), Lind_20(..),
     Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
     indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
@@ -52,6 +52,11 @@ module IndexMap (
 
    getValInd :: Ind n a -> Int -> a
    getValInd (UnsafemkInd s) i = fromJust $ I.lookup i s
+
+   sortInd :: Ord a => Ind n a -> Ind n a
+   sortInd (UnsafemkInd s) = UnsafemkInd $ I.fromList $ zip [0..] elemsSort
+            where
+                elemsSort = sort $ I.elems s   
 
    indSign2 :: Ord a => Ind 2 a -> Int
    indSign2 ind
@@ -130,19 +135,34 @@ module IndexMap (
 
    --removing and inserting of an element is already implemented in Data.Seq (push this to Ind)
 
+   --there is the problem!!!!
+
+   delF :: Int -> Int -> Int 
+   delF del x 
+        | x <= del = x
+        | otherwise = x-1
+
    delInd :: KnownNat n => Int -> Ind (n+1) a -> Ind n a
-   delInd i (UnsafemkInd s) = mkInd $ I.delete i s
+   delInd i (UnsafemkInd s) = mkInd $ I.mapKeys (delF i) $ I.delete i s 
 
    --if the insert position is to high the elem is inserted at the end
 
+   insF :: Int -> Int -> Int 
+   insF del x 
+        | x <= del = x
+        | otherwise = x+1
+
    insInd :: Int -> a -> Ind n a -> Ind (n+1) a
-   insInd i x (UnsafemkInd s) = UnsafemkInd $ I.insert i x s 
+   insInd i x (UnsafemkInd s) = UnsafemkInd $ I.insert i x $ I.mapKeys (insF i) s 
 
    repInd :: Int -> a -> Ind n a -> Ind n a 
    repInd i x (UnsafemkInd s) = UnsafemkInd $ I.adjust (\a -> x) i s 
 
-   combineInd :: Ind n a -> Ind m a -> Ind (n+m) a
-   combineInd (UnsafemkInd s1) (UnsafemkInd s2) = UnsafemkInd $ I.union s1 s2
+   combineInd :: forall n m a. (KnownNat n, KnownNat m) =>  Ind n a -> Ind m a -> Ind (n+m) a
+   combineInd (UnsafemkInd s1) (UnsafemkInd s2) = UnsafemkInd $ I.union s1 s2Shifted
+        where
+            nat = fromIntegral $ natVal (Proxy @n)
+            s2Shifted = I.mapKeys (\k -> k + nat) s2 
 
    --now the contraction Index (Index after contraction)
 
@@ -258,7 +278,7 @@ module IndexMap (
 
    --we need to be able to construct all possible combiantions of indices for the tensor product
 
-   combineIndex :: Index n1 n2 n3 n4 n5 n6 n7 n8 -> Index m1 m2 m3 m4 m5 m6 m7 m8 -> Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8)
+   combineIndex :: forall n1 n2 n3 n4 n5 n6 n7 n8 m1 m2 m3 m4 m5 m6 m7 m8. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8, KnownNat m1, KnownNat m2, KnownNat m3, KnownNat m4, KnownNat m5, KnownNat m6, KnownNat m7, KnownNat m8) => Index n1 n2 n3 n4 n5 n6 n7 n8 -> Index m1 m2 m3 m4 m5 m6 m7 m8 -> Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8)
    combineIndex (a1,b1,c1,d1,e1,f1,g1,h1) (a2,b2,c2,d2,e2,f2,g2,h2) = 
        (combineInd a1 a2, combineInd b1 b2, combineInd c1 c2, combineInd d1 d2, combineInd e1 e2, combineInd f1 f2, combineInd g1 g2, combineInd h1 h2)
 

@@ -171,7 +171,7 @@ module Order3Int (
                         block2 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_9 $ tensorProductNumeric intArea delta_20
                         block3 = tensorTranspose 1 (1,2) block2
                         totalBlock1 = tensorAdd block1 $ tensorAdd block2 block3 
-                        totalBlockTrans = tensorTranspose 2 (0,1) totalBlock1
+                        totalBlockTrans = tensorTranspose 2 (1,2) totalBlock1
                         tens = tensorAdd totalBlock1 totalBlockTrans
                         totalBlock2 = tensorContractWith_3 (1,1) (+) $ tensorProductNumeric invEta antiSym
                         prod = tensorProductNumeric tens totalBlock2

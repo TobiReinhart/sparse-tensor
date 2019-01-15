@@ -21,7 +21,7 @@ module Order3Int (
     ansatzAIBC, mkEqnSparseAnsatzAIBC,
     intAIBC, mkEqnSparseintAIBC, 
     ansatzAaBbC, mkEqnSparseAnsatzAaBbC,
-    intAaBbC, mkEqnSparseintAaBbC
+    intAaBbC, mkEqnSparseintAaBbC, intAaBbC2
     
 ) where
 
@@ -312,3 +312,26 @@ module Order3Int (
 
     mkEqnSparseintAaBbC :: Tensor 2 3 0 0 0 0 4 4 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseintAaBbC (Tensor map1) = M.mapKeys index2SparseintAaBbC map1
+
+
+    --we need to write this differently
+
+    intAaBbC2 :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 2 3 0 0 0 0 4 4 Rational 
+    intAaBbC2 map1Area map2Area map1Metric map2Metric = tensorSub tens tensTrans 
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        int2 = interEqn1_2 map1Area map2Area
+                        flatA = flatArea map2Area
+                        flatInt = tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea flatA 
+                        block0 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_3 $ tensorProductNumeric delta_3 delta_3
+                        block0prod = tensorProductNumeric block0 $! flatInt
+                        block1 = tensorProductNumeric int2 $ tensorProductNumeric delta_20 delta_3 
+                        block1prod = tensorProductNumeric block1 $! flatInt
+                        block2prod = tensorTranspose 7 (1,2) $ tensorTranspose 1 (0,1) block1prod
+                        block3 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric intArea $ tensorProductNumeric delta_3 delta_3
+                        block3prod = tensorContractWith_20 (2,3) (+) $ tensorProductNumeric block3 $! flatInt
+                        totalBlock1prod = tensorAdd block0prod $ tensorAdd block1prod $ tensorAdd block2prod block3prod 
+                        totalBlockTransprod = tensorTranspose 8 (1,2) $ tensorTranspose 2 (0,1) totalBlock1prod
+                        tens = tensorAdd totalBlock1prod totalBlockTransprod
+                        tensTrans = tensorTranspose 7 (0,3) $ tensorTranspose 8 (0,3) tens

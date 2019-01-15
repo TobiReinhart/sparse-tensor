@@ -519,9 +519,9 @@ module Main (
 
         --writeFile "ansatzAaBbC_15_1_19.txt" $ showEqnsFlat ansatzCondAaBbC 
 
-        let intCondAaBbC = mkEqnSparseintAaBbC $ intAaBbC map1Area map2Area map1Metric map2Metric
+        let intCondAaBbC = mkEqnSparseintAaBbC $ intAaBbC2 map1Area map2Area map1Metric map2Metric
 
-        writeFile "intAaBbC_15_1_19.txt" $ showEqnsFlat intCondAaBbC 
+        writeFile "intAaBbC2_15_1_19.txt" $ showEqnsFlat intCondAaBbC 
 
 
 

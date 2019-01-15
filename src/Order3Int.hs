@@ -17,7 +17,8 @@ module Order3Int (
     ansatzABC, mkEqnSparseAnsatzABC2,
     intABC, mkEqnSparseIntABC2,
     ansatzABC2,
-    ansatzAaBC, mkEqnSparseAnsatzAaBC
+    ansatzAaBC, mkEqnSparseAnsatzAaBC,
+    ansatzAIBC, mkEqnSparseAnsatzAIBC
     
 ) where
 
@@ -158,4 +159,37 @@ module Order3Int (
 
     mkEqnSparseAnsatzAaBC :: Tensor 3 3 0 0 1 0 1 1 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseAnsatzAaBC (Tensor map1) = M.mapKeys index2SparseAnsatzAaBC map1
+
+    ansatzAIBC :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 3 3 0 0 2 1 0 0 Rational 
+    ansatzAIBC map1Area map2Area map1Metric map2Metric = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (0,1) (+) prod
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric
+                        antiSym = aSymI_2 map1Metric
+                        block1 = tensorProductNumeric int3 $ tensorProductNumeric delta_20 delta_20 
+                        block2 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_9 $ tensorProductNumeric intArea delta_20
+                        block3 = tensorTranspose 1 (1,2) block2
+                        totalBlock1 = tensorAdd block1 $ tensorAdd block2 block3 
+                        totalBlockTrans = tensorTranspose 2 (0,1) totalBlock1
+                        tens = tensorAdd totalBlock1 totalBlockTrans
+                        totalBlock2 = tensorContractWith_3 (1,1) (+) $ tensorProductNumeric invEta antiSym
+                        prod = tensorProductNumeric tens totalBlock2
+
+    index2SparseAnsatzAIBC :: Index 3 3 0 0 2 1 0 0 -> (Int,Int) 
+    index2SparseAnsatzAIBC  (x1, x2, _, _, x5, x6, _, _) = ((g-1)*21^2*10*10+(e-1)*210*10+(f-1)*10*10+(j-1)*10+k,(c-1)*21^2*10+(b-1)*21*10+(a-1)*10+i)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      g = 1 + (fromEnum $ getValInd x1 2)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      c = 1 + (fromEnum $ getValInd x2 2)
+                                                      j = 1 +  (fromEnum $ getValInd x5 0)
+                                                      k = 1 +  (fromEnum $ getValInd x5 1)
+                                                      i = 1 +  (fromEnum $ getValInd x6 0)
+
+
+    mkEqnSparseAnsatzAIBC :: Tensor 3 3 0 0 2 1 0 0 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseAnsatzAIBC (Tensor map1) = M.mapKeys index2SparseAnsatzAIBC map1
 

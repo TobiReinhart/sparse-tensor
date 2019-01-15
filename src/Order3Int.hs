@@ -20,7 +20,8 @@ module Order3Int (
     ansatzAaBC, mkEqnSparseAnsatzAaBC,
     ansatzAIBC, mkEqnSparseAnsatzAIBC,
     intAIBC, mkEqnSparseintAIBC, 
-    ansatzAaBbC, mkEqnSparseAnsatzAaBbC
+    ansatzAaBbC, mkEqnSparseAnsatzAaBbC,
+    intAaBbC, mkEqnSparseintAaBbC
     
 ) where
 
@@ -270,3 +271,44 @@ module Order3Int (
 
     mkEqnSparseAnsatzAaBbC :: Tensor 3 3 0 0 1 0 2 2 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseAnsatzAaBbC (Tensor map1) = M.mapKeys index2SparseAnsatzAaBbC map1
+
+    intAaBbC :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 2 3 0 0 0 0 4 4 Rational 
+    intAaBbC map1Area map2Area map1Metric map2Metric = tensorSub prod prodTrans 
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        int2 = interEqn1_2 map1Area map2Area
+                        flatA = flatArea map2Area
+                        flatInt = tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea flatA 
+                        block0 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_3 $ tensorProductNumeric delta_3 delta_3
+                        block1 = tensorProductNumeric int2 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 delta_3 
+                        block2 = tensorTranspose 7 (1,2) $ tensorTranspose 1 (0,1) block1
+                        block3 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric intArea $ tensorProductNumeric delta_3 delta_3
+                        totalBlock1 = tensorAdd block0 $ tensorAdd block1 $ tensorAdd block2 block3 
+                        totalBlockTrans = tensorTranspose 8 (1,2) $ tensorTranspose 2 (0,1) totalBlock1
+                        tens = tensorAdd totalBlock1 totalBlockTrans
+                        prod = tensorContractWith_20 (2,3) (+) $ tensorProductNumeric tens $! flatInt
+                        prodTrans = tensorTranspose 7 (0,3) $ tensorTranspose 8 (0,3) prod
+
+    index2SparseintAaBbC :: Index 2 3 0 0 0 0 4 4 -> (Int,Int) 
+    index2SparseintAaBbC  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^6+(f-1)*4^6+(r-1)*4^5+(s-1)*4^4+(m-1)*4^3+(n-1)*4^2+(u-1)*4+v,(c-1)*21^2*4*4+(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      c = 1 + (fromEnum $ getValInd x2 2)
+                                                      p = 1 +  (fromEnum $ getValInd x8 0)
+                                                      q = 1 +  (fromEnum $ getValInd x8 1)
+                                                      r = 1 +  (fromEnum $ getValInd x7 0)
+                                                      s = 1 +  (fromEnum $ getValInd x7 1)
+                                                      m = 1 +  (fromEnum $ getValInd x7 2)
+                                                      n = 1 +  (fromEnum $ getValInd x7 3)
+                                                      u = 1 +  (fromEnum $ getValInd x8 2)
+                                                      v = 1 +  (fromEnum $ getValInd x8 3)
+
+
+
+
+    mkEqnSparseintAaBbC :: Tensor 2 3 0 0 0 0 4 4 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseintAaBbC (Tensor map1) = M.mapKeys index2SparseintAaBbC map1

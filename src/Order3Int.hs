@@ -21,7 +21,8 @@ module Order3Int (
     ansatzAIBC, mkEqnSparseAnsatzAIBC,
     intAIBC, mkEqnSparseintAIBC, 
     ansatzAaBbC, mkEqnSparseAnsatzAaBbC,
-    intAaBbC, mkEqnSparseintAaBbC, intAaBbC2
+    intAaBbC, mkEqnSparseintAaBbC, intAaBbC2,
+    ansatzAIBbC, mkEqnSparseAnsatzAIBbC
     
 ) where
 
@@ -335,3 +336,42 @@ module Order3Int (
                         totalBlockTransprod = tensorTranspose 8 (1,2) $ tensorTranspose 2 (0,1) totalBlock1prod
                         tens = tensorAdd totalBlock1prod totalBlockTransprod
                         tensTrans = tensorTranspose 7 (0,3) $ tensorTranspose 8 (0,3) tens
+
+
+    ansatzAIBbC :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 3 3 0 0 2 1 1 1 Rational 
+    ansatzAIBbC map1Area map2Area map1Metric map2Metric = tens
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        int2 = interEqn1_2 map1Area map2Area
+                        int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric
+                        antiSym = aSymI_2 map1Metric
+                        totalBlock2 = tensorContractWith_3 (1,1) (+) $ tensorProductNumeric invEta antiSym
+                        block1 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric intArea $ tensorProductNumeric delta_9 delta_3 
+                        block1prod = tensorContractWith_3 (1,0) (+) $ tensorContractWith_3 (0,2) (+) $ tensorProductNumeric block1 totalBlock2
+                        block2 = tensorProductNumeric delta_20 $ tensorProductNumeric int2 $ tensorProductNumeric delta_20 delta_9
+                        block2prod = tensorContractWith_3 (1,0) (+) $ tensorContractWith_3 (0,2) (+) $ tensorProductNumeric block2 totalBlock2
+                        block3 = tensorProductNumeric int3 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 delta_3
+                        block3prod = tensorContractWith_3 (1,0) (+) $ tensorContractWith_3 (0,2) (+) $ tensorProductNumeric block3 totalBlock2
+                        tens = tensorAdd block1prod $ tensorAdd block2prod block3prod 
+                       
+    index2SparseAnsatzAIBbC :: Index 3 3 0 0 2 1 1 1 -> (Int,Int) 
+    index2SparseAnsatzAIBbC  (x1, x2, _, _, x5, x6, x7, x8) = ((g-1)*21^2*100*4+(e-1)*2100*4+(f-1)*100*4+(j-1)*10*4+(k-1)*4+r,(c-1)*21^2*10*4+(b-1)*21*10*4+(p-1)*21*10+(a-1)*10+i)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      g = 1 + (fromEnum $ getValInd x1 2)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      c = 1 + (fromEnum $ getValInd x2 2)
+                                                      k = 1 +  (fromEnum $ getValInd x5 0)
+                                                      j = 1 +  (fromEnum $ getValInd x5 1)
+                                                      i = 1 +  (fromEnum $ getValInd x6 0)
+                                                      p = 1 +  (fromEnum $ getValInd x8 0)
+                                                      r = 1 +  (fromEnum $ getValInd x7 0)
+
+
+
+
+    mkEqnSparseAnsatzAIBbC :: Tensor 3 3 0 0 2 1 1 1 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseAnsatzAIBbC (Tensor map1) = M.mapKeys index2SparseAnsatzAIBbC map1                        

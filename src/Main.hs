@@ -509,7 +509,13 @@ module Main (
 
         let ansatzCondAIBC = mkEqnSparseAnsatzAIBC $ ansatzAIBC map1Area map2Area map1Metric map2Metric
 
-        writeFile "intAIBC_14_1_19.txt" $ showEqnsFlat ansatzCondAIBC 
+        --writeFile "intAIBC_14_1_19.txt" $ showEqnsFlat ansatzCondAIBC 
+
+        let intCondAIBC = mkEqnSparseintAIBC $ intAIBC map1Area map2Area map1Metric map2Metric
+
+        writeFile "intAIBC_15_1_19.txt" $ showEqnsFlat intCondAIBC 
+
+
 
 
 

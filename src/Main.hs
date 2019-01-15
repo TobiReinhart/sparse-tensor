@@ -501,6 +501,11 @@ module Main (
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/3rdOrderInt/intABC_14_1_19.txt" $ showEqnsFlatFrac intCondABC
 
-        writeFile "intABC_14_1_19.txt" $ showEqnsFlatFrac intCondABC 
+        --writeFile "intABC_14_1_19.txt" $ showEqnsFlatFrac intCondABC 
+
+        let ansatzCondAaBC = mkEqnSparseAnsatzAaBC $ ansatzAaBC map1Area map2Area map1Metric map2Metric
+
+        writeFile "intAaBC_14_1_19.txt" $ showEqnsFlat ansatzCondAaBC 
+
 
 

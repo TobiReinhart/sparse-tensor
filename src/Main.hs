@@ -273,11 +273,7 @@ module Main (
 
         let ansatz3 = getAllIndsLabel "abcd" [(1,3),(1,2),(3,4)] [] [(1,2),(3,4)]
 
-        let symLabel = ([(13,14)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], []) 
-
-        let symPos = ([(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14)], [], [], [], [[[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14]]])
-
-        let ans = map mkAns ansatz 
+         let ans = map mkAns ansatz 
 
         let symAns = symAnsSet ([],[],[],[],[]) symLabel ans
 
@@ -544,7 +540,19 @@ module Main (
 
         let ansatzTopSortnoFilter = getAllIndsLabelInverse "abcdmnefghpqijklrs" [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16),(15,17),(17,18)] [] []
 
-        writeFile "/cip/austausch/cgg/topSorts18Filtered2.txt" ansatzTopSort
+        --writeFile "/cip/austausch/cgg/topSorts18Filtered2.txt" ansatzTopSort
+
+        let ansatz14Sym = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14)] [] [(1,3),(1,2),(3,4),(7,8),(7,9),(9,10),(13,14),(5,6),(11,12),(1,7),(7,13)]
+
+        let symLabelAnsatz14 = ([(13,14)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], []) 
+
+        let symPosAnsatz14 = ([(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14)], [], [], [], [[[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14]]])
+
+        let ansatz14 = mkAns ansatz14Sym
+
+        let ans14Sym = symAnsSet symLabelAnsatz14 symPosAnsatz14 ansatz14 
+
+        writeFile "/cip/austausch/cgg/topSorts18Filtered2.txt" $ show ans14Sym
 
         
 

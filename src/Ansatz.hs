@@ -8,6 +8,7 @@ module Ansatz (
     import qualified Data.Set as Set
     import qualified Data.Sequence as S
     import qualified Data.IntMap.Strict as I
+    import Data.Foldable
     import Data.List 
 
     --all we need to store in the tree are Ints that label the index position
@@ -220,8 +221,10 @@ module Ansatz (
                             indList = S.foldrWithIndex (\i x y -> ((I.!) b x) : y) [] a
 
     getAllIndsLabel :: String -> [Edge] -> [Root] -> [(Int,Int)] -> String
-    getAllIndsLabel inds edges roots symList = "[" ++ concat ( intersperse "," (map (\x -> indexPermSeq x (mkIndMap inds)) $ getAllInds edges roots symList)) ++ "]"
-
+    --getAllIndsLabel inds edges roots symList = "[" ++ concat ( intersperse "," (map (\x -> indexPermSeq x (mkIndMap inds)) $ getAllInds edges roots symList)) ++ "]"
+    getAllIndsLabel inds edges roots symList = unlines $ map (map (\i -> m I.! i)) $ map toList $ getAllInds edges roots symList
+                            where
+                                m = mkIndMap inds
     
 
 

@@ -1,7 +1,7 @@
 --this module is intended for generating tensorial ansätze (built from the inverse geometry) , i.e symmetrized delta products
 
 module Ansatz (
-    getAllInds, getAllIndsLabel, indexPermSeq, mkIndMap
+    getAllInds, getAllIndsLabel, indexPermSeq, mkIndMap, getAllIndsInverse, getAllIndsLabelInverse
 
 ) where
 
@@ -191,6 +191,13 @@ module Ansatz (
             where 
                 f = \x y -> topSortSeqAppend (getRootVal y) $ getTopSortsSeq $ removeRootForest x forest 
 
+    invertPermSeq :: Int -> S.Seq Int -> S.Seq Int
+    invertPermSeq s seq = fmap snd zipSeqSort
+                where 
+                    ord = S.fromList [1..s]
+                    zipSeq = S.zip seq ord 
+                    zipSeqSort = S.sort zipSeq
+
 
     filter1Sym :: S.Seq Int -> (Int,Int) -> Bool 
     filter1Sym seq (i,j) 
@@ -213,6 +220,13 @@ module Ansatz (
                 forest = mkForest edges roots 
                 topSorts = getTopSortsSeq forest 
 
+    getAllIndsInverse :: [Edge] -> [Root] -> [(Int,Int)] -> [S.Seq Int]
+    getAllIndsInverse edges roots symList = map (invertPermSeq s)  $ filter (\x -> filterSym x symList) topSorts 
+            where
+                forest = mkForest edges roots 
+                topSorts = getTopSortsSeq forest 
+                s = S.length $ topSorts !! 0
+
     indexPermSeq :: S.Seq Int -> I.IntMap Char -> String 
     indexPermSeq a b
                 | S.length a /= I.size b = error "indexList and permutation do  not fit togehter"
@@ -223,6 +237,12 @@ module Ansatz (
     getAllIndsLabel :: String -> [Edge] -> [Root] -> [(Int,Int)] -> String
     --getAllIndsLabel inds edges roots symList = "[" ++ concat ( intersperse "," (map (\x -> indexPermSeq x (mkIndMap inds)) $ getAllInds edges roots symList)) ++ "]"
     getAllIndsLabel inds edges roots symList = unlines $ map (map (\i -> m I.! i)) $ map toList $ getAllInds edges roots symList
+                            where
+                                m = mkIndMap inds
+
+    getAllIndsLabelInverse :: String -> [Edge] -> [Root] -> [(Int,Int)] -> String
+    --getAllIndsLabel inds edges roots symList = "[" ++ concat ( intersperse "," (map (\x -> indexPermSeq x (mkIndMap inds)) $ getAllInds edges roots symList)) ++ "]"
+    getAllIndsLabelInverse inds edges roots symList = unlines $ map (map (\i -> m I.! i)) $ map toList $ getAllIndsInverse edges roots symList
                             where
                                 m = mkIndMap inds
     

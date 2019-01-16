@@ -532,17 +532,15 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/topSorts18Filtered2.txt" ansatzTopSort
 
-        let ansatz14Sym = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14)] [] [(1,3),(1,2),(3,4),(7,8),(7,9),(9,10),(13,14),(5,6),(11,12),(1,7),(7,13)]
+        let ansatz18Sym = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16),(15,17),(17,18)] [] [(1,3),(1,2),(3,4),(7,8),(7,9),(9,10),(13,14),(13,15),(15,16),(5,6),(11,12),(17,18),(1,7),(7,13)]
 
-        let symLabelAnsatz14 = ([(13,14)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], []) 
+        let symLabelAnsatz18 = ([(5,6),(11,12),(17,18)], [(1,2),(3,4),(7,8),(9,10),(13,14),(15,16)], [([1,2],[3,4]),([7,8],[9,10]),([13,14],[15,16])], [], []) 
 
-        let symPosAnsatz14 = ([(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14)], [], [], [], [[[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14]]])
+        let ansatz18 = map mkPertAns ansatz18Sym
 
-        let ansatz14 = map mkPertAns ansatz14Sym
+        let ans18Sym = symAnsSetPert symLabelAnsatz18 ansatz18 
 
-        let ans14Sym = symAnsSetPert symLabelAnsatz14 ansatz14 
-
-        writeFile "/cip/austausch/cgg/topSorts18Filtered2.txt" $ show ans14Sym
+        writeFile "/cip/austausch/cgg/topSorts18Symmetrized.txt" $ show ans18Sym
 
         
 

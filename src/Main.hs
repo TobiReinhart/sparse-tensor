@@ -532,7 +532,7 @@ module Main (
 
         let ansatzCondAa = mkEqnSparseAnsatzAa $ ansatzAa map1Area map2Area map1Metric map2Metric
 
-        let ansatzCondAI = mkEqnSparseAnsatzAI $ ansatzAI2 map1Area map2Area map1Metric map2Metric
+        let ansatzCondAI = mkEqnSparseAnsatzAI $ ansatzAI3 map1Area map2Area map1Metric map2Metric
 
         writeFile "/cip/austausch/cgg/Ansatz/ansatzA_16_1_19.txt" $ showEqnsFlatMatLab ansatzCondA
 

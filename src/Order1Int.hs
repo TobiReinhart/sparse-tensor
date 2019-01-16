@@ -16,7 +16,7 @@
 module Order1Int (
     ansatzA, mkEqnSparseAnsatzA,
     ansatzAa, mkEqnSparseAnsatzAa, 
-    ansatzAI2, mkEqnSparseAnsatzAI
+    ansatzAI3, mkEqnSparseAnsatzAI
     
     
 ) where
@@ -75,8 +75,8 @@ module Order1Int (
     mkEqnSparseAnsatzAa (Tensor map1) = M.mapKeys index2SparseAnsatzAa map1
 
     
-    ansatzAI2 :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 1 1 0 0 2 1 0 0 Rational 
-    ansatzAI2 map1Area map2Area map1Metric map2Metric = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (0,1) (+) prod
+    ansatzAI3 :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 1 1 0 0 2 1 0 0 Rational 
+    ansatzAI3 map1Area map2Area map1Metric map2Metric = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (0,1) (+) prod
                     where
                         int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric
                         antiSym = aSymI_2 map1Metric

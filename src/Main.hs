@@ -540,9 +540,16 @@ module Main (
 
         let ans18Sym = symAnsSetPert symLabelAnsatz18 ansatz18 
 
-        writeFile "/cip/austausch/cgg/topSorts18Symmetrized.txt" $ show ans18Sym
+        --writeFile "/cip/austausch/cgg/topSorts18Symmetrized.txt" $ show ans18Sym
 
-        
+        let ansatz18SymEps = getAllIndsInverse [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16),(15,17),(17,18)] [] [(1,3),(1,2),(3,4),(7,8),(7,9),(9,10),(13,14),(13,15),(15,16),(5,6),(11,12),(17,18),(1,7),(7,13)]
+
+        let ansatz18Eps = map mkPertAnsEpsilon ansatz18Sym
+
+        let ans18SymEpsilon = symAnsSetPertEpsilon symLabelAnsatz18 ansatz18Eps 
+
+        writeFile "/cip/austausch/cgg/topSorts18SymmetrizedEpsilon.txt" $ show ans18SymEpsilon
+
 
 
 

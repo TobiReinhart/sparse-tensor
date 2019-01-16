@@ -1,6 +1,6 @@
 module Perturbation (
 
-mkPertAns, PertAnsatz, symAnsSetPert, indexPermSeqPert, getRepIndsPert, evalPertAns, areaList14, areaEvalMap14, evalFullAns, areaEvalMap10
+mkPertAns, mkPertAnsEpsilon, PertAnsatz, PertAnsatzEpsilon, symAnsSetPert, symAnsSetPertEpsilon, indexPermSeqPert, getRepIndsPert, evalPertAns, areaList14, areaEvalMap14, evalFullAns, areaEvalMap10
 
 )
 where
@@ -17,12 +17,28 @@ where
 
     type PertAnsatz a = M.Map (S.Seq [Int] ) a
 
+    type PertAnsatzEpsilon a = M.Map ( ([Int],S.Seq [Int]) ) a
+
     --write this in 1 Map only ?
 
     swapLabel :: (Eq a, Ord a) => (a,a) -> S.Seq [a] -> S.Seq [a]
     swapLabel (x,y) seq = S.sort $ fmap f seq 
             where
                 f = sort.(map (swapLabelF (x,y)))
+
+    --we need to take care of the sign when using epsilon
+
+    epsilonSign ::(Num a) => [Int] -> a
+    epsilonSign [a,b,c,d] = (-1)^(length $  filter (==True) [b>a,c>a,d>a,c>b,d>c,d>c])
+    epsilonSign x = error "wrong list length in epsilon"
+               
+    
+    swapLabelEpsilon :: (Num a) => (Int,Int) -> (([Int],S.Seq [Int]),a) -> (([Int],S.Seq [Int]),a)
+    swapLabelEpsilon (x,y) ((eps,seq),s) = ((newEpsSort,newSeq),s*(epsilonSign newEps))
+                where
+                    newEps = map (swapLabelF (x,y)) eps 
+                    newEpsSort = sort newEps
+                    newSeq = swapLabel (x,y) seq 
 
     swapLabelF :: Eq a => (a,a) -> a -> a 
     swapLabelF (x,y) z
@@ -37,10 +53,24 @@ where
                 where
                     pairList = zip i j
 
+    swapBlockLabelEpsilon :: (Num a) => ([Int],[Int]) -> (([Int],S.Seq [Int]),a) -> (([Int],S.Seq [Int]),a)
+    swapBlockLabelEpsilon (i,j) s 
+            | length i /= length j = error "only blocks with the same lenght can be symmetrized"
+            | otherwise = foldr swapLabelEpsilon s pairList
+                where
+                    pairList = zip i j
+
     update1CycleLabel :: (Eq a, Ord a) => ([a],[a]) -> (S.Seq [a]) -> (S.Seq [a])
     update1CycleLabel (i,j) s = fmap f s 
             where 
                 f = sort.(map (update1CycleLabelF (i,j)))
+
+    update1CycleLabelEpsilon :: (Num a) => ([Int],[Int]) -> (([Int],S.Seq [Int]),a) -> (([Int],S.Seq [Int]),a)
+    update1CycleLabelEpsilon (i,j) ((eps,seq),s) = ((newEpsSort, newS),s*(epsilonSign newEps))
+            where 
+                newS = update1CycleLabel (i,j) seq
+                newEps = map (update1CycleLabelF (i,j)) eps 
+                newEpsSort = sort newEps
 
     
     update1CycleLabelF :: (Eq a, Ord a) => ([a],[a]) -> a -> a 
@@ -59,8 +89,20 @@ where
                 perm = tail $ permutations l 
                 cList = zip (repeat l) perm 
 
+    cyclicSwapLabelEpsilon :: (Num a) => [Int] -> (([Int],S.Seq [Int]),a) -> [(([Int],S.Seq [Int]),a)]
+    cyclicSwapLabelEpsilon l s = s : ( map (\x -> update1CycleLabelEpsilon x s) cList )
+            where 
+                perm = tail $ permutations l 
+                cList = zip (repeat l) perm 
+
     cyclicSwapBlockLabel :: (Eq a, Ord a) => [[a]] -> S.Seq [a] -> [S.Seq [a]]
     cyclicSwapBlockLabel l s = s : ( map (\x -> update1CycleLabel x s) cList )
+            where
+                perm = map concat $ tail $ permutations l
+                cList = zip (repeat $ concat l) perm
+
+    cyclicSwapBlockLabelEpsilon :: (Num a) => [[Int]] -> (([Int],S.Seq [Int]),a) -> [(([Int],S.Seq [Int]),a)]
+    cyclicSwapBlockLabelEpsilon l s = s : ( map (\x -> update1CycleLabelEpsilon x s) cList )
             where
                 perm = map concat $ tail $ permutations l
                 cList = zip (repeat $ concat l) perm
@@ -72,11 +114,25 @@ where
                 f = \x y -> x + y
                 swapAnsatz = M.mapKeys (swapLabel pair) a
 
+    symAnsatzLabelEpsilon :: (Fractional a) => (Int,Int) -> PertAnsatzEpsilon a -> PertAnsatzEpsilon a
+    symAnsatzLabelEpsilon pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz) 
+            where 
+                f = \x y -> x + y
+                ansList = M.assocs a
+                swapAnsatz = M.fromList $ map (swapLabelEpsilon pair) ansList
+
     aSymAnsatzLabel :: (Fractional a) => (Int,Int) -> PertAnsatz a -> PertAnsatz a
     aSymAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (-1/2)) swapAnsatz)  
             where 
                 f = \x y -> x + y 
                 swapAnsatz = M.mapKeys (swapLabel pair) a
+
+    aSymAnsatzLabelEpsilon :: (Fractional a) => (Int,Int) -> PertAnsatzEpsilon a -> PertAnsatzEpsilon a
+    aSymAnsatzLabelEpsilon pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (-1/2)) swapAnsatz)  
+            where 
+                f = \x y -> x + y
+                ansList = M.assocs a
+                swapAnsatz = M.fromList $ map (swapLabelEpsilon pair) ansList
 
     symBlockAnsatzLabel :: (Fractional a) => ([Int],[Int]) -> PertAnsatz a -> PertAnsatz a
     symBlockAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz) 
@@ -84,11 +140,25 @@ where
                 f = \x y -> x + y 
                 swapAnsatz = M.mapKeys (swapBlockLabel pair) a
 
+    symBlockAnsatzLabelEpsilon :: (Fractional a) => ([Int],[Int]) -> PertAnsatzEpsilon a -> PertAnsatzEpsilon a
+    symBlockAnsatzLabelEpsilon pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (1/2)) swapAnsatz) 
+            where 
+                f = \x y -> x + y
+                ansList = M.assocs a
+                swapAnsatz = M.fromList $ map (swapBlockLabelEpsilon pair) ansList
+
     aSymBlockAnsatzLabel :: (Fractional a) => ([Int],[Int]) -> PertAnsatz a -> PertAnsatz a
     aSymBlockAnsatzLabel pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (-1/2)) swapAnsatz)  
             where 
                 f = \x y -> x + y 
                 swapAnsatz = M.mapKeys (swapBlockLabel pair) a
+
+    aSymBlockAnsatzLabelEpsilon :: (Fractional a) => ([Int],[Int]) -> PertAnsatzEpsilon a -> PertAnsatzEpsilon a
+    aSymBlockAnsatzLabelEpsilon pair a = M.unionWith f (M.map (* (1/2)) a) (M.map (* (-1/2)) swapAnsatz) 
+            where 
+                f = \x y -> x + y
+                ansList = M.assocs a
+                swapAnsatz = M.fromList $ map (swapBlockLabelEpsilon pair) ansList
 
     factorial :: (Num a, Eq a) => a -> a
     factorial 0 = error "Int must be positiv!"
@@ -104,6 +174,14 @@ where
                 ansatzList = M.assocs ans
                 newAnsatzList = concat $ map g ansatzList 
 
+    symCycleLabelEpsilon :: (Fractional a) => [Int] -> PertAnsatzEpsilon a -> PertAnsatzEpsilon a
+    symCycleLabelEpsilon l ans =  M.fromListWith f newAnsatzList 
+            where 
+                norm = 1/ (fromIntegral $ factorial $ length l )
+                f = \x y -> x + y 
+                ansatzList = M.assocs ans
+                newAnsatzList = map (\(a,b) -> (a,norm*b)) $ concat $ map (cyclicSwapLabelEpsilon l) ansatzList 
+
     symCycleBlockLabel :: (Fractional a) => [[Int]] -> PertAnsatz a -> PertAnsatz a
     symCycleBlockLabel l ans =  M.fromListWith f newAnsatzList 
             where 
@@ -112,6 +190,14 @@ where
                 g = \(x,y) -> (zip (cyclicSwapBlockLabel l x) (repeat $ norm * y))
                 ansatzList = M.assocs ans
                 newAnsatzList = concat $ map g ansatzList
+
+    symCycleBlockLabelEpsilon :: (Fractional a) => [[Int]] -> PertAnsatzEpsilon a -> PertAnsatzEpsilon a
+    symCycleBlockLabelEpsilon l ans =  M.fromListWith f newAnsatzList 
+            where 
+                norm = 1/ (fromIntegral $ factorial $ length l )
+                f = \x y -> x + y 
+                ansatzList = M.assocs ans
+                newAnsatzList = map (\(a,b) -> (a,norm*b)) $ concat $ map (cyclicSwapBlockLabelEpsilon l) ansatzList 
 
     symAnsatz :: (Fractional a) => Symmetry -> PertAnsatz a -> PertAnsatz a 
     symAnsatz (labPair, labAPair, labBlock, labCycle, labBlockCycle) ans = 
@@ -125,8 +211,24 @@ where
             ) labCycle
         ) labBlockCycle  
 
+    symAnsatzEpsilon :: (Fractional a) => Symmetry -> PertAnsatzEpsilon a -> PertAnsatzEpsilon a 
+    symAnsatzEpsilon (labPair, labAPair, labBlock, labCycle, labBlockCycle) ans = 
+        foldr symCycleBlockLabelEpsilon (
+            foldr symCycleLabelEpsilon (
+                foldr symBlockAnsatzLabelEpsilon (
+                    foldr aSymAnsatzLabelEpsilon (
+                        foldr symAnsatzLabelEpsilon ans labPair
+                    ) labAPair
+                ) labBlock
+            ) labCycle
+        ) labBlockCycle  
+
+
     isZero :: (Fractional a, Eq a) => PertAnsatz a -> Bool
     isZero ans = elem 0 $ M.elems ans
+
+    isZeroEpsilon :: (Fractional a, Eq a) => PertAnsatzEpsilon a -> Bool
+    isZeroEpsilon ans = elem 0 $ M.elems ans
 
     symAnsSetPert :: (Eq a, Fractional a) => Symmetry -> [PertAnsatz a] -> [PertAnsatz a]
     symAnsSetPert sym1 [] = []
@@ -135,9 +237,22 @@ where
             | otherwise = symx : (symAnsSetPert sym1 $ rmAnsatz symx xs)
                 where
                     symx = symAnsatz sym1 x 
+
+    symAnsSetPertEpsilon :: (Eq a, Fractional a) => Symmetry -> [PertAnsatzEpsilon a] -> [PertAnsatzEpsilon a]
+    symAnsSetPertEpsilon sym1 [] = []
+    symAnsSetPertEpsilon sym1 (x:xs) 
+            | isZeroEpsilon symx = symAnsSetPertEpsilon sym1 $ rmAnsatzEpsilon symx xs 
+            | otherwise = symx : (symAnsSetPertEpsilon sym1 $ rmAnsatzEpsilon symx xs)
+                where
+                    symx = symAnsatzEpsilon sym1 x 
     
     rmAnsatz :: Fractional a => PertAnsatz a -> [PertAnsatz a] -> [PertAnsatz a]
     rmAnsatz ans ansList = filter (rmFunction rSet) ansList 
+            where 
+                rSet = M.keysSet ans 
+
+    rmAnsatzEpsilon :: Fractional a => PertAnsatzEpsilon a -> [PertAnsatzEpsilon a] -> [PertAnsatzEpsilon a]
+    rmAnsatzEpsilon ans ansList = filter (rmFunctionEpsilon rSet) ansList 
             where 
                 rSet = M.keysSet ans 
                 
@@ -147,6 +262,12 @@ where
             where
                 inter = Set.intersection rSet $ M.keysSet ans 
 
+    rmFunctionEpsilon :: Fractional a => Set.Set (([Int],S.Seq [Int])) -> PertAnsatzEpsilon a -> Bool
+    rmFunctionEpsilon rSet ans = (Set.size inter) == 0  
+            where
+                inter = Set.intersection rSet $ M.keysSet ans 
+
+
     --we need functions to construct an PertAnsatz from a given indcex list
 
     mkPertAns :: (Fractional a) => S.Seq Int -> PertAnsatz a
@@ -154,6 +275,16 @@ where
                 where 
                     chunks = S.chunksOf 2 seq 
                     seqList = (fmap F.toList) chunks 
+
+    mkPertAnsEpsilon :: (Fractional a) => S.Seq Int -> PertAnsatzEpsilon a
+    mkPertAnsEpsilon seq = M.fromList [((F.toList epsInds , seqList) ,1)]
+                where 
+                    epsInds = S.take 4 seq 
+                    chunks = S.chunksOf 2 $ S.drop 4 seq 
+                    seqList = (fmap F.toList) chunks 
+
+    --the rest of this module is for reading out and is not important for the moment 
+
 
     mkIndListtoEta :: I.IntMap Char -> [Int] -> String
     mkIndListtoEta iMap inds = "[" ++ (intersperse ',' eta) ++ "]"
@@ -176,6 +307,10 @@ where
             where 
                 seqList = getRepPert ans 
                 iMap = mkIndMap inds
+
+    --the evaluation is to slow 
+
+    --we need to write everything into a tree for the evaluation
 
     evalSeq :: (Num a) => M.Map Int Int -> S.Seq [Int] -> a
     evalSeq iMap seq = S.foldlWithIndex (\z ind val -> z * (etaF iMap val)) 1 seq 

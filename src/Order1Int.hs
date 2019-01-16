@@ -42,7 +42,7 @@ module Order1Int (
                         
 
     index2SparseAnsatzA :: Index 1 1 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseAnsatzA  (x1, x2, _, _, x5, _, _, _) = ((e-1)*10+j,a)
+    index2SparseAnsatzA  (x1, x2, _, _, x5, _, _, _) = ((e-1)*10+j,a+1)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)
@@ -61,7 +61,7 @@ module Order1Int (
                         
 
     index2SparseAnsatzAa :: Index 1 1 0 0 1 0 1 1 -> (Int,Int) 
-    index2SparseAnsatzAa  (x1, x2, _, _, x5, _, x7, x8) = ((e-1)*10*4+(j-1)*4+r,(a-1)*4+s)
+    index2SparseAnsatzAa  (x1, x2, _, _, x5, _, x7, x8) = ((e-1)*10*4+(j-1)*4+r,(a-1)*4+s+22)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)
@@ -85,7 +85,7 @@ module Order1Int (
                         
 
     index2SparseAnsatzAI :: Index 1 1 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseAnsatzAI  (x1, x2, _, _, x5, x6, _, _) = ((e-1)*100+(j-1)*10+k,(a-1)*10+i)
+    index2SparseAnsatzAI  (x1, x2, _, _, x5, x6, _, _) = ((e-1)*100+(j-1)*10+k,(a-1)*10+i+106)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)

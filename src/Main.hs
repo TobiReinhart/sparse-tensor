@@ -273,11 +273,7 @@ module Main (
 
         let ansatz3 = getAllIndsLabel "abcd" [(1,3),(1,2),(3,4)] [] [(1,2),(3,4)]
 
-         let ans = map mkAns ansatz 
-
-        let symAns = symAnsSet ([],[],[],[],[]) symLabel ans
-
-        let inds = getRepInds "abcdefghijklpq" symAns
+        let ans = map mkAns ansatz 
 
         let ansatz2 = getAllInds [(1,3),(1,2),(3,4),(5,7),(5,6),(7,8),(9,10),(1,5)] [] [(1,3),(1,2),(3,5),(3,4),(5,7),(5,6),(7,9),(7,8),(9,10)]
 
@@ -306,12 +302,6 @@ module Main (
         let ansatz4SymInds = getRepIndsPert "abcdpq" ansatz4Sym
 
         let pertAns1 = map mkPertAns ansatz
-
-        let pertAns1Sym = symAnsSetPert symLabel pertAns1
-
-        let pertAns1SymInds = getRepIndsPert "abcdefghijklpq" pertAns1Sym
-
-        let vals = evalFullAns areaEvalMap14 [pertAns1Sym !! 0]
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/FlatTest1.txt" $ showEqnsFlat $ M.union eqn1Flat eqnConstFlat
 
@@ -548,7 +538,7 @@ module Main (
 
         let symPosAnsatz14 = ([(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14)], [], [], [], [[[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14]]])
 
-        let ansatz14 = mkAns ansatz14Sym
+        let ansatz14 = map mkAns ansatz14Sym
 
         let ans14Sym = symAnsSet symLabelAnsatz14 symPosAnsatz14 ansatz14 
 

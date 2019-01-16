@@ -37,6 +37,7 @@ module Main (
     import Integrabillity
     import Perturbation
     import AnsatzEqns2
+    import Order1Int
     import Order2Int
     import Order3Int
      
@@ -525,7 +526,26 @@ module Main (
 
         let ansatzCondAIBbC = mkEqnSparseAnsatzAIBbC $ ansatzAIBbC map1Area map2Area map1Metric map2Metric
 
-        writeFile "ansatzAIBbC_15_1_19.txt" $ showEqnsFlat ansatzCondAIBbC 
+        --writeFile "ansatzAIBbC_15_1_19.txt" $ showEqnsFlat ansatzCondAIBbC 
+
+        let ansatzCondA = mkEqnSparseAnsatzA $ ansatzA map1Area map2Area map1Metric map2Metric
+
+        let ansatzCondAa = mkEqnSparseAnsatzAa $ ansatzAa map1Area map2Area map1Metric map2Metric
+
+        let ansatzCondAI = mkEqnSparseAnsatzAI $ ansatzAI2 map1Area map2Area map1Metric map2Metric
+
+        writeFile "/cip/austausch/cgg/Ansatz/ansatzA_16_1_19.txt" $ showEqnsFlatMatLab ansatzCondA
+
+        writeFile "/cip/austausch/cgg/Ansatz/ansatzAa_16_1_19.txt" $ showEqnsFlatMatLab ansatzCondAa
+
+        writeFile "/cip/austausch/cgg/Ansatz/ansatzAI_16_1_19.txt" $ showEqnsFlatMatLab ansatzCondAI
+
+
+
+
+
+
+        
 
 
 

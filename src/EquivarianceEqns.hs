@@ -19,7 +19,7 @@ module EquivarianceEqns (
     eqn1_1, eqn1_2, eqn1_3, eqn1_4, eqn2_2, eqn2_3, eqn3_3,
     index2Sparse1, index2Sparse2, index2Sparse3, index2Sparse4, index2Sparse5, index2Sparse6,index2SparseConst,
     mkEqn1Sparse, mkEqn2Sparse, mkEqn3Sparse, mkEqn4Sparse, mkEqn5Sparse, mkEqn6Sparse, mkEqnConstSparse, showEqns,
-    eqn1_1Flat, eqn2_2Flat, eqn3_3Flat, mkEqnConstSparseFlat, showEqnsFlat, showEqnsFlatFrac
+    eqn1_1Flat, eqn2_2Flat, eqn3_3Flat, mkEqnConstSparseFlat, showEqnsFlat, showEqnsFlatFrac, showEqnsFlatMatLab
 
 ) where
 
@@ -219,5 +219,15 @@ module EquivarianceEqns (
                             list1 = M.assocs map2
                             list2 = map (\(x,y) -> "," ++ show x ++ "=" ++ y ++ "\n") list1
 
+    
+    showEqnsFlatMatLab :: M.Map (Int,Int) Rational -> String
+    showEqnsFlatMatLab map1 = "{" ++ (tail (concat list2)) ++ "}"
+                        where
+                            map2 = M.map (show.truncate) $ M.filter (/=0) map1 
+                            list1 = M.assocs map2
+                            list2 = map (\(x,y) -> (showKeyMatLab x) ++ " " ++ show y ++ " " ++ "\n") list1
+
+    showKeyMatLab :: (Int,Int) -> String 
+    showKeyMatLab (i,j) = (show i) ++ " " ++ (show j)
 
     

@@ -208,7 +208,7 @@ module Ansatz (
                 b = S.index seq (j-1)
 
     filterSym :: S.Seq Int -> [(Int,Int)] -> Bool
-    filterSym seq list = foldl (\x y -> x && y) True boolList
+    filterSym seq list = and boolList
             where 
                 boolList = map (filter1Sym seq) list  
 

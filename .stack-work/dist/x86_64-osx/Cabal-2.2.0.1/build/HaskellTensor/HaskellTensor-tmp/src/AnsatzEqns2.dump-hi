@@ -1,9 +1,9 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-14 17:31:07.540887 UTC
+2019-01-16 12:35:56.609319 UTC
 
 interface main:AnsatzEqns2 8043
-  interface hash: 287db7c4c328f38684d9bd3345c58754
+  interface hash: e030ca019353254b081b6c340bb340c4
   ABI hash: 4f47a1b78e0e4e4edc836cc76a4e88b3
   export-list hash: 143dfa14ee31a97893027160ceec4cc4
   orphan hash: 7d6d69d66d99a3276b876b69566809a1
@@ -81,8 +81,8 @@ import  -/  BasicTensors 459e760670e17113d11708f22d917aa1
   interI_2 eb0e312eaf44de854b31148d758e3c06
   interMetric 7b123234da5bff1e9d5f5bfbd52a6db4
   invEta 654a36e8807dd2df11817151dcb7615d
-import  -/  EquivarianceEqns fbf17c99090e8b0250ffa5ce800c62ed
-  exports: 17332bd3a91566b072d1511317ff9a55
+import  -/  EquivarianceEqns 97e2971cea94f78bc7f1d6c830b407a4
+  exports: e7c82201f15d6bde89e88afb140ca87d
 import  -/  Index 60260ed90a129e1e10b6c5fafcb2ded1
   exports: 02acfc58131cc32506762c89c9bc64b7
   Index 5df768242bb15e89c1079fab7e7d3758

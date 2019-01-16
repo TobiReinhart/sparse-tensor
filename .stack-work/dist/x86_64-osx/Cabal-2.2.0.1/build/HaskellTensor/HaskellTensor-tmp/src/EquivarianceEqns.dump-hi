@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-14 17:30:57.376537 UTC
+2019-01-16 12:35:43.673284 UTC
 
 interface main:EquivarianceEqns 8043
-  interface hash: 29718ee23c3952dd8a7d3031c28d2421
-  ABI hash: fbf17c99090e8b0250ffa5ce800c62ed
-  export-list hash: 17332bd3a91566b072d1511317ff9a55
+  interface hash: 8d49a24d7b291cdbade26b36873cb5d5
+  ABI hash: 97e2971cea94f78bc7f1d6c830b407a4
+  export-list hash: e7c82201f15d6bde89e88afb140ca87d
   orphan hash: 5a8ea31337cbb9a6102439cfc89b3120
   flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
@@ -42,6 +42,7 @@ exports:
   EquivarianceEqns.showEqns
   EquivarianceEqns.showEqnsFlat
   EquivarianceEqns.showEqnsFlatFrac
+  EquivarianceEqns.showEqnsFlatMatLab
 module dependencies: BasicTensors Index Ivar Pde Tensor
 package dependencies: array-0.5.2.0 base-4.11.1.0
                       containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
@@ -3727,6 +3728,29 @@ d1d3367e84f30b67b468764bf55437b0
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) GHC.Base.String
   {- Arity: 1, Strictness: <S,1*U> -}
+3d9908dd4068b6049335b88944893994
+  showEqnsFlatMatLab ::
+    Data.Map.Internal.Map
+      (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
+    -> GHC.Base.String
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ (map1 :: Data.Map.Internal.Map
+                              (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational) ->
+                 EquivarianceEqns.showEqnsFlatMatLab_go13
+                   (GHC.Types.[] @ GHC.Types.Char)
+                   (EquivarianceEqns.showEqnsFlat_go13
+                      (Data.Map.Internal.filterWithKey
+                         @ (GHC.Types.Int, GHC.Types.Int)
+                         @ GHC.Real.Rational
+                         EquivarianceEqns.showEqnsFlat1
+                         map1))) -}
+1d9f394fc67e5b23b7f3e5a6c56cd898
+  showEqnsFlatMatLab_go13 ::
+    [GHC.Types.Char]
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, GHC.Types.Int) GHC.Base.String
+    -> [GHC.Types.Char]
+  {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
 cbd418d18b2d0da1f0d81fb35b330603
   showEqnsFlat_go1 ::
     [GHC.Types.Char]

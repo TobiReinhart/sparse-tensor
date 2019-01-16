@@ -542,10 +542,9 @@ module Main (
 
         let ansatzTopSort = getAllInds [(1,3),(1,2),(3,4),(5,7),(5,6),(7,8),(9,11),(9,10),(11,12),(13,14),(15,16),(1,5),(5,9)] [] [(1,3),(3,5),(5,7),(7,9),(9,11),(11,13),(13,15),(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16)]
 
-        let ansatzTopSortnoFilter = getAllInds [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16)] [] []
+        let ansatzTopSortnoFilter = getAllInds [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16),(15,17),(17,18)] [] []
 
-        writeFile "/cip/austausch/cgg/topSorts14.txt" $ show ansatzTopSortnoFilter
-
+        writeFile "/cip/austausch/cgg/topSorts18.txt" $ show ansatzTopSortnoFilter
 
 
 

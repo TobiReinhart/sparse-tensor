@@ -221,7 +221,7 @@ module EquivarianceEqns (
 
     
     showEqnsFlatMatLab :: M.Map (Int,Int) Rational -> String
-    showEqnsFlatMatLab map1 = tail (concat list2)
+    showEqnsFlatMatLab map1 = (concat list2)
                         where
                             map2 = M.map (show.truncate) $ M.filter (/=0) map1 
                             list1 = M.assocs map2

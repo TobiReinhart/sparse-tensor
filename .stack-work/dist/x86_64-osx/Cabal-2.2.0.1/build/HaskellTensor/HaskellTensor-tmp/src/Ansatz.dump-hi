@@ -1,13 +1,13 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-14 11:31:04.775137 UTC
+2019-01-16 14:17:57.682647 UTC
 
-interface main:Ansatz [hpc] 8043
-  interface hash: 646c833977c904f5a9e59da3adeac2c7
-  ABI hash: feb006ea34150c9f561fce99c96513c5
-  export-list hash: 59de763b5ed7159158b40cd802183e31
+interface main:Ansatz 8043
+  interface hash: e38898e52ff960f6b5ab240adbf49540
+  ABI hash: e80d045561c506e0590aa431c0cd1e76
+  export-list hash: d003aa5bf1bb4010f41a5bd7e042ed4f
   orphan hash: 0dde965f356f3e405547b440e184ccad
-  flag hash: badd6e954112606c59e049e70d21435f
+  flag hash: 707c86cfbee6a9c65f08462953a21ad8
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
   sig of: Nothing
@@ -15,7 +15,9 @@ interface main:Ansatz [hpc] 8043
   where
 exports:
   Ansatz.getAllInds
+  Ansatz.getAllIndsInverse
   Ansatz.getAllIndsLabel
+  Ansatz.getAllIndsLabelInverse
   Ansatz.indexPermSeq
   Ansatz.mkIndMap
 module dependencies:
@@ -50,6 +52,7 @@ import  -/  containers-0.5.11.0:Data.IntMap.Internal ef73a09d9589b16c95e337bc071
 import  -/  containers-0.5.11.0:Data.IntMap.Strict 79a3c61ca2c76eb71c4304029717e288
 import  -/  containers-0.5.11.0:Data.Sequence 21c58838329d44e2dc13db7c04e3a8d8
 import  -/  containers-0.5.11.0:Data.Sequence.Internal a2eae372f67713826bf16d410fc6cd8f
+import  -/  containers-0.5.11.0:Data.Sequence.Internal.Sorting 481f0d31b76dfcad90c740727653678b
 import  -/  containers-0.5.11.0:Data.Set 7d3c64a641be4cacbcd8119445bab919
 import  -/  containers-0.5.11.0:Data.Set.Internal 93fa3ef95853aa2a7aadf32d693bd451
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
@@ -121,16 +124,6 @@ c9a387433575b340b68c3abc8df6b8e8
                    -> case GHC.Classes.eqInt a2 b2 of wild3 {
                         GHC.Types.False -> GHC.Types.True
                         GHC.Types.True -> GHC.Types.False } } } }) -}
-7ccf27f361b94df174aa1f5fe920a8c1
-  $s$fFoldableSet_$celem_go3 ::
-    GHC.Types.Int
-    -> Data.Set.Internal.Set GHC.Types.Int -> GHC.Types.Bool
-  {- Arity: 2, HasNoCafRefs, Strictness: <S(S),1*U(U)><S,1*U>,
-     Inline: [0],
-     Unfolding: InlineRule (2, True, False)
-                (\ (w :: GHC.Types.Int)
-                   (w1 :: Data.Set.Internal.Set GHC.Types.Int) ->
-                 case w of ww { GHC.Types.I# ww1 -> Ansatz.$wgo3 ww1 w1 }) -}
 b548dc22626da76d18036d4541cede6b
   $sfromList ::
     [GHC.Types.Int] -> Data.Set.Internal.Set GHC.Types.Int
@@ -275,6 +268,24 @@ b916b0e1cc3fa7ea2828b1acaeddc965
     GHC.Prim.Int#
     -> Data.Set.Internal.Set GHC.Types.Int -> GHC.Types.Bool
   {- Arity: 2, HasNoCafRefs, Strictness: <L,U><S,1*U>, Inline: [0] -}
+547a4a3d91ef0366afafa8f0debc9aad
+  $wlvl ::
+    GHC.Prim.Int#
+    -> GHC.Types.Int
+    -> GHC.Prim.Int#
+    -> GHC.Types.Int
+    -> GHC.Types.Ordering
+  {- Arity: 4, HasNoCafRefs,
+     Strictness: <S,U><L,1*U(U)><S,U><L,1*U(U)>, Inline: [0],
+     Unfolding: (\ (ww :: GHC.Prim.Int#)
+                   (ww1 :: GHC.Types.Int)
+                   (ww2 :: GHC.Prim.Int#)
+                   (ww3 :: GHC.Types.Int) ->
+                 case GHC.Prim.<# ww ww2 of lwild {
+                   DEFAULT
+                   -> case GHC.Prim.==# ww ww2 of lwild1 {
+                        DEFAULT -> GHC.Types.GT 1# -> GHC.Classes.compareInt ww1 ww3 }
+                   1# -> GHC.Types.LT }) -}
 354d6fb1094c4d8e1958811937236204
   type Edge = (GHC.Types.Int, GHC.Types.Int)
 a456c151c9e277d0f28775b01686b8a7
@@ -285,7 +296,7 @@ edc911a4fd3a327199cdf82382a0ae98
   data Tree
     = Leaf GHC.Types.Int
     | Node GHC.Types.Int (Data.Sequence.Internal.Seq Ansatz.Tree)
-783e0080d02bd8e916cd48b33a5025dd
+fdcfec767009d3cd2156df4fbc07fb58
   getAllInds ::
     [Ansatz.Edge]
     -> [Ansatz.Root]
@@ -295,315 +306,413 @@ edc911a4fd3a327199cdf82382a0ae98
      Unfolding: (\ (edges :: [Ansatz.Edge])
                    (roots :: [Ansatz.Root])
                    (symList :: [(GHC.Types.Int, GHC.Types.Int)]) ->
-                 {__scc {main:Ansatz.getAllInds} True True} let {
-                                                              forest :: Data.Sequence.Internal.FingerTree
-                                                                          (Data.Sequence.Internal.Elem
-                                                                             Ansatz.Tree)
-                                                              = {__scc {main:Ansatz.getAllInds.forest} True True} {__scc {main:Ansatz.mkForest} True True} let {
-                                                                                                                                                             z :: [Ansatz.Tree]
-                                                                                                                                                             = GHC.Base.map
-                                                                                                                                                                 @ GHC.Types.Int
-                                                                                                                                                                 @ Ansatz.Tree
-                                                                                                                                                                 (\ (x :: Ansatz.Root) ->
-                                                                                                                                                                  {__scc {main:Ansatz.mkForest.\} True True} Ansatz.mkTree
-                                                                                                                                                                                                               x
-                                                                                                                                                                                                               edges)
-                                                                                                                                                                 ({__scc {main:Ansatz.getFirstNodes} True True} let {
-                                                                                                                                                                                                                  sndNodes :: Data.Set.Internal.Set
-                                                                                                                                                                                                                                GHC.Types.Int
-                                                                                                                                                                                                                  = {__scc {main:Ansatz.getFirstNodes.sndNodes} True True} Ansatz.$sfromList
-                                                                                                                                                                                                                                                                             (GHC.Base.map
-                                                                                                                                                                                                                                                                                @ (GHC.Types.Int,
-                                                                                                                                                                                                                                                                                   GHC.Types.Int)
-                                                                                                                                                                                                                                                                                @ GHC.Types.Int
-                                                                                                                                                                                                                                                                                Ansatz.getAllInds1
-                                                                                                                                                                                                                                                                                edges)
-                                                                                                                                                                                                                } in
-                                                                                                                                                                                                                letrec {
-                                                                                                                                                                                                                  go :: [(GHC.Types.Int,
-                                                                                                                                                                                                                          GHC.Types.Int)]
-                                                                                                                                                                                                                        -> [GHC.Types.Int]
-                                                                                                                                                                                                                    {- Arity: 1,
-                                                                                                                                                                                                                       Strictness: <S,1*U> -}
-                                                                                                                                                                                                                  = \ (ds :: [(GHC.Types.Int,
-                                                                                                                                                                                                                               GHC.Types.Int)]) ->
-                                                                                                                                                                                                                    case ds of wild {
-                                                                                                                                                                                                                      []
-                                                                                                                                                                                                                      -> GHC.Types.[]
-                                                                                                                                                                                                                           @ GHC.Types.Int
-                                                                                                                                                                                                                      : y ys
-                                                                                                                                                                                                                      -> case y of wild1 { (,) a b ->
-                                                                                                                                                                                                                         case {__scc {main:Ansatz.getFirstNodes.\} True True} Ansatz.$s$fFoldableSet_$celem_go3
-                                                                                                                                                                                                                                                                                a
-                                                                                                                                                                                                                                                                                sndNodes of wild2 {
-                                                                                                                                                                                                                           GHC.Types.False
-                                                                                                                                                                                                                           -> GHC.Types.:
-                                                                                                                                                                                                                                @ GHC.Types.Int
-                                                                                                                                                                                                                                ({__scc {main:Ansatz.getFirstNodes.\} True False} a)
-                                                                                                                                                                                                                                (go
-                                                                                                                                                                                                                                   ys)
-                                                                                                                                                                                                                           GHC.Types.True
-                                                                                                                                                                                                                           -> go
-                                                                                                                                                                                                                                ys } } }
-                                                                                                                                                                                                                } in
-                                                                                                                                                                                                                Data.Set.Internal.$fDataSet_go
-                                                                                                                                                                                                                  @ GHC.Types.Int
-                                                                                                                                                                                                                  (GHC.Types.[]
-                                                                                                                                                                                                                     @ GHC.Types.Int)
-                                                                                                                                                                                                                  (Ansatz.$sfromList
-                                                                                                                                                                                                                     (go
-                                                                                                                                                                                                                        edges)))
-                                                                                                                                                           } in
-                                                                                                                                                           letrec {
-                                                                                                                                                             go :: [GHC.Types.Int]
-                                                                                                                                                                   -> [Ansatz.Tree]
-                                                                                                                                                               {- Arity: 1,
-                                                                                                                                                                  Strictness: <S,1*U> -}
-                                                                                                                                                             = \ (ds :: [GHC.Types.Int]) ->
-                                                                                                                                                               case ds of wild {
-                                                                                                                                                                 []
-                                                                                                                                                                 -> z
-                                                                                                                                                                 : y ys
-                                                                                                                                                                 -> GHC.Types.:
-                                                                                                                                                                      @ Ansatz.Tree
-                                                                                                                                                                      (Ansatz.Leaf
-                                                                                                                                                                         y)
-                                                                                                                                                                      (go
-                                                                                                                                                                         ys) }
-                                                                                                                                                           } in
-                                                                                                                                                           Data.Sequence.Internal.$fIsListSeq_mkTree
-                                                                                                                                                             @ Ansatz.Tree
-                                                                                                                                                             @ Ansatz.Tree
-                                                                                                                                                             (go
-                                                                                                                                                                roots)
-                                                                                                                                                               `cast`
-                                                                                                                                                             ([Sym (Data.Sequence.Internal.N:Elem[0]
-                                                                                                                                                                        <Ansatz.Tree>_R)])_R
-                                                            } in
-                                                            GHC.List.filter
-                                                              @ (Data.Sequence.Internal.Seq
-                                                                   GHC.Types.Int)
-                                                              (\ (x :: Data.Sequence.Internal.Seq
-                                                                         GHC.Types.Int) ->
-                                                               {__scc {main:Ansatz.getAllInds.\} True True} {__scc {main:Ansatz.filterSym} True True} Ansatz.getAllInds_go
-                                                                                                                                                        ({__scc {main:Ansatz.filterSym.boolList} True True} GHC.Base.map
-                                                                                                                                                                                                              @ (GHC.Types.Int,
-                                                                                                                                                                                                                 GHC.Types.Int)
-                                                                                                                                                                                                              @ GHC.Types.Bool
-                                                                                                                                                                                                              (\ (ds :: (GHC.Types.Int,
-                                                                                                                                                                                                                         GHC.Types.Int)) ->
-                                                                                                                                                                                                               {__scc {main:Ansatz.filter1Sym} True True} case ds of wild { (,) i j ->
-                                                                                                                                                                                                                                                          {__scc {main:Ansatz.filter1Sym.a} True False} case i of wild1 { GHC.Types.I# x1 ->
-                                                                                                                                                                                                                                                                                                        case {__scc {main:Ansatz.filter1Sym.a} False True} Data.Sequence.Internal.$windex
-                                                                                                                                                                                                                                                                                                                                                             @ GHC.Types.Int
-                                                                                                                                                                                                                                                                                                                                                             x
-                                                                                                                                                                                                                                                                                                                                                             (GHC.Prim.-#
-                                                                                                                                                                                                                                                                                                                                                                x1
-                                                                                                                                                                                                                                                                                                                                                                1#) of wild2 { GHC.Types.I# x2 ->
-                                                                                                                                                                                                                                                                                                        {__scc {main:Ansatz.filter1Sym.b} True False} case j of wild3 { GHC.Types.I# x3 ->
-                                                                                                                                                                                                                                                                                                                                                      case {__scc {main:Ansatz.filter1Sym.b} False True} Data.Sequence.Internal.$windex
-                                                                                                                                                                                                                                                                                                                                                                                                           @ GHC.Types.Int
-                                                                                                                                                                                                                                                                                                                                                                                                           x
-                                                                                                                                                                                                                                                                                                                                                                                                           (GHC.Prim.-#
-                                                                                                                                                                                                                                                                                                                                                                                                              x3
-                                                                                                                                                                                                                                                                                                                                                                                                              1#) of wild4 { GHC.Types.I# y ->
-                                                                                                                                                                                                                                                                                                                                                      GHC.Prim.tagToEnum#
-                                                                                                                                                                                                                                                                                                                                                        @ GHC.Types.Bool
-                                                                                                                                                                                                                                                                                                                                                        (GHC.Prim.<#
-                                                                                                                                                                                                                                                                                                                                                           x2
-                                                                                                                                                                                                                                                                                                                                                           y) } } } } })
-                                                                                                                                                                                                              symList)
-                                                                                                                                                        GHC.Types.True)
-                                                              ({__scc {main:Ansatz.getAllInds.topSorts} True True} Ansatz.getTopSortsSeq
-                                                                                                                     forest
-                                                                                                                       `cast`
-                                                                                                                     (Sym (Data.Sequence.Internal.N:Seq[0]
-                                                                                                                               <Ansatz.Tree>_R)))) -}
-7581e1551d06ac385b677f859308f4bd
-  getAllInds1 :: (GHC.Types.Int, GHC.Types.Int) -> GHC.Types.Int
+                 GHC.List.filter
+                   @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                   (\ (x :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                    Ansatz.getAllInds3 x symList)
+                     `cast`
+                   (<Data.Sequence.Internal.Seq GHC.Types.Int>_R
+                    ->_R Data.Semigroup.Internal.N:All[0])
+                   (Ansatz.getTopSortsSeq
+                      (Ansatz.getAllInds1 edges roots)
+                        `cast`
+                      (Sym (Data.Sequence.Internal.N:Seq[0] <Ansatz.Tree>_R)))) -}
+0ceec920ed8346f470574a265b867bc0
+  getAllInds1 ::
+    [Ansatz.Edge]
+    -> [Ansatz.Root]
+    -> Data.Sequence.Internal.FingerTree
+         (Data.Sequence.Internal.Elem Ansatz.Tree)
+  {- Arity: 2, Strictness: <L,U><S,1*U>,
+     Unfolding: (\ (edges :: [Ansatz.Edge]) (leafs :: [Ansatz.Root]) ->
+                 let {
+                   z :: [Ansatz.Tree]
+                   = letrec {
+                       go3 :: [Ansatz.Tree]
+                              -> Data.Set.Internal.Set GHC.Types.Int -> [Ansatz.Tree]
+                         {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                       = \ (z' :: [Ansatz.Tree])
+                           (ds :: Data.Set.Internal.Set GHC.Types.Int) ->
+                         case ds of wild {
+                           Data.Set.Internal.Bin dt x l r
+                           -> go3
+                                (GHC.Types.: @ Ansatz.Tree (Ansatz.mkTree x edges) (go3 z' r))
+                                l
+                           Data.Set.Internal.Tip -> z' }
+                     } in
+                     let {
+                       sndNodes :: Data.Set.Internal.Set GHC.Types.Int
+                       = Ansatz.$sfromList
+                           (GHC.Base.map
+                              @ (GHC.Types.Int, GHC.Types.Int)
+                              @ GHC.Types.Int
+                              Ansatz.getAllInds2
+                              edges)
+                     } in
+                     letrec {
+                       go :: [(GHC.Types.Int, GHC.Types.Int)] -> [GHC.Types.Int]
+                         {- Arity: 1, Strictness: <S,1*U> -}
+                       = \ (ds :: [(GHC.Types.Int, GHC.Types.Int)]) ->
+                         case ds of wild {
+                           [] -> GHC.Types.[] @ GHC.Types.Int
+                           : y ys
+                           -> case y of wild1 { (,) a b ->
+                              case a of ww { GHC.Types.I# ww1 ->
+                              case Ansatz.$wgo3 ww1 sndNodes of wild2 {
+                                GHC.Types.False -> GHC.Types.: @ GHC.Types.Int ww (go ys)
+                                GHC.Types.True -> go ys } } } }
+                     } in
+                     go3 (GHC.Types.[] @ Ansatz.Tree) (Ansatz.$sfromList (go edges))
+                 } in
+                 letrec {
+                   go :: [GHC.Types.Int] -> [Ansatz.Tree]
+                     {- Arity: 1, Strictness: <S,1*U> -}
+                   = \ (ds :: [GHC.Types.Int]) ->
+                     case ds of wild {
+                       [] -> z
+                       : y ys -> GHC.Types.: @ Ansatz.Tree (Ansatz.Leaf y) (go ys) }
+                 } in
+                 Data.Sequence.Internal.$fIsListSeq_mkTree
+                   @ Ansatz.Tree
+                   @ Ansatz.Tree
+                   (go leafs)
+                     `cast`
+                   ([Sym (Data.Sequence.Internal.N:Elem[0] <Ansatz.Tree>_R)])_R) -}
+873230593a4f1427685f02b34d0b96c3
+  getAllInds2 :: (GHC.Types.Int, GHC.Types.Int) -> GHC.Types.Int
   {- Arity: 1, HasNoCafRefs, Strictness: <S(LS),1*U(A,1*U(U))>m,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: (GHC.Types.Int, GHC.Types.Int)) ->
-                 case ds of wild { (,) a b ->
-                 {__scc {main:Ansatz.getFirstNodes.sndNodes.\} True False} b }) -}
-3ce0d27e27bdc1552a623af8b1f86292
+                 case ds of wild { (,) a b -> b }) -}
+88bff57b1c88446f1277047cf97b00f4
+  getAllInds3 ::
+    Data.Sequence.Internal.Seq GHC.Types.Int
+    -> [(GHC.Types.Int, GHC.Types.Int)] -> Data.Semigroup.Internal.All
+  {- Arity: 2, Strictness: <L,U><S,1*U>,
+     Unfolding: (\ (seq :: Data.Sequence.Internal.Seq GHC.Types.Int)
+                   (list :: [(GHC.Types.Int, GHC.Types.Int)]) ->
+                 letrec {
+                   go :: [(GHC.Types.Int, GHC.Types.Int)]
+                         -> Data.Semigroup.Internal.All
+                     <join 1> {- Arity: 1, Strictness: <S,1*U> -}
+                   = \ (ds :: [(GHC.Types.Int, GHC.Types.Int)]) ->
+                     case ds of wild {
+                       []
+                       -> GHC.Types.True `cast` (Sym (Data.Semigroup.Internal.N:All[0]))
+                       : y ys
+                       -> case y of wild1 { (,) i j ->
+                          case i of wild2 { GHC.Types.I# x ->
+                          case j of wild3 { GHC.Types.I# x1 ->
+                          case Data.Sequence.Internal.$windex
+                                 @ GHC.Types.Int
+                                 seq
+                                 (GHC.Prim.-# x 1#) of wild4 { GHC.Types.I# x2 ->
+                          case Data.Sequence.Internal.$windex
+                                 @ GHC.Types.Int
+                                 seq
+                                 (GHC.Prim.-# x1 1#) of wild5 { GHC.Types.I# y1 ->
+                          case GHC.Prim.<# x2 y1 of lwild {
+                            DEFAULT
+                            -> GHC.Types.False `cast` (Sym (Data.Semigroup.Internal.N:All[0]))
+                            1# -> go ys } } } } } } }
+                 } in
+                 go list) -}
+e3e05f4bb277a21977b25f8b238155bf
+  getAllIndsInverse ::
+    [Ansatz.Edge]
+    -> [Ansatz.Root]
+    -> [(GHC.Types.Int, GHC.Types.Int)]
+    -> [Data.Sequence.Internal.Seq GHC.Types.Int]
+  {- Arity: 3, Strictness: <L,U><S,1*U><L,U>,
+     Unfolding: (\ (edges :: [Ansatz.Edge])
+                   (roots :: [Ansatz.Root])
+                   (symList :: [(GHC.Types.Int, GHC.Types.Int)]) ->
+                 let {
+                   topSorts :: [Data.Sequence.Internal.Seq GHC.Types.Int]
+                   = Ansatz.getTopSortsSeq
+                       (Ansatz.getAllInds1 edges roots)
+                         `cast`
+                       (Sym (Data.Sequence.Internal.N:Seq[0] <Ansatz.Tree>_R))
+                 } in
+                 let {
+                   lvl15 :: Data.Sequence.Internal.FingerTree
+                              (Data.Sequence.Internal.Elem GHC.Types.Int)
+                   = case (GHC.List.$w!!
+                             @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                             topSorts
+                             0#)
+                            `cast`
+                          (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R) of wild {
+                       Data.Sequence.Internal.EmptyT -> Ansatz.getAllIndsInverse3
+                       Data.Sequence.Internal.Single x -> Ansatz.getAllIndsInverse2
+                       Data.Sequence.Internal.Deep dt ds1 ds2 ds3
+                       -> Data.Sequence.Internal.$fIsListSeq_mkTree
+                            @ GHC.Types.Int
+                            @ GHC.Types.Int
+                            (GHC.Enum.eftInt 1# dt)
+                              `cast`
+                            ([Sym (Data.Sequence.Internal.N:Elem[0] <GHC.Types.Int>_R)])_R }
+                 } in
+                 letrec {
+                   go :: [Data.Sequence.Internal.Seq GHC.Types.Int]
+                         -> [Data.Sequence.Internal.Seq GHC.Types.Int]
+                     {- Arity: 1, Strictness: <S,1*U> -}
+                   = \ (ds :: [Data.Sequence.Internal.Seq GHC.Types.Int]) ->
+                     case ds of wild {
+                       [] -> GHC.Types.[] @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                       : y ys
+                       -> case (Ansatz.getAllInds3 y symList)
+                                 `cast`
+                               (Data.Semigroup.Internal.N:All[0]) of wild1 {
+                            GHC.Types.False -> go ys
+                            GHC.Types.True
+                            -> GHC.Types.:
+                                 @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                                 (Data.Sequence.Internal.$fFunctorSeq_$cfmap
+                                    @ (Data.Sequence.Internal.Elem (GHC.Types.Int, GHC.Types.Int))
+                                    @ (Data.Sequence.Internal.Elem GHC.Types.Int)
+                                    (Data.Tuple.snd @ GHC.Types.Int @ GHC.Types.Int)
+                                      `cast`
+                                    (Sym (Data.Sequence.Internal.N:Elem[0]
+                                              <(GHC.Types.Int, GHC.Types.Int)>_R)
+                                     ->_R Sym (Data.Sequence.Internal.N:Elem[0] <GHC.Types.Int>_R))
+                                    (Data.Sequence.Internal.Sorting.sortBy
+                                       @ (GHC.Types.Int, GHC.Types.Int)
+                                       Ansatz.getAllIndsInverse1
+                                       (Data.Sequence.Internal.zipWith
+                                          @ GHC.Types.Int
+                                          @ GHC.Types.Int
+                                          @ (GHC.Types.Int, GHC.Types.Int)
+                                          (GHC.Tuple.(,) @ GHC.Types.Int @ GHC.Types.Int)
+                                          y
+                                          lvl15
+                                            `cast`
+                                          (Sym (Data.Sequence.Internal.N:Seq[0]
+                                                    <GHC.Types.Int>_R))))
+                                      `cast`
+                                    (Data.Sequence.Internal.N:Seq[0]
+                                         <(GHC.Types.Int, GHC.Types.Int)>_R))
+                                   `cast`
+                                 (Sym (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R))
+                                 (go ys) } }
+                 } in
+                 go topSorts) -}
+7ea26508759726f0a45b0bbd45378e26
+  getAllIndsInverse1 ::
+    (GHC.Types.Int, GHC.Types.Int)
+    -> (GHC.Types.Int, GHC.Types.Int) -> GHC.Types.Ordering
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(S(S)L),1*U(1*U(U),1*U(U))><S(S(S)L),1*U(1*U(U),1*U(U))>,
+     Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: (GHC.Types.Int, GHC.Types.Int))
+                   (w1 :: (GHC.Types.Int, GHC.Types.Int)) ->
+                 case w of ww { (,) ww1 ww2 ->
+                 case ww1 of ww3 { GHC.Types.I# ww4 ->
+                 case w1 of ww5 { (,) ww6 ww7 ->
+                 case ww6 of ww8 { GHC.Types.I# ww9 ->
+                 Ansatz.$wlvl ww4 ww2 ww9 ww7 } } } }) -}
+b0b4bcbc782b22d40af2fbcfae52bee3
+  getAllIndsInverse2 ::
+    Data.Sequence.Internal.FingerTree
+      (Data.Sequence.Internal.Elem GHC.Types.Int)
+  {- Unfolding: (Data.Sequence.Internal.$fIsListSeq_mkTree
+                   @ GHC.Types.Int
+                   @ GHC.Types.Int
+                   (GHC.Enum.eftInt 1# 1#)
+                     `cast`
+                   ([Sym (Data.Sequence.Internal.N:Elem[0] <GHC.Types.Int>_R)])_R) -}
+27967ee56e1f10a8ab86b549c5fbc89f
+  getAllIndsInverse3 ::
+    Data.Sequence.Internal.FingerTree
+      (Data.Sequence.Internal.Elem GHC.Types.Int)
+  {- Unfolding: (Data.Sequence.Internal.$fIsListSeq_mkTree
+                   @ GHC.Types.Int
+                   @ GHC.Types.Int
+                   (GHC.Enum.eftInt 1# 0#)
+                     `cast`
+                   ([Sym (Data.Sequence.Internal.N:Elem[0] <GHC.Types.Int>_R)])_R) -}
+422ef2f66d3ba6211872917c2803609d
   getAllIndsLabel ::
     GHC.Base.String
     -> [Ansatz.Edge]
     -> [Ansatz.Root]
     -> [(GHC.Types.Int, GHC.Types.Int)]
     -> GHC.Base.String
-  {- Arity: 4, Strictness: <L,1*U><L,U><L,1*U><L,U>,
+  {- Arity: 4, Strictness: <L,1*U><L,U><S,1*U><L,U>,
      Unfolding: (\ (inds :: GHC.Base.String)
                    (edges :: [Ansatz.Edge])
                    (roots :: [Ansatz.Root])
                    (symList :: [(GHC.Types.Int, GHC.Types.Int)]) ->
                  let {
-                   lvl6 :: Data.IntMap.Internal.IntMap GHC.Types.Char
-                   = {__scc {main:Ansatz.getAllIndsLabel} False True} {__scc {main:Ansatz.getAllIndsLabel.\} False True} Ansatz.mkIndMap
-                                                                                                                           inds
+                   m :: Data.IntMap.Internal.IntMap GHC.Types.Char
+                   = Data.IntMap.Strict.fromList1
+                       @ GHC.Types.Char
+                       (Data.IntMap.Internal.Nil @ GHC.Types.Char)
+                       (Ansatz.getAllIndsLabel_go 1# inds)
                  } in
-                 {__scc {main:Ansatz.getAllIndsLabel} True True} GHC.CString.unpackAppendCString#
-                                                                   Ansatz.indexPermSeq4
-                                                                   (case GHC.Base.map
-                                                                           @ (Data.Sequence.Internal.Seq
-                                                                                GHC.Types.Int)
-                                                                           @ [GHC.Types.Char]
-                                                                           (\ (x :: Data.Sequence.Internal.Seq
-                                                                                      GHC.Types.Int) ->
-                                                                            {__scc {main:Ansatz.getAllIndsLabel.\} True True} Ansatz.indexPermSeq
-                                                                                                                                x
-                                                                                                                                lvl6)
-                                                                           (Ansatz.getAllInds
-                                                                              edges
-                                                                              roots
-                                                                              symList) of wild {
-                                                                      [] -> Ansatz.getAllIndsLabel3
-                                                                      : x xs
-                                                                      -> Ansatz.getAllIndsLabel_go
-                                                                           (GHC.Types.:
-                                                                              @ [GHC.Types.Char]
-                                                                              x
-                                                                              (Data.OldList.prependToAll
-                                                                                 @ [GHC.Types.Char]
-                                                                                 Ansatz.getAllIndsLabel1
-                                                                                 xs)) })) -}
-25151edf6f706134f5b5847cebfac45c
-  getAllIndsLabel1 :: [GHC.Types.Char]
-  {- Unfolding: (GHC.CString.unpackCString#
-                   Ansatz.getAllIndsLabel2) -}
-7a8642cb02da500db7cf01a769ff7ab2
-  getAllIndsLabel2 :: GHC.Prim.Addr#
-  {- HasNoCafRefs, Unfolding: (","#) -}
-6df5918d1ee83101f1afd5a48d8982a2
-  getAllIndsLabel3 :: [GHC.Types.Char]
-  {- Unfolding: (GHC.CString.unpackCString#
-                   Ansatz.getAllIndsLabel4) -}
-c814406e5798bd923a8cae3b9c2524b3
-  getAllIndsLabel4 :: GHC.Prim.Addr#
-  {- HasNoCafRefs, Unfolding: ("]"#) -}
-1da82766c3504826f330ea0d7f37756d
-  getAllIndsLabel_go :: [[GHC.Types.Char]] -> [GHC.Types.Char]
-  {- Arity: 1, Strictness: <S,1*U> -}
-b689bea102f835adef715a232fbf52ed
-  getAllInds_go ::
-    [GHC.Types.Bool] -> GHC.Types.Bool -> GHC.Types.Bool
-  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><S,1*U> -}
+                 let {
+                   lvl15 :: GHC.Types.Int -> [GHC.Types.Char] -> [GHC.Types.Char]
+                     {- Arity: 2, Strictness: <L,1*U(U)><L,U> -}
+                   = \ (x :: GHC.Types.Int) (ys :: [GHC.Types.Char])[OneShot] ->
+                     GHC.Types.:
+                       @ GHC.Types.Char
+                       (Data.IntMap.Internal.! @ GHC.Types.Char m x)
+                       ys
+                 } in
+                 Data.OldList.unlines
+                   (GHC.Base.map
+                      @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                      @ [GHC.Types.Char]
+                      (\ (x :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                       Data.Sequence.Internal.$fEq1Seq_$cfoldr
+                         @ (Data.Sequence.Internal.Elem GHC.Types.Int)
+                         @ [GHC.Types.Char]
+                         lvl15
+                           `cast`
+                         (Sym (Data.Sequence.Internal.N:Elem[0] <GHC.Types.Int>_R)
+                          ->_R <[GHC.Types.Char] -> [GHC.Types.Char]>_R)
+                         (GHC.Types.[] @ GHC.Types.Char)
+                         x `cast` (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R))
+                      (Ansatz.getAllInds edges roots symList))) -}
+b2c79ab5f32cfa90331a19303d6d35ec
+  getAllIndsLabelInverse ::
+    GHC.Base.String
+    -> [Ansatz.Edge]
+    -> [Ansatz.Root]
+    -> [(GHC.Types.Int, GHC.Types.Int)]
+    -> GHC.Base.String
+  {- Arity: 4, Strictness: <L,1*U><L,U><S,1*U><L,U>,
+     Unfolding: (\ (inds :: GHC.Base.String)
+                   (edges :: [Ansatz.Edge])
+                   (roots :: [Ansatz.Root])
+                   (symList :: [(GHC.Types.Int, GHC.Types.Int)]) ->
+                 let {
+                   m :: Data.IntMap.Internal.IntMap GHC.Types.Char
+                   = Data.IntMap.Strict.fromList1
+                       @ GHC.Types.Char
+                       (Data.IntMap.Internal.Nil @ GHC.Types.Char)
+                       (Ansatz.getAllIndsLabel_go 1# inds)
+                 } in
+                 let {
+                   lvl15 :: GHC.Types.Int -> [GHC.Types.Char] -> [GHC.Types.Char]
+                     {- Arity: 2, Strictness: <L,1*U(U)><L,U> -}
+                   = \ (x :: GHC.Types.Int) (ys :: [GHC.Types.Char])[OneShot] ->
+                     GHC.Types.:
+                       @ GHC.Types.Char
+                       (Data.IntMap.Internal.! @ GHC.Types.Char m x)
+                       ys
+                 } in
+                 Data.OldList.unlines
+                   (GHC.Base.map
+                      @ (Data.Sequence.Internal.Seq GHC.Types.Int)
+                      @ [GHC.Types.Char]
+                      (\ (x :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                       Data.Sequence.Internal.$fEq1Seq_$cfoldr
+                         @ (Data.Sequence.Internal.Elem GHC.Types.Int)
+                         @ [GHC.Types.Char]
+                         lvl15
+                           `cast`
+                         (Sym (Data.Sequence.Internal.N:Elem[0] <GHC.Types.Int>_R)
+                          ->_R <[GHC.Types.Char] -> [GHC.Types.Char]>_R)
+                         (GHC.Types.[] @ GHC.Types.Char)
+                         x `cast` (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R))
+                      (Ansatz.getAllIndsInverse edges roots symList))) -}
+30731938ac46a9632d986360f6be6810
+  getAllIndsLabel_go ::
+    GHC.Prim.Int#
+    -> [GHC.Types.Char] -> [(GHC.Types.Int, GHC.Types.Char)]
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,U><S,1*U> -}
 24672831fab0569817f3e0ae8aad08de
   getTopSortsSeq ::
     Ansatz.Forest -> [Data.Sequence.Internal.Seq GHC.Types.Int]
   {- Arity: 1, Strictness: <S,U> -}
-a49e68737d7ad22da18413bcd2a8636e
+d8bbdd5fdf4eef1087c8d90373bb817d
   indexPermSeq ::
     Data.Sequence.Internal.Seq GHC.Types.Int
     -> Data.IntMap.Internal.IntMap GHC.Types.Char -> GHC.Base.String
   {- Arity: 2, Strictness: <S,U><S,U>,
      Unfolding: (\ (a :: Data.Sequence.Internal.Seq GHC.Types.Int)
                    (b :: Data.IntMap.Internal.IntMap GHC.Types.Char) ->
-                 {__scc {main:Ansatz.indexPermSeq} True True} let {
-                                                                $j :: GHC.Base.String <join 0>
-                                                                = GHC.CString.unpackAppendCString#
-                                                                    Ansatz.indexPermSeq4
-                                                                    (case {__scc {main:Ansatz.indexPermSeq.indList} True True} Data.Sequence.Internal.$fEq1Seq_$cfoldr
-                                                                                                                                 @ (Data.Sequence.Internal.Elem
-                                                                                                                                      Data.IntSet.Internal.Key)
-                                                                                                                                 @ (GHC.Types.Int
-                                                                                                                                    -> [GHC.Types.Char])
-                                                                                                                                 (\ (x :: Data.IntSet.Internal.Key)
-                                                                                                                                    (g :: GHC.Types.Int
-                                                                                                                                          -> [GHC.Types.Char])[OneShot]
-                                                                                                                                    (i :: GHC.Types.Int) ->
-                                                                                                                                  case i of i1 { GHC.Types.I# ipv ->
-                                                                                                                                  {__scc {main:Ansatz.indexPermSeq.indList.\} True False} GHC.Types.:
-                                                                                                                                                                                            @ GHC.Types.Char
-                                                                                                                                                                                            ({__scc {main:Ansatz.indexPermSeq.indList.\} False True} Data.IntMap.Internal.!
-                                                                                                                                                                                                                                                       @ GHC.Types.Char
-                                                                                                                                                                                                                                                       b
-                                                                                                                                                                                                                                                       x)
-                                                                                                                                                                                            (g (GHC.Types.I#
-                                                                                                                                                                                                  (GHC.Prim.+#
-                                                                                                                                                                                                     ipv
-                                                                                                                                                                                                     1#))) })
-                                                                                                                                   `cast`
-                                                                                                                                 (Sym (Data.Sequence.Internal.N:Elem[0]
-                                                                                                                                           <Data.IntSet.Internal.Key>_R)
-                                                                                                                                  ->_R <(GHC.Types.Int
-                                                                                                                                         -> [GHC.Types.Char])
-                                                                                                                                        -> GHC.Types.Int
-                                                                                                                                        -> [GHC.Types.Char]>_R)
-                                                                                                                                 Ansatz.indexPermSeq3
-                                                                                                                                 a `cast`
-                                                                                                                                 (Data.Sequence.Internal.N:Seq[0]
-                                                                                                                                      <Data.IntSet.Internal.Key>_R)
-                                                                                                                                 Ansatz.$fShowTree2 of wild {
-                                                                       [] -> Ansatz.getAllIndsLabel3
-                                                                       : x xs
-                                                                       -> GHC.Base.++_$s++
-                                                                            @ GHC.Types.Char
-                                                                            Ansatz.getAllIndsLabel3
-                                                                            x
-                                                                            (Data.OldList.prependToAll
-                                                                               @ GHC.Types.Char
-                                                                               Ansatz.indexPermSeq2
-                                                                               xs) })
-                                                              } in
-                                                              case a `cast`
-                                                                   (Data.Sequence.Internal.N:Seq[0]
-                                                                        <GHC.Types.Int>_R) of wild {
-                                                                Data.Sequence.Internal.EmptyT
-                                                                -> case Data.IntMap.Internal.$wgo
-                                                                          @ GHC.Types.Char
-                                                                          0#
-                                                                          b of ww {
-                                                                     DEFAULT -> Ansatz.indexPermSeq1
-                                                                     0# -> $j }
-                                                                Data.Sequence.Internal.Single x
-                                                                -> case Data.IntMap.Internal.$wgo
-                                                                          @ GHC.Types.Char
-                                                                          0#
-                                                                          b of ww {
-                                                                     DEFAULT -> Ansatz.indexPermSeq1
-                                                                     1# -> $j }
-                                                                Data.Sequence.Internal.Deep dt ds1 ds2 ds3
-                                                                -> case Data.IntMap.Internal.$wgo
-                                                                          @ GHC.Types.Char
-                                                                          0#
-                                                                          b of ww { DEFAULT ->
-                                                                   case GHC.Prim./=#
-                                                                          dt
-                                                                          ww of lwild {
-                                                                     DEFAULT -> $j
-                                                                     1#
-                                                                     -> Ansatz.indexPermSeq1 } } }) -}
+                 let {
+                   $j :: GHC.Base.String <join 0>
+                   = GHC.CString.unpackAppendCString#
+                       Ansatz.indexPermSeq6
+                       (case Data.Sequence.Internal.$fEq1Seq_$cfoldr
+                               @ (Data.Sequence.Internal.Elem Data.IntSet.Internal.Key)
+                               @ (GHC.Types.Int -> [GHC.Types.Char])
+                               (\ (x :: Data.IntSet.Internal.Key)
+                                  (g :: GHC.Types.Int -> [GHC.Types.Char])[OneShot]
+                                  (i :: GHC.Types.Int) ->
+                                case i of i1 { GHC.Types.I# ipv ->
+                                GHC.Types.:
+                                  @ GHC.Types.Char
+                                  (Data.IntMap.Internal.! @ GHC.Types.Char b x)
+                                  (g (GHC.Types.I# (GHC.Prim.+# ipv 1#))) })
+                                 `cast`
+                               (Sym (Data.Sequence.Internal.N:Elem[0]
+                                         <Data.IntSet.Internal.Key>_R)
+                                ->_R <(GHC.Types.Int -> [GHC.Types.Char])
+                                      -> GHC.Types.Int -> [GHC.Types.Char]>_R)
+                               Ansatz.indexPermSeq5
+                               a `cast`
+                               (Data.Sequence.Internal.N:Seq[0] <Data.IntSet.Internal.Key>_R)
+                               Ansatz.$fShowTree2 of wild {
+                          [] -> Ansatz.indexPermSeq3
+                          : x xs
+                          -> GHC.Base.++_$s++
+                               @ GHC.Types.Char
+                               Ansatz.indexPermSeq3
+                               x
+                               (Data.OldList.prependToAll
+                                  @ GHC.Types.Char
+                                  Ansatz.indexPermSeq2
+                                  xs) })
+                 } in
+                 case a `cast`
+                      (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R) of wild {
+                   Data.Sequence.Internal.EmptyT
+                   -> case Data.IntMap.Internal.$wgo @ GHC.Types.Char 0# b of ww {
+                        DEFAULT -> Ansatz.indexPermSeq1 0# -> $j }
+                   Data.Sequence.Internal.Single x
+                   -> case Data.IntMap.Internal.$wgo @ GHC.Types.Char 0# b of ww {
+                        DEFAULT -> Ansatz.indexPermSeq1 1# -> $j }
+                   Data.Sequence.Internal.Deep dt ds1 ds2 ds3
+                   -> case Data.IntMap.Internal.$wgo
+                             @ GHC.Types.Char
+                             0#
+                             b of ww { DEFAULT ->
+                      case GHC.Prim./=# dt ww of lwild {
+                        DEFAULT -> $j 1# -> Ansatz.indexPermSeq1 } } }) -}
 4ee44ebdd11428950322aae4aa2fd06d
   indexPermSeq1 :: GHC.Base.String
   {- Strictness: x -}
 a7a60c65c99ca97691ec61b68321022b
   indexPermSeq2 :: GHC.Types.Char
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.C# ','#) -}
-f9e648c7a95dc50a6748b0ad4b4dde39
-  indexPermSeq3 :: GHC.Types.Int -> [GHC.Types.Char]
+4775a6986c0c5bac189e51598cac2766
+  indexPermSeq3 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString# Ansatz.indexPermSeq4) -}
+cb3ce68c61114d9a68b98d88e71158df
+  indexPermSeq4 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("]"#) -}
+6349c485f2d2e53f1dc97ac100a2d7aa
+  indexPermSeq5 :: GHC.Types.Int -> [GHC.Types.Char]
   {- Arity: 1, HasNoCafRefs, Strictness: <L,A>,
      Unfolding: InlineRule (1, True, True)
                 (\ (ds :: GHC.Types.Int) -> GHC.Types.[] @ GHC.Types.Char) -}
-ded6ee2b76850caca4b1921feb5382f6
-  indexPermSeq4 :: GHC.Prim.Addr#
+38149d66145248010042bf070afed8c1
+  indexPermSeq6 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("["#) -}
-6791acc2cf31656762d52fb03a1b3fa5
+b063376525dccbf318de1874d8e86141
   mkIndMap ::
     GHC.Base.String -> Data.IntMap.Internal.IntMap GHC.Types.Char
   {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U>,
      Unfolding: (\ (inds :: GHC.Base.String) ->
-                 {__scc {main:Ansatz.mkIndMap} True True} Data.IntMap.Strict.fromList1
-                                                            @ GHC.Types.Char
-                                                            (Data.IntMap.Internal.Nil
-                                                               @ GHC.Types.Char)
-                                                            (Ansatz.mkIndMap_go 1# inds)) -}
-d2d1522e242b589314a3d74b384f8de2
-  mkIndMap_go ::
-    GHC.Prim.Int#
-    -> [GHC.Types.Char] -> [(GHC.Types.Int, GHC.Types.Char)]
-  {- Arity: 2, HasNoCafRefs, Strictness: <L,U><S,1*U> -}
+                 Data.IntMap.Strict.fromList1
+                   @ GHC.Types.Char
+                   (Data.IntMap.Internal.Nil @ GHC.Types.Char)
+                   (Ansatz.getAllIndsLabel_go 1# inds)) -}
 5a5868224ebdda63b3260af933f45150
   mkTree :: Ansatz.Root -> [Ansatz.Edge] -> Ansatz.Tree
   {- Arity: 2, HasNoCafRefs, Strictness: <L,U(U)><S,U> -}

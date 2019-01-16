@@ -221,12 +221,11 @@ module Ansatz (
                 topSorts = getTopSortsSeq forest 
 
     getAllIndsInverse :: [Edge] -> [Root] -> [(Int,Int)] -> [S.Seq Int]
-    getAllIndsInverse edges roots symList = filter (\x -> filterSym x symList) inverseTopSorts 
+    getAllIndsInverse edges roots symList = map (invertPermSeq s)  $ filter (\x -> filterSym x symList) topSorts 
             where
                 forest = mkForest edges roots 
                 topSorts = getTopSortsSeq forest 
                 s = S.length $ topSorts !! 0
-                inverseTopSorts = map (invertPermSeq s)  $ topSorts 
 
     indexPermSeq :: S.Seq Int -> I.IntMap Char -> String 
     indexPermSeq a b

@@ -546,8 +546,6 @@ module Main (
 
         writeFile "/cip/austausch/cgg/topSorts18Filtered2.txt" ansatzTopSort
 
-
-
         
 
 

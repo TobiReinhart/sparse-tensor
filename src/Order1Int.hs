@@ -16,7 +16,7 @@
 module Order1Int (
     ansatzA, mkEqnSparseAnsatzA,
     ansatzAa, mkEqnSparseAnsatzAa, 
-    ansatzAI, mkEqnSparseAnsatzAI
+    ansatzAI2, mkEqnSparseAnsatzAI
     
     
 ) where

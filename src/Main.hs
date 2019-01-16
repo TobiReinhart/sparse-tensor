@@ -538,9 +538,9 @@ module Main (
 
         let symPosAnsatz14 = ([(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14)], [], [], [], [[[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14]]])
 
-        let ansatz14 = map mkAns ansatz14Sym
+        let ansatz14 = map mkPertAns ansatz14Sym
 
-        let ans14Sym = symAnsSet symLabelAnsatz14 symPosAnsatz14 ansatz14 
+        let ans14Sym = symAnsSetPert symLabelAnsatz14 ansatz14 
 
         writeFile "/cip/austausch/cgg/topSorts18Filtered2.txt" $ show ans14Sym
 

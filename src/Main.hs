@@ -548,7 +548,9 @@ module Main (
 
         let ans18SymEpsilon = symAnsSetPertEpsilon symLabelAnsatz18 ansatz18Eps 
 
-        writeFile "/cip/austausch/cgg/topSorts18SymmetrizedEpsilon.txt" $ show ans18SymEpsilon
+        --writeFile "/cip/austausch/cgg/topSorts18SymmetrizedEpsilon.txt" $ show ans18SymEpsilon
+
+        print $ length ansatz18SymEps
 
 
 

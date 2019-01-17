@@ -1,9 +1,9 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-16 14:05:54.061885 UTC
+2019-01-17 08:53:25.995224 UTC
 
 interface main:Symmetrize 8043
-  interface hash: 07a84ea7031606cdd99b7f661f053c8a
+  interface hash: 21270d14e24128696e0f8ed68816263c
   ABI hash: a6ed2605ac858eebc9579a2a0ea3bf31
   export-list hash: c79a0ef965b8f406eb0b9e72ceb58ef0
   orphan hash: 4a48000f354263bab76e696a9d5d0ba4
@@ -56,7 +56,7 @@ import  -/  containers-0.5.11.0:Data.Sequence.Internal a2eae372f67713826bf16d410
 import  -/  containers-0.5.11.0:Data.Set 7d3c64a641be4cacbcd8119445bab919
 import  -/  containers-0.5.11.0:Data.Set.Internal 93fa3ef95853aa2a7aadf32d693bd451
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
-import  -/  Ansatz 8312389b844219499369771723461f5d
+import  -/  Ansatz e80d045561c506e0590aa431c0cd1e76
   exports: d003aa5bf1bb4010f41a5bd7e042ed4f
   indexPermSeq d8bbdd5fdf4eef1087c8d90373bb817d
   mkIndMap b063376525dccbf318de1874d8e86141

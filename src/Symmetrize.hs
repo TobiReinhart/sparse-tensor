@@ -237,7 +237,7 @@ where
             ) labCycle
         ) labBlockCycle  
             
-    -- once an ansatz is symmetrized we need to remove zeros -> not necessary as if one perm is zero due to the group structure the whole ansatz vanishes
+    --once an ansatz is symmetrized we need to remove zeros -> not necessary as if one perm is zero due to the group structure the whole ansatz vanishes
 
     isZero :: (Fractional a, Eq a) => Ansatz a -> Bool
     isZero ans = elem 0 $ M.elems ans

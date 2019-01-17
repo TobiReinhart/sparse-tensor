@@ -1,12 +1,12 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-16 14:05:55.404842 UTC
+2019-01-17 08:53:27.886482 UTC
 
 interface main:Perturbation 8043
-  interface hash: f0acb511cae6aa81367c61ff55412882
-  ABI hash: 7b6ef98b7c9fde375af15490b50b49df
-  export-list hash: 2151821fea7fdcfba530bb109075c579
-  orphan hash: fd32531c54dc7aa768bba348542be920
+  interface hash: 4698c2e26775565317b2932720f58db1
+  ABI hash: 0e825cc71b7cfb75f47556da4cd2afa2
+  export-list hash: 94e25b3c86d4e670faac492ecf8a0eda
+  orphan hash: 1bc81da6a1dae6af331427dffa5a65a2
   flag hash: 707c86cfbee6a9c65f08462953a21ad8
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
@@ -22,8 +22,11 @@ exports:
   Perturbation.getRepIndsPert
   Perturbation.indexPermSeqPert
   Perturbation.mkPertAns
+  Perturbation.mkPertAnsEpsilon
   Perturbation.symAnsSetPert
+  Perturbation.symAnsSetPertEpsilon
   Perturbation.PertAnsatz
+  Perturbation.PertAnsatzEpsilon
 module dependencies: Ansatz Symmetrize
 package dependencies: array-0.5.2.0 base-4.11.1.0*
                       containers-0.5.11.0* deepseq-1.4.3.0 ghc-prim-0.5.2.0
@@ -52,6 +55,7 @@ import  -/  base-4.11.1.0:GHC.Err 5e26aa744981f14e0f1e4d29c44ac52e
 import  -/  base-4.11.1.0:GHC.List 1e4357702d8d00cded0703bd293e50e8
 import  -/  base-4.11.1.0:GHC.Num 8e54b26dce4495382dc4b50cf36ab754
 import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
+import  -/  base-4.11.1.0:GHC.Show 73be67392447c974f19c3befd83c46c0
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.IntMap.Internal ef73a09d9589b16c95e337bc0715aa57
 import  -/  containers-0.5.11.0:Data.IntMap.Strict 79a3c61ca2c76eb71c4304029717e288
@@ -64,14 +68,98 @@ import  -/  containers-0.5.11.0:Data.Sequence.Internal.Sorting 481f0d31b76dfcad9
 import  -/  containers-0.5.11.0:Data.Set 7d3c64a641be4cacbcd8119445bab919
 import  -/  containers-0.5.11.0:Data.Set.Internal 93fa3ef95853aa2a7aadf32d693bd451
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
-import  -/  Ansatz 8312389b844219499369771723461f5d
+import  -/  Ansatz e80d045561c506e0590aa431c0cd1e76
   exports: d003aa5bf1bb4010f41a5bd7e042ed4f
   mkIndMap b063376525dccbf318de1874d8e86141
 import  -/  Symmetrize a6ed2605ac858eebc9579a2a0ea3bf31
   exports: c79a0ef965b8f406eb0b9e72ceb58ef0
   Symmetry f51775b478da3c80f3a4963df025dc97
-f7389b902888e93b7f110ae4a9a0f722
-  $s$fEqSeq ::
+8448a01895e0fa462fc88c8f28f119a5
+  $fShowAnsatzTree :: GHC.Show.Show Perturbation.AnsatzTree
+  DFunId
+  {- Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ Perturbation.AnsatzTree
+                  Perturbation.$fShowAnsatzTree_$cshowsPrec
+                  Perturbation.$fShowAnsatzTree_$cshow
+                  Perturbation.$fShowAnsatzTree_$cshowList -}
+8448a01895e0fa462fc88c8f28f119a5
+  $fShowAnsatzTree1 :: Perturbation.AnsatzTree -> GHC.Show.ShowS
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ (w :: Perturbation.AnsatzTree) ->
+                 Perturbation.$w$cshowsPrec 0# w) -}
+ca457056bbdd200ba0f55ed886c18bec
+  $fShowAnsatzTree2 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
+8448a01895e0fa462fc88c8f28f119a5
+  $fShowAnsatzTree_$cshow ::
+    Perturbation.AnsatzTree -> GHC.Base.String
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: InlineRule (1, True, False)
+                (\ (x :: Perturbation.AnsatzTree) ->
+                 Perturbation.$fShowAnsatzTree_$cshowsPrec
+                   Perturbation.$fShowAnsatzTree2
+                   x
+                   (GHC.Types.[] @ GHC.Types.Char)) -}
+8448a01895e0fa462fc88c8f28f119a5
+  $fShowAnsatzTree_$cshowList ::
+    [Perturbation.AnsatzTree] -> GHC.Show.ShowS
+  {- Arity: 2, Strictness: <S,1*U><L,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (ls :: [Perturbation.AnsatzTree]) (s :: GHC.Base.String) ->
+                 GHC.Show.showList__
+                   @ Perturbation.AnsatzTree
+                   Perturbation.$fShowAnsatzTree1
+                   ls
+                   s) -}
+8448a01895e0fa462fc88c8f28f119a5
+  $fShowAnsatzTree_$cshowsPrec ::
+    GHC.Types.Int -> Perturbation.AnsatzTree -> GHC.Show.ShowS
+  {- Arity: 2, Strictness: <S(S),1*U(U)><S,1*U>, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: GHC.Types.Int) (w1 :: Perturbation.AnsatzTree) ->
+                 case w of ww { GHC.Types.I# ww1 ->
+                 Perturbation.$w$cshowsPrec ww1 w1 }) -}
+afc7201e1ab9af43bf48844ccb28daa9
+  $s$fEq(,) ::
+    GHC.Classes.Eq
+      ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+                  (GHC.Classes.$fEq(,)_$c==
+                     @ [GHC.Types.Int]
+                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                     GHC.Classes.$fEq[]_$s$fEq[]
+                     Perturbation.$s$fEq(,)_$s$fEqSeq)
+                  Perturbation.$s$fEq(,)_$s$fEq(,)_$c/= -}
+63dba72ed7eb5f6817eced00606a0641
+  $s$fEq(,)_$s$fEq(,)_$c/= ::
+    ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+    -> ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+    -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(SL),1*U(1*U,U)><S(SL),1*U(1*U,U)>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ (x :: ([GHC.Types.Int],
+                          Data.Sequence.Internal.Seq [GHC.Types.Int]))
+                   (y :: ([GHC.Types.Int],
+                          Data.Sequence.Internal.Seq [GHC.Types.Int])) ->
+                 case x of wild { (,) a1 a2 ->
+                 case y of wild1 { (,) b1 b2 ->
+                 case GHC.Classes.$fEq[]_$s$c== a1 b1 of wild2 {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True
+                   -> case Data.Sequence.Internal.$fEqSeq_$c==
+                             @ [GHC.Types.Int]
+                             GHC.Classes.$fEq[]_$s$fEq[]
+                             a2
+                             b2 of wild3 {
+                        GHC.Types.False -> GHC.Types.True
+                        GHC.Types.True -> GHC.Types.False } } } }) -}
+1607aaaefdab42baeef7798b37c83d85
+  $s$fEq(,)_$s$fEqSeq ::
     GHC.Classes.Eq (Data.Sequence.Internal.Seq [GHC.Types.Int])
   {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
      Unfolding: DFun:.
@@ -79,9 +167,9 @@ f7389b902888e93b7f110ae4a9a0f722
                   (Data.Sequence.Internal.$fEqSeq_$c==
                      @ [GHC.Types.Int]
                      GHC.Classes.$fEq[]_$s$fEq[])
-                  Perturbation.$s$fEqSeq_$s$fEqSeq_$c/= -}
-1d48eec79dc6632022759d732028766f
-  $s$fEqSeq_$s$fEqSeq_$c/= ::
+                  Perturbation.$s$fEq(,)_$s$fEqSeq_$c/= -}
+b82d11b736be6d6bf53ab86938fd08fa
+  $s$fEq(,)_$s$fEqSeq_$c/= ::
     Data.Sequence.Internal.Seq [GHC.Types.Int]
     -> Data.Sequence.Internal.Seq [GHC.Types.Int] -> GHC.Types.Bool
   {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>,
@@ -96,13 +184,110 @@ f7389b902888e93b7f110ae4a9a0f722
                         y of wild {
                    GHC.Types.False -> GHC.Types.True
                    GHC.Types.True -> GHC.Types.False }) -}
-ebb54f6591f1336fde50b15fbf414a1a
-  $s$fOrdSeq ::
+7d5dd273d779fb5bf00f743884ea6d68
+  $s$fOrd(,) ::
+    GHC.Classes.Ord
+      ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+                  Perturbation.$s$fEq(,)
+                  (GHC.Classes.$fOrd(,)_$ccompare
+                     @ [GHC.Types.Int]
+                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                     GHC.Classes.$fOrd[]_$s$fOrd[]
+                     Perturbation.$s$fOrd(,)_$s$fOrdSeq)
+                  (GHC.Classes.$fOrd(,)_$c<
+                     @ [GHC.Types.Int]
+                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                     GHC.Classes.$fOrd[]_$s$fOrd[]
+                     Perturbation.$s$fOrd(,)_$s$fOrdSeq)
+                  (GHC.Classes.$fOrd(,)_$c<=
+                     @ [GHC.Types.Int]
+                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                     GHC.Classes.$fOrd[]_$s$fOrd[]
+                     Perturbation.$s$fOrd(,)_$s$fOrdSeq)
+                  (\ (a1 :: ([GHC.Types.Int],
+                             Data.Sequence.Internal.Seq [GHC.Types.Int]))
+                     (b1 :: ([GHC.Types.Int],
+                             Data.Sequence.Internal.Seq [GHC.Types.Int])) ->
+                   GHC.Classes.$fOrd(,)_$c<
+                     @ [GHC.Types.Int]
+                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                     GHC.Classes.$fOrd[]_$s$fOrd[]
+                     Perturbation.$s$fOrd(,)_$s$fOrdSeq
+                     b1
+                     a1)
+                  (GHC.Classes.$fOrd(,)_$c>=
+                     @ [GHC.Types.Int]
+                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                     GHC.Classes.$fOrd[]_$s$fOrd[]
+                     Perturbation.$s$fOrd(,)_$s$fOrdSeq)
+                  (GHC.Classes.$fOrd(,)_$cmax
+                     @ [GHC.Types.Int]
+                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                     GHC.Classes.$fOrd[]_$s$fOrd[]
+                     Perturbation.$s$fOrd(,)_$s$fOrdSeq)
+                  (GHC.Classes.$fOrd(,)_$cmin
+                     @ [GHC.Types.Int]
+                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                     GHC.Classes.$fOrd[]_$s$fOrd[]
+                     Perturbation.$s$fOrd(,)_$s$fOrdSeq) -}
+879bb5696e2429f86fb6c899e0e4421a
+  $s$fOrd(,)_$cmax ::
+    ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+    -> ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+    -> ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(SL),1*U(U,U)><S(SL),1*U(U,U)>m, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w2 :: ([GHC.Types.Int],
+                           Data.Sequence.Internal.Seq [GHC.Types.Int]))
+                   (w3 :: ([GHC.Types.Int],
+                           Data.Sequence.Internal.Seq [GHC.Types.Int])) ->
+                 case w2 of ww { (,) ww1 ww2 ->
+                 case w3 of ww3 { (,) ww4 ww5 ->
+                 case GHC.Classes.$fOrd[]_$s$ccompare ww4 ww1 of wild {
+                   GHC.Types.LT -> (ww1, ww2)
+                   GHC.Types.EQ
+                   -> case Data.Sequence.Internal.$fOrdSeq_$c<
+                             @ [GHC.Types.Int]
+                             GHC.Classes.$fOrd[]_$s$fOrd[]
+                             ww5
+                             ww2 of wild1 {
+                        GHC.Types.False -> (ww4, ww5) GHC.Types.True -> (ww1, ww2) }
+                   GHC.Types.GT -> (ww4, ww5) } } }) -}
+0ad75a470400c4fcd02a2ea7ed770f21
+  $s$fOrd(,)_$cmin ::
+    ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+    -> ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+    -> ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <S(SL),1*U(U,U)><S(SL),1*U(U,U)>m, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w2 :: ([GHC.Types.Int],
+                           Data.Sequence.Internal.Seq [GHC.Types.Int]))
+                   (w3 :: ([GHC.Types.Int],
+                           Data.Sequence.Internal.Seq [GHC.Types.Int])) ->
+                 case w2 of ww { (,) ww1 ww2 ->
+                 case w3 of ww3 { (,) ww4 ww5 ->
+                 case GHC.Classes.$fOrd[]_$s$ccompare ww4 ww1 of wild {
+                   GHC.Types.LT -> (ww4, ww5)
+                   GHC.Types.EQ
+                   -> case Data.Sequence.Internal.$fOrdSeq_$c<
+                             @ [GHC.Types.Int]
+                             GHC.Classes.$fOrd[]_$s$fOrd[]
+                             ww5
+                             ww2 of wild1 {
+                        GHC.Types.False -> (ww1, ww2) GHC.Types.True -> (ww4, ww5) }
+                   GHC.Types.GT -> (ww1, ww2) } } }) -}
+579a8a1ebda3aee1e42d3e4a6d25408c
+  $s$fOrd(,)_$s$fOrdSeq ::
     GHC.Classes.Ord (Data.Sequence.Internal.Seq [GHC.Types.Int])
   {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
      Unfolding: DFun:.
                   @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                  Perturbation.$s$fEqSeq
+                  Perturbation.$s$fEq(,)_$s$fEqSeq
                   (Data.Sequence.Internal.$fOrdSeq_$ccompare
                      @ [GHC.Types.Int]
                      GHC.Classes.$fOrd[]_$s$fOrd[])
@@ -179,103 +364,8 @@ ebb54f6591f1336fde50b15fbf414a1a
                       (\ (x :: [a]) (y :: b)[OneShot] -> GHC.Base.foldr @ a @ b c y x)
                       n
                       xs)) -}
-2f14e84ee084bfc368a708e64848048b
+11eb9983273be78235759bac154eed2c
   $sfromList ::
-    [(Data.Sequence.Internal.Seq [GHC.Types.Int], a)]
-    -> Data.Map.Internal.Map
-         (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
-  {- Arity: 1, Strictness: <S,1*U>,
-     Unfolding: (\ @ a
-                   (ds :: [(Data.Sequence.Internal.Seq [GHC.Types.Int], a)]) ->
-                 case ds of wild {
-                   []
-                   -> Data.Map.Internal.Tip
-                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                        @ a
-                   : ds1 ds2
-                   -> case ds1 of wild1 { (,) kx x ->
-                      case ds2 of wild2 {
-                        []
-                        -> case kx
-                                  `cast`
-                                (Data.Sequence.Internal.N:Seq[0]
-                                     <[GHC.Types.Int]>_R) of nt { DEFAULT ->
-                           Data.Map.Internal.Bin
-                             @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                             @ a
-                             1#
-                             nt
-                               `cast`
-                             (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R))
-                             x
-                             (Data.Map.Internal.Tip
-                                @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                @ a)
-                             (Data.Map.Internal.Tip
-                                @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                @ a) }
-                        : ipv ipv1
-                        -> case ipv of wild3 { (,) ky ds3 ->
-                           case Data.Sequence.Internal.$fOrdSeq_$c>=
-                                  @ [GHC.Types.Int]
-                                  GHC.Classes.$fOrd[]_$s$fOrd[]
-                                  kx
-                                  ky of wild4 {
-                             GHC.Types.False
-                             -> case kx
-                                       `cast`
-                                     (Data.Sequence.Internal.N:Seq[0]
-                                          <[GHC.Types.Int]>_R) of nt { DEFAULT ->
-                                Perturbation.$wpoly_go1
-                                  @ a
-                                  1#
-                                  (Data.Map.Internal.Bin
-                                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                     @ a
-                                     1#
-                                     nt
-                                       `cast`
-                                     (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R))
-                                     x
-                                     (Data.Map.Internal.Tip
-                                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                        @ a)
-                                     (Data.Map.Internal.Tip
-                                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                        @ a))
-                                  wild2 }
-                             GHC.Types.True
-                             -> case kx
-                                       `cast`
-                                     (Data.Sequence.Internal.N:Seq[0]
-                                          <[GHC.Types.Int]>_R) of nt { DEFAULT ->
-                                Perturbation.$sfromList1
-                                  @ a
-                                  (Data.Map.Internal.Bin
-                                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                     @ a
-                                     1#
-                                     nt
-                                       `cast`
-                                     (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R))
-                                     x
-                                     (Data.Map.Internal.Tip
-                                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                        @ a)
-                                     (Data.Map.Internal.Tip
-                                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
-                                        @ a))
-                                  wild2 } } } } } }) -}
-1633b9278900e525f7c0c40d2133e12a
-  $sfromList1 ::
-    Data.Map.Internal.Map
-      (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
-    -> [(Data.Sequence.Internal.Seq [GHC.Types.Int], a)]
-    -> Data.Map.Internal.Map
-         (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
-  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
-bf194dbcaf3a570c5e72794481bb264e
-  $sfromList2 ::
     [(Data.Sequence.Internal.Seq [GHC.Types.Int], a)]
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
@@ -347,7 +437,7 @@ bf194dbcaf3a570c5e72794481bb264e
                                        `cast`
                                      (Data.Sequence.Internal.N:Seq[0]
                                           <[GHC.Types.Int]>_R) of nt { DEFAULT ->
-                                Perturbation.$sfromList3
+                                Perturbation.$sfromList1
                                   @ a
                                   (Data.Map.Internal.Bin
                                      @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
@@ -364,16 +454,16 @@ bf194dbcaf3a570c5e72794481bb264e
                                         @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
                                         @ a))
                                   wild2 } } } } } } }) -}
-5573498aaabd5f413d0ec980ffb4859a
-  $sfromList3 ::
+1633b9278900e525f7c0c40d2133e12a
+  $sfromList1 ::
     Data.Map.Internal.Map
       (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
     -> [(Data.Sequence.Internal.Seq [GHC.Types.Int], a)]
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
   {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
-2e0e5d3a2cafe5ea1a8e8f56370496bf
-  $sfromList4 ::
+34d3e86909fb7936347dd78d60410610
+  $sfromList2 ::
     [(GHC.Types.Int, a)] -> Data.Map.Internal.Map GHC.Types.Int a
   {- Arity: 1, Strictness: <S,1*U>,
      Unfolding: (\ @ a (ds :: [(GHC.Types.Int, a)]) ->
@@ -400,7 +490,7 @@ bf194dbcaf3a570c5e72794481bb264e
                            case GHC.Prim.>=# x1 y of lwild {
                              DEFAULT
                              -> case x of x0 { DEFAULT ->
-                                Perturbation.$wpoly_go2
+                                Perturbation.$wpoly_go1
                                   @ a
                                   1#
                                   (Data.Map.Internal.Bin
@@ -414,7 +504,7 @@ bf194dbcaf3a570c5e72794481bb264e
                                   wild2 }
                              1#
                              -> case x of x0 { DEFAULT ->
-                                Perturbation.$sfromList5
+                                Perturbation.$sfromList3
                                   @ a
                                   (Data.Map.Internal.Bin
                                      @ GHC.Types.Int
@@ -425,10 +515,239 @@ bf194dbcaf3a570c5e72794481bb264e
                                      (Data.Map.Internal.Tip @ GHC.Types.Int @ a)
                                      (Data.Map.Internal.Tip @ GHC.Types.Int @ a))
                                   wild2 } } } } } } } }) -}
-0898960eb4e244fb71dc8039ca15b20e
-  $sfromList5 ::
+89978f32344fa4b4f300577f2a427663
+  $sfromList3 ::
     Data.Map.Internal.Map GHC.Types.Int a
     -> [(GHC.Types.Int, a)] -> Data.Map.Internal.Map GHC.Types.Int a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+303ee16bf9db40d66da1ea6b4914451f
+  $sfromList4 ::
+    [(([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]),
+      a)]
+    -> Data.Map.Internal.Map
+         ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a
+                   (ds :: [(([GHC.Types.Int],
+                             Data.Sequence.Internal.Seq [GHC.Types.Int]),
+                            a)]) ->
+                 case ds of wild {
+                   []
+                   -> Data.Map.Internal.Tip
+                        @ ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+                        @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case x of x1 { DEFAULT ->
+                           case kx of dt1 { (,) ipv ipv1 ->
+                           Data.Map.Internal.Bin
+                             @ ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+                             @ a
+                             1#
+                             dt1
+                             x1
+                             (Data.Map.Internal.Tip
+                                @ ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                @ a)
+                             (Data.Map.Internal.Tip
+                                @ ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                @ a) } }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case kx of ww { (,) ww1 ww2 ->
+                           case ky of ww3 { (,) ww4 ww5 ->
+                           case GHC.Classes.$fOrd[]_$s$ccompare ww1 ww4 of wild4 {
+                             GHC.Types.LT
+                             -> case x of x0 { DEFAULT ->
+                                Perturbation.$wpoly_go2
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                     @ a
+                                     1#
+                                     ww
+                                     x0
+                                     (Data.Map.Internal.Tip
+                                        @ ([GHC.Types.Int],
+                                           Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ ([GHC.Types.Int],
+                                           Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                        @ a))
+                                  wild2 }
+                             GHC.Types.EQ
+                             -> case Data.Sequence.Internal.$fOrdSeq_$c<
+                                       @ [GHC.Types.Int]
+                                       GHC.Classes.$fOrd[]_$s$fOrd[]
+                                       ww2
+                                       ww5 of wild5 {
+                                  GHC.Types.False
+                                  -> case x of x0 { DEFAULT ->
+                                     Perturbation.$sfromList5
+                                       @ a
+                                       (Data.Map.Internal.Bin
+                                          @ ([GHC.Types.Int],
+                                             Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                          @ a
+                                          1#
+                                          ww
+                                          x0
+                                          (Data.Map.Internal.Tip
+                                             @ ([GHC.Types.Int],
+                                                Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                             @ a)
+                                          (Data.Map.Internal.Tip
+                                             @ ([GHC.Types.Int],
+                                                Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                             @ a))
+                                       wild2 }
+                                  GHC.Types.True
+                                  -> case x of x0 { DEFAULT ->
+                                     Perturbation.$wpoly_go2
+                                       @ a
+                                       1#
+                                       (Data.Map.Internal.Bin
+                                          @ ([GHC.Types.Int],
+                                             Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                          @ a
+                                          1#
+                                          ww
+                                          x0
+                                          (Data.Map.Internal.Tip
+                                             @ ([GHC.Types.Int],
+                                                Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                             @ a)
+                                          (Data.Map.Internal.Tip
+                                             @ ([GHC.Types.Int],
+                                                Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                             @ a))
+                                       wild2 } }
+                             GHC.Types.GT
+                             -> case x of x0 { DEFAULT ->
+                                Perturbation.$sfromList5
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                     @ a
+                                     1#
+                                     ww
+                                     x0
+                                     (Data.Map.Internal.Tip
+                                        @ ([GHC.Types.Int],
+                                           Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ ([GHC.Types.Int],
+                                           Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                        @ a))
+                                  wild2 } } } } } } } }) -}
+bfb943eb9e4a41537fd02831e89922b6
+  $sfromList5 ::
+    Data.Map.Internal.Map
+      ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+    -> [(([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]),
+         a)]
+    -> Data.Map.Internal.Map
+         ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+df5f29cfa8ee0a55b7547ed6fcb446d9
+  $sfromList6 ::
+    [(Data.Sequence.Internal.Seq [GHC.Types.Int], a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ @ a
+                   (ds :: [(Data.Sequence.Internal.Seq [GHC.Types.Int], a)]) ->
+                 case ds of wild {
+                   []
+                   -> Data.Map.Internal.Tip
+                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                        @ a
+                   : ds1 ds2
+                   -> case ds1 of wild1 { (,) kx x ->
+                      case ds2 of wild2 {
+                        []
+                        -> case kx
+                                  `cast`
+                                (Data.Sequence.Internal.N:Seq[0]
+                                     <[GHC.Types.Int]>_R) of nt { DEFAULT ->
+                           Data.Map.Internal.Bin
+                             @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                             @ a
+                             1#
+                             nt
+                               `cast`
+                             (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R))
+                             x
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                @ a)
+                             (Data.Map.Internal.Tip
+                                @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                @ a) }
+                        : ipv ipv1
+                        -> case ipv of wild3 { (,) ky ds3 ->
+                           case Data.Sequence.Internal.$fOrdSeq_$c>=
+                                  @ [GHC.Types.Int]
+                                  GHC.Classes.$fOrd[]_$s$fOrd[]
+                                  kx
+                                  ky of wild4 {
+                             GHC.Types.False
+                             -> case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <[GHC.Types.Int]>_R) of nt { DEFAULT ->
+                                Perturbation.$wpoly_go3
+                                  @ a
+                                  1#
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R))
+                                     x
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                        @ a))
+                                  wild2 }
+                             GHC.Types.True
+                             -> case kx
+                                       `cast`
+                                     (Data.Sequence.Internal.N:Seq[0]
+                                          <[GHC.Types.Int]>_R) of nt { DEFAULT ->
+                                Perturbation.$sfromList7
+                                  @ a
+                                  (Data.Map.Internal.Bin
+                                     @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                     @ a
+                                     1#
+                                     nt
+                                       `cast`
+                                     (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R))
+                                     x
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                        @ a)
+                                     (Data.Map.Internal.Tip
+                                        @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                                        @ a))
+                                  wild2 } } } } } }) -}
+238035d11ad33a8c00b5168fed630688
+  $sfromList7 ::
+    Data.Map.Internal.Map
+      (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+    -> [(Data.Sequence.Internal.Seq [GHC.Types.Int], a)]
+    -> Data.Map.Internal.Map
+         (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
   {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
 21bce92c46fe45e77290aa1fce2bec81
   $sinsertWithKey_go8 ::
@@ -450,28 +769,42 @@ bf194dbcaf3a570c5e72794481bb264e
     -> Data.Map.Internal.Map k1 a1
   {- Arity: 5,
      Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><L,U><S,1*U><L,U><S,1*U> -}
-f5e043ba356efb7218196bff74fa7131
+c06fdb3e9b0e94a6666acb8de93f2dec
+  $sinsert_go8 ::
+    GHC.Classes.Ord k1 =>
+    k1
+    -> a1 -> Data.Map.Internal.Map k1 a1 -> Data.Map.Internal.Map k1 a1
+  {- Arity: 4,
+     Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><S,1*U><S,1*U><S,1*U> -}
+db7e4cd846ea00de5f416df73091e954
   $sintersection ::
+    Data.Set.Internal.Set
+      ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+    -> Data.Set.Internal.Set
+         ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+    -> Data.Set.Internal.Set
+         ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int])
+  {- Arity: 2, Strictness: <S,1*U><L,1*U>, Inline: [~] -}
+ad1bc49c2d8008770e0719ebea12fe1a
+  $sintersection1 ::
     Data.Set.Internal.Set (Data.Sequence.Internal.Seq [GHC.Types.Int])
     -> Data.Set.Internal.Set
          (Data.Sequence.Internal.Seq [GHC.Types.Int])
     -> Data.Set.Internal.Set
          (Data.Sequence.Internal.Seq [GHC.Types.Int])
   {- Arity: 2, Strictness: <S,1*U><L,1*U>, Inline: [~] -}
-2069006b8b3c7be179ab87d38374abca
-  $slookup1 ::
-    GHC.Types.Int
-    -> Data.Map.Internal.Map GHC.Types.Int a -> GHC.Base.Maybe a
-  {- Arity: 2, HasNoCafRefs, Strictness: <S(S),1*U(U)><S,1*U>,
-     Inline: [0],
-     Unfolding: InlineRule (2, True, False)
-                (\ @ a
-                   (w :: GHC.Types.Int)
-                   (w1 :: Data.Map.Internal.Map GHC.Types.Int a) ->
-                 case w of ww { GHC.Types.I# ww1 ->
-                 Perturbation.$wpoly_go3 @ a ww1 w1 }) -}
-f08d14fdbb1a4352d45b0471d3ba9f6b
+dbc7220e69581a318efce5cd5fe4efc0
   $sunionWith ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map
+         ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+    -> Data.Map.Internal.Map
+         ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+    -> Data.Map.Internal.Map
+         ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+c5a13cb0cc4721c0cfb13f7296152216
+  $sunionWith1 ::
     (a -> a -> a)
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
@@ -480,6 +813,97 @@ f08d14fdbb1a4352d45b0471d3ba9f6b
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
   {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+3281609fc5648c0fd4ad5592428f19d3
+  $tc'EpsilonLeaf :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   16113597437082687009##
+                   14940947881829077918##
+                   Perturbation.$trModule
+                   Perturbation.$tc'EpsilonLeaf2
+                   0#
+                   Perturbation.$tc'EpsilonLeaf1) -}
+d87b4989009867fa50a7331c28d98189
+  $tc'EpsilonLeaf1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
+1f67d56dfa27f1f87db519ea632475ed
+  $tc'EpsilonLeaf2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Perturbation.$tc'EpsilonLeaf3) -}
+ed44b4b9d7e07a6a54d6e0e02bf58306
+  $tc'EpsilonLeaf3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'EpsilonLeaf"#) -}
+f4798189b03799fe23cc7fc3662813e3
+  $tc'EpsilonNode :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   7561895244216283090##
+                   9669769052164822017##
+                   Perturbation.$trModule
+                   Perturbation.$tc'EpsilonNode2
+                   0#
+                   Perturbation.$tc'EpsilonNode1) -}
+2a505c81b52d0561edf39076046b3a01
+  $tc'EpsilonNode1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
+a78450d00c87a2a526a2fe899dbdf84b
+  $tc'EpsilonNode2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Perturbation.$tc'EpsilonNode3) -}
+6ac07795732ef3431e2e4781e28d01a1
+  $tc'EpsilonNode3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'EpsilonNode"#) -}
+c6220e8dea3f47fa37c7f8edf6a47add
+  $tc'EtaLeaf :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   17991047172142351747##
+                   17138074172548287723##
+                   Perturbation.$trModule
+                   Perturbation.$tc'EtaLeaf1
+                   0#
+                   Perturbation.$tc'EpsilonLeaf1) -}
+2536130b314f1a102eb0eeddcbf3a80f
+  $tc'EtaLeaf1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Perturbation.$tc'EtaLeaf2) -}
+a3650ce11c4d4f250f89a54ae6a4cee2
+  $tc'EtaLeaf2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'EtaLeaf"#) -}
+96fcac84e1338377d7d6424b0733aa98
+  $tc'EtaNode :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   11922038923821919193##
+                   2323741459849484360##
+                   Perturbation.$trModule
+                   Perturbation.$tc'EtaNode1
+                   0#
+                   Perturbation.$tc'EpsilonNode1) -}
+c1f39ae874363de52748894a22941fbf
+  $tc'EtaNode1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Perturbation.$tc'EtaNode2) -}
+431a12e68fe969af5a893ce0102a5ec7
+  $tc'EtaNode2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'EtaNode"#) -}
+297d3348438756675a543e9d07b28218
+  $tcAnsatzTree :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   8311810510664636861##
+                   10407194126429275062##
+                   Perturbation.$trModule
+                   Perturbation.$tcAnsatzTree1
+                   0#
+                   GHC.Types.krep$*) -}
+c8b2d8ba3cb17bb557c950723d7a683c
+  $tcAnsatzTree1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS Perturbation.$tcAnsatzTree2) -}
+aeb9c6d752e99af62e8059d63cf39026
+  $tcAnsatzTree2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("AnsatzTree"#) -}
 f4f39e0d28d7c4d9feaa285794bf4111
   $trModule :: GHC.Types.Module
   {- HasNoCafRefs, Strictness: m,
@@ -500,6 +924,10 @@ f5766357f6e87561267ea7695b034d40
 532d5a2fc11c420f1e4d544dbffd3c74
   $trModule4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("main"#) -}
+8448a01895e0fa462fc88c8f28f119a5
+  $w$cshowsPrec ::
+    GHC.Prim.Int# -> Perturbation.AnsatzTree -> GHC.Show.ShowS
+  {- Arity: 2, Strictness: <S,U><S,1*U>, Inline: [0] -}
 33754e84d4b7103bec02648c8128006b
   $w$sevalPertAns ::
     Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int
@@ -513,7 +941,7 @@ f5766357f6e87561267ea7695b034d40
     -> Data.Map.Internal.Map GHC.Types.Int a1
     -> Data.Map.Internal.Map GHC.Types.Int a1
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-7a6fe8da4108cc4fb48e43bcb8aba55e
+adebdd08cea80436d93d19d6ea292f07
   $wgetRepIndsPert ::
     GHC.Base.String -> [Perturbation.PertAnsatz a] -> [GHC.Types.Char]
   {- Arity: 2, Strictness: <L,1*U><L,1*U>, Inline: [0],
@@ -556,8 +984,29 @@ f5766357f6e87561267ea7695b034d40
                                  @ [GHC.Types.Char]
                                  Perturbation.getRepIndsPert1
                                  xs)) })) -}
-3214d3802526be338b15af5f3c6f23cf
+7f7dd2c18f26db931803be0c6eb6edda
   $wpoly_go1 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map GHC.Types.Int a
+    -> [(GHC.Types.Int, a)]
+    -> Data.Map.Internal.Map GHC.Types.Int a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+cbbfc2a80bd194da292d9ec7ffbe7b12
+  $wpoly_go13 ::
+    GHC.Prim.Int# -> Data.Map.Internal.Map GHC.Types.Int a -> a
+  {- Arity: 2, Strictness: <S,U><S,1*U>, Inline: [0] -}
+ad5b26c2955b73c235bd62fd8f5cbc9c
+  $wpoly_go2 ::
+    GHC.Prim.Int#
+    -> Data.Map.Internal.Map
+         ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+    -> [(([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]),
+         a)]
+    -> Data.Map.Internal.Map
+         ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+5112b8d6455c5a94ecb5f2b625d2b044
+  $wpoly_go3 ::
     GHC.Prim.Int#
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
@@ -565,19 +1014,8 @@ f5766357f6e87561267ea7695b034d40
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-cbbfc2a80bd194da292d9ec7ffbe7b12
-  $wpoly_go13 ::
-    GHC.Prim.Int# -> Data.Map.Internal.Map GHC.Types.Int a -> a
-  {- Arity: 2, Strictness: <S,U><S,1*U>, Inline: [0] -}
-4edc7c578810da898ddfe55437301827
-  $wpoly_go2 ::
-    GHC.Prim.Int#
-    -> Data.Map.Internal.Map GHC.Types.Int a
-    -> [(GHC.Types.Int, a)]
-    -> Data.Map.Internal.Map GHC.Types.Int a
-  {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-b77ddef605d95270047e5cf8472cec81
-  $wpoly_go3 ::
+1390b84718ccc60b9fbb3507bc70883e
+  $wpoly_go4 ::
     GHC.Prim.Int#
     -> Data.Map.Internal.Map GHC.Types.Int a -> GHC.Base.Maybe a
   {- Arity: 2, HasNoCafRefs, Strictness: <L,U><S,1*U>, Inline: [0] -}
@@ -590,11 +1028,28 @@ b77ddef605d95270047e5cf8472cec81
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
+f14ae3b1d974bbfe46d7d357ff0e2391
+  type AnsatzForest =
+    Data.Sequence.Internal.Seq Perturbation.AnsatzTree
+8448a01895e0fa462fc88c8f28f119a5
+  data AnsatzTree
+    = EpsilonNode [GHC.Types.Int]
+                  (Data.Sequence.Internal.Seq Perturbation.AnsatzTree)
+    | EpsilonLeaf [GHC.Types.Int] Perturbation.Var
+    | EtaNode [GHC.Types.Int]
+              (Data.Sequence.Internal.Seq Perturbation.AnsatzTree)
+    | EtaLeaf [GHC.Types.Int] Perturbation.Var
 49c16eefccbca44d2ca7fe60c6d926aa
   type PertAnsatz a =
     Data.Map.Internal.Map
       (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
-67345f5d1a490d72f3f9761f045dee22
+e1cb1e745d91b17137b314f51bc504e1
+  type PertAnsatzEpsilon a =
+    Data.Map.Internal.Map
+      ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
+e0d83fc6d31d2b809e0f5ad7a64a7f16
+  type Var = Data.IntMap.Internal.IntMap GHC.Real.Rational
+6c77d2ad2c70e9eed3271cd0ce3f9463
   areaEvalMap1 ::
     [GHC.Types.Int]
     -> Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int
@@ -603,7 +1058,7 @@ b77ddef605d95270047e5cf8472cec81
                  case x of wild {
                    [] -> Perturbation.areaEvalMap18
                    : y ys
-                   -> Perturbation.$sfromList4
+                   -> Perturbation.$sfromList2
                         @ GHC.Types.Int
                         (GHC.Types.:
                            @ (GHC.Types.Int, GHC.Types.Int)
@@ -751,7 +1206,7 @@ e904d889d3c9e49664dacde3fb6a7ae1
 1b483ea4718341111d17ae49eaed2451
   areaEvalMap13 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 4#) -}
-9785e41a4a69641d2e2862c1ae367f7f
+c1cc09c9df3ff11aa2a9c0da4b67b38f
   areaEvalMap14 ::
     [Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int]
   {- Unfolding: (GHC.Base.map
@@ -768,9 +1223,9 @@ e904d889d3c9e49664dacde3fb6a7ae1
 5e8f4510bf447acb4d1bca5cb155e706
   areaEvalMap17 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 1#) -}
-f229161f738bf53297a5a028d9a0dced
+9f43b56189f8bd2a1e6e7c23495de79c
   areaEvalMap18 :: Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int
-  {- Unfolding: (Perturbation.$sfromList4
+  {- Unfolding: (Perturbation.$sfromList2
                    @ GHC.Types.Int
                    (GHC.Types.[] @ (GHC.Types.Int, GHC.Types.Int))) -}
 c6fce343e5a4bf050806cfaf31ae90d0
@@ -841,7 +1296,7 @@ c64e4d51da30dacc19ef04befd1e5cf6
     -> Perturbation.PertAnsatz a -> a
   {- Arity: 3,
      Strictness: <L,U(C(C1(U)),A,C(C1(U)),1*C1(U),A,A,C(U))><L,U><S,1*U> -}
-95efbb0a59a14070d557bb884c8275ef
+fa0dbf87b6c0dfbd99b32353ea7b725d
   getRepIndsPert ::
     GHC.Real.Fractional a =>
     GHC.Base.String -> [Perturbation.PertAnsatz a] -> GHC.Base.String
@@ -869,7 +1324,7 @@ c4a98a510cf06ae5043d67dce073a9e3
 f4654c5ea812983dc988f8511fa8442a
   getRepIndsPert_go :: [[GHC.Types.Char]] -> [GHC.Types.Char]
   {- Arity: 1, Strictness: <S,1*U> -}
-64b9f9ceed8ca808cd472764dc12ddc0
+993b3415e3ba651f47d5b59fd6241273
   indexPermSeqPert ::
     Data.Sequence.Internal.Seq [GHC.Types.Int]
     -> Data.IntMap.Internal.IntMap GHC.Types.Char -> GHC.Base.String
@@ -889,7 +1344,7 @@ f4654c5ea812983dc988f8511fa8442a
                        -> GHC.CString.unpackAppendCString#
                             Perturbation.indexPermSeqPert3
                             (let {
-                               lvl59 :: Data.IntSet.Internal.Key -> GHC.Types.Char
+                               lvl79 :: Data.IntSet.Internal.Key -> GHC.Types.Char
                                  {- Arity: 1, Strictness: <S(S),1*U(U)>,
                                     Unfolding: InlineRule (1, True, False)
                                                (\ (x :: Data.IntSet.Internal.Key) ->
@@ -914,7 +1369,7 @@ f4654c5ea812983dc988f8511fa8442a
                                           (case GHC.Base.map
                                                   @ GHC.Types.Int
                                                   @ GHC.Types.Char
-                                                  lvl59
+                                                  lvl79
                                                   inds of wild {
                                              [] -> Perturbation.getRepIndsPert3
                                              : x xs
@@ -959,7 +1414,7 @@ b5c4373d11442986b006eac08cf2f665
 d122972fa71c0cfb78d0fa3e5d7072d7
   indexPermSeqPert3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("["#) -}
-7de5bb19932085d89984fecca65953b8
+2e09fc17f8285dc30664fb2655cb3334
   mkPertAns ::
     GHC.Real.Fractional a =>
     Data.Sequence.Internal.Seq GHC.Types.Int
@@ -967,14 +1422,14 @@ d122972fa71c0cfb78d0fa3e5d7072d7
   {- Arity: 1, Strictness: <L,1*U(1*U(A,A,A,A,A,A,1*C1(U)),A,A,A)>,
      Unfolding: (\ @ a ($dFractional :: GHC.Real.Fractional a) ->
                  let {
-                   lvl59 :: a
+                   lvl79 :: a
                    = GHC.Num.fromInteger
                        @ a
                        (GHC.Real.$p1Fractional @ a $dFractional)
                        Perturbation.mkPertAns1
                  } in
                  \ (seq :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
-                 Perturbation.$sfromList2
+                 Perturbation.$sfromList
                    @ a
                    (GHC.Types.:
                       @ (Data.Sequence.Internal.Seq [GHC.Types.Int], a)
@@ -993,12 +1448,65 @@ d122972fa71c0cfb78d0fa3e5d7072d7
                                <Data.Sequence.Internal.Seq GHC.Types.Int>_R))
                          `cast`
                        (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R)),
-                       lvl59)
+                       lvl79)
                       (GHC.Types.[]
                          @ (Data.Sequence.Internal.Seq [GHC.Types.Int], a)))) -}
 804c1a1c6e0816f609d79be364085180
   mkPertAns1 :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (1) -}
+21ad4383864ca913db2b0ef80f35c7ce
+  mkPertAnsEpsilon ::
+    GHC.Real.Fractional a =>
+    Data.Sequence.Internal.Seq GHC.Types.Int
+    -> Perturbation.PertAnsatzEpsilon a
+  {- Arity: 1, Strictness: <L,1*U(1*U(A,A,A,A,A,A,1*C1(U)),A,A,A)>,
+     Unfolding: (\ @ a ($dFractional :: GHC.Real.Fractional a) ->
+                 let {
+                   lvl79 :: a
+                   = GHC.Num.fromInteger
+                       @ a
+                       (GHC.Real.$p1Fractional @ a $dFractional)
+                       Perturbation.mkPertAns1
+                 } in
+                 \ (seq :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
+                 Perturbation.$sfromList4
+                   @ a
+                   (GHC.Types.:
+                      @ (([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]),
+                         a)
+                      ((Data.Sequence.Internal.$fEq1Seq_$cfoldr
+                          @ (Data.Sequence.Internal.Elem GHC.Types.Int)
+                          @ [GHC.Types.Int]
+                          (GHC.Types.: @ GHC.Types.Int)
+                            `cast`
+                          (Sym (Data.Sequence.Internal.N:Elem[0] <GHC.Types.Int>_R)
+                           ->_R <[GHC.Types.Int] -> [GHC.Types.Int]>_R)
+                          (GHC.Types.[] @ GHC.Types.Int)
+                          (Data.Sequence.Internal.$wtake @ GHC.Types.Int 4# seq)
+                            `cast`
+                          (Data.Sequence.Internal.N:Seq[0] <GHC.Types.Int>_R),
+                        (Data.Sequence.Internal.$fFunctorSeq_$cfmap
+                           @ (Data.Sequence.Internal.Elem
+                                (Data.Sequence.Internal.Seq GHC.Types.Int))
+                           @ (Data.Sequence.Internal.Elem [GHC.Types.Int])
+                           (Data.Sequence.Internal.$fFoldableSeq_$ctoList @ GHC.Types.Int)
+                             `cast`
+                           (Sym (Data.Sequence.Internal.N:Elem[0]
+                                     <Data.Sequence.Internal.Seq GHC.Types.Int>_R)
+                            ->_R Sym (Data.Sequence.Internal.N:Elem[0] <[GHC.Types.Int]>_R))
+                           (Data.Sequence.Internal.$wchunksOf
+                              @ GHC.Types.Int
+                              2#
+                              (Data.Sequence.Internal.$wdrop @ GHC.Types.Int 4# seq))
+                             `cast`
+                           (Data.Sequence.Internal.N:Seq[0]
+                                <Data.Sequence.Internal.Seq GHC.Types.Int>_R))
+                          `cast`
+                        (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R))),
+                       lvl79)
+                      (GHC.Types.[]
+                         @ (([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]),
+                            a)))) -}
 2dc22dcb1b0de462f8027f9a29873628
   symAnsSetPert ::
     (GHC.Classes.Eq a, GHC.Real.Fractional a) =>
@@ -1006,24 +1514,84 @@ d122972fa71c0cfb78d0fa3e5d7072d7
     -> [Perturbation.PertAnsatz a] -> [Perturbation.PertAnsatz a]
   {- Arity: 4,
      Strictness: <L,U(C(C1(U)),A)><L,U(U(C(C1(U)),A,C(C1(U)),C(U),A,A,C(U)),C(C1(U)),A,A)><L,1*U(U,U,U,U,U)><S,1*U> -}
+2ddee4395ae4c54bf95671edcc134e99
+  symAnsSetPertEpsilon ::
+    (GHC.Classes.Eq a, GHC.Real.Fractional a) =>
+    Symmetrize.Symmetry
+    -> [Perturbation.PertAnsatzEpsilon a]
+    -> [Perturbation.PertAnsatzEpsilon a]
+  {- Arity: 4,
+     Strictness: <L,U(C(C1(U)),A)><L,U(U(C(C1(U)),A,C(C1(U)),C(U),A,A,C(U)),C(C1(U)),A,A)><L,1*U(U,U,U,U,U)><S,1*U> -}
+instance [safe] GHC.Show.Show [Perturbation.AnsatzTree]
+  = Perturbation.$fShowAnsatzTree
 "SPEC evalPertAns @ Rational" forall ($dNum :: GHC.Num.Num
                                                  GHC.Real.Rational)
   Perturbation.evalPertAns @ (GHC.Real.Ratio
                                 GHC.Integer.Type.Integer)
                            $dNum
   = Perturbation.evalFullAns_$sevalPertAns
+"SPEC/Perturbation $fEq(,) @ [Int] @ (Seq [Int])" [orphan] forall (v1 :: GHC.Classes.Eq
+                                                                           (Data.Sequence.Internal.Seq
+                                                                              [GHC.Types.Int]))
+                                                                  (v :: GHC.Classes.Eq
+                                                                          [GHC.Types.Int])
+  GHC.Classes.$fEq(,) @ [GHC.Types.Int]
+                      @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                      v
+                      v1
+  = Perturbation.$s$fEq(,)
+"SPEC/Perturbation $fEq(,)_$c/= @ [Int] @ (Seq [Int])" [orphan] forall ($dEq1 :: GHC.Classes.Eq
+                                                                                   (Data.Sequence.Internal.Seq
+                                                                                      [GHC.Types.Int]))
+                                                                       ($dEq :: GHC.Classes.Eq
+                                                                                  [GHC.Types.Int])
+  GHC.Classes.$fEq(,)_$c/= @ [GHC.Types.Int]
+                           @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                           $dEq
+                           $dEq1
+  = Perturbation.$s$fEq(,)_$s$fEq(,)_$c/=
 "SPEC/Perturbation $fEqSeq @ [Int]" [orphan] forall (v :: GHC.Classes.Eq
                                                             [GHC.Types.Int])
   Data.Sequence.Internal.$fEqSeq @ [GHC.Types.Int] v
-  = Perturbation.$s$fEqSeq
+  = Perturbation.$s$fEq(,)_$s$fEqSeq
 "SPEC/Perturbation $fEqSeq_$c/= @ [Int]" [orphan] forall ($dEq :: GHC.Classes.Eq
                                                                     [GHC.Types.Int])
   Data.Sequence.Internal.$fEqSeq_$c/= @ [GHC.Types.Int] $dEq
-  = Perturbation.$s$fEqSeq_$s$fEqSeq_$c/=
+  = Perturbation.$s$fEq(,)_$s$fEqSeq_$c/=
+"SPEC/Perturbation $fOrd(,) @ [Int] @ (Seq [Int])" [orphan] forall (v1 :: GHC.Classes.Ord
+                                                                            (Data.Sequence.Internal.Seq
+                                                                               [GHC.Types.Int]))
+                                                                   (v :: GHC.Classes.Ord
+                                                                           [GHC.Types.Int])
+  GHC.Classes.$fOrd(,) @ [GHC.Types.Int]
+                       @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                       v
+                       v1
+  = Perturbation.$s$fOrd(,)
+"SPEC/Perturbation $fOrd(,)_$cmax @ [Int] @ (Seq [Int])" [orphan] [0] forall (w1 :: GHC.Classes.Ord
+                                                                                      (Data.Sequence.Internal.Seq
+                                                                                         [GHC.Types.Int]))
+                                                                             (w :: GHC.Classes.Ord
+                                                                                     [GHC.Types.Int])
+  GHC.Classes.$fOrd(,)_$cmax @ [GHC.Types.Int]
+                             @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                             w
+                             w1
+  = Perturbation.$s$fOrd(,)_$cmax
+"SPEC/Perturbation $fOrd(,)_$cmin @ [Int] @ (Seq [Int])" [orphan] [0] forall (w1 :: GHC.Classes.Ord
+                                                                                      (Data.Sequence.Internal.Seq
+                                                                                         [GHC.Types.Int]))
+                                                                             (w :: GHC.Classes.Ord
+                                                                                     [GHC.Types.Int])
+  GHC.Classes.$fOrd(,)_$cmin @ [GHC.Types.Int]
+                             @ (Data.Sequence.Internal.Seq [GHC.Types.Int])
+                             w
+                             w1
+  = Perturbation.$s$fOrd(,)_$cmin
 "SPEC/Perturbation $fOrdSeq @ [Int]" [orphan] forall (v :: GHC.Classes.Ord
                                                              [GHC.Types.Int])
   Data.Sequence.Internal.$fOrdSeq @ [GHC.Types.Int] v
-  = Perturbation.$s$fOrdSeq
+  = Perturbation.$s$fOrd(,)_$s$fOrdSeq
 "SPEC/Perturbation $fOrdSeq_$cmax @ [Int]" [orphan] forall ($dOrd :: GHC.Classes.Ord
                                                                        [GHC.Types.Int])
   Data.Sequence.Internal.$fOrdSeq_$cmax @ [GHC.Types.Int] $dOrd
@@ -1040,29 +1608,47 @@ d122972fa71c0cfb78d0fa3e5d7072d7
                                                              ($dOrd :: GHC.Classes.Ord
                                                                          (Data.Sequence.Internal.Seq
                                                                             [GHC.Types.Int]))
-  Data.Map.Internal.fromList @ (Data.Sequence.Internal.Seq
-                                  [GHC.Types.Int])
-                             @ a
-                             $dOrd
+  Data.Map.Strict.Internal.fromList @ (Data.Sequence.Internal.Seq
+                                         [GHC.Types.Int])
+                                    @ a
+                                    $dOrd
   = Perturbation.$sfromList @ a
 "SPEC/Perturbation fromList @ (Seq [Int]) _" [orphan] forall @ a
                                                              ($dOrd :: GHC.Classes.Ord
                                                                          (Data.Sequence.Internal.Seq
                                                                             [GHC.Types.Int]))
-  Data.Map.Strict.Internal.fromList @ (Data.Sequence.Internal.Seq
-                                         [GHC.Types.Int])
+  Data.Map.Internal.fromList @ (Data.Sequence.Internal.Seq
+                                  [GHC.Types.Int])
+                             @ a
+                             $dOrd
+  = Perturbation.$sfromList6 @ a
+"SPEC/Perturbation fromList @ ([Int], Seq [Int]) _" [orphan] forall @ a
+                                                                    ($dOrd :: GHC.Classes.Ord
+                                                                                ([GHC.Types.Int],
+                                                                                 Data.Sequence.Internal.Seq
+                                                                                   [GHC.Types.Int]))
+  Data.Map.Strict.Internal.fromList @ ([GHC.Types.Int],
+                                       Data.Sequence.Internal.Seq [GHC.Types.Int])
                                     @ a
                                     $dOrd
-  = Perturbation.$sfromList2 @ a
+  = Perturbation.$sfromList4 @ a
 "SPEC/Perturbation fromList @ Int _" [orphan] forall @ a
                                                      ($dOrd :: GHC.Classes.Ord GHC.Types.Int)
   Data.Map.Strict.Internal.fromList @ GHC.Types.Int @ a $dOrd
-  = Perturbation.$sfromList4 @ a
+  = Perturbation.$sfromList2 @ a
 "SPEC/Perturbation intersection @ (Seq [Int])" [orphan] forall ($dOrd :: GHC.Classes.Ord
                                                                            (Data.Sequence.Internal.Seq
                                                                               [GHC.Types.Int]))
   Data.Set.Internal.intersection @ (Data.Sequence.Internal.Seq
                                       [GHC.Types.Int])
+                                 $dOrd
+  = Perturbation.$sintersection1
+"SPEC/Perturbation intersection @ ([Int], Seq [Int])" [orphan] forall ($dOrd :: GHC.Classes.Ord
+                                                                                  ([GHC.Types.Int],
+                                                                                   Data.Sequence.Internal.Seq
+                                                                                     [GHC.Types.Int]))
+  Data.Set.Internal.intersection @ ([GHC.Types.Int],
+                                    Data.Sequence.Internal.Seq [GHC.Types.Int])
                                  $dOrd
   = Perturbation.$sintersection
 "SPEC/Perturbation unionWith @ (Seq [Int]) _" [orphan] forall @ a
@@ -1071,6 +1657,16 @@ d122972fa71c0cfb78d0fa3e5d7072d7
                                                                              [GHC.Types.Int]))
   Data.Map.Strict.Internal.unionWith @ (Data.Sequence.Internal.Seq
                                           [GHC.Types.Int])
+                                     @ a
+                                     $dOrd
+  = Perturbation.$sunionWith1 @ a
+"SPEC/Perturbation unionWith @ ([Int], Seq [Int]) _" [orphan] forall @ a
+                                                                     ($dOrd :: GHC.Classes.Ord
+                                                                                 ([GHC.Types.Int],
+                                                                                  Data.Sequence.Internal.Seq
+                                                                                    [GHC.Types.Int]))
+  Data.Map.Strict.Internal.unionWith @ ([GHC.Types.Int],
+                                        Data.Sequence.Internal.Seq [GHC.Types.Int])
                                      @ a
                                      $dOrd
   = Perturbation.$sunionWith @ a

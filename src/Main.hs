@@ -556,7 +556,7 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/epsilonTopSorts.txt" ansatz18SymEpsLabel
 
-        writeFile "/cip/austausch/cgg/ansatzAaBbC_17_1_19.txt" $ showEqnsFlatMatLab ansatzCondAaBbC 
+        writeFile "/cip/austausch/cgg/intAaBbC_17_1_19.txt" $ showEqnsFlatMatLab intCondAaBbC 
 
 
 

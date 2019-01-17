@@ -572,8 +572,11 @@ module Main (
 
         let totalProlong2 = M.unionWith (+) prolong2AaBb prolong2AaBbC
 
-        writeFile "/cip/austausch/cgg/prolongEqn2AaBb.txt" $ showEqnsFlatMatLab totalProlong2
+        --writeFile "/cip/austausch/cgg/prolongEqn2AaBb.txt" $ showEqnsFlatMatLab totalProlong2
 
+        let intCondABTrian = mkEqnSparseIntABTrian trian $ intAB1 map1Area map2Area map1Metric map2Metric
+
+        writeFile "/cip/austausch/cgg/intCondABTrian.txt" $ showEqnsFlatMatLab intCondABTrian
 
 
 

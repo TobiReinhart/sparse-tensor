@@ -18,7 +18,8 @@ module Order2Int (
     ansatzABb2, mkEqnSparseAnsatzABb2, 
     ansatzAIB2, mkEqnSparseAnsatzAIB2, intAIB, mkEqnSparseIntAIB, intAIBsym, intAIBsymZero, intAIBsymRed, mkEqnSparseIntAIBsym,
     intAI, mkEqnSparseIntAI,
-    ansatzAI2, mkEqnSparseAnsatzAI2
+    ansatzAI2, mkEqnSparseAnsatzAI2,
+    mkEqnSparseIntABTrian
     
 ) where
 
@@ -102,6 +103,21 @@ module Order2Int (
 
     mkEqnSparseIntAB :: Tensor 1 2 0 0 0 0 2 2 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseIntAB (Tensor map1) = M.mapKeys index2SparseIntAB map1
+
+    index2SparseIntABTrian :: M.Map [Int] Int -> Index 1 2 0 0 0 0 2 2 -> (Int,Int) 
+    index2SparseIntABTrian trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,316 + x)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      m = 1 +  (fromEnum $ getValInd x7 0)
+                                                      r = 1 +  (fromEnum $ getValInd x7 1)
+                                                      n = 1 +  (fromEnum $ getValInd x8 0)
+                                                      s = 1 +  (fromEnum $ getValInd x8 1)
+                                                      x = (M.!) trian [min a b, max a b]
+
+    mkEqnSparseIntABTrian :: M.Map [Int] Int -> Tensor 1 2 0 0 0 0 2 2 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseIntABTrian trian (Tensor map1) = M.mapKeys (index2SparseIntABTrian trian) map1
 
 
     --the A:Bb prolongation

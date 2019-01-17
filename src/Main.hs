@@ -554,7 +554,10 @@ module Main (
 
         let ansatz18SymEpsLabel = getAllIndsLabelInverse "abcdmnefghpqijklrs" [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16),(15,17),(17,18)] [] [(1,3),(1,2),(3,4),(7,8),(7,9),(9,10),(13,14),(13,15),(15,16),(5,6),(11,12),(17,18),(1,7),(7,13)]
 
-        writeFile "/cip/austausch/cgg/epsilonTopSorts.txt" ansatz18SymEpsLabel
+        --writeFile "/cip/austausch/cgg/epsilonTopSorts.txt" ansatz18SymEpsLabel
+
+        writeFile "/cip/austausch/cgg/ansatzAaBbC_17_1_19.txt" $ showEqnsFlatMatLab ansatzCondAaBbC 
+
 
 
 

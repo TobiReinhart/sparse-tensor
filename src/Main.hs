@@ -564,7 +564,15 @@ module Main (
 
         let totalProlong1 = M.unionWith (+) prolong1AI prolong1ACK
 
-        writeFile "/cip/austausch/cgg/prolongEqn1.txt" $ showEqnsFlatMatLab totalProlong1
+        --writeFile "/cip/austausch/cgg/prolongEqn1.txt" $ showEqnsFlatMatLab totalProlong1
+
+        let prolong2AaBb = mkEqnSparseprolongation2AaBb $ prolongation2AaBb map1Area map2Area map1Metric map2Metric
+
+        let prolong2AaBbC = mkEqnSparseprolongation2AaBbC $ prolongation2AaBbC map1Area map2Area map1Metric map2Metric
+
+        let totalProlong2 = M.unionWith (+) prolong2AaBb prolong2AaBbC
+
+        writeFile "/cip/austausch/cgg/prolongEqn2AaBb.txt" $ showEqnsFlatMatLab totalProlong2
 
 
 

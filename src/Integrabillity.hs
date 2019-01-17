@@ -40,7 +40,9 @@ module Integrabillity (
     inter4noFactor, inter4Factor, mkEqnSparseinterMat,
     inter6noFactor, inter6Factor, mkEqnSparseinter6Mat,
     prolongation1AI_AI, prolongation1AI_ACK,
-    mkEqnSparseprolongation1AI_AI, mkEqnSparseprolongation1AI_ACK
+    mkEqnSparseprolongation1AI_AI, mkEqnSparseprolongation1AI_ACK,
+    prolongation2AaBb, prolongation2AaBbC,
+    mkEqnSparseprolongation2AaBb, mkEqnSparseprolongation2AaBbC
     
 ) where
 
@@ -954,3 +956,59 @@ module Integrabillity (
 
     mkEqnSparseprolongation1AI_ACK :: Tensor 1 2 0 0 1 1 1 1 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseprolongation1AI_ACK  (Tensor map1) = M.mapKeys index2Sparseprolongation1AI_ACK map1
+
+    --the second order prolongation of the first eqn
+
+    prolongation2AaBbC :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 -> M.Map (Uinds_3 2) Lind_9 ->Tensor 2 3 0 0 0 0 3 3 Rational
+    prolongation2AaBbC map1Area map2Area map1Metric map2Metric = tensorAdd tens tensTrans
+                        where
+                            intArea = interArea map1Area map2Area
+                            flatA = flatArea map2Area
+                            flatInter = tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea flatA
+                            tens = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_3 $ tensorProductNumeric delta_3 flatInter
+                            tensTrans = tensorTranspose 2 (0,1) $ tensorTranspose 8 (1,2) tens
+
+    index2Sparseprolongation2AaBbC :: Index 2 3 0 0 0 0 3 3 -> (Int,Int) 
+    index2Sparseprolongation2AaBbC  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^6+(f-1)*4^4+(r-1)*4^3+(s-1)*4^2+(m-1)*4+u,(c-1)*21^2*4*4+(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p+21^2*16)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      c = 1 + (fromEnum $ getValInd x2 2)
+                                                      p = 1 +  (fromEnum $ getValInd x8 0)
+                                                      q = 1 +  (fromEnum $ getValInd x8 1)
+                                                      r = 1 +  (fromEnum $ getValInd x7 0)
+                                                      s = 1 +  (fromEnum $ getValInd x7 1)
+                                                      m = 1 +  (fromEnum $ getValInd x7 2)
+                                                      u = 1 +  (fromEnum $ getValInd x8 2)
+
+    mkEqnSparseprolongation2AaBbC :: Tensor 2 3 0 0 0 0 3 3 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseprolongation2AaBbC  (Tensor map1) = M.mapKeys index2Sparseprolongation2AaBbC map1
+
+    prolongation2AaBb :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 -> M.Map (Uinds_3 2) Lind_9 ->Tensor 2 2 0 0 0 0 3 3 Rational
+    prolongation2AaBb map1Area map2Area map1Metric map2Metric = tensorAdd tens tensTrans
+                        where
+                            int2 = interEqn1_2 map1Area map2Area
+                            block1 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_3 $ tensorProductNumeric delta_3 delta_3
+                            block2 = tensorProductNumeric int2 $ tensorProductNumeric delta_20 delta_3
+                            block3 = tensorTranspose 1 (0,1) $ tensorTranspose 7 (1,2) block2 
+                            tens = tensorAdd block1 $ tensorAdd block2 block3
+                            tensTrans = tensorTranspose 2 (0,1) $ tensorTranspose 8 (1,2) tens
+
+    index2Sparseprolongation2AaBb :: Index 2 2 0 0 0 0 3 3 -> (Int,Int) 
+    index2Sparseprolongation2AaBb  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^6+(f-1)*4^4+(r-1)*4^3+(s-1)*4^2+(m-1)*4+u,(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      p = 1 +  (fromEnum $ getValInd x8 0)
+                                                      q = 1 +  (fromEnum $ getValInd x8 1)
+                                                      r = 1 +  (fromEnum $ getValInd x7 0)
+                                                      s = 1 +  (fromEnum $ getValInd x7 1)
+                                                      m = 1 +  (fromEnum $ getValInd x7 2)
+                                                      u = 1 +  (fromEnum $ getValInd x8 2)
+
+    mkEqnSparseprolongation2AaBb :: Tensor 2 2 0 0 0 0 3 3 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseprolongation2AaBb  (Tensor map1) = M.mapKeys index2Sparseprolongation2AaBb map1

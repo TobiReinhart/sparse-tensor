@@ -556,7 +556,17 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/epsilonTopSorts.txt" ansatz18SymEpsLabel
 
-        writeFile "/cip/austausch/cgg/intAaBbC_17_1_19.txt" $ showEqnsFlatMatLab intCondAaBbC 
+        --writeFile "/cip/austausch/cgg/intAaBbC_17_1_19.txt" $ showEqnsFlatMatLab intCondAaBbC 
+
+        let prolong1AI = mkEqnSparseprolongation1AI_AI $ prolongation1AI_AI map1Area map2Area map1Metric map2Metric
+
+        let prolong1ACK = mkEqnSparseprolongation1AI_ACK $ prolongation1AI_ACK map1Area map2Area map1Metric map2Metric
+
+        let totalProlong1 = M.unionWith (+) prolong1AI prolong1ACK
+
+        writeFile "/cip/austausch/cgg/prolongEqn1.txt" $ showEqnsFlatMatLab totalProlong1
+
+
 
 
 

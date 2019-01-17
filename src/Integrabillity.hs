@@ -38,7 +38,9 @@ module Integrabillity (
     interProTest,
     intCondCompNoSym, mkEqnSparseintCondCompNoSym,
     inter4noFactor, inter4Factor, mkEqnSparseinterMat,
-    inter6noFactor, inter6Factor, mkEqnSparseinter6Mat
+    inter6noFactor, inter6Factor, mkEqnSparseinter6Mat,
+    prolongation1AI_AI, prolongation1AI_ACK,
+    mkEqnSparseprolongation1AI_AI, mkEqnSparseprolongation1AI_ACK
     
 ) where
 
@@ -908,3 +910,47 @@ module Integrabillity (
 
     mkEqnSparseinter6Mat :: Tensor 1 1 0 0 1 1 0 0 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseinter6Mat  (Tensor map1) = M.mapKeys index2Sparseinter6Mat map1
+
+    prolongation1AI_AI :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 -> M.Map (Uinds_3 2) Lind_9 ->Tensor 1 1 0 0 1 1 1 1 Rational
+    prolongation1AI_AI map1Area map2Area map1Metric map2Metric = tens 
+                where
+                    int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric 
+                    block1 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_9 delta_3
+                    tens = tensorAdd block1 int3 
+
+    prolongation1AI_ACK :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 -> M.Map (Uinds_3 2) Lind_9 ->Tensor 1 2 0 0 1 1 1 1 Rational
+    prolongation1AI_ACK map1Area map2Area map1Metric map2Metric = tens 
+                where
+                    intArea = interArea map1Area map2Area
+                    flatA = flatArea map2Area
+                    flatInter = tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea flatA
+                    tens = tensorProductNumeric delta_20 $ tensorProductNumeric delta_9 flatInter
+
+    
+    index2Sparseprolongation1AI_AI:: Index 1 1 0 0 1 1 1 1 -> (Int,Int) 
+    index2Sparseprolongation1AI_AI (x1, x2, _, _, x5, x6, x7, x8) = ((b-1)*10*16+(k-1)*16+(m-1)*4+n,(a-1)*10+i)
+                         where 
+                             a = 1 + (fromEnum $ getValInd x2 0) 
+                             b = 1 + (fromEnum $ getValInd x1 0)
+                             i = 1 + (fromEnum $ getValInd x6 0) 
+                             k = 1 + (fromEnum $ getValInd x5 0) 
+                             m = 1 + (fromEnum $ getValInd x7 0) 
+                             n = 1 + (fromEnum $ getValInd x8 0) 
+
+    index2Sparseprolongation1AI_ACK:: Index 1 2 0 0 1 1 1 1 -> (Int,Int) 
+    index2Sparseprolongation1AI_ACK (x1, x2, _, _, x5, x6, x7, x8) = ((b-1)*10*16+(k-1)*16+(m-1)*4+n,(c-1)*210+(a-1)*10+i+210)
+                         where 
+                             a = 1 + (fromEnum $ getValInd x2 0) 
+                             c = 1 + (fromEnum $ getValInd x2 1) 
+                             b = 1 + (fromEnum $ getValInd x1 0)
+                             i = 1 + (fromEnum $ getValInd x6 0) 
+                             k = 1 + (fromEnum $ getValInd x5 0) 
+                             m = 1 + (fromEnum $ getValInd x7 0) 
+                             n = 1 + (fromEnum $ getValInd x8 0)
+
+    mkEqnSparseprolongation1AI_AI :: Tensor 1 1 0 0 1 1 1 1 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseprolongation1AI_AI  (Tensor map1) = M.mapKeys index2Sparseprolongation1AI_AI map1
+
+
+    mkEqnSparseprolongation1AI_ACK :: Tensor 1 2 0 0 1 1 1 1 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseprolongation1AI_ACK  (Tensor map1) = M.mapKeys index2Sparseprolongation1AI_ACK map1

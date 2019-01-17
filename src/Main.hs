@@ -550,8 +550,7 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/topSorts18SymmetrizedEpsilon.txt" $ show ans18SymEpsilon
 
-        print $ length ansatz18SymEps
-
+        writeFile "/cip/austausch/cgg/epsilonTopSorts.txt" $ show ansatz18SymEps 
 
 
 

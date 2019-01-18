@@ -14,14 +14,14 @@
 {-# LANGUAGE TypeApplications #-}
 
 module Order3Int (
-    ansatzABC, mkEqnSparseAnsatzABC2,
-    intABC, mkEqnSparseIntABC2,
+    ansatzABC, mkEqnSparseAnsatzABC2, mkEqnSparseAnsatzABCTrian,
+    intABC, mkEqnSparseIntABC2, mkEqnSparseIntABCTrian,
     ansatzABC2,
     ansatzAaBC, mkEqnSparseAnsatzAaBC,
     ansatzAIBC, mkEqnSparseAnsatzAIBC,
     intAIBC, mkEqnSparseintAIBC, 
-    ansatzAaBbC, mkEqnSparseAnsatzAaBbC,
-    intAaBbC, mkEqnSparseintAaBbC, intAaBbC2,
+    ansatzAaBbC, mkEqnSparseAnsatzAaBbC, mkEqnSparseAnsatzAaBbCTrian,
+    intAaBbC, mkEqnSparseintAaBbC, intAaBbC2, mkEqnSparseintAaBbCTrian,
     ansatzAIBbC, mkEqnSparseAnsatzAIBbC
     
 ) where
@@ -33,6 +33,7 @@ module Order3Int (
     import Pde
     import EquivarianceEqns
     import qualified Data.Map as M 
+    import Data.List
 
 
     --A:B:C ansatz Eqn
@@ -88,8 +89,26 @@ module Order3Int (
                                                       c = 1 + (fromEnum $ getValInd x2 2)
                                                       j = 1 +  (fromEnum $ getValInd x5 0)
 
+    index2SparseAnsatzABCTrian :: M.Map [Int] Int -> Index 3 3 0 0 1 0 0 0 -> (Int,Int) 
+    index2SparseAnsatzABCTrian trian (x1, x2, _, _, x5, _, _, _) = ((g-1)*21^2*10+(e-1)*210+(f-1)*10+j,316 +  (div (315*316) 2 )+ x)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      g = 1 + (fromEnum $ getValInd x1 2)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      c = 1 + (fromEnum $ getValInd x2 2)
+                                                      j = 1 +  (fromEnum $ getValInd x5 0)
+                                                      [a2,b2,c2] = sort [a,b,c]
+                                                      x = (M.!) trian [a,b,c]
+
+
     mkEqnSparseAnsatzABC2 :: Tensor 3 3 0 0 1 0 0 0 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseAnsatzABC2 (Tensor map1) = M.mapKeys index2SparseAnsatzABC map1
+
+
+    mkEqnSparseAnsatzABCTrian :: M.Map [Int] Int -> Tensor 3 3 0 0 1 0 0 0 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseAnsatzABCTrian trian (Tensor map1) = M.mapKeys (index2SparseAnsatzABCTrian trian) map1
 
     intABC :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 2 3 0 0 0 0 2 2 Rational 
     intABC map1Area map2Area map1Metric map2Metric = tensorSub prod prodTrans 
@@ -125,9 +144,28 @@ module Order3Int (
                                                       n = 1 + (fromEnum $ getValInd x8 0)
                                                       s = 1 + (fromEnum $ getValInd x8 1)
 
+    index2SparseIntABCTrian :: M.Map [Int] Int -> Index 2 3 0 0 0 0 2 2 -> (Int,Int) 
+    index2SparseIntABCTrian trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^4+(f-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,316 +  (div (315*316) 2 )+ x)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      c = 1 + (fromEnum $ getValInd x2 2)
+                                                      m = 1 + (fromEnum $ getValInd x7 0)
+                                                      r = 1 + (fromEnum $ getValInd x7 1)
+                                                      n = 1 + (fromEnum $ getValInd x8 0)
+                                                      s = 1 + (fromEnum $ getValInd x8 1)
+                                                      x = (M.!) trian [a,b,c]
+
+
 
     mkEqnSparseIntABC2 :: Tensor 2 3 0 0 0 0 2 2 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseIntABC2 (Tensor map1) = M.mapKeys index2SparseIntABC map1
+
+    mkEqnSparseIntABCTrian :: M.Map [Int] Int -> Tensor 2 3 0 0 0 0 2 2 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseIntABCTrian trian (Tensor map1) = M.mapKeys (index2SparseIntABCTrian trian) map1
+
 
     --the Aa:C:D ansatz eqn
 
@@ -268,10 +306,31 @@ module Order3Int (
                                                       s = 1 +  (fromEnum $ getValInd x7 1)
 
 
+    index2SparseAnsatzAaBbCTrian :: M.Map [Int] Int -> Index 3 3 0 0 1 0 2 2 -> (Int,Int) 
+    index2SparseAnsatzAaBbCTrian trian  (x1, x2, _, _, x5, _, x7, x8) = ((g-1)*21^2*10*4*4+(e-1)*210*4*4+(f-1)*10*4*4+(j-1)*4*4+(r-1)*4+s,316+ div (315*316) 2 + x)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      g = 1 + (fromEnum $ getValInd x1 2)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      c = 1 + (fromEnum $ getValInd x2 2)
+                                                      j = 1 +  (fromEnum $ getValInd x5 0)
+                                                      p = 1 +  (fromEnum $ getValInd x8 0)
+                                                      q = 1 +  (fromEnum $ getValInd x8 1)
+                                                      r = 1 +  (fromEnum $ getValInd x7 0)
+                                                      s = 1 +  (fromEnum $ getValInd x7 1)
+                                                      [a',b'] = [min ((a-1)*4+p) ((b-1)*4+q) , max ((a-1)*4+p) ((b-1)*4+q)]
+                                                      x = (M.!) trian [c,a',b']
+
+
 
 
     mkEqnSparseAnsatzAaBbC :: Tensor 3 3 0 0 1 0 2 2 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseAnsatzAaBbC (Tensor map1) = M.mapKeys index2SparseAnsatzAaBbC map1
+
+    mkEqnSparseAnsatzAaBbCTrian :: M.Map [Int] Int -> Tensor 3 3 0 0 1 0 2 2 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseAnsatzAaBbCTrian trian (Tensor map1) = M.mapKeys (index2SparseAnsatzAaBbCTrian trian ) map1
 
     intAaBbC :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 2 3 0 0 0 0 4 4 Rational 
     intAaBbC map1Area map2Area map1Metric map2Metric = tensorSub prod prodTrans 
@@ -307,12 +366,36 @@ module Order3Int (
                                                       n = 1 +  (fromEnum $ getValInd x7 3)
                                                       u = 1 +  (fromEnum $ getValInd x8 2)
                                                       v = 1 +  (fromEnum $ getValInd x8 3)
+                                                      
+
+
+    index2SparseintAaBbCTrian :: M.Map [Int] Int -> Index 2 3 0 0 0 0 4 4 -> (Int,Int) 
+    index2SparseintAaBbCTrian  trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^6+(f-1)*4^6+(r-1)*4^5+(s-1)*4^4+(m-1)*4^3+(n-1)*4^2+(u-1)*4+v,316+ div (315*316) 2 + x)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      c = 1 + (fromEnum $ getValInd x2 2)
+                                                      p = 1 +  (fromEnum $ getValInd x8 0)
+                                                      q = 1 +  (fromEnum $ getValInd x8 1)
+                                                      r = 1 +  (fromEnum $ getValInd x7 0)
+                                                      s = 1 +  (fromEnum $ getValInd x7 1)
+                                                      m = 1 +  (fromEnum $ getValInd x7 2)
+                                                      n = 1 +  (fromEnum $ getValInd x7 3)
+                                                      u = 1 +  (fromEnum $ getValInd x8 2)
+                                                      v = 1 +  (fromEnum $ getValInd x8 3)
+                                                      [a',b'] = [min ((a-1)*4+p) ((b-1)*4+q) , max ((a-1)*4+p) ((b-1)*4+q)]
+                                                      x = (M.!) trian [c,a',b']
 
 
 
 
     mkEqnSparseintAaBbC :: Tensor 2 3 0 0 0 0 4 4 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseintAaBbC (Tensor map1) = M.mapKeys index2SparseintAaBbC map1
+
+    mkEqnSparseintAaBbCTrian :: M.Map [Int] Int -> Tensor 2 3 0 0 0 0 4 4 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseintAaBbCTrian trian (Tensor map1) = M.mapKeys (index2SparseintAaBbCTrian trian) map1
 
 
     --we need to write this differently

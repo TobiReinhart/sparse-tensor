@@ -16,7 +16,8 @@
 module AnsatzEqns2 (
     ansatzAB, ansatzABb, ansatzAIB, ansatzAaBI, ansatzAaBb, ansatzAIBJ,
     mkEqnSparseAnsatzAB, mkEqnSparseAnsatzABb, mkEqnSparseAnsatzAIB, mkEqnSparseAnsatzAaBI, mkEqnSparseAnsatzAaBb, mkEqnSparseAnsatzAIBJ,
-    intCond2NoSym, mkEqnSparseintCond2NoSym, removeAIB, mkEqnSparseRemoveAIB, intCondfirstOrder, mkEqnSparsefirstOrder
+    intCond2NoSym, mkEqnSparseintCond2NoSym, removeAIB, mkEqnSparseRemoveAIB, intCondfirstOrder, mkEqnSparsefirstOrder,
+    mkEqnSparseAnsatzABSolo
    
 ) where
 
@@ -27,6 +28,7 @@ module AnsatzEqns2 (
     import Pde
     import EquivarianceEqns
     import qualified Data.Map as M 
+    import Data.Maybe
 
     --AI:B Ansatz Eqn
 
@@ -59,7 +61,7 @@ module AnsatzEqns2 (
     
 
     mkEqnSparseAnsatzAIB :: M.Map [Int] Int -> Tensor 2 2 0 0 2 1 0 0 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseAnsatzAIB trian (Tensor map1) = M.mapKeys (index2SparseAnsatzAIB trian) map1
+    mkEqnSparseAnsatzAIB trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzAIB trian) map1
 
     --A:B ansatz Eqn
 
@@ -90,6 +92,23 @@ module AnsatzEqns2 (
     mkEqnSparseAnsatzAB :: M.Map [Int] Int -> Tensor 2 2 0 0 1 0 0 0 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseAnsatzAB trian (Tensor map1) = M.mapKeys (index2SparseAnsatzAB trian) map1
 
+    index2SparseAnsatzABSolo :: M.Map [Int] Int -> Index 2 2 0 0 1 0 0 0 -> (Int,Int) 
+    index2SparseAnsatzABSolo trian (x1, x2, _, _, x5, _, _, _) = ((e-1)*210+(f-1)*10+j,22 + x)
+                                                  where 
+                                                      e = 1 + (fromEnum $ getValInd x1 0)
+                                                      f = 1 + (fromEnum $ getValInd x1 1)
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      b = 1 + (fromEnum $ getValInd x2 1)
+                                                      j = 1 +  (fromEnum $ getValInd x5 0)
+                                                      --x = fromMaybe 0 $ (M.!?) trian [a,b]
+                                                      x = (M.!) trian [min a b, max a b]
+
+    --reading out is the problem
+    
+
+    mkEqnSparseAnsatzABSolo :: M.Map [Int] Int -> Tensor 2 2 0 0 1 0 0 0 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseAnsatzABSolo trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzABSolo trian) map1
+
     --A:Bb Ansatz Equation
 
     ansatzABb :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 2 2 0 0 1 0 1 1 Rational 
@@ -118,7 +137,7 @@ module AnsatzEqns2 (
                                                       x = (M.!) trian [a,21+(b-1)*4+r]
 
     mkEqnSparseAnsatzABb :: M.Map [Int] Int -> Tensor 2 2 0 0 1 0 1 1 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseAnsatzABb trian (Tensor map1) = M.mapKeys (index2SparseAnsatzABb trian) map1
+    mkEqnSparseAnsatzABb trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzABb trian) map1
 
 
     --the Aa:Bb ansatz Equation
@@ -153,7 +172,7 @@ module AnsatzEqns2 (
                                                       x = (M.!) trian [21 + (min ((a-1)*4+p) ((b-1)*4+q)),21 + (max ((a-1)*4+p) ((b-1)*4+q))]
 
     mkEqnSparseAnsatzAaBb :: M.Map [Int] Int -> Tensor 2 2 0 0 1 0 2 2 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseAnsatzAaBb trian (Tensor map1) = M.mapKeys (index2SparseAnsatzAaBb trian) map1
+    mkEqnSparseAnsatzAaBb trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzAaBb trian) map1
 
                                                       
     --the Aa:BI Ansatz Equation
@@ -187,7 +206,7 @@ module AnsatzEqns2 (
                                                       x = (M.!) trian [21+(a-1)*4+p,105+(b-1)*10+k]
 
     mkEqnSparseAnsatzAaBI :: M.Map [Int] Int -> Tensor 2 2 0 0 2 1 1 1 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseAnsatzAaBI trian (Tensor map1) = M.mapKeys (index2SparseAnsatzAaBI trian) map1
+    mkEqnSparseAnsatzAaBI trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzAaBI trian) map1
 
     --the AI:BJ Ansatz Equation
 
@@ -221,7 +240,7 @@ module AnsatzEqns2 (
                                                       x = (M.!) trian [105 + (min ((a-1)*10+i) ((b-1)*10+j)),105 +  (max ((a-1)*10+i) ((b-1)*10+j))]
 
     mkEqnSparseAnsatzAIBJ :: M.Map [Int] Int -> Tensor 2 2 0 0 3 2 0 0 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseAnsatzAIBJ trian (Tensor map1) = M.mapKeys (index2SparseAnsatzAIBJ trian) map1   
+    mkEqnSparseAnsatzAIBJ trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzAIBJ trian) map1   
     
     --int condition
 
@@ -257,7 +276,7 @@ module AnsatzEqns2 (
                              x = (M.!) trian [b,105+(a-1)*10+i]
 
     mkEqnSparseintCond2NoSym :: M.Map [Int] Int -> Tensor 1 2 0 0 1 1 2 2 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseintCond2NoSym trian (Tensor map1) = M.mapKeys (index2SparseintCond2NoSym trian) map1
+    mkEqnSparseintCond2NoSym trian (Tensor map1) = M.mapKeysWith (+) (index2SparseintCond2NoSym trian) map1
 
     --eqns that remove the A:BI Ansatz
 
@@ -276,7 +295,7 @@ module AnsatzEqns2 (
                                                       x = (M.!) trian [a,105+(b-1)*10+i]
 
     mkEqnSparseRemoveAIB :: M.Map [Int] Int -> Tensor 2 2 0 0 1 1 0 0 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseRemoveAIB trian (Tensor map1) = M.mapKeys (index2SparseRemoveAIB trian) map1
+    mkEqnSparseRemoveAIB trian (Tensor map1) = M.mapKeysWith (+) (index2SparseRemoveAIB trian) map1
 
     --sym int Cond for the first prolongation order
 

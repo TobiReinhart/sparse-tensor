@@ -40,6 +40,7 @@ module Main (
     import Order1Int
     import Order2Int
     import Order3Int
+    import qualified Data.Map.Strict as M
      
 
     main = do
@@ -576,8 +577,65 @@ module Main (
 
         let intCondABTrian = mkEqnSparseIntABTrian trian $ intAB1 map1Area map2Area map1Metric map2Metric
 
-        writeFile "/cip/austausch/cgg/intCondABTrian.txt" $ showEqnsFlatMatLab intCondABTrian
+        --writeFile "/cip/austausch/cgg/intCondABTrian.txt" $ showEqnsFlatMatLab intCondABTrian
 
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/ansatzA_18_1_19.txt" $ showEqnsFlat int3
+
+        let intCond1A = mkEqnSparseint1A $ int1A map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/intA_18_1_19.txt" $ showEqnsFlat intCond1A
+
+        let eqn1SparseNew = M.union eqn1Sparse eqnConstSparse
+
+        let pde1New = mkPdefromTens eqn1SparseNew
+
+        let trian1New = triangleMap 21 
+
+        let mults1New = mkAllMultInds 21
+
+        let pdeProlonged1New_1 = prolongPdeAll mults1New pde1New
+
+        let pdeTotal1NewOrd2 =  combinePdesIvar pde1New pdeProlonged1New_1
+
+        let pdeProlonged1New_2 = prolongPdeAll mults1New pdeProlonged1New_1
+
+        let pdeTotal1NewOrd3 =  combinePdesIvar pde1New $ combinePdesIvar pdeProlonged1New_2 pdeProlonged1New_1
+
+        let sys1NewOrd3 = evalPdeRand 21 trian1New flatAreaM pdeTotal1NewOrd3
+
+        let sys1NewOrd2 = evalPdeRand 21 trian1New flatAreaM pdeTotal1NewOrd2
+
+        let sys1NewOrd3Maple = print2MaplePde pdeTotal1NewOrd3
+
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/pdeOrd1Maple_18_1_19.txt" $ print2MaplePde pde1New
+
+        let ansABSol = mkEqnSparseAnsatzABSolo trian1New $ ansatzAB map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/ansatzABFac_18_1_19.txt" $ showEqnsFlat ansABSol
+
+        let intCondABTrian2 = mkEqnSparseIntABTrian trian1New $ intAB1 map1Area map2Area map1Metric map2Metric
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Ansatz/intABFac_18_1_19.txt" $ showEqnsFlat intCondABTrian2
+
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/PdeHaskellFlatProlonged2.txt" $  evalPdeRand 315 trian flatAreaM pdeTotal 
+
+        --print $ M.size $ getPdeMap pdeTotal1NewOrd3
+        
+        --print $ M.size $ M.mapKeys (\(x,y) -> (x,multInd2MatrixNr y 21 trian1New)) $ getPdeMap pdeTotal1NewOrd3
+
+        writeFile "/cip/austausch/cgg/Ansatz/ansAB_18_1_19.txt" $ showEqnsFlatMatLab  ansAB
+
+        writeFile "/cip/austausch/cgg/Ansatz/ansABb_18_1_19.txt" $ showEqnsFlatMatLab  ansABb
+
+        writeFile "/cip/austausch/cgg/Ansatz/ansAaBb_18_1_19.txt" $ showEqnsFlatMatLab  ansAaBb
+
+        writeFile "/cip/austausch/cgg/Ansatz/ansAIB_18_1_19.txt" $ showEqnsFlatMatLab  ansAIB
+
+        writeFile "/cip/austausch/cgg/Ansatz/ansAaBI_18_1_19.txt" $ showEqnsFlatMatLab  ansAaBI
+
+        writeFile "/cip/austausch/cgg/Ansatz/ansAIBJ_18_1_19.txt" $ showEqnsFlatMatLab  ansAIBJ
 
 
 

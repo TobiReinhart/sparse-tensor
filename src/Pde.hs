@@ -3,9 +3,9 @@
 
 
 module Pde (
-    prolongPde, prolongPdeAll, print2Maple, mkPdefromTens, evalPdeRand, triangleMap, mkAllMultInds, number2MultInd, prolongPdeConst, prolongPdeIvar,
-    combinePdes, prolongSymbolAll, deriveIvar1, multInd2Number1, addMultiInds, isDerivableIvar1, print2MaplePde, printConstPde,
-    prolongPdeAllBlock1
+    prolongPde, prolongPdeAll, print2Maple, mkPdefromTens, evalPdeRand, triangleMap,triangleMap2P, triangleMap3P, mkAllMultInds, number2MultInd, prolongPdeConst, prolongPdeIvar,
+    combinePdes, combinePdesIvar,  prolongSymbolAll, deriveIvar1, multInd2Number1, addMultiInds, isDerivableIvar1, print2MaplePde, printConstPde,
+    prolongPdeAllBlock1, getPdeMap, multInd2MatrixNr
 
 ) where
 
@@ -55,18 +55,21 @@ module Pde (
             
     --the idea is to first filter the list of keys by isDerivableIvar1 and then only derive the remaining keys
 
-    prolongPdeConst :: MultiIndex -> Pde a -> Pde a
-    prolongPdeConst mult (Pde map1) = Pde $ M.mapKeys (\(x,y) -> (136*(multInd2Number1 mult)+x,addMultiInds mult y)) map1
+    prolongPdeConst :: MultiIndex -> Pde a -> Int -> Int  -> Pde a
+    prolongPdeConst mult (Pde map1) maxNr minNr = Pde $ M.mapKeys (\(x,y) -> ( ((multInd2Number1 mult)-1) * (maxNr-minNr+1) + (x-minNr) + maxNr + 1 , addMultiInds mult y)) map1
 
-    prolongPdeIvar :: Num a => MultiIndex -> Pde (Ivar a) -> Pde (Ivar a)
-    prolongPdeIvar mult (Pde map1) = Pde map3
+    prolongPdeIvar :: Num a => MultiIndex -> Pde (Ivar a) -> Int -> Int -> Pde (Ivar a)
+    prolongPdeIvar mult (Pde map1) maxNr minNr = Pde map3
                     where
                         mapFilter = M.filter (isDerivableIvar1 mult) map1
                         map2 = M.map (deriveIvar1 mult) mapFilter
-                        map3 = M.mapKeys (\(x,y) -> (136*(multInd2Number1 mult)+x,y)) map2 
+                        map3 = M.mapKeys (\(x,y) -> (((multInd2Number1 mult)-1) * (maxNr-minNr+1) + (x-minNr) + maxNr + 1,y)) map2 
 
     prolongPde :: (Num a, Eq a) => MultiIndex -> Pde (Ivar a) -> Pde (Ivar a)
-    prolongPde mult sys = Pde $ M.unionWith addIvar (getPdeMap $ prolongPdeConst mult sys) (getPdeMap $ prolongPdeIvar mult sys)
+    prolongPde mult (Pde map1) = Pde $ M.unionWith addIvar (getPdeMap $ prolongPdeConst mult (Pde map1) maxNr minNr) (getPdeMap $ prolongPdeIvar mult (Pde map1) maxNr minNr)
+                        where
+                            ((maxNr,_),_) = M.findMax map1
+                            ((minNr,_),_) = M.findMin map1
 
     --the only problem is getting the new eqn number when prolonging -> solved by using M.mapKeys 
 
@@ -78,9 +81,13 @@ module Pde (
     --this is probably not necessary
 
     prolongSymbolAll :: Num a => [MultiIndex] -> Pde (Ivar a) -> Pde (Ivar a)
-    prolongSymbolAll mults pde = Pde $ M.unions pdeMapList
+    prolongSymbolAll mults (Pde map1) = Pde $ M.unions pdeMapList
                     where
-                        pdeMapList = map (\x -> getPdeMap $ prolongPdeConst x pde) mults
+
+                        pdeMapList = map (\x -> getPdeMap $ prolongPdeConst x (Pde map1) maxNr minNr) mults
+                        ((maxNr,_),_) = M.findMax map1
+                        ((minNr,_),_) = M.findMin map1
+
 
 
     --we need functions for printing a pde
@@ -111,17 +118,29 @@ module Pde (
 
     --store the order of the snd derivatives in a map
 
-    triangleMap :: Int -> M.Map [Int] Int 
-    triangleMap i = M.fromList $ zip j k
+    triangleMap2P :: Int -> M.Map [Int] Int 
+    triangleMap2P i = M.fromList $ zip j k
                     where
                         j = [ [a,b] | a <- [1..i], b <- [a..i] ]
                         k = [1..]
+
+    triangleMap3P :: Int -> M.Map [Int] Int
+    triangleMap3P i = M.fromList $ zip j k
+                    where
+                        j = [ [a,b,c] | a <- [1..i], b <- [a..i], c <- [b..i] ]
+                        k = [1..]
+
+    triangleMap :: Int -> M.Map [Int] Int
+    triangleMap i = M.union (triangleMap2P i) (triangleMap3P i)
+
+    --we need the total trinagle here
 
     multInd2MatrixNr :: MultiIndex -> Int -> M.Map [Int] Int -> Int
     multInd2MatrixNr mult nopsIvars triangle 
                     | diff == 0 = 1
                     | diff == 1 = 1 + (num !! 0)
                     | diff == 2 = 1 +  nopsIvars + ( (M.!) triangle num ) 
+                    | diff == 3 = 1 + nopsIvars + (div (nopsIvars*(nopsIvars+1)) 2) + ( (M.!) triangle num ) 
                         where 
                             diff = diffOrder mult 
                             num = multInd2Number mult 
@@ -153,6 +172,9 @@ module Pde (
 
     combinePdes :: Pde a -> Pde a -> Pde a
     combinePdes (Pde map1) (Pde map2) = Pde $ M.union map1 map2
+
+    combinePdesIvar :: (Num a, Eq a) => Pde (Ivar a) -> Pde (Ivar a) -> Pde (Ivar a)
+    combinePdesIvar (Pde map1) (Pde map2) = Pde $ M.unionWith addIvar map1 map2
 
 
     print2MaplePde :: Pde (Ivar Rational) -> String

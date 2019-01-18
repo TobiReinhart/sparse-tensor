@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-17 08:53:27.886482 UTC
+2019-01-18 09:39:54.830062 UTC
 
 interface main:Perturbation 8043
-  interface hash: 4698c2e26775565317b2932720f58db1
-  ABI hash: 0e825cc71b7cfb75f47556da4cd2afa2
+  interface hash: a73417126cef75869f2aa63d2819f210
+  ABI hash: 0c5594cb695f7286ac07f1e3a60cf237
   export-list hash: 94e25b3c86d4e670faac492ecf8a0eda
   orphan hash: 1bc81da6a1dae6af331427dffa5a65a2
   flag hash: 707c86cfbee6a9c65f08462953a21ad8
@@ -55,7 +55,6 @@ import  -/  base-4.11.1.0:GHC.Err 5e26aa744981f14e0f1e4d29c44ac52e
 import  -/  base-4.11.1.0:GHC.List 1e4357702d8d00cded0703bd293e50e8
 import  -/  base-4.11.1.0:GHC.Num 8e54b26dce4495382dc4b50cf36ab754
 import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
-import  -/  base-4.11.1.0:GHC.Show 73be67392447c974f19c3befd83c46c0
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.IntMap.Internal ef73a09d9589b16c95e337bc0715aa57
 import  -/  containers-0.5.11.0:Data.IntMap.Strict 79a3c61ca2c76eb71c4304029717e288
@@ -74,52 +73,6 @@ import  -/  Ansatz e80d045561c506e0590aa431c0cd1e76
 import  -/  Symmetrize a6ed2605ac858eebc9579a2a0ea3bf31
   exports: c79a0ef965b8f406eb0b9e72ceb58ef0
   Symmetry f51775b478da3c80f3a4963df025dc97
-8448a01895e0fa462fc88c8f28f119a5
-  $fShowAnsatzTree :: GHC.Show.Show Perturbation.AnsatzTree
-  DFunId
-  {- Strictness: m, Inline: CONLIKE,
-     Unfolding: DFun:.
-                  @ Perturbation.AnsatzTree
-                  Perturbation.$fShowAnsatzTree_$cshowsPrec
-                  Perturbation.$fShowAnsatzTree_$cshow
-                  Perturbation.$fShowAnsatzTree_$cshowList -}
-8448a01895e0fa462fc88c8f28f119a5
-  $fShowAnsatzTree1 :: Perturbation.AnsatzTree -> GHC.Show.ShowS
-  {- Arity: 1, Strictness: <S,1*U>,
-     Unfolding: (\ (w :: Perturbation.AnsatzTree) ->
-                 Perturbation.$w$cshowsPrec 0# w) -}
-ca457056bbdd200ba0f55ed886c18bec
-  $fShowAnsatzTree2 :: GHC.Types.Int
-  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
-8448a01895e0fa462fc88c8f28f119a5
-  $fShowAnsatzTree_$cshow ::
-    Perturbation.AnsatzTree -> GHC.Base.String
-  {- Arity: 1, Strictness: <S,1*U>,
-     Unfolding: InlineRule (1, True, False)
-                (\ (x :: Perturbation.AnsatzTree) ->
-                 Perturbation.$fShowAnsatzTree_$cshowsPrec
-                   Perturbation.$fShowAnsatzTree2
-                   x
-                   (GHC.Types.[] @ GHC.Types.Char)) -}
-8448a01895e0fa462fc88c8f28f119a5
-  $fShowAnsatzTree_$cshowList ::
-    [Perturbation.AnsatzTree] -> GHC.Show.ShowS
-  {- Arity: 2, Strictness: <S,1*U><L,U>,
-     Unfolding: InlineRule (2, True, False)
-                (\ (ls :: [Perturbation.AnsatzTree]) (s :: GHC.Base.String) ->
-                 GHC.Show.showList__
-                   @ Perturbation.AnsatzTree
-                   Perturbation.$fShowAnsatzTree1
-                   ls
-                   s) -}
-8448a01895e0fa462fc88c8f28f119a5
-  $fShowAnsatzTree_$cshowsPrec ::
-    GHC.Types.Int -> Perturbation.AnsatzTree -> GHC.Show.ShowS
-  {- Arity: 2, Strictness: <S(S),1*U(U)><S,1*U>, Inline: [0],
-     Unfolding: InlineRule (2, True, False)
-                (\ (w :: GHC.Types.Int) (w1 :: Perturbation.AnsatzTree) ->
-                 case w of ww { GHC.Types.I# ww1 ->
-                 Perturbation.$w$cshowsPrec ww1 w1 }) -}
 afc7201e1ab9af43bf48844ccb28daa9
   $s$fEq(,) ::
     GHC.Classes.Eq
@@ -813,97 +766,6 @@ c5a13cb0cc4721c0cfb13f7296152216
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
   {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
-3281609fc5648c0fd4ad5592428f19d3
-  $tc'EpsilonLeaf :: GHC.Types.TyCon
-  {- HasNoCafRefs, Strictness: m,
-     Unfolding: (GHC.Types.TyCon
-                   16113597437082687009##
-                   14940947881829077918##
-                   Perturbation.$trModule
-                   Perturbation.$tc'EpsilonLeaf2
-                   0#
-                   Perturbation.$tc'EpsilonLeaf1) -}
-d87b4989009867fa50a7331c28d98189
-  $tc'EpsilonLeaf1 :: GHC.Types.KindRep
-  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
-1f67d56dfa27f1f87db519ea632475ed
-  $tc'EpsilonLeaf2 :: GHC.Types.TrName
-  {- HasNoCafRefs, Strictness: m1,
-     Unfolding: (GHC.Types.TrNameS Perturbation.$tc'EpsilonLeaf3) -}
-ed44b4b9d7e07a6a54d6e0e02bf58306
-  $tc'EpsilonLeaf3 :: GHC.Prim.Addr#
-  {- HasNoCafRefs, Unfolding: ("'EpsilonLeaf"#) -}
-f4798189b03799fe23cc7fc3662813e3
-  $tc'EpsilonNode :: GHC.Types.TyCon
-  {- HasNoCafRefs, Strictness: m,
-     Unfolding: (GHC.Types.TyCon
-                   7561895244216283090##
-                   9669769052164822017##
-                   Perturbation.$trModule
-                   Perturbation.$tc'EpsilonNode2
-                   0#
-                   Perturbation.$tc'EpsilonNode1) -}
-2a505c81b52d0561edf39076046b3a01
-  $tc'EpsilonNode1 :: GHC.Types.KindRep
-  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
-a78450d00c87a2a526a2fe899dbdf84b
-  $tc'EpsilonNode2 :: GHC.Types.TrName
-  {- HasNoCafRefs, Strictness: m1,
-     Unfolding: (GHC.Types.TrNameS Perturbation.$tc'EpsilonNode3) -}
-6ac07795732ef3431e2e4781e28d01a1
-  $tc'EpsilonNode3 :: GHC.Prim.Addr#
-  {- HasNoCafRefs, Unfolding: ("'EpsilonNode"#) -}
-c6220e8dea3f47fa37c7f8edf6a47add
-  $tc'EtaLeaf :: GHC.Types.TyCon
-  {- HasNoCafRefs, Strictness: m,
-     Unfolding: (GHC.Types.TyCon
-                   17991047172142351747##
-                   17138074172548287723##
-                   Perturbation.$trModule
-                   Perturbation.$tc'EtaLeaf1
-                   0#
-                   Perturbation.$tc'EpsilonLeaf1) -}
-2536130b314f1a102eb0eeddcbf3a80f
-  $tc'EtaLeaf1 :: GHC.Types.TrName
-  {- HasNoCafRefs, Strictness: m1,
-     Unfolding: (GHC.Types.TrNameS Perturbation.$tc'EtaLeaf2) -}
-a3650ce11c4d4f250f89a54ae6a4cee2
-  $tc'EtaLeaf2 :: GHC.Prim.Addr#
-  {- HasNoCafRefs, Unfolding: ("'EtaLeaf"#) -}
-96fcac84e1338377d7d6424b0733aa98
-  $tc'EtaNode :: GHC.Types.TyCon
-  {- HasNoCafRefs, Strictness: m,
-     Unfolding: (GHC.Types.TyCon
-                   11922038923821919193##
-                   2323741459849484360##
-                   Perturbation.$trModule
-                   Perturbation.$tc'EtaNode1
-                   0#
-                   Perturbation.$tc'EpsilonNode1) -}
-c1f39ae874363de52748894a22941fbf
-  $tc'EtaNode1 :: GHC.Types.TrName
-  {- HasNoCafRefs, Strictness: m1,
-     Unfolding: (GHC.Types.TrNameS Perturbation.$tc'EtaNode2) -}
-431a12e68fe969af5a893ce0102a5ec7
-  $tc'EtaNode2 :: GHC.Prim.Addr#
-  {- HasNoCafRefs, Unfolding: ("'EtaNode"#) -}
-297d3348438756675a543e9d07b28218
-  $tcAnsatzTree :: GHC.Types.TyCon
-  {- HasNoCafRefs, Strictness: m,
-     Unfolding: (GHC.Types.TyCon
-                   8311810510664636861##
-                   10407194126429275062##
-                   Perturbation.$trModule
-                   Perturbation.$tcAnsatzTree1
-                   0#
-                   GHC.Types.krep$*) -}
-c8b2d8ba3cb17bb557c950723d7a683c
-  $tcAnsatzTree1 :: GHC.Types.TrName
-  {- HasNoCafRefs, Strictness: m1,
-     Unfolding: (GHC.Types.TrNameS Perturbation.$tcAnsatzTree2) -}
-aeb9c6d752e99af62e8059d63cf39026
-  $tcAnsatzTree2 :: GHC.Prim.Addr#
-  {- HasNoCafRefs, Unfolding: ("AnsatzTree"#) -}
 f4f39e0d28d7c4d9feaa285794bf4111
   $trModule :: GHC.Types.Module
   {- HasNoCafRefs, Strictness: m,
@@ -924,10 +786,6 @@ f5766357f6e87561267ea7695b034d40
 532d5a2fc11c420f1e4d544dbffd3c74
   $trModule4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("main"#) -}
-8448a01895e0fa462fc88c8f28f119a5
-  $w$cshowsPrec ::
-    GHC.Prim.Int# -> Perturbation.AnsatzTree -> GHC.Show.ShowS
-  {- Arity: 2, Strictness: <S,U><S,1*U>, Inline: [0] -}
 33754e84d4b7103bec02648c8128006b
   $w$sevalPertAns ::
     Data.Map.Internal.Map GHC.Types.Int GHC.Types.Int
@@ -941,7 +799,7 @@ f5766357f6e87561267ea7695b034d40
     -> Data.Map.Internal.Map GHC.Types.Int a1
     -> Data.Map.Internal.Map GHC.Types.Int a1
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-adebdd08cea80436d93d19d6ea292f07
+1e58eccf95d2c69a4e20628f7ba87fc2
   $wgetRepIndsPert ::
     GHC.Base.String -> [Perturbation.PertAnsatz a] -> [GHC.Types.Char]
   {- Arity: 2, Strictness: <L,1*U><L,1*U>, Inline: [0],
@@ -1028,17 +886,6 @@ ad5b26c2955b73c235bd62fd8f5cbc9c
     -> Data.Map.Internal.Map
          (Data.Sequence.Internal.Seq [GHC.Types.Int]) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-f14ae3b1d974bbfe46d7d357ff0e2391
-  type AnsatzForest =
-    Data.Sequence.Internal.Seq Perturbation.AnsatzTree
-8448a01895e0fa462fc88c8f28f119a5
-  data AnsatzTree
-    = EpsilonNode [GHC.Types.Int]
-                  (Data.Sequence.Internal.Seq Perturbation.AnsatzTree)
-    | EpsilonLeaf [GHC.Types.Int] Perturbation.Var
-    | EtaNode [GHC.Types.Int]
-              (Data.Sequence.Internal.Seq Perturbation.AnsatzTree)
-    | EtaLeaf [GHC.Types.Int] Perturbation.Var
 49c16eefccbca44d2ca7fe60c6d926aa
   type PertAnsatz a =
     Data.Map.Internal.Map
@@ -1047,8 +894,6 @@ e1cb1e745d91b17137b314f51bc504e1
   type PertAnsatzEpsilon a =
     Data.Map.Internal.Map
       ([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]) a
-e0d83fc6d31d2b809e0f5ad7a64a7f16
-  type Var = Data.IntMap.Internal.IntMap GHC.Real.Rational
 6c77d2ad2c70e9eed3271cd0ce3f9463
   areaEvalMap1 ::
     [GHC.Types.Int]
@@ -1296,7 +1141,7 @@ c64e4d51da30dacc19ef04befd1e5cf6
     -> Perturbation.PertAnsatz a -> a
   {- Arity: 3,
      Strictness: <L,U(C(C1(U)),A,C(C1(U)),1*C1(U),A,A,C(U))><L,U><S,1*U> -}
-fa0dbf87b6c0dfbd99b32353ea7b725d
+c28f45fc3f3a3071be08ebe4be72fe39
   getRepIndsPert ::
     GHC.Real.Fractional a =>
     GHC.Base.String -> [Perturbation.PertAnsatz a] -> GHC.Base.String
@@ -1324,7 +1169,7 @@ c4a98a510cf06ae5043d67dce073a9e3
 f4654c5ea812983dc988f8511fa8442a
   getRepIndsPert_go :: [[GHC.Types.Char]] -> [GHC.Types.Char]
   {- Arity: 1, Strictness: <S,1*U> -}
-993b3415e3ba651f47d5b59fd6241273
+cf7cbb3c574aa132b1f8811322ee63da
   indexPermSeqPert ::
     Data.Sequence.Internal.Seq [GHC.Types.Int]
     -> Data.IntMap.Internal.IntMap GHC.Types.Char -> GHC.Base.String
@@ -1344,7 +1189,7 @@ f4654c5ea812983dc988f8511fa8442a
                        -> GHC.CString.unpackAppendCString#
                             Perturbation.indexPermSeqPert3
                             (let {
-                               lvl79 :: Data.IntSet.Internal.Key -> GHC.Types.Char
+                               lvl76 :: Data.IntSet.Internal.Key -> GHC.Types.Char
                                  {- Arity: 1, Strictness: <S(S),1*U(U)>,
                                     Unfolding: InlineRule (1, True, False)
                                                (\ (x :: Data.IntSet.Internal.Key) ->
@@ -1369,7 +1214,7 @@ f4654c5ea812983dc988f8511fa8442a
                                           (case GHC.Base.map
                                                   @ GHC.Types.Int
                                                   @ GHC.Types.Char
-                                                  lvl79
+                                                  lvl76
                                                   inds of wild {
                                              [] -> Perturbation.getRepIndsPert3
                                              : x xs
@@ -1414,7 +1259,7 @@ b5c4373d11442986b006eac08cf2f665
 d122972fa71c0cfb78d0fa3e5d7072d7
   indexPermSeqPert3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("["#) -}
-2e09fc17f8285dc30664fb2655cb3334
+f7899695a9b4f8d4b2b36c3a4b720c46
   mkPertAns ::
     GHC.Real.Fractional a =>
     Data.Sequence.Internal.Seq GHC.Types.Int
@@ -1422,7 +1267,7 @@ d122972fa71c0cfb78d0fa3e5d7072d7
   {- Arity: 1, Strictness: <L,1*U(1*U(A,A,A,A,A,A,1*C1(U)),A,A,A)>,
      Unfolding: (\ @ a ($dFractional :: GHC.Real.Fractional a) ->
                  let {
-                   lvl79 :: a
+                   lvl76 :: a
                    = GHC.Num.fromInteger
                        @ a
                        (GHC.Real.$p1Fractional @ a $dFractional)
@@ -1448,13 +1293,13 @@ d122972fa71c0cfb78d0fa3e5d7072d7
                                <Data.Sequence.Internal.Seq GHC.Types.Int>_R))
                          `cast`
                        (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R)),
-                       lvl79)
+                       lvl76)
                       (GHC.Types.[]
                          @ (Data.Sequence.Internal.Seq [GHC.Types.Int], a)))) -}
 804c1a1c6e0816f609d79be364085180
   mkPertAns1 :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (1) -}
-21ad4383864ca913db2b0ef80f35c7ce
+16e753e3368c057da5e76ad244215205
   mkPertAnsEpsilon ::
     GHC.Real.Fractional a =>
     Data.Sequence.Internal.Seq GHC.Types.Int
@@ -1462,7 +1307,7 @@ d122972fa71c0cfb78d0fa3e5d7072d7
   {- Arity: 1, Strictness: <L,1*U(1*U(A,A,A,A,A,A,1*C1(U)),A,A,A)>,
      Unfolding: (\ @ a ($dFractional :: GHC.Real.Fractional a) ->
                  let {
-                   lvl79 :: a
+                   lvl76 :: a
                    = GHC.Num.fromInteger
                        @ a
                        (GHC.Real.$p1Fractional @ a $dFractional)
@@ -1503,7 +1348,7 @@ d122972fa71c0cfb78d0fa3e5d7072d7
                                 <Data.Sequence.Internal.Seq GHC.Types.Int>_R))
                           `cast`
                         (Sym (Data.Sequence.Internal.N:Seq[0] <[GHC.Types.Int]>_R))),
-                       lvl79)
+                       lvl76)
                       (GHC.Types.[]
                          @ (([GHC.Types.Int], Data.Sequence.Internal.Seq [GHC.Types.Int]),
                             a)))) -}
@@ -1522,8 +1367,6 @@ d122972fa71c0cfb78d0fa3e5d7072d7
     -> [Perturbation.PertAnsatzEpsilon a]
   {- Arity: 4,
      Strictness: <L,U(C(C1(U)),A)><L,U(U(C(C1(U)),A,C(C1(U)),C(U),A,A,C(U)),C(C1(U)),A,A)><L,1*U(U,U,U,U,U)><S,1*U> -}
-instance [safe] GHC.Show.Show [Perturbation.AnsatzTree]
-  = Perturbation.$fShowAnsatzTree
 "SPEC evalPertAns @ Rational" forall ($dNum :: GHC.Num.Num
                                                  GHC.Real.Rational)
   Perturbation.evalPertAns @ (GHC.Real.Ratio

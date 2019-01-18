@@ -1,12 +1,12 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-16 12:35:56.609319 UTC
+2019-01-18 15:26:33.077297 UTC
 
 interface main:AnsatzEqns2 8043
-  interface hash: e030ca019353254b081b6c340bb340c4
-  ABI hash: 4f47a1b78e0e4e4edc836cc76a4e88b3
-  export-list hash: 143dfa14ee31a97893027160ceec4cc4
-  orphan hash: 7d6d69d66d99a3276b876b69566809a1
+  interface hash: dee36bc9c85c63a6eca1c1d6d7807574
+  ABI hash: 1070ee6f7096d5fb3235e2da02b6590a
+  export-list hash: bd8b11d3f00127ad64ee51525e015ce0
+  orphan hash: 270f034e838fe5a4216d24b3580836e3
   flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
@@ -23,6 +23,7 @@ exports:
   AnsatzEqns2.intCond2NoSym
   AnsatzEqns2.intCondfirstOrder
   AnsatzEqns2.mkEqnSparseAnsatzAB
+  AnsatzEqns2.mkEqnSparseAnsatzABSolo
   AnsatzEqns2.mkEqnSparseAnsatzABb
   AnsatzEqns2.mkEqnSparseAnsatzAIB
   AnsatzEqns2.mkEqnSparseAnsatzAIBJ
@@ -60,6 +61,7 @@ family instance modules: base-4.11.1.0:Control.Applicative
                          containers-0.5.11.0:Data.Set.Internal
                          primitive-0.6.3.0:Control.Monad.Primitive
                          primitive-0.6.3.0:Data.Primitive.ByteArray
+import  -/  base-4.11.1.0:Data.Maybe 409c3da2b142470b68be39ce1d97a9f7
 import  -/  base-4.11.1.0:GHC.Base 604111500e81281298777e721c75643b
 import  -/  base-4.11.1.0:GHC.Enum 8824828888f5a89ecc9e7c73f05f3151
 import  -/  base-4.11.1.0:GHC.Num 8e54b26dce4495382dc4b50cf36ab754
@@ -95,8 +97,8 @@ import  -/  Index 60260ed90a129e1e10b6c5fafcb2ded1
   getValInd 974a87ce371ea262afad5f9d63705d90
 import  -/  Ivar 59828d84f4f392dde7d157e78b1e20aa
   exports: 847b7f62b7be31da91814bf314ffd8e5
-import  -/  Pde eae954b97181edb505aaa709b5471e56
-  exports: d780795f6c5eb865753089f7498e7db4
+import  -/  Pde 01727937c27ae17d2b109d09ad686ca8
+  exports: b2cd66be74d90ac4a27aea2ce34825a2
 import  -/  Tensor 176e25c77f5f937264699042a39a34a2
   exports: 9a68ab01e29b77db9280f7aa573b73ab
   Tensor 1ac5ddd89ae57be76544d24271fdf653
@@ -357,6 +359,64 @@ adb1afa8e41c0b4778022b350568fe82
     -> Data.Map.Internal.Map (Index.Index 1 1 0 0 0 0 1 1) a1
   {- Arity: 4,
      Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+580fad8745e53c39fbe9b50c823622c8
+  $smapKeysWith ::
+    (a -> a -> a)
+    -> (k1 -> (GHC.Types.Int, GHC.Types.Int))
+    -> Data.Map.Internal.Map k1 a
+    -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><L,C(U)><S,1*U>,
+     Unfolding: (\ @ a
+                   @ k1
+                   (c :: a -> a -> a)
+                   (f :: k1 -> (GHC.Types.Int, GHC.Types.Int))
+                   (eta :: Data.Map.Internal.Map k1 a) ->
+                 let {
+                   f1 :: (GHC.Types.Int, GHC.Types.Int) -> a -> a -> a
+                     {- Arity: 3, Strictness: <L,A><L,U><L,U>,
+                        Unfolding: InlineRule (3, True, True)
+                                   (\ (ds :: (GHC.Types.Int, GHC.Types.Int)) (x1 :: a) (y :: a) ->
+                                    c x1 y) -}
+                   = \ (ds :: (GHC.Types.Int, GHC.Types.Int))
+                       (x1 :: a)[OneShot]
+                       (y :: a)[OneShot] ->
+                     c x1 y
+                 } in
+                 letrec {
+                   go13 :: [((GHC.Types.Int, GHC.Types.Int), a)]
+                           -> Data.Map.Internal.Map k1 a
+                           -> [((GHC.Types.Int, GHC.Types.Int), a)]
+                     {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                   = \ (z' :: [((GHC.Types.Int, GHC.Types.Int), a)])
+                       (ds :: Data.Map.Internal.Map k1 a) ->
+                     case ds of wild {
+                       Data.Map.Internal.Bin dt1 kx x l r
+                       -> go13
+                            (GHC.Types.:
+                               @ ((GHC.Types.Int, GHC.Types.Int), a)
+                               (f kx, x)
+                               (go13 z' r))
+                            l
+                       Data.Map.Internal.Tip -> z' }
+                 } in
+                 letrec {
+                   go14 :: Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
+                           -> [((GHC.Types.Int, GHC.Types.Int), a)]
+                           -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
+                     <join 2> {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+                   = \ (z :: Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a)
+                       (ds :: [((GHC.Types.Int, GHC.Types.Int), a)]) ->
+                     case ds of wild {
+                       [] -> z
+                       : x1 xs
+                       -> case x1 of wild1 { (,) k x2 ->
+                          case k of ww { (,) ww1 ww2 ->
+                          case AnsatzEqns2.$w$sgo9 @ a f1 ww1 ww2 x2 z of z' { DEFAULT ->
+                          go14 z' xs } } } }
+                 } in
+                 go14
+                   (Data.Map.Internal.Tip @ (GHC.Types.Int, GHC.Types.Int) @ a)
+                   (go13 (GHC.Types.[] @ ((GHC.Types.Int, GHC.Types.Int), a)) eta)) -}
 619b3c4d831b7fe390b7e5daf83d0061
   $stensorContractWith_1 :: GHC.Natural.Natural
   {- Unfolding: (case AnsatzEqns2.$stensorContractWith_2 of wild {
@@ -670,6 +730,17 @@ a4da2741379a970b97a6872cb6bab219
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
   {- Arity: 5, Strictness: <L,U><L,1*U(U)><L,U(U)><L,U><S,1*U>,
+     Inline: [0] -}
+4ce01e7eb40780f29a80e037342748e1
+  $w$sgo9 ::
+    ((GHC.Types.Int, GHC.Types.Int) -> a1 -> a1 -> a1)
+    -> GHC.Types.Int
+    -> GHC.Types.Int
+    -> a1
+    -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
+    -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
+  {- Arity: 5,
+     Strictness: <L,1*C1(C1(C1(U)))><L,U(U)><L,U(U)><L,U><S,1*U>,
      Inline: [0] -}
 fc0c6ff32761973601b6dcdeece66add
   $wansatzAB ::
@@ -2583,6 +2654,98 @@ c6af19c64ad2d709d169338df8eeb43d
                       (GHC.Types.[]
                          @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
                       ww)) -}
+481aa81f0ce9d26dbc5de2254bf7d7b5
+  $wmkEqnSparseAnsatzABSolo ::
+    Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+    -> Data.Map.Internal.Map
+         (Index.Index 2 2 0 0 1 0 0 0) GHC.Real.Rational
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
+  {- Arity: 2, Strictness: <L,U><S,1*U>, Inline: [0],
+     Unfolding: (\ (w :: Data.Map.Internal.Map
+                           [GHC.Types.Int] GHC.Types.Int)
+                   (ww :: Data.Map.Internal.Map
+                            (Index.Index 2 2 0 0 1 0 0 0) GHC.Real.Rational) ->
+                 AnsatzEqns2.$smapKeysWith
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   @ (Index.Uinds_20 2, Index.Linds_20 2, Index.Uinds_19 0,
+                      Index.Linds_19 0, Index.Uinds_9 1, Index.Linds_9 0,
+                      Index.Uinds_3 0, Index.Linds_3 0)
+                   GHC.Real.$fEnumRatio_$s$c+
+                   (\ (ds :: (Index.Uinds_20 2, Index.Linds_20 2, Index.Uinds_19 0,
+                              Index.Linds_19 0, Index.Uinds_9 1, Index.Linds_9 0,
+                              Index.Uinds_3 0, Index.Linds_3 0)) ->
+                    case ds of wild { (,,,,,,,) x1 x2 ds1 ds2 x5 ds3 ds4 ds5 ->
+                    (case x1 of wild1 { Index.UnsafemkInd s ->
+                     case Data.Sequence.Internal.$wlookup
+                            @ Index.Uind_20
+                            0#
+                            s of wild2 {
+                       GHC.Base.Nothing
+                       -> case Data.Maybe.fromJust1 ret_ty GHC.Types.Int of {}
+                       GHC.Base.Just x
+                       -> case GHC.Prim.dataToTag# @ Index.Uind_20 x of a# { DEFAULT ->
+                          case Data.Sequence.Internal.$wlookup
+                                 @ Index.Uind_20
+                                 1#
+                                 s of wild3 {
+                            GHC.Base.Nothing
+                            -> case Data.Maybe.fromJust1 ret_ty GHC.Types.Int of {}
+                            GHC.Base.Just x4
+                            -> case GHC.Prim.dataToTag# @ Index.Uind_20 x4 of a#1 { DEFAULT ->
+                               case x5 of wild4 { Index.UnsafemkInd s1 ->
+                               case Data.Sequence.Internal.$wlookup
+                                      @ Index.Uind_9
+                                      0#
+                                      s1 of wild5 {
+                                 GHC.Base.Nothing
+                                 -> case Data.Maybe.fromJust1 ret_ty GHC.Types.Int of {}
+                                 GHC.Base.Just x6
+                                 -> case GHC.Prim.dataToTag# @ Index.Uind_9 x6 of a#2 { DEFAULT ->
+                                    GHC.Types.I#
+                                      (GHC.Prim.+#
+                                         (GHC.Prim.+#
+                                            (GHC.Prim.*# (GHC.Prim.-# (GHC.Prim.+# 1# a#) 1#) 210#)
+                                            (GHC.Prim.*# (GHC.Prim.-# (GHC.Prim.+# 1# a#1) 1#) 10#))
+                                         (GHC.Prim.+# 1# a#2)) } } } } } } } },
+                     let {
+                       b :: GHC.Types.Int
+                       = case x2 of wild1 { Index.UnsafemkInd s ->
+                         case Data.Sequence.Internal.$wlookup
+                                @ Index.Lind_20
+                                1#
+                                s of wild2 {
+                           GHC.Base.Nothing
+                           -> case Data.Maybe.fromJust1 ret_ty GHC.Types.Int of {}
+                           GHC.Base.Just x
+                           -> case GHC.Prim.dataToTag# @ Index.Lind_20 x of a# { DEFAULT ->
+                              GHC.Types.I# (GHC.Prim.+# 1# a#) } } }
+                     } in
+                     let {
+                       a :: GHC.Types.Int
+                       = case x2 of wild1 { Index.UnsafemkInd s ->
+                         case Data.Sequence.Internal.$wlookup
+                                @ Index.Lind_20
+                                0#
+                                s of wild2 {
+                           GHC.Base.Nothing
+                           -> case Data.Maybe.fromJust1 ret_ty GHC.Types.Int of {}
+                           GHC.Base.Just x
+                           -> case GHC.Prim.dataToTag# @ Index.Lind_20 x of a# { DEFAULT ->
+                              GHC.Types.I# (GHC.Prim.+# 1# a#) } } }
+                     } in
+                     case AnsatzEqns2.$sfind1
+                            @ GHC.Types.Int
+                            (GHC.Types.:
+                               @ GHC.Types.Int
+                               (GHC.Classes.$fOrdInt_$cmin a b)
+                               (GHC.Types.:
+                                  @ GHC.Types.Int
+                                  (GHC.Classes.$fOrdInt_$cmax a b)
+                                  (GHC.Types.[] @ GHC.Types.Int)))
+                            w of wild1 { GHC.Types.I# y ->
+                     GHC.Types.I# (GHC.Prim.+# 22# y) }) })
+                   ww) -}
 f6408630dd83e581da17b7298995e82d
   $wmkEqnSparseAnsatzABb ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
@@ -3297,6 +3460,18 @@ f47100f5252359e60ed86a3e7847ce5b
                    (w1 :: Tensor.Tensor 2 2 0 0 1 0 0 0 GHC.Real.Rational) ->
                  case w1 of ww { Tensor.Tensor ww1 ->
                  AnsatzEqns2.$wmkEqnSparseAnsatzAB w ww1 }) -}
+9377e34f1edc634e5a9f1d488cd31bee
+  mkEqnSparseAnsatzABSolo ::
+    Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+    -> Tensor.Tensor 2 2 0 0 1 0 0 0 GHC.Real.Rational
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
+  {- Arity: 2, Strictness: <L,U><S(S),1*U(1*U)>, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int)
+                   (w1 :: Tensor.Tensor 2 2 0 0 1 0 0 0 GHC.Real.Rational) ->
+                 case w1 of ww { Tensor.Tensor ww1 ->
+                 AnsatzEqns2.$wmkEqnSparseAnsatzABSolo w ww1 }) -}
 822c0def7863c4c6e2482d1fb7be4d20
   mkEqnSparseAnsatzABb ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
@@ -3509,6 +3684,16 @@ c79a79e5ff4f133fb6c4989d23b0bf08
                              @ a
                              $dOrd
   = AnsatzEqns2.$sfromList @ a
+"SPEC/AnsatzEqns2 mapKeysWith @ (Int, Int) _ _" [orphan] forall @ a
+                                                                @ k1
+                                                                ($dOrd :: GHC.Classes.Ord
+                                                                            (GHC.Types.Int,
+                                                                             GHC.Types.Int))
+  Data.Map.Internal.mapKeysWith @ (GHC.Types.Int, GHC.Types.Int)
+                                @ a
+                                @ k1
+                                $dOrd
+  = AnsatzEqns2.$smapKeysWith @ a @ k1
 "SPEC/AnsatzEqns2 unionWith @ (Index 1 1 0 0 0 0 1 1) _" [orphan] forall @ a
                                                                          ($dOrd :: GHC.Classes.Ord
                                                                                      (Index.Index

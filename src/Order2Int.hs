@@ -30,6 +30,7 @@ module Order2Int (
     import Pde
     import EquivarianceEqns
     import qualified Data.Map as M 
+    import Data.Maybe
 
 
     --A:B ansatz Eqn
@@ -90,6 +91,7 @@ module Order2Int (
                         totalBlock = tensorContractWith_20 (1,2) (+) $ tensorProductNew block1Sym totalBlock2
                         totalBlockTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) totalBlock
 
+
     index2SparseIntAB :: Index 1 2 0 0 0 0 2 2 -> (Int,Int) 
     index2SparseIntAB  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,(b-1)*21+a)
                                                   where 
@@ -105,7 +107,7 @@ module Order2Int (
     mkEqnSparseIntAB (Tensor map1) = M.mapKeys index2SparseIntAB map1
 
     index2SparseIntABTrian :: M.Map [Int] Int -> Index 1 2 0 0 0 0 2 2 -> (Int,Int) 
-    index2SparseIntABTrian trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,316 + x)
+    index2SparseIntABTrian trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,22 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)
@@ -114,10 +116,11 @@ module Order2Int (
                                                       r = 1 +  (fromEnum $ getValInd x7 1)
                                                       n = 1 +  (fromEnum $ getValInd x8 0)
                                                       s = 1 +  (fromEnum $ getValInd x8 1)
+                                                      --x = fromMaybe 0 $ (M.!?) trian [a,b]
                                                       x = (M.!) trian [min a b, max a b]
 
     mkEqnSparseIntABTrian :: M.Map [Int] Int -> Tensor 1 2 0 0 0 0 2 2 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseIntABTrian trian (Tensor map1) = M.mapKeys (index2SparseIntABTrian trian) map1
+    mkEqnSparseIntABTrian trian (Tensor map1) = M.mapKeysWith (+) (index2SparseIntABTrian trian) map1
 
 
     --the A:Bb prolongation

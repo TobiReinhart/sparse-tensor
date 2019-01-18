@@ -16,7 +16,8 @@
 module Order1Int (
     ansatzA, mkEqnSparseAnsatzA,
     ansatzAa, mkEqnSparseAnsatzAa, 
-    ansatzAI3, mkEqnSparseAnsatzAI
+    ansatzAI3, mkEqnSparseAnsatzAI,
+    int1A, mkEqnSparseint1A
     
     
 ) where
@@ -98,3 +99,27 @@ module Order1Int (
 
     mkEqnSparseAnsatzAI :: Tensor 1 1 0 0 2 1 0 0 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseAnsatzAI (Tensor map1) = M.mapKeys index2SparseAnsatzAI map1
+
+    
+    int1A :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 0 1 0 0 0 0 2 2 Rational 
+    int1A map1Area map2Area map1Metric map2Metric = tensorSub tens tensTrans
+                                                    where
+                                                        intArea = interArea map1Area map2Area
+                                                        flatA = flatArea map2Area
+                                                        flatInter = tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea flatA
+                                                        block1 = tensorProductNumeric delta_3 flatInter
+                                                        block2 = tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea flatInter
+                                                        tens = tensorAdd block1 block2 
+                                                        tensTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) $ tens
+
+    index2Sparseint1A :: Index 0 1 0 0 0 0 2 2 -> (Int,Int) 
+    index2Sparseint1A  (_, x2, _, _, _, _, x7, x8) = ((m-1)*4^3+(n-1)*4^2+(r-1)*4+s,a)
+                                                  where 
+                                                      a = 1 + (fromEnum $ getValInd x2 0)
+                                                      m = 1 +  (fromEnum $ getValInd x7 0)
+                                                      r = 1 +  (fromEnum $ getValInd x7 0)
+                                                      n = 1 +  (fromEnum $ getValInd x8 0)
+                                                      s = 1 +  (fromEnum $ getValInd x8 1)
+
+    mkEqnSparseint1A :: Tensor 0 1 0 0 0 0 2 2 Rational -> M.Map (Int,Int) Rational
+    mkEqnSparseint1A (Tensor map1) = M.mapKeys index2Sparseint1A map1

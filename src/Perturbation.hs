@@ -285,57 +285,6 @@ where
 
     --the rest of this module is for reading out and is not important for the moment 
 
-    type Var = I.IntMap Rational 
-
-    --now we need tree data types for the 2 ansätze
-
-    data AnsatzTree = EpsilonNode [Int] (S.Seq AnsatzTree) |
-                      EpsilonLeaf [Int] Var | 
-                      EtaNode [Int] (S.Seq AnsatzTree) | 
-                      EtaLeaf [Int] Var deriving (Show)
-
-    getNodeVal :: AnsatzTree -> [Int]
-    getNodeVal (EpsilonNode i j) = i
-    getNodeVal (EtaNode i j) = i
-    getNodeVal (EpsilonLeaf i j) = i
-    getNodeVal (EtaLeaf i j) = i
-
-    getSubForest :: AnsatzTree -> AnsatzForest
-    getSubForest (EpsilonNode i s) = s
-    getSubForest (EtaNode i s) = s
-    getSubForest x = error "wrong type of forest"
-
-    isLeaf :: AnsatzTree -> Bool
-    isLeaf (EtaLeaf i j) = True
-    isLeaf (EpsilonLeaf i j) = True
-    isLeaf x = False
-
-    addVarLeaf :: Var -> AnsatzTree -> AnsatzTree
-    addVarLeaf var (EtaLeaf i j) = EtaLeaf i (I.unionWith (+) var j)
-    addVarLeaf var (EpsilonLeaf i j) = EtaLeaf i (I.unionWith (+) var j)
-    addVarLeaf var x = error "wrong ansatzTree"
-
-
-    type AnsatzForest = S.Seq AnsatzTree
-
-    insertSeqEta :: Var -> AnsatzForest -> S.Seq [Int] -> AnsatzForest 
-    insertSeqEta var ans seq 
-                    | S.length ans == 0 = mkSeqAnsatzForestEta var seq
-                    | seq1 == (getNodeVal ans1) && (isLeaf ans1) = (S.<|) (addVarLeaf var ans1) ansRest  
-                    | seq1 == (getNodeVal ans1) = (S.<|) (EtaNode (getNodeVal ans1) (insertSeqEta var (getSubForest ans1) seqRest)) ansRest 
-                    | otherwise = (S.<|) ans1 $ insertSeqEta var ansRest seq
-                    where
-                        ans1 = S.index ans 0
-                        seq1 = S.index seq 0
-                        ansRest = S.index (S.tails ans ) 1
-                        seqRest = S.index (S.tails seq ) 1
-
-    mkSeqAnsatzForestEta :: Var -> S.Seq [Int] -> AnsatzForest
-    mkSeqAnsatzForestEta var seq 
-                        | S.length seq == 1 = S.singleton $ EtaLeaf (S.index seq 0) var  
-                        | otherwise = S.singleton $ EtaNode (S.index seq 0) $ mkSeqAnsatzForestEta var (S.index (S.tails seq ) 1) 
-
-
     mkIndListtoEta :: I.IntMap Char -> [Int] -> String
     mkIndListtoEta iMap inds = "[" ++ (intersperse ',' eta) ++ "]"
                 where

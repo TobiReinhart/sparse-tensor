@@ -107,7 +107,7 @@ module Order2Int (
     mkEqnSparseIntAB (Tensor map1) = M.mapKeys index2SparseIntAB map1
 
     index2SparseIntABTrian :: M.Map [Int] Int -> Index 1 2 0 0 0 0 2 2 -> (Int,Int) 
-    index2SparseIntABTrian trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,22 + x)
+    index2SparseIntABTrian trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)

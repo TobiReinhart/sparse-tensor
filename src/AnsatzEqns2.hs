@@ -90,7 +90,7 @@ module AnsatzEqns2 (
                                                       x = (M.!) trian [min a b, max a b]
 
     mkEqnSparseAnsatzAB :: M.Map [Int] Int -> Tensor 2 2 0 0 1 0 0 0 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseAnsatzAB trian (Tensor map1) = M.mapKeys (index2SparseAnsatzAB trian) map1
+    mkEqnSparseAnsatzAB trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzAB trian) map1
 
     index2SparseAnsatzABSolo :: M.Map [Int] Int -> Index 2 2 0 0 1 0 0 0 -> (Int,Int) 
     index2SparseAnsatzABSolo trian (x1, x2, _, _, x5, _, _, _) = ((e-1)*210+(f-1)*10+j,22 + x)

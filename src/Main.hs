@@ -625,7 +625,7 @@ module Main (
         
         --print $ M.size $ M.mapKeys (\(x,y) -> (x,multInd2MatrixNr y 21 trian1New)) $ getPdeMap pdeTotal1NewOrd3
 
-        --writeFile "/cip/austausch/cgg/Ansatz/ansAB_18_1_19.txt" $ showEqnsFlatMatLab  ansAB
+        writeFile "/cip/austausch/cgg/Ansatz/ansAB_18_1_19.txt" $ showEqnsFlatMatLab  ansAB
 
         --writeFile "/cip/austausch/cgg/Ansatz/ansABb_18_1_19.txt" $ showEqnsFlatMatLab  ansABb
 
@@ -637,9 +637,9 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/Ansatz/ansAIBJ_18_1_19.txt" $ showEqnsFlatMatLab  ansAIBJ
 
-        writeFile "/cip/austausch/cgg/Ansatz/intABI_18_1_19.txt" $ showEqnsFlatMatLab  newInt2
+        --writeFile "/cip/austausch/cgg/Ansatz/intABI_18_1_19.txt" $ showEqnsFlatMatLab  newInt2
 
-        writeFile "/cip/austausch/cgg/Ansatz/intAB_18_1_19.txt" $ showEqnsFlatMatLab  intCondABTrian
+        --writeFile "/cip/austausch/cgg/Ansatz/intAB_18_1_19.txt" $ showEqnsFlatMatLab  intCondABTrian
 
 
 

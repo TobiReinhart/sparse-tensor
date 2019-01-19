@@ -8,12 +8,17 @@ module PerturbationTree (
     import qualified Data.Sequence as S
     import Data.Foldable
     import Data.Maybe
+    import Data.Tree 
 
     type Eta = (Int,Int)
 
     type Epsilon = (Int,Int,Int,Int)
 
     type Var = I.IntMap Rational 
+
+    --use the following data type for nodes in Data.Tree !!!
+
+    data AnsatzNode = EpsilonNode Epsilon | EtaNode Eta | EpsilonLeaf Epsilon Var | EtaLeaf Eta Var deriving (Show, Eq)
 
     sortEta :: Eta -> Eta 
     sortEta (i,j) = (min i j, max i j)
@@ -25,6 +30,43 @@ module PerturbationTree (
 
     signEpsilon :: Epsilon -> Int
     signEpsilon (i,j,k,l) = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+
+
+    mkEtaSeq :: S.Seq Int -> S.Seq Eta 
+    mkEtaSeq seq = fmap f seq2
+            where 
+                seq2 = S.chunksOf 2 seq 
+                f = \s -> (S.index s 0, S.index s 1)
+
+    mkEpsilonSeq :: S.Seq Int -> (Epsilon,S.Seq Eta)
+    mkEpsilonSeq seq = (eps,etaSeq)
+            where 
+                eps = (S.index seq 0, S.index seq 1, S.index seq 2, S.index seq 3)
+                etaSeq = mkEtaSeq $ S.drop 4 seq 
+
+    --the next step is making a tree from the top Sort Seq
+
+    mkTreeEta :: Var -> S.Seq Eta -> Tree AnsatzNode 
+    mkTreeEta var seq 
+                | S.length seq == 1 = Node (EtaLeaf (S.index seq 0) var) []  
+                | otherwise = Node (EtaNode (S.index seq 0)) [mkTreeEta var (S.drop 1 seq)]
+
+    mkTreeEpsilon :: Var -> (Epsilon,S.Seq Eta) -> Tree AnsatzNode 
+    mkTreeEpsilon var (eps,seq) 
+                | S.length seq == 0 = Node (EpsilonLeaf eps var) []
+                | otherwise = Node (EpsilonNode eps) [mkTreeEta var seq]
+
+    getEta :: AnsatzNode -> Eta
+    getEta (EtaNode i ) = i
+    getEta (EtaLeaf i j) = i
+    getEta x = error "Node is an Epsilon Node!"
+
+    getEpsilon :: AnsatzNode -> Epsilon
+    getEpsilon (EpsilonNode i ) = i
+    getEpsilon (EpsilonLeaf i j) = i
+    getEpsilon x = error "Node is an Eta Node!"
+
+    {-
 
     --now we need tree data types for the 2 ansätze
     
@@ -63,34 +105,31 @@ module PerturbationTree (
                 | otherwise = False
                 where
                     indEps = S.elemIndexL eps $ fmap getEpsilon ansF
-{-
+
     addAnsatz :: AnsatzTree -> AnsatzForest -> AnsatzForest
     addAnsatz (EtaLeaf eta var) ansF 
-                | length indsEta > 1 = 
-                | otherwise = False
+                | isJust indEta = S.adjust (addVarLeaf var) $ fromJust indEta
+                | otherwise = 
                 where
-                    indsEta = elemIndices eta $ map getEta ansF
-                    subFEta = getSubForest $ ansF !! (indsEta !! 0)
+                    indEta = S.elemIndexL eta $ fmap getEta ansF
     addAnsatz (EpsilonLeaf eps var) ansF 
-                | length indsEps > 1 = True
+                | isJust indEps = and $ fmap (\ a -> lookupAnsatz a (getSubForest $ S.index ansF $ fromJust indEps)) restAns
                 | otherwise = False
                 where
-                    indsEps = elemIndices eps $ map getEpsilon ansF
-                    subFEps = getSubForest $ ansF !! (indsEps !! 0)
-    addAnsatz (EtaNode eta restAns) ansF
-                | length indsEta > 1 = and $ map (\ a -> lookupAnsatz a subFEta) restAns
-                | otherwise = False
-                where
-                    indsEta = elemIndices eta $ map getEta ansF
-                    subFEta = getSubForest $ ansF !! (indsEta !! 0)
-    addAnsatz (EpsilonNode eps restAns) ansF
-                | length indsEps > 1 = and $ map (\ a -> lookupAnsatz a subFEps) restAns
-                | otherwise = False
-                where
-                    indsEps = elemIndices eps $ map getEpsilon ansF
-                    subFEps = getSubForest $ ansF !! (indsEps !! 0)
+                    indEps = S.elemIndexL eps $ fmap getEpsilon ansF
 
--}
+    addAnsatz (EtaNode eta restAns) ansF
+                | isJust indEta = and $ fmap (\ a -> lookupAnsatz a (getSubForest $ S.index ansF $ fromJust indEta)) restAns
+                | otherwise = False
+                where
+                    indEta = S.elemIndexL eta $ fmap getEta ansF
+    addAnsatz (EpsilonNode eps restAns) ansF
+                | isJust indEps = and $ fmap (\ a -> lookupAnsatz a (getSubForest $ S.index ansF $ fromJust indEps)) restAns
+                | otherwise = False
+                where
+                    indEps = S.elemIndexL eps $ fmap getEpsilon ansF
+
+
     getEta :: AnsatzTree -> Eta
     getEta (EtaNode i j) = i
     getEta (EtaLeaf i j) = i
@@ -104,8 +143,6 @@ module PerturbationTree (
     getSubForest (EtaNode i s) = s
     getSubForest x = error "wrong type of forest"
    
-    
-
 
     isLeaf :: AnsatzTree -> Bool
     isLeaf (EtaLeaf i j) = True
@@ -117,7 +154,7 @@ module PerturbationTree (
     addVarLeaf var (EpsilonLeaf i j) = EpsilonLeaf i (I.unionWith (+) var j)
     addVarLeaf var x = error "wrong ansatzTree"
 
-    {-
+    
         
     insertSeqEta :: Var -> AnsatzForest -> S.Seq [Int] -> AnsatzForest 
     insertSeqEta var ans seq 

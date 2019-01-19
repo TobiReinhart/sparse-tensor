@@ -100,7 +100,7 @@ module Order3Int (
                                                       c = 1 + (fromEnum $ getValInd x2 2)
                                                       j = 1 +  (fromEnum $ getValInd x5 0)
                                                       [a2,b2,c2] = sort [a,b,c]
-                                                      x = (M.!) trian [a,b,c]
+                                                      x = (M.!) trian [a2,b2,c2]
 
 
     mkEqnSparseAnsatzABC2 :: Tensor 3 3 0 0 1 0 0 0 Rational -> M.Map (Int,Int) Rational

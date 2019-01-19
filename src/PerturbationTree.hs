@@ -73,7 +73,6 @@ module PerturbationTree (
     multVarNode n (EpsilonLeaf i var) = EpsilonLeaf i $ I.map ((*) n) var 
     multVarNode n i = i 
 
-
     swapLabelF :: Eq a => (a,a) -> a -> a 
     swapLabelF (x,y) z
             | x == z = y
@@ -90,13 +89,37 @@ module PerturbationTree (
                         epsSign = signEpsilon newEps
 
 
-    swapLabelNode :: (Int,Int) -> AnsatzNode -> AnsatzNode
-    swapLabelNode j (EtaNode eta) = EtaNode (swapLabelEta j eta)
-    swapLabelNode j (EtaLeaf eta var) = EtaLeaf (swapLabelRta j eta) var
-    swapLabelNode j (EpsilonNode eps) = EpsilonNode (swapLabelEpsilon j eps)
+    swapLabelNodeEta :: (Int,Int) -> AnsatzNode -> AnsatzNode
+    swapLabelNodeEta j (EtaNode eta) = EtaNode (swapLabelEta j eta)
+    swapLabelNodeEta j (EtaLeaf eta var) = EtaLeaf (swapLabelEta j eta) var
+
+
+    swapLabelNodeEpsilon :: (Int,Int) -> AnsatzNode -> (Int,AnsatzNode)
+    swapLabelNodeEpsilon j (EpsilonNode eps) = (epsSign, EpsilonNode (epsSwap))
+                        where
+                            (epsSign,epsSwap) = swapLabelEpsilon j eps
+    swapLabelNodeEpsilon j (EpsilonLeaf eps var) = (1, EpsilonLeaf epsSwap $ I.map ((*) ( fromIntegral epsSign)) var )
+                        where
+                         (epsSign,epsSwap) = swapLabelEpsilon j eps
+
+    swapLabelTree :: (Int,Int) -> Tree AnsatzNode -> Tree AnsatzNode 
+    swapLabelTree j (Node (EtaNode eta) subTree) = Node etaNodeSwap subTree
+                where
+                    etaNodeSwap = swapLabelNodeEta j (EtaNode eta)
+    swapLabelTree j (Node (EtaLeaf eta var) []) = Node etaLeafSwap []
+                where
+                    etaLeafSwap = swapLabelNodeEta j (EtaLeaf eta var)
+    swapLabelTree j (Node (EpsilonNode eps) subTree) = Node epsNodeSwap $ map (fmap (multVarNode $ fromIntegral epsSign)) subTree
+                where
+                    (epsSign,epsNodeSwap) = swapLabelNodeEpsilon j (EpsilonNode eps)
+    swapLabelTree j (Node (EpsilonLeaf eps var) [] ) = Node epsLeafSwap []
+                where
+                    (_,epsLeafSwap) = swapLabelNodeEpsilon j (EpsilonLeaf eps var)
+    swapLabelTree j x = error "pattern not matched"
     
 
 
+    --the next important bits are lokking up an ansatz in a tree and adding 2 trees 
 
     {-
 

@@ -108,7 +108,7 @@ module Order3Int (
 
 
     mkEqnSparseAnsatzABCTrian :: M.Map [Int] Int -> Tensor 3 3 0 0 1 0 0 0 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseAnsatzABCTrian trian (Tensor map1) = M.mapKeys (index2SparseAnsatzABCTrian trian) map1
+    mkEqnSparseAnsatzABCTrian trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzABCTrian trian) map1
 
     intABC :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 2 3 0 0 0 0 2 2 Rational 
     intABC map1Area map2Area map1Metric map2Metric = tensorSub prod prodTrans 
@@ -156,15 +156,15 @@ module Order3Int (
                                                       r = 1 + (fromEnum $ getValInd x7 1)
                                                       n = 1 + (fromEnum $ getValInd x8 0)
                                                       s = 1 + (fromEnum $ getValInd x8 1)
-                                                      [a2,b2,c2] = sort [a,b,c]
-                                                      x = (M.!) trian [a2,b2,c2]
+                                                      y = sort [a,b,c]
+                                                      x = (M.!) trian y
 
 
     mkEqnSparseIntABC2 :: Tensor 2 3 0 0 0 0 2 2 Rational -> M.Map (Int,Int) Rational
     mkEqnSparseIntABC2 (Tensor map1) = M.mapKeys index2SparseIntABC map1
 
     mkEqnSparseIntABCTrian :: M.Map [Int] Int -> Tensor 2 3 0 0 0 0 2 2 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseIntABCTrian trian (Tensor map1) = M.mapKeys (index2SparseIntABCTrian trian) map1
+    mkEqnSparseIntABCTrian trian (Tensor map1) = M.mapKeysWith (+) (index2SparseIntABCTrian trian) map1
 
 
     --the Aa:C:D ansatz eqn
@@ -330,7 +330,7 @@ module Order3Int (
     mkEqnSparseAnsatzAaBbC (Tensor map1) = M.mapKeys index2SparseAnsatzAaBbC map1
 
     mkEqnSparseAnsatzAaBbCTrian :: M.Map [Int] Int -> Tensor 3 3 0 0 1 0 2 2 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseAnsatzAaBbCTrian trian (Tensor map1) = M.mapKeys (index2SparseAnsatzAaBbCTrian trian ) map1
+    mkEqnSparseAnsatzAaBbCTrian trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzAaBbCTrian trian ) map1
 
     intAaBbC :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 2 3 0 0 0 0 4 4 Rational 
     intAaBbC map1Area map2Area map1Metric map2Metric = tensorSub prod prodTrans 
@@ -395,7 +395,7 @@ module Order3Int (
     mkEqnSparseintAaBbC (Tensor map1) = M.mapKeys index2SparseintAaBbC map1
 
     mkEqnSparseintAaBbCTrian :: M.Map [Int] Int -> Tensor 2 3 0 0 0 0 4 4 Rational -> M.Map (Int,Int) Rational
-    mkEqnSparseintAaBbCTrian trian (Tensor map1) = M.mapKeys (index2SparseintAaBbCTrian trian) map1
+    mkEqnSparseintAaBbCTrian trian (Tensor map1) = M.mapKeysWith (+) (index2SparseintAaBbCTrian trian) map1
 
 
     --we need to write this differently

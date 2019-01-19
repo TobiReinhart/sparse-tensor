@@ -641,10 +641,12 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/Ansatz/intAB_18_1_19.txt" $ showEqnsFlatMatLab  intCondABTrian
 
+        trianNew = triangleMap 315
 
-        let ansatzCondAaBbCT = mkEqnSparseAnsatzAaBbCTrian trian $ ansatzAaBbC map1Area map2Area map1Metric map2Metric
 
-        let intCondAaBbCT = mkEqnSparseintAaBbCTrian trian $ intAaBbC2 map1Area map2Area map1Metric map2Metric
+        let ansatzCondAaBbCT = mkEqnSparseAnsatzAaBbCTrian trianNew $ ansatzAaBbC map1Area map2Area map1Metric map2Metric
+
+        let intCondAaBbCT = mkEqnSparseintAaBbCTrian trianNew $ intAaBbC2 map1Area map2Area map1Metric map2Metric
 
         writeFile "/cip/austausch/cgg/Ansatz/ansatzAaBbC_18_1_19.txt" $ showEqnsFlatMatLab  ansatzCondAaBbCT
 

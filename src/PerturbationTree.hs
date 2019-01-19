@@ -5,6 +5,7 @@ module PerturbationTree (
 
     import Data.List
     import qualified Data.IntMap.Strict as I
+    import qualified Data.Map.Strict as M
     import qualified Data.Sequence as S
     import Data.Foldable
     import Data.Maybe
@@ -18,7 +19,7 @@ module PerturbationTree (
 
     --use the following data type for nodes in Data.Tree !!!
 
-    data AnsatzNode = EpsilonNode Epsilon | EtaNode Eta | EpsilonLeaf Epsilon Var | EtaLeaf Eta Var deriving (Show, Eq)
+    data AnsatzNode = EpsilonNode Epsilon | EtaNode Eta | EpsilonLeaf Epsilon Var | EtaLeaf Eta Var deriving (Show, Eq, Ord)
 
     sortEta :: Eta -> Eta 
     sortEta (i,j) = (min i j, max i j)
@@ -103,20 +104,52 @@ module PerturbationTree (
                          (epsSign,epsSwap) = swapLabelEpsilon j eps
 
     swapLabelTree :: (Int,Int) -> Tree AnsatzNode -> Tree AnsatzNode 
-    swapLabelTree j (Node (EtaNode eta) subTree) = Node etaNodeSwap subTree
+    swapLabelTree j (Node (EtaNode eta) subTree) = Node etaNodeSwap  $ map (swapLabelTree j) subTree
                 where
                     etaNodeSwap = swapLabelNodeEta j (EtaNode eta)
     swapLabelTree j (Node (EtaLeaf eta var) []) = Node etaLeafSwap []
                 where
                     etaLeafSwap = swapLabelNodeEta j (EtaLeaf eta var)
-    swapLabelTree j (Node (EpsilonNode eps) subTree) = Node epsNodeSwap $ map (fmap (multVarNode $ fromIntegral epsSign)) subTree
+    swapLabelTree j (Node (EpsilonNode eps) subTree) = Node epsNodeSwap $ map ((swapLabelTree j). (fmap (multVarNode $ fromIntegral epsSign))) subTree
                 where
                     (epsSign,epsNodeSwap) = swapLabelNodeEpsilon j (EpsilonNode eps)
     swapLabelTree j (Node (EpsilonLeaf eps var) [] ) = Node epsLeafSwap []
                 where
                     (_,epsLeafSwap) = swapLabelNodeEpsilon j (EpsilonLeaf eps var)
     swapLabelTree j x = error "pattern not matched"
-    
+
+    --we need to sort the etas in the tree after the lables are swapped 
+
+    hasIndexEta :: (Int,Int) -> Eta -> Bool
+    hasIndexEta (i,j) (a,b) 
+                    | i == a || i == b || j == a || j == b = True
+                    | otherwise = False
+
+    getIndexEtas :: (Int,Int) -> Tree AnsatzNode -> [Eta]
+    getIndexEtas inds ans = filter ((hasIndexEta inds)) $ map getEta $ flatten ans
+
+    updateEta :: (Eta -> Eta) -> AnsatzNode -> AnsatzNode
+    updateEta f (EtaNode eta)  = EtaNode (f eta) 
+    updateEta f (EtaLeaf eta var)  = EtaLeaf (f eta) var 
+
+    sortIndexEtas :: (Int,Int) -> Tree AnsatzNode -> Tree AnsatzNode 
+    sortIndexEtas inds ans = fmap (updateEta updateEtaIndsF) ans 
+            where 
+                etaInds = getIndexEtas inds ans
+                updateEtaIndsMap = M.fromList $ zip etaInds $ sort etaInds 
+                updateEtaIndsF = \eta -> fromMaybe eta $ M.lookup eta updateEtaIndsMap 
+
+    sortForestEta :: Forest AnsatzNode -> Forest AnsatzNode 
+    sortForestEta ans = sortOn (getEta.head.flatten) ans
+
+    sortForestEpsilon :: Forest AnsatzNode -> Forest AnsatzNode 
+    sortForestEpsilon ans = sortOn (getEpsilon.head.flatten) ans
+                
+    swapLabelForestEta :: (Int,Int) -> Forest AnsatzNode -> Forest AnsatzNode
+    swapLabelForestEta inds ans = sortForestEta $ map ((sortIndexEtas inds).swapLabelTree inds) ans
+
+    swapLabelForestEpsilon :: (Int,Int) -> Forest AnsatzNode -> Forest AnsatzNode
+    swapLabelForestEpsilon inds ans = sortForestEpsilon $ map ((sortIndexEtas inds).swapLabelTree inds) ans
 
 
     --the next important bits are lokking up an ansatz in a tree and adding 2 trees 

@@ -66,6 +66,38 @@ module PerturbationTree (
     getEpsilon (EpsilonLeaf i j) = i
     getEpsilon x = error "Node is an Eta Node!"
 
+    --the next step is symmetrizing the trees
+
+    multVarNode :: Rational -> AnsatzNode -> AnsatzNode
+    multVarNode n (EtaLeaf i var) = EtaLeaf i $ I.map ((*) n) var 
+    multVarNode n (EpsilonLeaf i var) = EpsilonLeaf i $ I.map ((*) n) var 
+    multVarNode n i = i 
+
+
+    swapLabelF :: Eq a => (a,a) -> a -> a 
+    swapLabelF (x,y) z
+            | x == z = y
+            | y == z = x
+            | otherwise = z 
+
+    swapLabelEta :: (Int,Int) -> Eta -> Eta
+    swapLabelEta l (e1,e2) = sortEta (swapLabelF l e1, swapLabelF l e2)
+
+    swapLabelEpsilon :: (Int,Int) -> Epsilon -> (Int,Epsilon)
+    swapLabelEpsilon l (e1,e2,e3,e4) = (epsSign,sortEpsilon newEps)
+                    where
+                        newEps = (swapLabelF l e1, swapLabelF l e2, swapLabelF l e3, swapLabelF l e4)
+                        epsSign = signEpsilon newEps
+
+
+    swapLabelNode :: (Int,Int) -> AnsatzNode -> AnsatzNode
+    swapLabelNode j (EtaNode eta) = EtaNode (swapLabelEta j eta)
+    swapLabelNode j (EtaLeaf eta var) = EtaLeaf (swapLabelRta j eta) var
+    swapLabelNode j (EpsilonNode eps) = EpsilonNode (swapLabelEpsilon j eps)
+    
+
+
+
     {-
 
     --now we need tree data types for the 2 ansätze

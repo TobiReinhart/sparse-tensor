@@ -648,7 +648,7 @@ module Main (
 
         writeFile "/cip/austausch/cgg/Ansatz/ansatzAaBbC_18_1_19.txt" $ showEqnsFlatMatLab  ansatzCondAaBbCT
 
-        writeFile "/cip/austausch/cgg/Ansatz/intAaBbC_18_1_19.txt" $ showEqnsFlatMatLab  intCondAaBbCT
+        --writeFile "/cip/austausch/cgg/Ansatz/intAaBbC_18_1_19.txt" $ showEqnsFlatMatLab  intCondAaBbCT
 
 
 

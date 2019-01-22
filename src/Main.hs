@@ -762,11 +762,21 @@ module Main (
 
         let etaTrees18 = reduceAnsatzEta sym18 treeIndsEta18
 
-        writeFile "/cip/austausch/cgg/EtaAnsätze18.txt" $ printForest etaTrees18
+        --writeFile "/cip/austausch/cgg/EtaAnsätze18.txt" $ printForest etaTrees18
 
-        writeFile "/cip/austausch/cgg/EtaAnsätze18Vars.txt" $ show $ getVarsForest etaTrees18
+        --writeFile "/cip/austausch/cgg/EtaAnsätze18Vars.txt" $ show $ getVarsForest etaTrees18
 
+        let treeInds18Eps = getAllIndsInverse [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16),(15,17),(17,18)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(5,9),(9,10),(11,12),(9,11),(13,14),(15,16),(17,18)]
 
+        let sym18 = ([(13,14),(15,16),(17,18)],[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)],[([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])],[],[[[1,2,3,4,13,14],[5,6,7,8,15,16],[9,10,11,12,17,18]]])
+
+        let treeIndsEps18 = zip (map mkEpsilonSeq treeInds18Eps) (mkAllVarsfrom2 (1,length treeInds18Eps))
+
+        let epsTrees18 = reduceAnsatzEpsilon sym18 treeIndsEps18
+
+        writeFile "/cip/austausch/cgg/EpsilonAnsätze18.txt" $ printForest epsTrees18
+
+        writeFile "/cip/austausch/cgg/EpsilonAnsätze18Vars.txt" $ show $ getVarsForest epsTrees18
 
 
 

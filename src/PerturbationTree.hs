@@ -545,3 +545,19 @@ module PerturbationTree (
     getVarsForest :: Forest AnsatzNode -> [[Int]]
     getVarsForest forest = nub $ concat $ map getVarsTree forest
 
+    --the second option for adding trees is flatten 1 tree and inserting the lists into the second tree
+
+    flattenTreeEta :: Tree AnsatzNode -> [([Eta],Var)]
+    flattenTreeEta (Node (EtaLeaf eta var) []) = [([eta],var)]
+    flattenTreeEta (Node (EtaNode eta) subTree) = newList
+            where
+                rest = concat $ map flattenTreeEta subTree 
+                newList = map (\(y,z) -> (insert eta y,z)) rest 
+                
+    flattenTreeEpsilon :: Tree AnsatzNode -> [((Epsilon,[Eta]),Var)]
+    flattenTreeEpsilon (Node (EpsilonLeaf eps var) []) = [((eps,[]),var)]
+    flattenTreeEpsilon (Node (EpsilonNode eps) subTree) = newList
+            where
+                rest = concat $ map flattenTreeEta subTree 
+                newList = map (\(y,z) ->  ((eps,y),z)) rest 
+

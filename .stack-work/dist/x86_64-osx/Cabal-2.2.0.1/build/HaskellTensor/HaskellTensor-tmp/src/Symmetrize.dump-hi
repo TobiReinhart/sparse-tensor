@@ -1,13 +1,13 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-17 08:53:25.995224 UTC
+2019-01-22 14:46:04.427698 UTC
 
-interface main:Symmetrize 8043
-  interface hash: 21270d14e24128696e0f8ed68816263c
-  ABI hash: a6ed2605ac858eebc9579a2a0ea3bf31
+interface main:Symmetrize [hpc] 8043
+  interface hash: 9fac5932ff3c201d1b2c14d350c23ead
+  ABI hash: 9eee972227eba3994cb0eb9abca1881f
   export-list hash: c79a0ef965b8f406eb0b9e72ceb58ef0
   orphan hash: 4a48000f354263bab76e696a9d5d0ba4
-  flag hash: 707c86cfbee6a9c65f08462953a21ad8
+  flag hash: badd6e954112606c59e049e70d21435f
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
   sig of: Nothing
@@ -56,10 +56,10 @@ import  -/  containers-0.5.11.0:Data.Sequence.Internal a2eae372f67713826bf16d410
 import  -/  containers-0.5.11.0:Data.Set 7d3c64a641be4cacbcd8119445bab919
 import  -/  containers-0.5.11.0:Data.Set.Internal 93fa3ef95853aa2a7aadf32d693bd451
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
-import  -/  Ansatz e80d045561c506e0590aa431c0cd1e76
+import  -/  Ansatz f73908cbebb99b64870766cefd70bd60
   exports: d003aa5bf1bb4010f41a5bd7e042ed4f
-  indexPermSeq d8bbdd5fdf4eef1087c8d90373bb817d
-  mkIndMap b063376525dccbf318de1874d8e86141
+  indexPermSeq 0d4c1c99edf3fb66aaf13f548998bd50
+  mkIndMap 7aab477f3e77b855d29a69a1ec3268ee
 fbf178f7dbeaf45b97aea4e18e490073
   $s$fEqSeq ::
     GHC.Classes.Eq (Data.Sequence.Internal.Seq GHC.Types.Int)
@@ -424,22 +424,24 @@ ca825b91d482b438717929674f14d56b
     -> Data.Map.Internal.Map k1 a1
   {- Arity: 5,
      Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><L,1*C1(C1(C1(U)))><S,1*U><L,U><S,1*U> -}
-96dae4aac87a233cd9b1c626ff18fa76
-  $sinsert_go13 ::
-    GHC.Classes.Ord k1 =>
-    k1
-    -> k1
-    -> a1
-    -> Data.Map.Internal.Map k1 a1
-    -> Data.Map.Internal.Map k1 a1
-  {- Arity: 5,
-     Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><L,U><S,1*U><L,U><S,1*U> -}
 00afb71a88a91750f45071bc414a637a
   $sintersection ::
     Data.Set.Internal.Set (Data.Sequence.Internal.Seq GHC.Types.Int)
     -> Data.Set.Internal.Set (Data.Sequence.Internal.Seq GHC.Types.Int)
     -> Data.Set.Internal.Set (Data.Sequence.Internal.Seq GHC.Types.Int)
   {- Arity: 2, Strictness: <S,1*U><L,1*U>, Inline: [~] -}
+2f9a9db04e1174e3c8e775710fa33099
+  $slookup1 ::
+    GHC.Types.Int
+    -> Data.Map.Internal.Map GHC.Types.Int a -> GHC.Base.Maybe a
+  {- Arity: 2, HasNoCafRefs, Strictness: <S(S),1*U(U)><S,1*U>,
+     Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a
+                   (w :: GHC.Types.Int)
+                   (w1 :: Data.Map.Internal.Map GHC.Types.Int a) ->
+                 case w of ww { GHC.Types.I# ww1 ->
+                 Symmetrize.$wpoly_go2 @ a ww1 w1 }) -}
 6a7980f01a6f6ecee29d0280dab7feab
   $sunionWith ::
     (a -> a -> a)
@@ -477,49 +479,50 @@ c12bcb44fc387fcd5c417556b2147809
     -> Data.Map.Internal.Map GHC.Types.Int a1
     -> Data.Map.Internal.Map GHC.Types.Int a1
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-f4c0e990641021b30aa8d05990fbbc4e
+7443fa50135d6c16f949c9919edbd4c3
   $wgetRepInds ::
     GHC.Base.String -> [Symmetrize.Ansatz a] -> [GHC.Types.Char]
   {- Arity: 2, Strictness: <L,1*U><L,1*U>, Inline: [0],
      Unfolding: (\ @ a
                    (w :: GHC.Base.String)
                    (w1 :: [Symmetrize.Ansatz a]) ->
-                 GHC.CString.unpackAppendCString#
-                   Symmetrize.getRepInds5
-                   (let {
-                      iMap :: Data.IntMap.Internal.IntMap GHC.Types.Char
-                      = Data.IntMap.Strict.fromList1
-                          @ GHC.Types.Char
-                          (Data.IntMap.Internal.Nil @ GHC.Types.Char)
-                          (Ansatz.getAllIndsLabel_go 1# w)
-                    } in
-                    case GHC.Base.map
-                           @ (Data.Map.Internal.Map
-                                (Data.Sequence.Internal.Seq GHC.Types.Int) a)
-                           @ [GHC.Types.Char]
-                           (\ (x :: Data.Map.Internal.Map
-                                      (Data.Sequence.Internal.Seq GHC.Types.Int) a) ->
-                            Ansatz.indexPermSeq
-                              (GHC.List.$w!!
-                                 @ (Data.Sequence.Internal.Seq GHC.Types.Int)
-                                 (Data.Map.Internal.keys_go
-                                    @ (Data.Sequence.Internal.Seq GHC.Types.Int)
-                                    @ a
-                                    (GHC.Types.[] @ (Data.Sequence.Internal.Seq GHC.Types.Int))
-                                    x)
-                                 0#)
-                              iMap)
-                           w1 of wild {
-                      [] -> Symmetrize.getRepInds3
-                      : x xs
-                      -> Symmetrize.getRepInds_go
-                           (GHC.Types.:
-                              @ [GHC.Types.Char]
-                              x
-                              (Data.OldList.prependToAll
-                                 @ [GHC.Types.Char]
-                                 Symmetrize.getRepInds1
-                                 xs)) })) -}
+                 {__scc {main:Symmetrize.getRepInds} True True} GHC.CString.unpackAppendCString#
+                                                                  Symmetrize.getRepInds6
+                                                                  (let {
+                                                                     iMap :: Data.IntMap.Internal.IntMap
+                                                                               GHC.Types.Char
+                                                                     = {__scc {main:Symmetrize.getRepInds.iMap} True True} Ansatz.mkIndMap
+                                                                                                                             w
+                                                                   } in
+                                                                   case GHC.Base.map
+                                                                          @ (Data.Sequence.Internal.Seq
+                                                                               GHC.Types.Int)
+                                                                          @ [GHC.Types.Char]
+                                                                          (\ (x :: Data.Sequence.Internal.Seq
+                                                                                     GHC.Types.Int) ->
+                                                                           {__scc {main:Symmetrize.getRepInds.\} True True} Ansatz.indexPermSeq
+                                                                                                                              x
+                                                                                                                              iMap)
+                                                                          ({__scc {main:Symmetrize.getRepInds.seqList} True True} {__scc {main:Symmetrize.getRep} True True} GHC.Base.map
+                                                                                                                                                                               @ (Data.Map.Internal.Map
+                                                                                                                                                                                    (Data.Sequence.Internal.Seq
+                                                                                                                                                                                       GHC.Types.Int)
+                                                                                                                                                                                    a)
+                                                                                                                                                                               @ (Data.Sequence.Internal.Seq
+                                                                                                                                                                                    GHC.Types.Int)
+                                                                                                                                                                               (Symmetrize.getRepInds5
+                                                                                                                                                                                  @ a)
+                                                                                                                                                                               w1) of wild {
+                                                                     [] -> Symmetrize.getRepInds3
+                                                                     : x xs
+                                                                     -> Symmetrize.getRepInds_go
+                                                                          (GHC.Types.:
+                                                                             @ [GHC.Types.Char]
+                                                                             x
+                                                                             (Data.OldList.prependToAll
+                                                                                @ [GHC.Types.Char]
+                                                                                Symmetrize.getRepInds1
+                                                                                xs)) })) -}
 8155ff7cfecac0b16d2ac769b58ded35
   $wpoly_go1 ::
     GHC.Prim.Int#
@@ -559,7 +562,7 @@ f51775b478da3c80f3a4963df025dc97
      [(GHC.Types.Int, GHC.Types.Int)],
      [([GHC.Types.Int], [GHC.Types.Int])], [[GHC.Types.Int]],
      [[[GHC.Types.Int]]])
-f922b78b9c7032ff96f8cb74395ef2ce
+ca123f6656165a8a3650c82dfb152bfd
   getRepInds ::
     GHC.Real.Fractional a =>
     GHC.Base.String -> [Symmetrize.Ansatz a] -> GHC.Base.String
@@ -584,36 +587,65 @@ f227ba0cc5c0b611e43e37a6b42a74a7
 c7e24b858e65902338e997162c07cd2b
   getRepInds4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("]"#) -}
-da3c8377e8a7cd20f07ec4e876339df6
-  getRepInds5 :: GHC.Prim.Addr#
+0cb413da5bf246ddd8e56c057bfb05f4
+  getRepInds5 ::
+    Data.Map.Internal.Map (Data.Sequence.Internal.Seq GHC.Types.Int) a
+    -> Data.Sequence.Internal.Seq GHC.Types.Int
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: InlineRule (1, True, False)
+                (\ @ a
+                   (x :: Data.Map.Internal.Map
+                           (Data.Sequence.Internal.Seq GHC.Types.Int) a) ->
+                 {__scc {main:Symmetrize.getRep.\} True True} GHC.List.$w!!
+                                                                @ (Data.Sequence.Internal.Seq
+                                                                     GHC.Types.Int)
+                                                                (Data.Map.Internal.keys_go
+                                                                   @ (Data.Sequence.Internal.Seq
+                                                                        GHC.Types.Int)
+                                                                   @ a
+                                                                   (GHC.Types.[]
+                                                                      @ (Data.Sequence.Internal.Seq
+                                                                           GHC.Types.Int))
+                                                                   x)
+                                                                0#) -}
+1d0c5db0b461f05e471595d87d03f8b3
+  getRepInds6 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("["#) -}
 6eebb3bab105c0762846e0d09620b922
   getRepInds_go :: [[GHC.Types.Char]] -> [GHC.Types.Char]
   {- Arity: 1, Strictness: <S,1*U> -}
-06d0925877023ff7f5a7034b2c348be4
+bebb29c873be3222ecd07cdf115aeb59
   mkAns ::
     GHC.Real.Fractional a =>
     Data.Sequence.Internal.Seq GHC.Types.Int -> Symmetrize.Ansatz a
   {- Arity: 1, Strictness: <L,1*U(1*U(A,A,A,A,A,A,1*C1(U)),A,A,A)>,
      Unfolding: (\ @ a ($dFractional :: GHC.Real.Fractional a) ->
                  let {
-                   lvl32 :: a
-                   = GHC.Num.fromInteger
-                       @ a
-                       (GHC.Real.$p1Fractional @ a $dFractional)
-                       Symmetrize.mkAns1
+                   lvl18 :: a
+                   = let {
+                       $dNum :: GHC.Num.Num a = GHC.Real.$p1Fractional @ a $dFractional
+                     } in
+                     {__scc {main:Symmetrize.mkAns} False True} GHC.Num.fromInteger
+                                                                  @ a
+                                                                  $dNum
+                                                                  Symmetrize.mkAns1
                  } in
                  \ (seq :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
-                 Symmetrize.$sfromList4
-                   @ a
-                   (GHC.Types.:
-                      @ (Data.Sequence.Internal.Seq GHC.Types.Int, a)
-                      (seq, lvl32)
-                      (GHC.Types.[] @ (Data.Sequence.Internal.Seq GHC.Types.Int, a)))) -}
+                 {__scc {main:Symmetrize.mkAns} True True} Symmetrize.$sfromList4
+                                                             @ a
+                                                             (GHC.Types.:
+                                                                @ (Data.Sequence.Internal.Seq
+                                                                     GHC.Types.Int,
+                                                                   a)
+                                                                (seq, lvl18)
+                                                                (GHC.Types.[]
+                                                                   @ (Data.Sequence.Internal.Seq
+                                                                        GHC.Types.Int,
+                                                                      a)))) -}
 1b4ede4ead2391d2fc86af101d0dabde
   mkAns1 :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (1) -}
-3e28567e813dc1dfde267efbdbdbad70
+d0b7ac2190be176fd19e3a9b97f21a8c
   symAnsSet ::
     (GHC.Classes.Eq a, GHC.Real.Fractional a) =>
     Symmetrize.Symmetry
@@ -621,7 +653,7 @@ da3c8377e8a7cd20f07ec4e876339df6
     -> [Symmetrize.Ansatz a]
     -> [Symmetrize.Ansatz a]
   {- Arity: 5,
-     Strictness: <L,U(C(C1(U)),A)><L,U(U(C(C1(U)),A,C(C1(U)),C(U),A,A,C(U)),C(C1(U)),A,A)><L,1*U(U,U,U,U,U)><L,1*U(U,U,U,U,U)><S,1*U> -}
+     Strictness: <L,U(C(C1(U)),A)><L,U(U(C(C1(U)),A,C(C1(U)),C(U),A,A,C(U)),C(C1(U)),A,A)><L,U(U,U,U,U,U)><L,U(U,U,U,U,U)><S,1*U> -}
 "SPEC/Symmetrize $fEqSeq @ Int" [orphan] forall (v :: GHC.Classes.Eq
                                                         GHC.Types.Int)
   Data.Sequence.Internal.$fEqSeq @ GHC.Types.Int v

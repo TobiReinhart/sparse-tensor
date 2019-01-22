@@ -41,6 +41,7 @@ module Main (
     import Order2Int
     import Order3Int
     import qualified Data.Map.Strict as M
+    import PerturbationTree
      
 
     main = do
@@ -641,16 +642,133 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/Ansatz/intAB_18_1_19.txt" $ showEqnsFlatMatLab  intCondABTrian
 
-        trianNew = triangleMap 315
-
+        let trianNew = triangleMap 315
 
         let ansatzCondAaBbCT = mkEqnSparseAnsatzAaBbCTrian trianNew $ ansatzAaBbC map1Area map2Area map1Metric map2Metric
 
         let intCondAaBbCT = mkEqnSparseintAaBbCTrian trianNew $ intAaBbC2 map1Area map2Area map1Metric map2Metric
 
-        writeFile "/cip/austausch/cgg/Ansatz/ansatzAaBbC_18_1_19.txt" $ showEqnsFlatMatLab  ansatzCondAaBbCT
+        --writeFile "/cip/austausch/cgg/Ansatz/ansatzAaBbC_18_1_19.txt" $ showEqnsFlatMatLab  ansatzCondAaBbCT
 
         --writeFile "/cip/austausch/cgg/Ansatz/intAaBbC_18_1_19.txt" $ showEqnsFlatMatLab  intCondAaBbCT
+
+        let treeInds = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7)]
+
+        let treeIndsEta = zip (map mkEtaSeq treeInds) (mkAllVarsfrom2 (1,length treeInds))
+
+        let sym8 = ([],[(1,2),(3,4),(5,6),(7,8)],[([1,2],[3,4]),([5,6],[7,8]),([1,2,3,4],[5,6,7,8])],[],[])
+
+        let etaTrees8 = reduceAnsatzEta sym8 treeIndsEta 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree.txt" $ printForest etaTrees8
+
+        let t = S.fromList [(1,5),(2,6),(3,4),(7,8)]
+
+        let tree1 = [ mkTreeEta (I.fromList [(1,1)]) t]
+
+        let tree2 = swapLabelForest (2,3) tree1 
+
+        --putStr $ printForest tree1
+
+        --putStr $ printForest tree2 
+
+        let tree3 = addForests tree1 tree2
+
+        --putStr $ printForest tree3
+
+        let tree4 = [ mkTreeEta (I.fromList [(1,-1)]) t]
+
+        let tree5 = addForests tree3 tree4
+
+        --putStr $ printForest tree5
+
+        let sym8Test = ([],[(1,2),(3,4),(5,6)],[([1,2,3],[5,6,7])],[],[])
+
+        let sym8Test2 = ([],[(1,2),(3,4),(5,6)],[],[],[])
+
+
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree4.txt" $ printForest etaTrees8 
+
+        let t9 = [ mkTreeEta (I.fromList [(1,1)]) $ mkEtaSeq $ treeInds !! 13]
+
+        --putStr $ printForest $ symAnsatzForest sym8Test t9
+
+        let t10 = swapLabelForest (1,5) $ swapLabelForest (2,6) $ swapLabelForest (3,7) (symAnsatzForest sym8Test2 t9)
+
+        --putStr $ printForest $ addForests t10 (symAnsatzForest sym8Test2 t9)
+
+        --putStr $ printForest t10
+
+        --putStr $ printForest $ (symAnsatzForest sym8Test2 t9)
+
+        let t11 = swapLabelForest (2,6) $ swapLabelForest (3,7) (symAnsatzForest sym8Test2 t9)
+
+        --putStr $ printForest [t11 !! 1]
+
+        --putStr $ printForest $ swapLabelForest (1,5) $ [t11 !! 1]
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree4.txt" $ printForest etaTrees8 
+
+        let treeIndsEps = getAllIndsInverse [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7)]
+
+        let treeIndsEpsilon = zip (map mkEpsilonSeq treeIndsEps) (mkAllVarsfrom2 (1,length treeIndsEps))
+
+        let epsTrees8 = reduceAnsatzEpsilon sym8 treeIndsEpsilon
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree5.txt" $ printForest epsTrees8 
+
+        --print $ getVarsForest epsTrees8
+
+        --print $ length treeIndsEps
+
+        let treeInds14 = getAllIndsInverse [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11)]
+
+        let sym14 = ([],[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)],[([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4,13],[5,6,7,8,14])],[],[])
+
+        let treeIndsEta14 = zip (map mkEpsilonSeq treeInds14) (mkAllVarsfrom2 (1,length treeInds14))
+
+        let etaTrees14 = reduceAnsatzEpsilon sym14 treeIndsEta14
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree6.txt" $ printForest etaTrees14 
+
+        let treeInds10 = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10)] [] [(1,2),(3,4),(1,3),(5,6),(7,8),(5,7),(1,5)]
+
+        let sym10 = ([],[(1,2),(3,4),(5,6),(7,8)],[([1,2],[3,4]),([5,6],[7,8])],[],[])
+
+        let treeIndsEta10 = zip (map mkEtaSeq treeInds10) (mkAllVarsfrom2 (1,length treeInds10))
+       
+        let etaTrees10 = reduceAnsatzEta sym10 treeIndsEta10
+
+        let t12 = [ (symAnsatzForest sym10 $ [mkTreeEta (I.fromList [(1,1)]) $ mkEtaSeq $ treeInds10 !! 42]) !! 0]
+
+        let t13 = swapBlockLabelForest ([1,2,3,4,9],[5,6,7,8,10]) etaTrees10
+
+        let t14 = [swapBlockLabelTree ([1,2,3,4,9],[5,6,7,8,10]) $ t12 !! 0]
+
+        --putStr $ printForest t14
+
+        --putStr $ printForest t13
+
+        --print $ length $ getVarsForest etaTrees14
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree6.txt" $ show treeInds14
+
+        let treeInds18 = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16),(15,17),(17,18)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(5,9),(9,10),(11,12),(9,11),(13,14),(15,16),(17,18)]
+
+        let sym18 = ([(13,14),(15,16),(17,18)],[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)],[([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])],[],[[[1,2,3,4,13,14],[5,6,7,8,15,16],[9,10,11,12,17,18]]])
+
+        let treeIndsEta18 = zip (map mkEtaSeq treeInds18) (mkAllVarsfrom2 (1,length treeInds18))
+
+        let etaTrees18 = reduceAnsatzEta sym18 treeIndsEta18
+
+        writeFile "/cip/austausch/cgg/EtaAnsätze18.txt" $ printForest etaTrees18
+
+        writeFile "/cip/austausch/cgg/EtaAnsätze18Vars.txt" $ show $ getVarsForest etaTrees18
+
+
+
+
 
 
 

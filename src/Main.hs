@@ -776,9 +776,20 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/EpsilonAnsätze18.txt" $ show epsTrees18
 
-        writeFile "/cip/austausch/cgg/EpsilonAnsätze18Vars.txt" $ show $ getVarsForest epsTrees18
+        --writeFile "/cip/austausch/cgg/EpsilonAnsätze18Vars.txt" $ show $ getVarsForest epsTrees18
 
-        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree6.txt"  $ show $ getVarsForest etaTrees14
+        let treeInds16 = getAllIndsInverse [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(15,16)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11),(13,14),(15,16)]
+
+        let sym16 = ([(13,14),(15,16)],[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)],[([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4,13,14],[5,6,7,8,15,16])],[],[])
+
+        let treeIndsEps16 = zip (map mkEpsilonSeq treeInds16) (mkAllVarsfrom2 (1,length treeInds16))
+
+        let epsTrees16 = reduceAnsatzEpsilon sym16 treeIndsEps16
+
+
+        print $ getVarsForest epsTrees16
+
+        print $ length $ getVarsForest epsTrees16
 
 
 

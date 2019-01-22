@@ -128,21 +128,26 @@ module PerturbationTree (
             
 
     swapLabelEta :: (Int,Int) -> Eta -> Eta
-    swapLabelEta l (e1,e2) = sortEta (swapLabelF l e1, swapLabelF l e2)
+    swapLabelEta l (e1,e2) = sortEta (f e1, f e2)
+                where f = swapLabelF l
 
     swapLabelEpsilon :: (Int,Int) -> Epsilon -> (Int,Epsilon)
     swapLabelEpsilon l (e1,e2,e3,e4) = (epsSign,sortEpsilon newEps)
                     where
-                        newEps = (swapLabelF l e1, swapLabelF l e2, swapLabelF l e3, swapLabelF l e4)
+                        f = swapLabelF l
+                        newEps = (f e1, f e2, f e3, f e4)
                         epsSign = signEpsilon newEps
 
     swapBlockLabelEta :: ([Int],[Int]) -> Eta -> Eta
-    swapBlockLabelEta l (e1,e2) = sortEta (swapBlockLabelF l e1, swapBlockLabelF l e2)
+    swapBlockLabelEta l (e1,e2) = sortEta (f e1, f e2)
+                        where
+                            f = swapBlockLabelF l
 
     swapBlockLabelEpsilon :: ([Int],[Int]) -> Epsilon -> (Int,Epsilon)
     swapBlockLabelEpsilon l (e1,e2,e3,e4) = (epsSign,sortEpsilon newEps)
                     where
-                        newEps = (swapBlockLabelF l e1, swapBlockLabelF l e2, swapBlockLabelF l e3, swapBlockLabelF l e4)
+                        f = swapBlockLabelF l
+                        newEps = (f e1, f e2, f e3, f e4)
                         epsSign = signEpsilon newEps
 
 
@@ -172,40 +177,50 @@ module PerturbationTree (
                         where
                          (epsSign,epsSwap) = swapBlockLabelEpsilon j eps
 
-    --sort nodes at each level -> maybe faster way than sort 
+    swapLabelTree :: (Int,Int) -> Tree AnsatzNode -> Tree AnsatzNode
+    swapLabelTree inds (Node x subTree)
+                    | isEpsilonNode x = Node epsNodeSwap $ map (fmap ((swapLabelNodeEta inds).(multVarNode $ fromIntegral epsSign))) subTree
+                    | otherwise = fmap (swapLabelNodeEta inds) (Node x subTree)
+                        where
+                            (epsSign,epsNodeSwap) = swapLabelNodeEpsilon inds x
 
-    --here we probably only need sortOn
 
-    swapLabelTree :: (Int,Int) -> Tree AnsatzNode -> Tree AnsatzNode 
-    swapLabelTree j (Node (EtaNode eta) subTree) = Node etaNodeSwap  $ map (swapLabelTree j) subTree
+    swapLabelTree2 :: (Int,Int) -> Tree AnsatzNode -> Tree AnsatzNode 
+    swapLabelTree2 j (Node (EtaNode eta) subTree) = Node etaNodeSwap  $ map (swapLabelTree j) subTree
                 where
                     etaNodeSwap = swapLabelNodeEta j (EtaNode eta)
-    swapLabelTree j (Node (EtaLeaf eta var) []) = Node etaLeafSwap []
+    swapLabelTree2 j (Node (EtaLeaf eta var) []) = Node etaLeafSwap []
                 where
                     etaLeafSwap = swapLabelNodeEta j (EtaLeaf eta var)
-    swapLabelTree j (Node (EpsilonNode eps) subTree) = Node epsNodeSwap  $ map ((swapLabelTree j). (fmap (multVarNode $ fromIntegral epsSign))) subTree
+    swapLabelTree2 j (Node (EpsilonNode eps) subTree) = Node epsNodeSwap  $ map ((swapLabelTree j). (fmap (multVarNode $ fromIntegral epsSign))) subTree
                 where
                     (epsSign,epsNodeSwap) = swapLabelNodeEpsilon j (EpsilonNode eps)
-    swapLabelTree j (Node (EpsilonLeaf eps var) [] ) = Node epsLeafSwap []
+    swapLabelTree2 j (Node (EpsilonLeaf eps var) [] ) = Node epsLeafSwap []
                 where
                     (_,epsLeafSwap) = swapLabelNodeEpsilon j (EpsilonLeaf eps var)
-    swapLabelTree j x = error "pattern not matched"
+    swapLabelTree2 j x = error "pattern not matched"
 
-    swapBlockLabelTree :: ([Int],[Int]) -> Tree AnsatzNode -> Tree AnsatzNode 
-    swapBlockLabelTree j (Node (EtaNode eta) subTree) = Node etaNodeSwap  $ map (swapBlockLabelTree j) subTree
+    swapBlockLabelTree2 :: ([Int],[Int]) -> Tree AnsatzNode -> Tree AnsatzNode 
+    swapBlockLabelTree2 j (Node (EtaNode eta) subTree) = Node etaNodeSwap  $ map (swapBlockLabelTree j) subTree
                 where
                     etaNodeSwap = swapBlockLabelNodeEta j (EtaNode eta)
-    swapBlockLabelTree j (Node (EtaLeaf eta var) []) = Node etaLeafSwap []
+    swapBlockLabelTree2 j (Node (EtaLeaf eta var) []) = Node etaLeafSwap []
                 where
                     etaLeafSwap = swapBlockLabelNodeEta j (EtaLeaf eta var)
-    swapBlockLabelTree j (Node (EpsilonNode eps) subTree) = Node epsNodeSwap  $ map ((swapBlockLabelTree j). (fmap (multVarNode $ fromIntegral epsSign))) subTree
+    swapBlockLabelTree2 j (Node (EpsilonNode eps) subTree) = Node epsNodeSwap  $ map ((swapBlockLabelTree j). (fmap (multVarNode $ fromIntegral epsSign))) subTree
                 where
                     (epsSign,epsNodeSwap) = swapBlockLabelNodeEpsilon j (EpsilonNode eps)
-    swapBlockLabelTree j (Node (EpsilonLeaf eps var) [] ) = Node epsLeafSwap []
+    swapBlockLabelTree2 j (Node (EpsilonLeaf eps var) [] ) = Node epsLeafSwap []
                 where
                     (_,epsLeafSwap) = swapBlockLabelNodeEpsilon j (EpsilonLeaf eps var)
-    swapBlockLabelTree j x = error "pattern not matched"
+    swapBlockLabelTree2 j x = error "pattern not matched"
 
+    swapBlockLabelTree :: ([Int],[Int]) -> Tree AnsatzNode -> Tree AnsatzNode
+    swapBlockLabelTree inds (Node x subTree)
+                    | isEpsilonNode x = Node epsNodeSwap $ map (fmap ((swapBlockLabelNodeEta inds).(multVarNode $ fromIntegral epsSign))) subTree
+                    | otherwise = fmap (swapBlockLabelNodeEta inds) (Node x subTree)
+                        where
+                            (epsSign,epsNodeSwap) = swapBlockLabelNodeEpsilon inds x
     
     sortIndexEtas :: Tree AnsatzNode -> Forest AnsatzNode
     sortIndexEtas ( Node (EtaLeaf eta var) []) = [Node (EtaLeaf eta var) []]
@@ -353,9 +368,9 @@ module PerturbationTree (
     addTree2Forest (Node (EtaLeaf eta1 var1) []) forest = map (\x -> Node x []) (add2Leafs (EtaLeaf eta1 var1) (map getTopNode forest))
     addTree2Forest (Node (EpsilonLeaf eps1 var1) []) forest = map (\x -> Node x [])  (add2Leafs (EpsilonLeaf eps1 var1) (map getTopNode forest))
     addTree2Forest (Node x subForest) forest
+                | isNothing ind = insertBy (comparing getTopNode) (Node x subForest) forest
                 | isJustInd && (newSubForest == []) = part1 ++ (tail part2)
-                | isJustInd = part1 ++ ( Node x newSubForest )  : (tail part2)
-                | otherwise = sortOn (getTopNode) $ (Node x subForest) : forest
+                | otherwise = part1 ++ ( Node x newSubForest )  : (tail part2)
                     where
                         ind = searchNodeTopLevel forest x
                         isJustInd = isJust ind

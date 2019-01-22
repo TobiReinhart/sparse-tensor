@@ -774,11 +774,11 @@ module Main (
 
         let epsTrees18 = reduceAnsatzEpsilon sym18 treeIndsEps18
 
-        writeFile "/cip/austausch/cgg/EpsilonAnsätze18.txt" $ printForest epsTrees18
+        --writeFile "/cip/austausch/cgg/EpsilonAnsätze18.txt" $ show epsTrees18
 
         writeFile "/cip/austausch/cgg/EpsilonAnsätze18Vars.txt" $ show $ getVarsForest epsTrees18
 
-
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree6.txt"  $ show $ getVarsForest etaTrees14
 
 
 

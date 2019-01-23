@@ -786,14 +786,22 @@ module Main (
 
         let epsTrees16 = reduceAnsatzEpsilon sym16 treeIndsEps16
 
+        let treeInds16Eta = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(15,16)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11),(13,14),(15,16)]
+
+        let treeIndsEta16 = zip (map mkEtaSeq treeInds16Eta) (mkAllVarsfrom2 (1,length treeInds16Eta))
+
+        let etaTrees16 = reduceAnsatzEta sym16 treeIndsEta16
+
+        putStr $ printForest etaTrees16
+
 
         --print $ getVarsForest epsTrees16
 
         --print $ length $ getVarsForest epsTrees16
 
-        print $ getVarsForest epsTrees14 
+        --print $ getVarsForest epsTrees14 
 
-        print $ length $ getVarsForest epsTrees14
+        --print $ length $ getVarsForest epsTrees14
 
 
 

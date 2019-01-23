@@ -115,7 +115,7 @@ module PerturbationTree (
     multForest :: Rational -> Forest AnsatzNode -> Forest AnsatzNode
     multForest n = map (multTree n) 
 
-    swapLabelF :: Eq a => (a,a) -> a -> a 
+    swapLabelF :: (Int,Int) -> Int -> Int 
     swapLabelF (x,y) z
             | x == z = y
             | y == z = x

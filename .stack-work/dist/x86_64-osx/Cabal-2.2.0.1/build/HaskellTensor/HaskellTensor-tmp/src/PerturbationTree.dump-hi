@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-22 22:37:09.567573 UTC
+2019-01-23 10:31:17.053734 UTC
 
 interface main:PerturbationTree [hpc] 8043
-  interface hash: e1d44dddc0e022d9d9ee49fe852197a7
-  ABI hash: b490ce6f139fe4505225c36a94d38db0
+  interface hash: a7722b5fd006c1f5be51c6e9abdcf82e
+  ABI hash: 0d769f92700af139ac3964c89a31ae12
   export-list hash: 95ea0105078fba4fd2827412c567f1d9
   orphan hash: c514c2bcf542795640571bdbe2bda124
   flag hash: badd6e954112606c59e049e70d21435f
@@ -79,7 +79,7 @@ import  -/  containers-0.5.11.0:Data.Sequence.Internal a2eae372f67713826bf16d410
 import  -/  containers-0.5.11.0:Data.Tree 334e5590b70599cff00c9af57a2f6140
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
 import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fEqAnsatzNode :: GHC.Classes.Eq PerturbationTree.AnsatzNode
   DFunId
   {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
@@ -87,7 +87,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                   @ PerturbationTree.AnsatzNode
                   PerturbationTree.$fEqAnsatzNode_$c==
                   PerturbationTree.$fEqAnsatzNode_$c/= -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fEqAnsatzNode_$c/= ::
     PerturbationTree.AnsatzNode
     -> PerturbationTree.AnsatzNode -> GHC.Types.Bool
@@ -99,7 +99,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                  case PerturbationTree.$fEqAnsatzNode_$c== x y of wild {
                    GHC.Types.False -> GHC.Types.True
                    GHC.Types.True -> GHC.Types.False }) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fEqAnsatzNode_$c== ::
     PerturbationTree.AnsatzNode
     -> PerturbationTree.AnsatzNode -> GHC.Types.Bool
@@ -225,7 +225,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                                                                                     GHC.Real.$fOrdRatio_$s$fEqRatio
                                                                                     a2
                                                                                     b2 } } } } } } } } } }) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fOrdAnsatzNode :: GHC.Classes.Ord PerturbationTree.AnsatzNode
   DFunId
   {- Strictness: m, Inline: CONLIKE,
@@ -239,7 +239,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                   PerturbationTree.$fOrdAnsatzNode_$c>=
                   PerturbationTree.$fOrdAnsatzNode_$cmax
                   PerturbationTree.$fOrdAnsatzNode_$cmin -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fOrdAnsatzNode_$c< ::
     PerturbationTree.AnsatzNode
     -> PerturbationTree.AnsatzNode -> GHC.Types.Bool
@@ -249,7 +249,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                    (y :: PerturbationTree.AnsatzNode) ->
                  case PerturbationTree.$fOrdAnsatzNode_$ccompare x y of wild {
                    DEFAULT -> GHC.Types.False GHC.Types.LT -> GHC.Types.True }) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fOrdAnsatzNode_$c<= ::
     PerturbationTree.AnsatzNode
     -> PerturbationTree.AnsatzNode -> GHC.Types.Bool
@@ -259,7 +259,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                    (y :: PerturbationTree.AnsatzNode) ->
                  case PerturbationTree.$fOrdAnsatzNode_$ccompare x y of wild {
                    DEFAULT -> GHC.Types.True GHC.Types.GT -> GHC.Types.False }) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fOrdAnsatzNode_$c> ::
     PerturbationTree.AnsatzNode
     -> PerturbationTree.AnsatzNode -> GHC.Types.Bool
@@ -269,7 +269,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                    (y :: PerturbationTree.AnsatzNode) ->
                  case PerturbationTree.$fOrdAnsatzNode_$ccompare x y of wild {
                    DEFAULT -> GHC.Types.False GHC.Types.GT -> GHC.Types.True }) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fOrdAnsatzNode_$c>= ::
     PerturbationTree.AnsatzNode
     -> PerturbationTree.AnsatzNode -> GHC.Types.Bool
@@ -279,12 +279,12 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                    (y :: PerturbationTree.AnsatzNode) ->
                  case PerturbationTree.$fOrdAnsatzNode_$ccompare x y of wild {
                    DEFAULT -> GHC.Types.True GHC.Types.LT -> GHC.Types.False }) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fOrdAnsatzNode_$ccompare ::
     PerturbationTree.AnsatzNode
     -> PerturbationTree.AnsatzNode -> GHC.Types.Ordering
   {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fOrdAnsatzNode_$cmax ::
     PerturbationTree.AnsatzNode
     -> PerturbationTree.AnsatzNode -> PerturbationTree.AnsatzNode
@@ -294,7 +294,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                    (y :: PerturbationTree.AnsatzNode) ->
                  case PerturbationTree.$fOrdAnsatzNode_$ccompare x y of wild {
                    DEFAULT -> y GHC.Types.GT -> x }) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fOrdAnsatzNode_$cmin ::
     PerturbationTree.AnsatzNode
     -> PerturbationTree.AnsatzNode -> PerturbationTree.AnsatzNode
@@ -304,7 +304,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                    (y :: PerturbationTree.AnsatzNode) ->
                  case PerturbationTree.$fOrdAnsatzNode_$ccompare x y of wild {
                    DEFAULT -> x GHC.Types.GT -> y }) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fShowAnsatzNode :: GHC.Show.Show PerturbationTree.AnsatzNode
   DFunId
   {- Strictness: m, Inline: CONLIKE,
@@ -313,7 +313,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                   PerturbationTree.$fShowAnsatzNode_$cshowsPrec
                   PerturbationTree.$fShowAnsatzNode_$cshow
                   PerturbationTree.$fShowAnsatzNode_$cshowList -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fShowAnsatzNode1 :: PerturbationTree.AnsatzNode -> GHC.Show.ShowS
   {- Arity: 1, Strictness: <S,1*U>,
      Unfolding: (\ (w :: PerturbationTree.AnsatzNode) ->
@@ -321,7 +321,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
 15c2cd3a55ab3be9ae4d4deefc023d33
   $fShowAnsatzNode2 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fShowAnsatzNode_$cshow ::
     PerturbationTree.AnsatzNode -> GHC.Base.String
   {- Arity: 1, Strictness: <S,1*U>,
@@ -331,7 +331,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                    PerturbationTree.$fShowAnsatzNode2
                    x
                    (GHC.Types.[] @ GHC.Types.Char)) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fShowAnsatzNode_$cshowList ::
     [PerturbationTree.AnsatzNode] -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S,1*U><L,U>,
@@ -342,7 +342,7 @@ import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
                    PerturbationTree.$fShowAnsatzNode1
                    ls
                    s) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $fShowAnsatzNode_$cshowsPrec ::
     GHC.Types.Int -> PerturbationTree.AnsatzNode -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S(S),1*U(U)><S,1*U>, Inline: [0],
@@ -415,7 +415,7 @@ c2064ed0f8b2f2c9d2ecc308ed9cd01a
                         1#
                         -> case GHC.Integer.Type.eqInteger# a5 b5 of wild3 {
                              DEFAULT -> GHC.Types.True 1# -> GHC.Types.False } } } } } } }) -}
-990ef98ac9bbedb5d1931ad28e150d4e
+c903a0d42b8ed532af707ab205eb6a56
   $s$fEqTree ::
     GHC.Classes.Eq (Data.Tree.Tree PerturbationTree.AnsatzNode)
   {- Strictness: m, Inline: CONLIKE,
@@ -425,7 +425,7 @@ c2064ed0f8b2f2c9d2ecc308ed9cd01a
                      @ PerturbationTree.AnsatzNode
                      PerturbationTree.$fEqAnsatzNode)
                   PerturbationTree.$s$fEqTree_$s$fEqTree_$c/= -}
-5cd1a9b8856eb3e6f41aae9008a3c2da
+f8df0de655058f34b89f171285432c44
   $s$fEqTree_$s$fEqTree_$c/= ::
     Data.Tree.Tree PerturbationTree.AnsatzNode
     -> Data.Tree.Tree PerturbationTree.AnsatzNode -> GHC.Types.Bool
@@ -604,18 +604,18 @@ ffa27dfeb21ce4b6650c709fe7595329
 98bb877ac1db45aae886950a40e340d1
   $trModule4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("main"#) -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   $w$cshowsPrec ::
     GHC.Prim.Int# -> PerturbationTree.AnsatzNode -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S,U><S,1*U>, Inline: [0] -}
-22240888933240cc06acece8ae80791f
+9faeb8c7914d4b9e0c495992f6075d8c
   $waddTree2Forest ::
     PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
   {- Arity: 3, Strictness: <S,U><L,U><S,U>, Inline: [0] -}
-9d654f78278de6c4903dc4bd3ccb674f
+98250206b3d3e9bc6f310cda208d4d4f
   $wlvl ::
     PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode -> GHC.Base.String
@@ -629,7 +629,7 @@ ffa27dfeb21ce4b6650c709fe7595329
                         ww
                         ww1 of ww3 { (#,#) ww4 ww5 ->
                  Data.Tree.$wdrawTree ww4 ww5 }) -}
-fa168f3b9dd27759abd32b0cc983c76c
+24660f2dc3a3d3b4bea83d606b63405f
   $wmkAllVarsfrom2 ::
     GHC.Prim.Int# -> GHC.Prim.Int# -> [PerturbationTree.Var]
   {- Arity: 2, HasNoCafRefs, Strictness: <S,U><S,U>, Inline: [0],
@@ -683,7 +683,7 @@ fa168f3b9dd27759abd32b0cc983c76c
                                                                             -> GHC.Types.[]
                                                                                  @ (Data.IntMap.Internal.IntMap
                                                                                       GHC.Real.Rational) }) -}
-984723430d42f7dc7f26378625d5b041
+5840544e1ca67aa75f2cd49885c6fccf
   $wmkEpsilonSeq ::
     Data.Sequence.Internal.Seq GHC.Types.Int
     -> (# PerturbationTree.Epsilon,
@@ -757,19 +757,19 @@ fa168f3b9dd27759abd32b0cc983c76c
                                                                                                                                                                                                   (Sym (Data.Sequence.Internal.N:Seq[0]
                                                                                                                                                                                                             <(GHC.Types.Int,
                                                                                                                                                                                                               GHC.Types.Int)>_R)) #)) -}
-4f5cf6f39f2df1bfdbcc709c63bb3f28
+4e4774521f1af5fe689ccc1617fa4762
   $wmkTreeEta ::
     PerturbationTree.Var
     -> Data.Sequence.Internal.Seq PerturbationTree.Eta
     -> (# PerturbationTree.AnsatzNode,
           Data.Tree.Forest PerturbationTree.AnsatzNode #)
   {- Arity: 2, Strictness: <L,U><S,U>, Inline: [0] -}
-13b4fc3c82ead295e5cdd3aa41296bc8
+7ca642d1ad568581f5c1bca2c788dee0
   $wprintAnsatzNode ::
     PerturbationTree.AnsatzNode
     -> (# GHC.Types.Char, [GHC.Types.Char] #)
   {- Arity: 1, Strictness: <S,1*U>, Inline: [0] -}
-20e712c69e07d72874f0d7946be24dc5
+efa7eb1614dd789f67b004d988c9ac0d
   $wprintTree ::
     PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode -> GHC.Base.String
@@ -785,7 +785,7 @@ fa168f3b9dd27759abd32b0cc983c76c
                                                                      Data.Tree.$wdrawTree
                                                                        ww4
                                                                        ww5 }) -}
-672a642b5e3090419b5d7c0af55b7899
+be64090b2c2ddc6aaa1aae4ebfb4a96a
   $wsearchForestEpsilonSeq ::
     PerturbationTree.Epsilon
     -> Data.Sequence.Internal.Seq PerturbationTree.Eta
@@ -885,13 +885,13 @@ fa168f3b9dd27759abd32b0cc983c76c
                                                                                                                                                                                                                                                     w
                                                                                                                                                                                                                                                     ww3 of ww4 { Data.Tree.Node ww5 ww6 ->
                                                                                                                                                                                                                                              {__scc {main:PerturbationTree.getSubForest} True False} ww6 }) } }) -}
-8f8d496c6ff637920ada087077482c6a
+cd65f346d5a62056f1f220df576068f6
   $wsortIndexEtas ::
     PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
   {- Arity: 2, Strictness: <S,1*U><S,1*U>, Inline: [0] -}
-51ca36286173ee29a5af0314cec17a9e
+f3c4a281b0bc400ef660223b58976a23
   $wswapBlockLabelTree ::
     ([GHC.Types.Int], [GHC.Types.Int])
     -> PerturbationTree.AnsatzNode
@@ -899,7 +899,7 @@ fa168f3b9dd27759abd32b0cc983c76c
     -> (# PerturbationTree.AnsatzNode,
           Data.Tree.Forest PerturbationTree.AnsatzNode #)
   {- Arity: 3, Strictness: <L,U(U,U)><S,U><L,1*U>, Inline: [0] -}
-d68308129a36200ee9644eba5f1b0823
+2c37f742c4c382f52c881661baa0b073
   $wswapLabelTree ::
     (GHC.Types.Int, GHC.Types.Int)
     -> PerturbationTree.AnsatzNode
@@ -908,7 +908,7 @@ d68308129a36200ee9644eba5f1b0823
           Data.Tree.Forest PerturbationTree.AnsatzNode #)
   {- Arity: 3, Strictness: <L,U(U(U),U(U))><S,U><L,1*U>,
      Inline: [0] -}
-84121d2792e8c96bf0d79284c0b5aeb9
+055e5fdcf39a3f3cc4c7eb7f3f825d99
   $wsymAnsatzForest ::
     [(GHC.Types.Int, GHC.Types.Int)]
     -> [(GHC.Types.Int, GHC.Types.Int)]
@@ -919,7 +919,7 @@ d68308129a36200ee9644eba5f1b0823
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
   {- Arity: 6, Strictness: <S,1*U><S,1*U><S,1*U><S,1*U><S,1*U><S,U>,
      Inline: [0] -}
-225f06a99d3eb3c147302bae9a9b8c0d
+603f5f0f4769f46f427ccf0961210899
   data AnsatzNode
     = EpsilonNode PerturbationTree.Epsilon
     | EtaNode PerturbationTree.Eta
@@ -938,7 +938,7 @@ cb9bea3061fa2f7af7cecc2fe06cdf95
      [[[GHC.Types.Int]]])
 b5e2275ff0ec23297d708d83166317f2
   type Var = Data.IntMap.Internal.IntMap GHC.Real.Rational
-3b21559f68212adc0dde04940edd3140
+cc3987cc976ae20aa92f9d8767421ab9
   addForests ::
     Data.Tree.Forest PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
@@ -965,7 +965,7 @@ b5e2275ff0ec23297d708d83166317f2
                                                                                  (go8 ys) } }
                                                                       } in
                                                                       go8 f2) -}
-f0df3bd14f31a7c7e293424ceb55f2c5
+399f080ea4bf22b2db0ca72674c79d2e
   getVarsForest ::
     Data.Tree.Forest PerturbationTree.AnsatzNode -> [[GHC.Types.Int]]
   {- Arity: 1, Strictness: <S,1*U>,
@@ -976,11 +976,11 @@ f0df3bd14f31a7c7e293424ceb55f2c5
                                                                            GHC.Classes.$fEq[]_$s$c==
                                                                            (PerturbationTree.getVarsForest_go
                                                                               forest)) -}
-d2287a697e01b2535e9c4ccdc1bcfdb4
+739097ca73af123268b06260e0288ed2
   getVarsForest_go ::
     [Data.Tree.Tree PerturbationTree.AnsatzNode] -> [[GHC.Types.Int]]
   {- Arity: 1, Strictness: <S,1*U> -}
-948f9e25cc5091a8c37356d98c0af089
+da75b6b3413dd14bdb259899921a67de
   getVarsTree ::
     Data.Tree.Tree PerturbationTree.AnsatzNode -> [[GHC.Types.Int]]
   {- Arity: 1, Strictness: <L,U(U,U)>,
@@ -995,12 +995,12 @@ d2287a697e01b2535e9c4ccdc1bcfdb4
                                                                                     PerturbationTree.AnsatzNode)))
                                                                          (GHC.List.lastError
                                                                             @ [PerturbationTree.AnsatzNode])) -}
-edb0d206d5cbfed55b575b4dbc605013
+6337c86c08b661bf5ccd11307aa077f9
   getVarsTree_go ::
     [[PerturbationTree.AnsatzNode]]
     -> [PerturbationTree.AnsatzNode] -> [[Data.IntSet.Internal.Key]]
   {- Arity: 2, Strictness: <S,1*U><L,1*U> -}
-585f0768b3781dfa3e07576b16852a02
+8518b059099730c4f723af0be681e204
   groupForests ::
     Data.Tree.Forest PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
@@ -1012,7 +1012,7 @@ de659a702053193c670a54a0b26297ec
                    @ GHC.Integer.Type.Integer
                    PerturbationTree.mkAllVarsfrom3
                    GHC.Real.$fEnumRatio1) -}
-83588f05065ceb07a6b82d30547f5c0b
+7b34477ac3332cd2185ce2d560021121
   mkAllVarsfrom2 ::
     (GHC.Types.Int, GHC.Types.Int) -> [PerturbationTree.Var]
   {- Arity: 1, HasNoCafRefs,
@@ -1026,7 +1026,7 @@ de659a702053193c670a54a0b26297ec
 83255672a74039aa59d49c6dc95ed849
   mkAllVarsfrom3 :: GHC.Integer.Type.Integer
   {- HasNoCafRefs, Unfolding: (1) -}
-ce3e8e739d30af35a01b3d09ee5e0514
+c8a57fac0b165a5206af88e383fe749e
   mkEpsilonSeq ::
     Data.Sequence.Internal.Seq GHC.Types.Int
     -> (PerturbationTree.Epsilon,
@@ -1036,7 +1036,7 @@ ce3e8e739d30af35a01b3d09ee5e0514
                 (\ (w :: Data.Sequence.Internal.Seq GHC.Types.Int) ->
                  case PerturbationTree.$wmkEpsilonSeq w of ww { (#,#) ww1 ww2 ->
                  (ww1, ww2) }) -}
-f6b8a73a46266ad163eef0a2fa5b3d3d
+75a1a59991591730e2ca7886fd99c2e4
   mkEpsilonSeq1 ::
     Data.Sequence.Internal.Seq GHC.Types.Int
     -> (GHC.Types.Int, GHC.Types.Int)
@@ -1051,7 +1051,7 @@ f6b8a73a46266ad163eef0a2fa5b3d3d
                                                                                                                                                                                           @ GHC.Types.Int
                                                                                                                                                                                           s
                                                                                                                                                                                           1#)) -}
-db1782bf19f5c0628bb13ad3a4ad4aa1
+31b261c1630a391b352dbc382fa879d3
   mkEtaSeq ::
     Data.Sequence.Internal.Seq GHC.Types.Int
     -> Data.Sequence.Internal.Seq PerturbationTree.Eta
@@ -1062,7 +1062,7 @@ db1782bf19f5c0628bb13ad3a4ad4aa1
                 (<Data.Sequence.Internal.Seq GHC.Types.Int>_R
                  ->_R Sym (Data.Sequence.Internal.N:Seq[0]
                                <(GHC.Types.Int, GHC.Types.Int)>_R)) -}
-f2e281ac709dd364474a4433085ab69d
+a52252026e7c6626057c3f0e944fc0be
   mkEtaSeq1 ::
     Data.Sequence.Internal.Seq GHC.Types.Int
     -> Data.Sequence.Internal.FingerTree
@@ -1093,7 +1093,7 @@ f2e281ac709dd364474a4433085ab69d
                                                                       (Data.Sequence.Internal.N:Seq[0]
                                                                            <Data.Sequence.Internal.Seq
                                                                               GHC.Types.Int>_R)) -}
-02adf0e5f5f7bb7537c105c1a1897d5f
+8a9f60f16bf300226810f2d90850bfe7
   mkTreeEpsilon ::
     PerturbationTree.Var
     -> (PerturbationTree.Epsilon,
@@ -1171,7 +1171,7 @@ f2e281ac709dd364474a4433085ab69d
                                                                                       (GHC.Types.[]
                                                                                          @ (Data.Tree.Tree
                                                                                               PerturbationTree.AnsatzNode)) } } }) -}
-1a9c2444ec3d2dd74651e8b4d8c6d733
+628b485b19298c8a2c0ea66c01139f4e
   mkTreeEta ::
     PerturbationTree.Var
     -> Data.Sequence.Internal.Seq PerturbationTree.Eta
@@ -1182,14 +1182,14 @@ f2e281ac709dd364474a4433085ab69d
                    (w1 :: Data.Sequence.Internal.Seq PerturbationTree.Eta) ->
                  case PerturbationTree.$wmkTreeEta w w1 of ww { (#,#) ww1 ww2 ->
                  Data.Tree.Node @ PerturbationTree.AnsatzNode ww1 ww2 }) -}
-68b663b4692c5c4d6b698aa5c28de22e
+528414a9585fb5086caac7b357b52506
   printAnsatzNode :: PerturbationTree.AnsatzNode -> GHC.Base.String
   {- Arity: 1, Strictness: <S,1*U>m2, Inline: [0],
      Unfolding: InlineRule (1, True, False)
                 (\ (w :: PerturbationTree.AnsatzNode) ->
                  case PerturbationTree.$wprintAnsatzNode w of ww { (#,#) ww1 ww2 ->
                  GHC.Types.: @ GHC.Types.Char ww1 ww2 }) -}
-d79084ddd8f3e90dba006f0c67de9317
+c5de78a70c778ac2862abd8024c0156f
   printForest ::
     Data.Tree.Forest PerturbationTree.AnsatzNode -> GHC.Base.String
   {- Arity: 1, Strictness: <S,1*U>,
@@ -1216,7 +1216,7 @@ d79084ddd8f3e90dba006f0c67de9317
                                                                                   PerturbationTree.printForest1)
                                                                                n
                                                                                forest))) -}
-334ebc6bfcd3dc3da226d7bf7b63f13c
+d21caac80efecce5c01be6777e5bebe0
   printForest1 ::
     Data.Tree.Tree PerturbationTree.AnsatzNode -> GHC.Base.String
   {- Arity: 1, Strictness: <S,1*U(U,1*U)>, Inline: [0],
@@ -1224,7 +1224,7 @@ d79084ddd8f3e90dba006f0c67de9317
                 (\ (w :: Data.Tree.Tree PerturbationTree.AnsatzNode) ->
                  case w of ww { Data.Tree.Node ww1 ww2 ->
                  PerturbationTree.$wlvl ww1 ww2 }) -}
-7a939bafdcdf5737497ec844090c1216
+cc124e4c667a61d1fbed27f7db21e278
   printTree ::
     Data.Tree.Tree PerturbationTree.AnsatzNode -> GHC.Base.String
   {- Arity: 1, Strictness: <S,1*U(U,1*U)>, Inline: [0],
@@ -1232,7 +1232,7 @@ d79084ddd8f3e90dba006f0c67de9317
                 (\ (w :: Data.Tree.Tree PerturbationTree.AnsatzNode) ->
                  case w of ww { Data.Tree.Node ww1 ww2 ->
                  PerturbationTree.$wprintTree ww1 ww2 }) -}
-0bf8adcfe70937d12143283d19a897f2
+ca96112e5b04f44ea64ae62755603ca1
   reduceAnsatzEpsilon ::
     PerturbationTree.Symmetry
     -> [((PerturbationTree.Epsilon,
@@ -1240,7 +1240,7 @@ d79084ddd8f3e90dba006f0c67de9317
          PerturbationTree.Var)]
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
   {- Arity: 2, Strictness: <L,U(U,U,U,U,U)><S,1*U> -}
-3b74a21e59252dd54ec1cd3e5265ac9b
+10b4b701072aa3cf0d6cfc267923f1bc
   reduceAnsatzEta ::
     PerturbationTree.Symmetry
     -> [(Data.Sequence.Internal.Seq PerturbationTree.Eta,
@@ -1363,7 +1363,7 @@ d79084ddd8f3e90dba006f0c67de9317
                                                                                                                                                      -> forest } } }
                                                                                 } in
                                                                                 go8 wild }) -}
-2f39a0c0fdddb5880eae3bfcd47be1d0
+fe55d28eb67d7e6c92a20c8e98d325c5
   searchForestEpsilonSeq ::
     (PerturbationTree.Epsilon,
      Data.Sequence.Internal.Seq PerturbationTree.Eta)
@@ -1379,12 +1379,12 @@ d79084ddd8f3e90dba006f0c67de9317
 82f1df2ebab90ec3653b167f7b62f982
   searchForestEpsilonSeq1 :: PerturbationTree.Epsilon
   {- Strictness: x -}
-d2fed78a653fe9d79733f4e8646606f6
+5bfd2ec0c77d78dc7f3c2be8a08bbce9
   searchForestEtaSeq ::
     Data.Sequence.Internal.Seq PerturbationTree.Eta
     -> Data.Tree.Forest PerturbationTree.AnsatzNode -> GHC.Types.Bool
   {- Arity: 2, Strictness: <S,U><S,U> -}
-d09b5e5581cf2e2d36b9cc215ea16555
+d4f77286f1841c50c0440517966cae36
   sortForest ::
     Data.Tree.Forest PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
@@ -1415,7 +1415,7 @@ d09b5e5581cf2e2d36b9cc215ea16555
                                                                                       PerturbationTree.AnsatzNode)
                                                                                  PerturbationTree.sortForest1
                                                                                  ans)))) -}
-452bf0a869a410e2afecd3f6eea22e1a
+a2b4500df65430ce89eda19de29c5836
   sortForest1 ::
     Data.Tree.Tree PerturbationTree.AnsatzNode
     -> (PerturbationTree.AnsatzNode,
@@ -1426,7 +1426,7 @@ d09b5e5581cf2e2d36b9cc215ea16555
                  {__scc {main:PerturbationTree.getTopNode} True False} case x of wild { Data.Tree.Node x1 subTree ->
                                                                        case x1 of y { DEFAULT ->
                                                                        (y, wild) } }) -}
-24134581a86e64b1f2a68d47879a8518
+055c5cfe98c83e8069bb388f8319c15e
   sortForest2 ::
     (PerturbationTree.AnsatzNode,
      Data.Tree.Tree PerturbationTree.AnsatzNode)
@@ -1442,7 +1442,7 @@ d09b5e5581cf2e2d36b9cc215ea16555
                  case x of wild { (,) x1 ds1 ->
                  case y of wild1 { (,) x2 ds2 ->
                  PerturbationTree.$fOrdAnsatzNode_$ccompare x1 x2 } }) -}
-ea803f99fb997e54f26579387741ac3c
+bb7e77092d96ad28ec9b4f327ec20df4
   sortIndexEtas ::
     Data.Tree.Tree PerturbationTree.AnsatzNode
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
@@ -1451,7 +1451,7 @@ ea803f99fb997e54f26579387741ac3c
                 (\ (w :: Data.Tree.Tree PerturbationTree.AnsatzNode) ->
                  case w of ww { Data.Tree.Node ww1 ww2 ->
                  PerturbationTree.$wsortIndexEtas ww1 ww2 }) -}
-04d40238951734c5bb53263f87eb9ce1
+ff260e90f4eba90344b900042cc87475
   swapBlockLabelForest ::
     ([GHC.Types.Int], [GHC.Types.Int])
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
@@ -1531,12 +1531,12 @@ ea803f99fb997e54f26579387741ac3c
                                                                                                                                                                                                                                                                                                    (PerturbationTree.swapBlockLabelForest_go
                                                                                                                                                                                                                                                                                                       ww5)) } })
                                                                                                                                                                      wild) } }) -}
-ce6025e4a6a87c5b60bd54c50438320f
+1383c455f12d0a582616555e11518f80
   swapBlockLabelForest_go ::
     [Data.Tree.Tree PerturbationTree.AnsatzNode]
     -> [Data.Tree.Tree PerturbationTree.AnsatzNode]
   {- Arity: 1, Strictness: <S,1*U> -}
-87debaf84841f730000ed04a0f254007
+453346bd374e1ddfff83dddec8149d31
   swapBlockLabelTree ::
     ([GHC.Types.Int], [GHC.Types.Int])
     -> Data.Tree.Tree PerturbationTree.AnsatzNode
@@ -1552,7 +1552,7 @@ ce6025e4a6a87c5b60bd54c50438320f
                         ww1
                         ww2 of ww3 { (#,#) ww4 ww5 ->
                  Data.Tree.Node @ PerturbationTree.AnsatzNode ww4 ww5 } }) -}
-22b18979b6afcdf9a731d64209a89e40
+58bab7605785fb3d3f5b615638c77162
   swapLabelForest ::
     (GHC.Types.Int, GHC.Types.Int)
     -> Data.Tree.Forest PerturbationTree.AnsatzNode
@@ -1632,7 +1632,7 @@ ce6025e4a6a87c5b60bd54c50438320f
                                                                                                                                                                                                                                                                                          (PerturbationTree.swapBlockLabelForest_go
                                                                                                                                                                                                                                                                                             ww5)) } })
                                                                                                                                                            wild) } }) -}
-94e3aad0dbf85198c7933aede8ee96ba
+b8972d17049ded2b5ce2a1ddd3779bd4
   swapLabelTree ::
     (GHC.Types.Int, GHC.Types.Int)
     -> Data.Tree.Tree PerturbationTree.AnsatzNode
@@ -1648,7 +1648,7 @@ ce6025e4a6a87c5b60bd54c50438320f
                         ww1
                         ww2 of ww3 { (#,#) ww4 ww5 ->
                  Data.Tree.Node @ PerturbationTree.AnsatzNode ww4 ww5 } }) -}
-4da74cc6bb7cdfedad28aec8e9b3d439
+98156aea6a6f67d360c9ae42e4496aea
   symAnsatzForest ::
     PerturbationTree.Symmetry
     -> Data.Tree.Forest PerturbationTree.AnsatzNode

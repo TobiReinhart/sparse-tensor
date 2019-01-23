@@ -746,13 +746,22 @@ module Main (
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree6.txt" $ show treeInds14
 
+        let treeInds14Eps = getAllIndsInverse [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11)]
+
+        let treeInds14Eta = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11)]
+        
         let treeInds14noFilter = getAllIndsInverse [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14)] [] []
 
         let sym14 = ([],[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)],[([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4,13],[5,6,7,8,14])],[],[])
 
-        let treeIndsEps14 = zip (map mkEpsilonSeq treeInds14noFilter) (mkAllVarsfrom2 (1,length treeInds14noFilter))
+        let treeIndsEps14 = zip (map mkEpsilonSeq treeInds14Eps) (mkAllVarsfrom2 (1,length treeInds14Eps))
+
+        let treeIndsEta14 = zip (map mkEtaSeq treeInds14Eta) (mkAllVarsfrom2 (1,length treeInds14Eta))
 
         let epsTrees14 = reduceAnsatzEpsilon sym14 treeIndsEps14
+
+        let etaTrees14 = reduceAnsatzEta sym14 treeIndsEta14
+
 
         let treeInds18 = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16),(15,17),(17,18)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(5,9),(9,10),(11,12),(9,11),(13,14),(15,16),(17,18)]
 
@@ -792,8 +801,7 @@ module Main (
 
         let etaTrees16 = reduceAnsatzEta sym16 treeIndsEta16
 
-        putStr $ printForest etaTrees16
-
+        --putStr $ printForest etaTrees16
 
         --print $ getVarsForest epsTrees16
 
@@ -804,9 +812,10 @@ module Main (
         --print $ length $ getVarsForest epsTrees14
 
 
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree10.txt" $ printForest epsTrees14
 
 
-
+        putStr $ printForest etaTrees18 
 
 
 

@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-23 10:36:24.632399 UTC
+2019-01-23 16:40:44.806992 UTC
 
 interface main:Main [hpc] 8043
-  interface hash: 808a5cd844135f14f5192b6bf6206a93
-  ABI hash: 0123f21b1f4d82dad84c93e54bbc9504
+  interface hash: ded5e675776d5a32280437badc38a6c5
+  ABI hash: 5c7886b46ec5cb52600a1c8c553e74c8
   export-list hash: e9c409922be23e577ec0b27ff6e41517
   orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
   flag hash: 8371069d9a3c93df4564b1c967507c8a
@@ -298,20 +298,20 @@ import  -/  Perturbation 1a0e86698ec5a31cdfef7b507847abb4
   mkPertAnsEpsilon a01af1356f32fe0a1d8c28a17945d357
   symAnsSetPert 2a4b458e30b9b27870a28d777b5e3934
   symAnsSetPertEpsilon 1dc1e13f7f0dd602c7ccd51c18bdf569
-import  -/  PerturbationTree 0d769f92700af139ac3964c89a31ae12
+import  -/  PerturbationTree e72e3af9a1d1c6f03ede4572fc8dc0be
   exports: 95ea0105078fba4fd2827412c567f1d9
-  addForests cc3987cc976ae20aa92f9d8767421ab9
-  mkAllVarsfrom2 7b34477ac3332cd2185ce2d560021121
-  mkEpsilonSeq c8a57fac0b165a5206af88e383fe749e
-  mkEtaSeq 31b261c1630a391b352dbc382fa879d3
-  mkTreeEta 628b485b19298c8a2c0ea66c01139f4e
-  printForest c5de78a70c778ac2862abd8024c0156f
-  reduceAnsatzEpsilon ca96112e5b04f44ea64ae62755603ca1
-  reduceAnsatzEta 10b4b701072aa3cf0d6cfc267923f1bc
-  swapBlockLabelForest ff260e90f4eba90344b900042cc87475
-  swapBlockLabelTree 453346bd374e1ddfff83dddec8149d31
-  swapLabelForest 58bab7605785fb3d3f5b615638c77162
-  symAnsatzForest 98156aea6a6f67d360c9ae42e4496aea
+  addForests 99da855a726f2fd7829986a9bd222a78
+  mkAllVarsfrom2 933c2924ae12865ba6667fcbd4e6ff13
+  mkEpsilonSeq 2cce2f98bfc2735a6c9bff70d92eceab
+  mkEtaSeq de47289af2ea34de7960b064dd100803
+  mkTreeEta 89799c7d02acb402a14f716c0473e7e3
+  printForest 3194ad3d2fadb678f1bfcd36345f2070
+  reduceAnsatzEpsilon d0a20bf3fdb96b64bfb2d71e7323ccec
+  reduceAnsatzEta 70cccf79d28f091e54de6bbdb696db49
+  swapBlockLabelForest 3dc0e888b766bbd549d3a0f874ca2d0e
+  swapBlockLabelTree 8235d8360195e5ef506fa191ddabcb12
+  swapLabelForest 8ef952914cb176e129a56599b9bc3eff
+  symAnsatzForest c8f158565abed262720ae3ed4225062b
 import  -/  Symmetrize 9eee972227eba3994cb0eb9abca1881f
   exports: c79a0ef965b8f406eb0b9e72ceb58ef0
   getRepInds ca123f6656165a8a3650c82dfb152bfd
@@ -346,11 +346,11 @@ e5875966b74dad2d29772660b8a75e33
 d026be77cb9ced20e35a61514e0458aa
   $trModule4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("main"#) -}
-9145c62e5a8a3b3726b2a6dd92d3d8aa
+709d270d23658dac83b7dad88b8fd8fd
   main :: GHC.Types.IO ()
   {- Unfolding: InlineRule (0, True, True)
                 Main.main1 `cast` (Sym (GHC.Types.N:IO[0] <()>_R)) -}
-f92734316c9cab80ab280dac7031fedf
+b9446d1ec1331bf6a17d182da8bd28e7
   main1 ::
     GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
@@ -424,7 +424,7 @@ c7c7024e69297c225cc8692f720bf421
   main19 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
      Unfolding: ((Main.main17, Main.main20)) -}
-ee543d6501519c516ba2cbbe92278f69
+7c17b6e8447c5cf89cb24cf516c710fc
   main2 ::
     GHC.IO.Handle.Types.Handle
     -> GHC.Prim.State# GHC.Prim.RealWorld
@@ -469,7 +469,7 @@ daf73ee88b7e986ea2a7d3ae381eccf1
 2903c516cba0f1ab6656b05a334297e9
   main29 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 6#) -}
-db4cdea0fe2609ce4948b52a464c495f
+05d25294fba54b90183a341aa1cd7986
   main3 :: GHC.Base.String
   {- Unfolding: ({__scc {main:Main.main} False True} {__scc {main:PerturbationTree.printForest} False True} Data.OldList.unlines
                                                                                                               (GHC.Base.map
@@ -520,7 +520,7 @@ bcca9589199c9d1059abb1cfc5041d53
   main39 :: [Ansatz.Edge]
   {- HasNoCafRefs, Strictness: m2,
      Unfolding: (GHC.Types.: @ Ansatz.Edge Main.main55 Main.main40) -}
-af94b684d15d9d1ca1f54fe2dc520e0e
+0e3dd04c5dd52d37b785f7af09252ef6
   main4 :: [Data.IntMap.Internal.IntMap GHC.Real.Rational]
   {- Unfolding: ({__scc {main:Main.main} False True} {__scc {main:Main.main.treeIndsEps14} False True} {__scc {main:Main.main} False True} {__scc {main:Main.main.treeIndsEps14} False True} case Main.main5 of ww5 { GHC.Types.I# ww6 ->
                                                                                                                                                                                              PerturbationTree.$wmkAllVarsfrom2
@@ -569,7 +569,7 @@ def9e2a5bb37c93f977ca5fe5d89030d
                    @ Ansatz.Edge
                    Main.main50
                    (GHC.Types.[] @ Ansatz.Edge)) -}
-088e5a193467cb1b41ae6cbc42830693
+cd5e99ad5cc02eff706860c0572d63ab
   main5 :: GHC.Types.Int
   {- Unfolding: ({__scc {main:Main.main} False True} {__scc {main:Main.main.treeIndsEps14} False True} case GHC.List.$wlenAcc
                                                                                                               @ (Data.Sequence.Internal.Seq
@@ -833,7 +833,7 @@ cfd541acf7abd0def058065efa30a9b9
   main93 :: GHC.Prim.Addr#
   {- HasNoCafRefs,
      Unfolding: ("/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree10.txt"#) -}
-f6ec93120cffac76b22fc13f233c2b14
+dec8befcc611e8856dc89cfb2d23f1ae
   main94 ::
     GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
@@ -849,7 +849,7 @@ f6ec93120cffac76b22fc13f233c2b14
           Data.Sequence.Internal.Seq PerturbationTree.Eta),
          Data.IntMap.Internal.IntMap GHC.Real.Rational)]
   {- Arity: 2, Strictness: <S,1*U><L,1*U> -}
-4c9763ddf8a99527663f36f14dc9a6d3
+8c294622519278d36e9951233fc121d3
   main_sym14 ::
     ([a1], [(GHC.Types.Int, GHC.Types.Int)],
      [([GHC.Types.Int], [GHC.Types.Int])], [a2], [a3])
@@ -862,14 +862,14 @@ f6ec93120cffac76b22fc13f233c2b14
                                                                                                   @ a1,
                                                                                                 GHC.Types.[]
                                                                                                   @ a2)) -}
-c99c779dbd44baa4b1cb0c4fca4b3002
+e26988422626109407964b8b5d9f4e8e
   main_treeInds14Eps :: [Data.Sequence.Internal.Seq GHC.Types.Int]
   {- Unfolding: ({__scc {main:Main.main} False True} {__scc {main:Main.main.treeInds14Eps} True True} Ansatz.getAllIndsInverse
                                                                                                         Main.main38
                                                                                                         (GHC.Types.[]
                                                                                                            @ Ansatz.Root)
                                                                                                         Main.main6) -}
-9cede4072ba4ea9e68da9e5807be7700
+1a70a9725400801d4685997f46939642
   main_treeIndsEps14 ::
     [((PerturbationTree.Epsilon,
        Data.Sequence.Internal.Seq PerturbationTree.Eta),

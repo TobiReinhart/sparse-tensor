@@ -812,10 +812,10 @@ module Main (
         --print $ length $ getVarsForest epsTrees14
 
 
-        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree10.txt" $ printForest epsTrees14
+        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree10.txt" $ printForest epsTrees14
 
 
-        putStr $ printForest etaTrees18 
+        --putStr $ printForest etaTrees18 
 
 
 

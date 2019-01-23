@@ -14,6 +14,7 @@ module PerturbationTree (
     import Data.Maybe
     import Data.Tree 
     import Data.Ord
+    import qualified Data.Set as Set
 
     type Eta = (Int,Int)
 
@@ -38,6 +39,7 @@ module PerturbationTree (
     --use the following data type for nodes in Data.Tree !!!
 
     data AnsatzNode = EpsilonNode Epsilon | EtaNode Eta | EpsilonLeaf Epsilon Var | EtaLeaf Eta Var deriving (Show, Eq, Ord)
+
 
     printAnsatzNode :: AnsatzNode -> String
     printAnsatzNode (EtaNode eta) = show eta
@@ -253,6 +255,7 @@ module PerturbationTree (
     groupForestsF :: Forest AnsatzNode -> Tree AnsatzNode
     groupForestsF l = Node (getTopNode $ head l) $ sortOn getTopNode $ concat $ map (getSubForest) l
 
+
     isLeaf :: AnsatzNode -> Bool
     isLeaf (EtaLeaf i j) = True
     isLeaf (EpsilonLeaf i j) = True
@@ -268,17 +271,20 @@ module PerturbationTree (
     updateEta f x = error "Node is an epsilon Node"
 
 
-    sortForest :: Forest AnsatzNode -> Forest AnsatzNode 
-    sortForest ans = groupForests $ sortOn getTopNode ans
+    sortForest2 :: Forest AnsatzNode -> Forest AnsatzNode 
+    sortForest2 ans = groupForests $ sortOn getTopNode ans
 
     sortSubForestEta :: Tree AnsatzNode -> Tree AnsatzNode
     sortSubForestEta (Node x subForest) = Node x $ sortForest $ concat $ map sortIndexEtas subForest
+
                 
     swapLabelForestEta :: (Int,Int) -> Forest AnsatzNode -> Forest AnsatzNode
     swapLabelForestEta inds ans = sortForest $ concat $ map (sortIndexEtas.(swapLabelTree inds)) ans
 
+
     swapLabelForestEpsilon :: (Int,Int) -> Forest AnsatzNode -> Forest AnsatzNode
     swapLabelForestEpsilon inds ans = sortForest $ map (sortSubForestEta.swapLabelTree inds) ans
+
 
     swapBlockLabelForestEta :: ([Int],[Int]) -> Forest AnsatzNode -> Forest AnsatzNode
     swapBlockLabelForestEta inds ans = sortForest $ concat $ map (sortIndexEtas.(swapBlockLabelTree inds)) ans
@@ -292,6 +298,7 @@ module PerturbationTree (
     isEpsilonNode (EpsilonNode x) = True
     isEpsilonNode x = False
 
+    {-
     swapLabelForest :: (Int,Int) -> Forest AnsatzNode -> Forest AnsatzNode
     swapLabelForest inds [] = []
     swapLabelForest inds forest
@@ -307,8 +314,44 @@ module PerturbationTree (
                 | otherwise = swapBlockLabelForestEta inds forest
                  where
                     isEpsilon = isEpsilonNode $ getTopNode $ head forest
+    -}
+
+    swapLabelForest :: (Int,Int) -> Forest AnsatzNode -> Forest AnsatzNode
+    swapLabelForest inds ans = sortForest $ map (swapLabelTree inds) ans 
+
+    swapBlockLabelForest :: ([Int],[Int]) -> Forest AnsatzNode -> Forest AnsatzNode
+    swapBlockLabelForest inds ans = sortForest $ map (swapBlockLabelTree inds) ans 
 
     --now adding two trees
+
+    updateOrInsertBy :: (Ord b) => (a -> b) -> (a -> a -> a) -> a -> [a] -> [a]
+    updateOrInsertBy g f a [] = [a]
+    updateOrInsertBY g f a (x:xs) 
+                    | (g a) < (g x) = a : x : xs
+                    | (g a) == (g x) = (f a x) : xs
+                    | otherwise = x : (updateOrInsertBy g f a xs)
+
+
+    add2Leafs :: AnsatzNode -> [AnsatzNode] -> [AnsatzNode]
+    add2Leafs (EtaLeaf eta var) [] = [EtaLeaf eta var]
+    add2Leafs (EtaLeaf eta1 var1) ((EtaLeaf eta2 var2):xs)
+                        | eta1 < eta2 = (EtaLeaf eta1 var1) : (EtaLeaf eta2 var2) : xs
+                        | eta1 > eta2 = (EtaLeaf eta2 var2) : (add2Leafs (EtaLeaf eta1 var1) xs)
+                        | isZeroVar varSum = xs
+                        | otherwise = (EtaLeaf eta1 varSum) : xs 
+                            where
+                                varSum = I.unionWith (+) var1 var2 
+    add2Leafs (EpsilonLeaf eps var) [] = [EpsilonLeaf eps var]
+    add2Leafs (EpsilonLeaf eps1 var1) ((EpsilonLeaf eps2 var2):xs)
+                        | eps1 < eps2 = (EpsilonLeaf eps1 var1) : (EpsilonLeaf eps2 var2) : xs
+                        | eps1 > eps2 = (EpsilonLeaf eps2 var2) : (add2Leafs (EpsilonLeaf eps1 var1) xs)
+                        | isZeroVar varSum = xs
+                        | otherwise = (EpsilonLeaf eps1 varSum) : xs 
+                            where
+                                varSum = I.unionWith (+) var1 var2 
+    add2Leafs x y = error "pattern not matched"
+
+    {-
 
     addVar2Leaf :: Var -> AnsatzNode -> Maybe AnsatzNode
     addVar2Leaf var (EtaLeaf eta i)
@@ -325,7 +368,28 @@ module PerturbationTree (
                         isZero = isZeroVar newVar 
     addVar2Leaf var x = error "can only add to Leaf"
 
-    --we need to remove leafs that are zero !!
+    add2Leafs2 :: AnsatzNode -> [AnsatzNode] -> [AnsatzNode]
+    add2Leafs2 (EtaLeaf eta var) ans 
+                | isJust etaPos && (not isNonZero) = part1 ++ (tail part2)
+                | isJust etaPos = part1 ++ fromJust (addVar2Leaf var $ head part2) : (tail part2)
+                | otherwise = insertBy (comparing getEta) (EtaLeaf eta var) ans
+            where
+                etaPos = findIndex (\a -> (getEta a) == eta ) ans
+                (part1,part2) = splitAt (fromMaybe 0 etaPos) ans
+                newAnsNode = (addVar2Leaf var $ head part2)
+                isJustEtaPos = isJust etaPos 
+                isNonZero = isJust newAnsNode
+    add2Leafs2 (EpsilonLeaf epsilon var) ans 
+                | isJust epsPos && (not isNonZero) = part1 ++ (tail part2)
+                | isJust epsPos = part1 ++ fromJust (addVar2Leaf var $ head part2) : (tail part2)
+                | otherwise = insertBy (comparing getEpsilon) (EpsilonLeaf epsilon var) ans
+            where
+                epsPos = findIndex (\a -> (getEpsilon a) == epsilon ) ans
+                (part1,part2) = splitAt (fromMaybe 0 epsPos) ans
+                newAnsNode = (addVar2Leaf var $ head part2)
+                isJustEpsPos = isJust epsPos 
+                isNonZero = isJust newAnsNode
+    add2Leafs2 a b = error "can only add Leaf to Leafs"
 
     add2Leafs :: AnsatzNode -> [AnsatzNode] -> [AnsatzNode]
     add2Leafs (EtaLeaf eta var) ans 
@@ -350,6 +414,8 @@ module PerturbationTree (
                 isNonZero = isJust newAnsNode
     add2Leafs a b = error "can only add Leaf to Leafs"
 
+    -}
+
     getTopNode :: Tree AnsatzNode -> AnsatzNode 
     getTopNode (Node x subTree) = x
 
@@ -362,7 +428,19 @@ module PerturbationTree (
     searchNodeTopLevel f (EtaLeaf eta1 var) = findIndex (\a -> (getEta (getTopNode a))==eta1) f 
     searchNodeTopLevel f (EpsilonLeaf eps1 var) = findIndex (\a -> (getEpsilon (getTopNode a))==eps1) f 
 
+    addTree2Forest :: Tree AnsatzNode -> Forest AnsatzNode -> Forest AnsatzNode
+    addTree2Forest (Node (EtaLeaf eta1 var1) []) forest = map (\x -> Node x []) (add2Leafs (EtaLeaf eta1 var1) (map getTopNode forest))
+    addTree2Forest (Node (EpsilonLeaf eps1 var1) []) forest = map (\x -> Node x [])  (add2Leafs (EpsilonLeaf eps1 var1) (map getTopNode forest))
+    addTree2Forest n [] = [n]
+    addTree2Forest (Node n subForest1) ((Node m subForest2):xs) 
+                | n < m = (Node n subForest1) : ( (Node m subForest2) : xs )
+                | n > m = (Node m subForest2) : (addTree2Forest (Node n subForest1) xs)
+                | newSubForest == [] = xs
+                | otherwise = (Node n newSubForest) : xs
+                    where
+                        newSubForest = filter (not.isZeroTree) (foldr addTree2Forest subForest1 subForest2)
 
+    {-
 
     addTree2Forest :: Tree AnsatzNode -> Forest AnsatzNode -> Forest AnsatzNode
     addTree2Forest (Node (EtaLeaf eta1 var1) []) forest = map (\x -> Node x []) (add2Leafs (EtaLeaf eta1 var1) (map getTopNode forest))
@@ -376,6 +454,8 @@ module PerturbationTree (
                         isJustInd = isJust ind
                         (part1,part2) = splitAt (fromMaybe 0 ind) forest
                         newSubForest = filter (not.isZeroTree) (foldr addTree2Forest (getSubForest $ head part2) subForest)
+
+    -}
 
     isZeroTree :: Tree AnsatzNode -> Bool
     isZeroTree (Node (EtaNode i) []) = True
@@ -481,6 +561,34 @@ module PerturbationTree (
 
 
     --the last step is searching the forest w.r.t. a given ansatz sequence
+    
+    searchForestEtaSeq :: S.Seq Eta -> Forest AnsatzNode -> Bool
+    searchForestEtaSeq s [] = False
+    searchForestEtaSeq ((S.:<|) eta1 S.Empty) ((Node (EtaLeaf eta2 var) []):xs )
+            | eta1 < eta2 = False
+            | eta1 == eta2 = True
+            | otherwise = searchForestEtaSeq ((S.:<|) eta1 S.Empty) xs
+    searchForestEtaSeq ((S.:<|) eta1 subSeq) ((Node (EtaNode eta2) subForest):xs )
+            | eta1 < eta2 = False
+            | eta1 == eta2 = searchForestEtaSeq subSeq subForest 
+            | otherwise = searchForestEtaSeq ((S.:<|) eta1 subSeq) xs
+    searchForestEtaSeq x y = error "pattern not matched"
+
+    searchForestEpsilonSeq :: (Epsilon,S.Seq Eta) -> Forest AnsatzNode -> Bool
+    searchForestEpsilonSeq x [] = False
+    searchForestEpsilonSeq (eps1 , S.Empty) ((Node (EpsilonLeaf eps2 var) []) : xs)
+            | eps1 < eps2 = False
+            | eps1 == eps2 = True
+            | otherwise = searchForestEpsilonSeq (eps1, S.Empty) xs 
+    searchForestEpsilonSeq (eps1 , seq) ((Node (EpsilonNode eps2 ) subForest) : xs)
+            | eps1 < eps2 = False
+            | eps1 == eps2 = searchForestEtaSeq seq subForest
+            | otherwise = searchForestEpsilonSeq (eps1, seq) xs 
+    searchForestEpsilonSeq x y = error "pattern not matched"
+      
+
+
+{-    
 
     searchForestEtaSeq :: S.Seq Eta -> Forest AnsatzNode -> Bool
     searchForestEtaSeq ((S.:<|) eta S.Empty) forest = elem eta etasForest
@@ -496,6 +604,8 @@ module PerturbationTree (
                     ind1 = fromMaybe 0 ind1Maybe 
                     restForest = getSubForest $ forest !! ind1
 
+    
+
     searchForestEpsilonSeq :: (Epsilon,S.Seq Eta) -> Forest AnsatzNode -> Bool
     searchForestEpsilonSeq ( eps , seq ) forest
             | isJust epsIndMaybe = searchForestEtaSeq seq restForest
@@ -504,6 +614,8 @@ module PerturbationTree (
                 epsIndMaybe = findIndex (\x ->  (getEpsilon.getTopNode) x == eps ) forest
                 ind1 = fromMaybe 0 epsIndMaybe
                 restForest = getSubForest $ forest !! ind1
+
+    -}
         
     addForestEtaSeq :: Symmetry -> (S.Seq Eta, Var) -> Forest AnsatzNode -> Forest AnsatzNode
     addForestEtaSeq sym (seq,var) forest 
@@ -567,7 +679,7 @@ module PerturbationTree (
     flattenTreeEta (Node (EtaNode eta) subTree) = newList
             where
                 rest = concat $ map flattenTreeEta subTree 
-                newList = map (\(y,z) -> (insert eta y,z)) rest 
+                newList = map (\(y,z) -> ( insert eta y,z)) rest 
                 
     flattenTreeEpsilon :: Tree AnsatzNode -> [((Epsilon,[Eta]),Var)]
     flattenTreeEpsilon (Node (EpsilonLeaf eps var) []) = [((eps,[]),var)]
@@ -575,4 +687,28 @@ module PerturbationTree (
             where
                 rest = concat $ map flattenTreeEta subTree 
                 newList = map (\(y,z) ->  ((eps,y),z)) rest 
+
+    mkEtaTreeFromList :: ([Eta], Var) -> Tree AnsatzNode
+    mkEtaTreeFromList  (x:xs,var) 
+                | xs == [] = Node (EtaLeaf x var) []
+                | otherwise = (Node (EtaNode x) $ [mkEtaTreeFromList (xs,var)])
+
+    mkEpsilonTreeFromList :: ((Epsilon,[Eta]), Var) -> Tree AnsatzNode
+    mkEpsilonTreeFromList  ((eps,[]),var)  = Node (EpsilonLeaf eps var) []
+    mkEpsilonTreeFromList  ((eps,l),var)   = (Node (EpsilonNode eps) $ [mkEtaTreeFromList (l,var)])
+
+    sortTree :: Tree AnsatzNode -> Forest AnsatzNode 
+    sortTree t
+            | isEpsilonNode $ getTopNode t = foldr addTree2Forest [] epsList
+            | otherwise = foldr addTree2Forest [] etaList
+                    where
+                        epsList = map mkEpsilonTreeFromList $ flattenTreeEpsilon t 
+                        etaList = map mkEtaTreeFromList $ flattenTreeEta t
+
+    sortForest :: Forest AnsatzNode -> Forest AnsatzNode 
+    sortForest forest = foldr addTree2Forest [] symTreeList 
+                        where
+                            symTreeList =sortOn getTopNode $ concat $ map sortTree forest
+
+                
 

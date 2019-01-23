@@ -722,14 +722,6 @@ module Main (
 
         --print $ length treeIndsEps
 
-        let treeInds14 = getAllIndsInverse [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11)]
-
-        let sym14 = ([],[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)],[([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4,13],[5,6,7,8,14])],[],[])
-
-        let treeIndsEta14 = zip (map mkEpsilonSeq treeInds14) (mkAllVarsfrom2 (1,length treeInds14))
-
-        let etaTrees14 = reduceAnsatzEpsilon sym14 treeIndsEta14
-
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree6.txt" $ printForest etaTrees14 
 
         let treeInds10 = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10)] [] [(1,2),(3,4),(1,3),(5,6),(7,8),(5,7),(1,5)]
@@ -753,6 +745,14 @@ module Main (
         --print $ length $ getVarsForest etaTrees14
 
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree6.txt" $ show treeInds14
+
+        let treeInds14noFilter = getAllIndsInverse [(1,2),(2,3),(3,4),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14)] [] []
+
+        let sym14 = ([],[(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)],[([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4,13],[5,6,7,8,14])],[],[])
+
+        let treeIndsEps14 = zip (map mkEpsilonSeq treeInds14noFilter) (mkAllVarsfrom2 (1,length treeInds14noFilter))
+
+        let epsTrees14 = reduceAnsatzEpsilon sym14 treeIndsEps14
 
         let treeInds18 = getAllIndsInverse [(1,2),(1,3),(3,4),(3,5),(5,6),(5,7),(7,8),(7,9),(9,10),(9,11),(11,12),(11,13),(13,14),(13,15),(15,16),(15,17),(17,18)] [] [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(5,9),(9,10),(11,12),(9,11),(13,14),(15,16),(17,18)]
 
@@ -791,9 +791,9 @@ module Main (
 
         --print $ length $ getVarsForest epsTrees16
 
-        writeFile "/cip/austausch/cgg/EpsilonAnsätze18Vars.txt" $ show treeIndsEps16
+        print $ getVarsForest epsTrees14 
 
-        print $ length treeIndsEps16 
+        print $ length $ getVarsForest epsTrees14
 
 
 

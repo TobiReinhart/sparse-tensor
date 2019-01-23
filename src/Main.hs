@@ -787,9 +787,14 @@ module Main (
         let epsTrees16 = reduceAnsatzEpsilon sym16 treeIndsEps16
 
 
-        print $ getVarsForest epsTrees16
+        --print $ getVarsForest epsTrees16
 
-        print $ length $ getVarsForest epsTrees16
+        --print $ length $ getVarsForest epsTrees16
+
+        writeFile "/cip/austausch/cgg/EpsilonAnsätze18Vars.txt" $ show treeIndsEps16
+
+        print $ length treeIndsEps16 
+
 
 
 

@@ -821,9 +821,9 @@ module Main (
 
         --putStr $ printForest etaTrees18 
 
-        let intAIBJC = mkEqnSparseintAIBJCTrian trian $ intAIBJC map1Area map2Area map1Metric map2Metric
+        let intCondAIBJC = mkEqnSparseintAIBJCTrian trian $ intAIBJC map1Area map2Area map1Metric map2Metric
 
-        writeFile "/cip/austausch/cgg/intAIBJC.txt" $ showEqnsFlatMatLab intAIBJC
+        writeFile "/cip/austausch/cgg/intAIBJC.txt" $ showEqnsFlatMatLab intCondAIBJC
 
 
 

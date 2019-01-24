@@ -1,13 +1,13 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-22 14:46:17.294852 UTC
+2019-01-24 11:53:52.969742 UTC
 
-interface main:Order3Int [hpc] 8043
-  interface hash: 9b79f9f51f2509f95c12f8153086c8fd
-  ABI hash: f4cad950d24c090882261a9f0288afa8
-  export-list hash: e41100516b3c4208fa4fffdbce701e58
-  orphan hash: b397196ae13186cbd1ea609779cb4369
-  flag hash: 034627c3e6816f7545a7b63584c609bb
+interface main:Order3Int 8043
+  interface hash: c7ec623fb17468dff41ab1e572650283
+  ABI hash: 634b4f7b77c29e711bf409a48894aede
+  export-list hash: 4866d9d4a6a86c7c57b2cc398fe1586b
+  orphan hash: f7d4dac654cb1046db96017533e1d0c7
+  flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
   sig of: Nothing
@@ -22,6 +22,7 @@ exports:
   Order3Int.ansatzAaBbC
   Order3Int.intABC
   Order3Int.intAIBC
+  Order3Int.intAIBJC
   Order3Int.intAaBbC
   Order3Int.intAaBbC2
   Order3Int.mkEqnSparseAnsatzABC2
@@ -34,6 +35,7 @@ exports:
   Order3Int.mkEqnSparseIntABC2
   Order3Int.mkEqnSparseIntABCTrian
   Order3Int.mkEqnSparseintAIBC
+  Order3Int.mkEqnSparseintAIBJCTrian
   Order3Int.mkEqnSparseintAaBbC
   Order3Int.mkEqnSparseintAaBbCTrian
 module dependencies: BasicTensors EquivarianceEqns Index Ivar Pde
@@ -74,44 +76,44 @@ import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.Map 0dbdaec812ef695a364aa6c69e7f7d53
 import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
 import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
-import  -/  BasicTensors eb5b51414d2c3c3fc45fe3497d3f932c
-  exports: 7bd1d97902a82e67c502cc891749fa89
-  aSymI_2 85b96c1b469ca0318ab6d34ecbdffdf1
-  delta_20 162a995d96c74a333b7936c74f9c8654
-  delta_3 1b779d8bf6d3a2de4e2c39cbf2952342
-  delta_9 71b32e9191ec29699321bcbae6e0b83a
-  flatArea 88f143656f05841ce5f6bc5818ab7cee
-  interArea 068502db5feb6a9b80dde94e3ee55a07
-  interEqn1_2 c92cf830c592d74911b3103d773bcb06
-  interEqn1_3 5671d20c260b1f499f7d26c836568368
-  interMetric 53b357e50bf8477d50d697f15bb13184
-  invEta a329957d4f2e507cf294c76791a875aa
-import  -/  EquivarianceEqns 91d578dc64c09630cc293b0e537bd69a
-  exports: 753233c47284511068d96a6925317f46
-import  -/  Index 08e2a14604a823b6ff2a9dd0412736b8
+import  -/  BasicTensors 459e760670e17113d11708f22d917aa1
+  exports: b16000811d6d04867ef2d7f77be3b83b
+  aSymI_2 ce4c78589fa1c490048ec19d5ac45bab
+  delta_20 cc7ac0d02f645bebaef7e7d6a42c65ec
+  delta_3 88443abb7d76d02fee3e7a789d30d02a
+  delta_9 e75aa262356472dc198559ec7f775732
+  flatArea c50387668f8e570ba03b4875269be9e8
+  interArea 1a57b66a1918e60a1c093487dbdb6d77
+  interEqn1_2 383ad8280ba0e8ba15ac3edd7a0b30d8
+  interEqn1_3 cde5e40e18aaf48a3d2721dd1a8bf9ea
+  interMetric 7b123234da5bff1e9d5f5bfbd52a6db4
+  invEta 654a36e8807dd2df11817151dcb7615d
+import  -/  EquivarianceEqns 97e2971cea94f78bc7f1d6c830b407a4
+  exports: e7c82201f15d6bde89e88afb140ca87d
+import  -/  Index 60260ed90a129e1e10b6c5fafcb2ded1
   exports: 02acfc58131cc32506762c89c9bc64b7
-  Index fef7dd75ac4341fe9ac6422ae53896cb
-  Lind_20 bc4b9092451ad6bbfee40a37af5a3be5
-  Lind_9 e56724c95d48d5af2b671320de0a16e6
-  Linds_3 c88a9b9457367a41a7b841cbc4cd99c9
-  Uind_20 bfe4746a22221d53bc0caf3ab68bb75f
-  Uind_9 60e6e8f96660ac8be150b9dcf7a9bf57
-  Uinds_3 78c689db53b46c5dad666c484780219c
-  getValInd 9fdbb30c9f0128d475e5de016ad1bc53
-import  -/  Ivar 40f81219a01d4a021d2869f9c4ec8065
+  Index 5df768242bb15e89c1079fab7e7d3758
+  Lind_20 8a3588434be3c9662430693d2d2e332f
+  Lind_9 89b0e08dbee85927dc2463ead2b84188
+  Linds_3 562700c5f35c258ae2adef3c77ddc1b1
+  Uind_20 f2c1b76a3e7f0dd431510d7cb9f659a1
+  Uind_9 ab8f3576b9e9258982a5d77295330a40
+  Uinds_3 63ef11ca566ba01817ced09e779f86a0
+  getValInd 974a87ce371ea262afad5f9d63705d90
+import  -/  Ivar 59828d84f4f392dde7d157e78b1e20aa
   exports: 847b7f62b7be31da91814bf314ffd8e5
-import  -/  Pde ee46c0f08935aa69c73c37bcf3103bae
-  exports: 5f26c9b1fc31234bc17b520659bce428
-import  -/  Tensor 506762f61e5eb09856fcdcf668e157fa
-  exports: 1e07b17b3ec8892664f89099181669ba
-  Tensor 2f2ba18b2559fd3b006c3f606f3e15da
-  Tensor c676ef3822419832be89c54f66299684
-  tensorAdd c17d8b47f4737f18a61e8d192d389e87
-  tensorContractWith_20 192b6213f73a7a7828516a5b8c5dbe89
-  tensorContractWith_3 c385296e26e3bb0dcfa2f644b248f67b
-  tensorProductNumeric 6bf62d328fd962ef9923c8cda98aba01
-  tensorSub fbca68c0210815bd3e38973881a34ada
-  tensorTranspose 44e01331e8dca2b21922eeae8693de1e
+import  -/  Pde 01727937c27ae17d2b109d09ad686ca8
+  exports: b2cd66be74d90ac4a27aea2ce34825a2
+import  -/  Tensor 176e25c77f5f937264699042a39a34a2
+  exports: 9a68ab01e29b77db9280f7aa573b73ab
+  Tensor 1ac5ddd89ae57be76544d24271fdf653
+  Tensor de2cb2f95a4c3ff6ea3ffdde0ef67deb
+  tensorAdd b03543f4dfebee64226240002a5665ef
+  tensorContractWith_20 6cf282d64edd6c9ec712d855bb38e06a
+  tensorContractWith_3 529107206dcaa10693fc48c26137b94b
+  tensorProductNumeric 0a352647ad8349c5cc4ef731b863771f
+  tensorSub 5ae6e28292f5ee5e3aebc88142b4d18f
+  tensorTranspose 3f7c7309fc31e499e4e26c886fbf7b4a
 bf61f1d8cbf49a746a249c20a9812a6a
   $s^1 :: GHC.Types.Int
   {- Strictness: x -}
@@ -227,7 +229,133 @@ df822f186b912d974f244c31c0f87004
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
   {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
-b7d87696765d4675163591dffbbcbe1a
+a028ef8ff12215da8ebd7fb1c9902cec
+  $sinsertWithR_$sgo1 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 2 1 1 1
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+a9e82a9add0829dcde1a4cab31ef6ec0
+  $sinsertWithR_$sgo2 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 2 3 0 0 0 0 4 4
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a1
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+6c45cebac82a22aa537fb3bcc274a08c
+  $sinsertWithR_$sgo3 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 0 0 3 3
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+eeba73ffcb53008e340ec205a58e854a
+  $sinsertWithR_$sgo4 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 1 1 1 1
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+16796ec4997b86fe9be2919303c57992
+  $sinsertWithR_$sgo5 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 0 0 2 2
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+ec32737e248ad924e18c1e1b2c29cc20
+  $sinsertWithR_$sgo6 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 0 0 1 1
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+f86ffad8211d33d67d73626176908152
+  $sinsertWithR_$sgo8 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 2 3 0 0 2 2 2 2
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a1
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+67df57d18974785d2642dd6d543f7144
+  $sinsertWith_$sgo1 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 2 1 1 1
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+8c8009134c0bdd96102601554ff4684e
+  $sinsertWith_$sgo2 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 2 3 0 0 0 0 4 4
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a1
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+6bfb6142f8262c2e51b6ff1cd8c67ec1
+  $sinsertWith_$sgo3 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 0 0 3 3
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+ec40e1a7f44b89ead8c0cd4587eff38b
+  $sinsertWith_$sgo4 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 1 1 1 1
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+597fb48efbd03feb427ce9b89c9b6dd8
+  $sinsertWith_$sgo5 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 0 0 2 2
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+cd3d9a29db57f29eb7226e8388e68335
+  $sinsertWith_$sgo6 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 3 3 0 0 0 0 1 1
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+5bc0ebc82beaaba13ab29e5478686699
+  $sinsertWith_$sgo8 ::
+    (a1 -> a1 -> a1)
+    -> Index.Index 2 3 0 0 2 2 2 2
+    -> a1
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a1
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a1
+  {- Arity: 4,
+     Strictness: <L,1*C1(C1(U))><S,1*U(U(U),U(U),U(U),U(U),U(U),U(U),U(U),U(U))><L,U><S,1*U> -}
+8be4ed0316ffe06715500833e083fd8b
   $smapKeysWith ::
     (a -> a -> a)
     -> (k1 -> (GHC.Types.Int, GHC.Types.Int))
@@ -279,13 +407,13 @@ b7d87696765d4675163591dffbbcbe1a
                        : x1 xs
                        -> case x1 of wild1 { (,) k x2 ->
                           case k of ww { (,) ww1 ww2 ->
-                          case Order3Int.$w$sgo1 @ a f1 ww1 ww2 x2 z of z' { DEFAULT ->
+                          case Order3Int.$w$sgo8 @ a f1 ww1 ww2 x2 z of z' { DEFAULT ->
                           go14 z' xs } } } }
                  } in
                  go14
                    (Data.Map.Internal.Tip @ (GHC.Types.Int, GHC.Types.Int) @ a)
                    (go13 (GHC.Types.[] @ ((GHC.Types.Int, GHC.Types.Int), a)) eta)) -}
-1665b2920556d386a5e7599d3b3cf016
+068e0cea815dabcfd02e6749c1dce1ef
   $stensorContractWith_1 :: GHC.Natural.Natural
   {- Unfolding: (case Order3Int.$stensorContractWith_2 of wild {
                    GHC.Integer.Type.S# i#
@@ -305,12 +433,12 @@ b7d87696765d4675163591dffbbcbe1a
                            GHC.Natural.NatS# wild2 } }
                    GHC.Integer.Type.Jn# ipv
                    -> GHC.Natural.underflowError @ GHC.Natural.Natural }) -}
-7ac4b59162e06a19abf2f6b354ba1a99
+53700895d36df62c674afccdce3f7cda
   $stensorContractWith_2 :: GHC.Integer.Type.Integer
-  {- HasNoCafRefs, Unfolding: (3) -}
-a49d58137e8fa4b06291ae645718799d
+  {- HasNoCafRefs, Unfolding: (1) -}
+f42cfb4b3e849d9f29a02a3985b7e3db
   $stensorContractWith_3 :: GHC.Natural.Natural
-  {- Unfolding: (case Order3Int.$seven1 of wild {
+  {- Unfolding: (case Order3Int.$s^2 of wild {
                    GHC.Integer.Type.S# i#
                    -> case GHC.Prim.>=# i# 0# of lwild {
                         DEFAULT -> GHC.Natural.underflowError @ GHC.Natural.Natural
@@ -328,7 +456,7 @@ a49d58137e8fa4b06291ae645718799d
                            GHC.Natural.NatS# wild2 } }
                    GHC.Integer.Type.Jn# ipv
                    -> GHC.Natural.underflowError @ GHC.Natural.Natural }) -}
-448ae60920f57a4f894b215d8d43f780
+18eaf75b02f82c1ae14c8c9eb2acb595
   $stensorContractWith_5 :: GHC.Natural.Natural
   {- Unfolding: (case Order3Int.$stensorContractWith_6 of wild {
                    GHC.Integer.Type.S# i#
@@ -348,12 +476,12 @@ a49d58137e8fa4b06291ae645718799d
                            GHC.Natural.NatS# wild2 } }
                    GHC.Integer.Type.Jn# ipv
                    -> GHC.Natural.underflowError @ GHC.Natural.Natural }) -}
-9baa58133699ab094f6dc45f53bd9cbc
+6b19e58e8bdd409299b7ba0839d8408b
   $stensorContractWith_6 :: GHC.Integer.Type.Integer
-  {- HasNoCafRefs, Unfolding: (1) -}
-f6f4fdaf272ee7687bc717d5645bde46
+  {- HasNoCafRefs, Unfolding: (3) -}
+2aa444300ab9f8337b3846db2a3d7ecb
   $stensorContractWith_7 :: GHC.Natural.Natural
-  {- Unfolding: (case Order3Int.$s^2 of wild {
+  {- Unfolding: (case Order3Int.$seven1 of wild {
                    GHC.Integer.Type.S# i#
                    -> case GHC.Prim.>=# i# 0# of lwild {
                         DEFAULT -> GHC.Natural.underflowError @ GHC.Natural.Natural
@@ -371,6 +499,55 @@ f6f4fdaf272ee7687bc717d5645bde46
                            GHC.Natural.NatS# wild2 } }
                    GHC.Integer.Type.Jn# ipv
                    -> GHC.Natural.underflowError @ GHC.Natural.Natural }) -}
+f54e3108a8198c9654223d4ef8712542
+  $sunionWith ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+53032fc1cf63195c777a769ca653830a
+  $sunionWith1 ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+1856eb1aa38fbe39fe20fc32a671a5cf
+  $sunionWith2 ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+d0a91513947c4e60de09f85d0b8b1f84
+  $sunionWith3 ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+825520351489da975d2fc693a13f45e0
+  $sunionWith4 ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+e6592b78e95cc7f4344c616570f2191e
+  $sunionWith5 ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
+6a7f02601ab5a6f1a70a984575d9be69
+  $sunionWith6 ::
+    (a -> a -> a)
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U><S,1*U>, Inline: [~] -}
 2033b8212ef7cfaf8a753432945eba54
   $trModule :: GHC.Types.Module
   {- HasNoCafRefs, Strictness: m,
@@ -403,8 +580,137 @@ f6f4fdaf272ee7687bc717d5645bde46
                         -> case w of ww { GHC.Types.I# ww1 -> Order3Int.$wf ww1 w1 }
                         1# -> 1# }
                    1# -> case Order3Int.$s^1 ret_ty GHC.Prim.Int# of {} }) -}
-2d8a3f3510cd9871bdd049fb4566b252
+e4e7516041cafa3ab2a4074e45e5ab0a
   $w$sgo1 ::
+    Index.Uinds_20 3
+    -> Index.Linds_20 3
+    -> Index.Uinds_19 0
+    -> Index.Linds_19 0
+    -> Index.Uinds_9 2
+    -> Index.Linds_9 1
+    -> Index.Uinds_3 1
+    -> Index.Linds_3 1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a1
+    -> (# Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a1,
+          GHC.Base.Maybe a1,
+          Data.Map.Internal.Map (Index.Index 3 3 0 0 2 1 1 1) a1 #)
+  {- Arity: 9,
+     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
+     Inline: [0] -}
+f9953fdc41cdbdcf4604e950d24d5086
+  $w$sgo13 ::
+    Index.Uinds_20 2
+    -> Index.Linds_20 3
+    -> Index.Uinds_19 0
+    -> Index.Linds_19 0
+    -> Index.Uinds_9 2
+    -> Index.Linds_9 2
+    -> Index.Uinds_3 2
+    -> Index.Linds_3 2
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a1
+    -> (# Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a1,
+          GHC.Base.Maybe a1,
+          Data.Map.Internal.Map (Index.Index 2 3 0 0 2 2 2 2) a1 #)
+  {- Arity: 9,
+     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
+     Inline: [0] -}
+6c9559bf667965a2a62f44f497738475
+  $w$sgo2 ::
+    Index.Uinds_20 2
+    -> Index.Linds_20 3
+    -> Index.Uinds_19 0
+    -> Index.Linds_19 0
+    -> Index.Uinds_9 0
+    -> Index.Linds_9 0
+    -> Index.Uinds_3 4
+    -> Index.Linds_3 4
+    -> Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a1
+    -> (# Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a1,
+          GHC.Base.Maybe a1,
+          Data.Map.Internal.Map (Index.Index 2 3 0 0 0 0 4 4) a1 #)
+  {- Arity: 9,
+     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
+     Inline: [0] -}
+b30bc80ea7f356fecc3421885bc95eb0
+  $w$sgo3 ::
+    Index.Uinds_20 3
+    -> Index.Linds_20 3
+    -> Index.Uinds_19 0
+    -> Index.Linds_19 0
+    -> Index.Uinds_9 0
+    -> Index.Linds_9 0
+    -> Index.Uinds_3 3
+    -> Index.Linds_3 3
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a1
+    -> (# Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a1,
+          GHC.Base.Maybe a1,
+          Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 3 3) a1 #)
+  {- Arity: 9,
+     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
+     Inline: [0] -}
+11015b05dbc4949f29d4afb157315702
+  $w$sgo4 ::
+    Index.Uinds_20 3
+    -> Index.Linds_20 3
+    -> Index.Uinds_19 0
+    -> Index.Linds_19 0
+    -> Index.Uinds_9 1
+    -> Index.Linds_9 1
+    -> Index.Uinds_3 1
+    -> Index.Linds_3 1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a1
+    -> (# Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a1,
+          GHC.Base.Maybe a1,
+          Data.Map.Internal.Map (Index.Index 3 3 0 0 1 1 1 1) a1 #)
+  {- Arity: 9,
+     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
+     Inline: [0] -}
+1ca22c46f2be5aaf565e4c3de1d9277a
+  $w$sgo5 ::
+    Index.Uinds_20 3
+    -> Index.Linds_20 3
+    -> Index.Uinds_19 0
+    -> Index.Linds_19 0
+    -> Index.Uinds_9 0
+    -> Index.Linds_9 0
+    -> Index.Uinds_3 2
+    -> Index.Linds_3 2
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a1
+    -> (# Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a1,
+          GHC.Base.Maybe a1,
+          Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 2 2) a1 #)
+  {- Arity: 9,
+     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
+     Inline: [0] -}
+69331e6b9ad24dfcef23236e774e2576
+  $w$sgo6 ::
+    Index.Uinds_20 3
+    -> Index.Linds_20 3
+    -> Index.Uinds_19 0
+    -> Index.Linds_19 0
+    -> Index.Uinds_9 0
+    -> Index.Linds_9 0
+    -> Index.Uinds_3 1
+    -> Index.Linds_3 1
+    -> Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a1
+    -> (# Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a1,
+          GHC.Base.Maybe a1,
+          Data.Map.Internal.Map (Index.Index 3 3 0 0 0 0 1 1) a1 #)
+  {- Arity: 9,
+     Strictness: <L,1*U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><L,U(U)><S,1*U>,
+     Inline: [0] -}
+13425559355c6e25580edb7b4dec6142
+  $w$sgo7 ::
+    (GHC.Types.Int, GHC.Types.Int)
+    -> GHC.Types.Int
+    -> GHC.Types.Int
+    -> a1
+    -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
+    -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
+  {- Arity: 5, Strictness: <L,U><L,1*U(U)><L,U(U)><L,U><S,1*U>,
+     Inline: [0] -}
+b8e4d2834c58ac53c366d4726674f421
+  $w$sgo8 ::
     ((GHC.Types.Int, GHC.Types.Int) -> a1 -> a1 -> a1)
     -> GHC.Types.Int
     -> GHC.Types.Int
@@ -414,17 +720,7 @@ f6f4fdaf272ee7687bc717d5645bde46
   {- Arity: 5,
      Strictness: <L,1*C1(C1(C1(U)))><L,U(U)><L,U(U)><L,U><S,1*U>,
      Inline: [0] -}
-d41571fd51e4b90138f825bd6d4a49ba
-  $w$sgo13 ::
-    (GHC.Types.Int, GHC.Types.Int)
-    -> GHC.Types.Int
-    -> GHC.Types.Int
-    -> a1
-    -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
-    -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
-  {- Arity: 5, Strictness: <L,U><L,1*U(U)><L,U(U)><L,U><S,1*U>,
-     Inline: [0] -}
-c3e13c727ae87b74c9d0f64fddbe1f2f
+b8b65fdad3ccc588208c10a4e2e1e1d6
   $wansatzABC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -432,7 +728,7 @@ c3e13c727ae87b74c9d0f64fddbe1f2f
     -> (# Data.Map.Internal.Map
             (Index.Index 3 3 0 0 1 0 0 0) GHC.Real.Rational #)
   {- Arity: 3, Strictness: <L,U><L,U><L,U>, Inline: [0] -}
-763af19237870dc5fda8fee8024975ed
+47f8d54bb34e75242133faf6b0def725
   $wansatzABC2 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -440,7 +736,7 @@ c3e13c727ae87b74c9d0f64fddbe1f2f
     -> (# Data.Map.Internal.Map
             (Index.Index 3 3 0 0 1 0 0 0) GHC.Real.Rational #)
   {- Arity: 3, Strictness: <L,U><L,U><L,U>, Inline: [0] -}
-f9b233849f5bb3527fd1e12607b25343
+64436525d81b504aeaf364c639e078f1
   $wansatzAIBC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -449,7 +745,7 @@ f9b233849f5bb3527fd1e12607b25343
     -> (# Data.Map.Internal.Map
             (Index.Index 3 3 0 0 2 1 0 0) GHC.Real.Rational #)
   {- Arity: 4, Strictness: <L,U><L,U><L,U><L,U>, Inline: [0] -}
-998da171b305c92708bc8731f3245174
+fbc9f8ba12ea693887b2bc0588dd949d
   $wansatzAIBbC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -458,15 +754,248 @@ f9b233849f5bb3527fd1e12607b25343
     -> (# Data.Map.Internal.Map
             (Index.Index 3 3 0 0 2 1 1 1) GHC.Real.Rational #)
   {- Arity: 4, Strictness: <L,U><L,U><L,U><L,U>, Inline: [0] -}
-f4d1dc745828387703bc6190fe3fc4d1
+c99c747b6a4602f4af05d00810b0327c
   $wansatzAaBC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
     -> Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
     -> (# Data.Map.Internal.Map
             (Index.Index 3 3 0 0 1 0 1 1) GHC.Real.Rational #)
-  {- Arity: 3, Strictness: <L,U><L,U><L,U>, Inline: [0] -}
-521d4c3bab747af8fd05b92f883c356d
+  {- Arity: 3, Strictness: <L,U><L,U><L,U>, Inline: [0],
+     Unfolding: (\ (w :: Data.Map.Internal.Map
+                           (Index.Linds_3 4) Index.Uind_20)
+                   (w1 :: Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20)
+                   (w2 :: Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9) ->
+                 case (Order3Int.ansatzAaBC17
+                         (case (Order3Int.ansatzAaBC16
+                                  BasicTensors.delta_20
+                                  (Order3Int.ansatzAaBC15
+                                     (BasicTensors.interArea w w1)
+                                     Order3Int.ansatzAaBC13
+                                       `cast`
+                                     (Tensor.Tensor
+                                        (Add0R (<1>_N))
+                                        (Add0R (<1>_N))
+                                        (Add0L (<0>_N))
+                                        (Add0L (<0>_N))
+                                        (Add0L (<0>_N))
+                                        (Add0L (<0>_N))
+                                        (Add0L (<1>_N))
+                                        (Add0L (<1>_N))
+                                        <GHC.Real.Rational>_R)_R)
+                                    `cast`
+                                  (Tensor.Tensor
+                                     (AddDef (<1>_N, <1>_N))
+                                     (AddDef (<1>_N, <1>_N))
+                                     (Add0L (<0>_N))
+                                     (Add0L (<0>_N))
+                                     (Add0L (<0>_N))
+                                     (Add0L (<0>_N))
+                                     (AddDef (<1>_N, <1>_N))
+                                     (AddDef (<1>_N, <1>_N))
+                                     <GHC.Real.Rational>_R)_R)
+                                 `cast`
+                               (Tensor.Tensor
+                                  (AddDef (<1>_N, <2>_N))
+                                  (AddDef (<1>_N, <2>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<2>_N))
+                                  (Add0L (<2>_N))
+                                  <GHC.Real.Rational>_R)_R of wild { Tensor.Tensor map1 ->
+                          case Tensor.$wtensorTranspose
+                                 @ 3
+                                 @ 3
+                                 @ 0
+                                 @ 0
+                                 @ 0
+                                 @ 0
+                                 @ 2
+                                 @ 2
+                                 @ GHC.Real.Rational
+                                 Order3Int.ansatzAaBC3
+                                 Order3Int.ansatzAaBC12
+                                 map1 of ww2 { Unit# ww3 ->
+                          case (Order3Int.ansatzAaBC11
+                                  (BasicTensors.interEqn1_2 w w1)
+                                  Order3Int.ansatzAaBC9
+                                    `cast`
+                                  (Tensor.Tensor
+                                     (AddDef (<1>_N, <1>_N))
+                                     (AddDef (<1>_N, <1>_N))
+                                     (Add0L (<0>_N))
+                                     (Add0L (<0>_N))
+                                     (Add0L (<0>_N))
+                                     (Add0L (<0>_N))
+                                     (Add0L (<0>_N))
+                                     (Add0L (<0>_N))
+                                     <GHC.Real.Rational>_R)_R)
+                                 `cast`
+                               (Tensor.Tensor
+                                  (AddDef (<1>_N, <2>_N))
+                                  (AddDef (<1>_N, <2>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0R (<2>_N))
+                                  (Add0R (<2>_N))
+                                  <GHC.Real.Rational>_R)_R of wild1 { Tensor.Tensor map2 ->
+                          let {
+                            map4 :: Data.Map.Internal.Map
+                                      (Index.Index 3 3 0 0 0 0 2 2) GHC.Real.Rational
+                            = Order3Int.$sunionWith5
+                                @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                                GHC.Real.$fEnumRatio_$s$c+
+                                map1
+                                (Order3Int.$sunionWith5
+                                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                                   GHC.Real.$fEnumRatio_$s$c+
+                                   ww3
+                                   map2)
+                          } in
+                          case Tensor.$wtensorTranspose
+                                 @ 3
+                                 @ 3
+                                 @ 0
+                                 @ 0
+                                 @ 0
+                                 @ 0
+                                 @ 2
+                                 @ 2
+                                 @ GHC.Real.Rational
+                                 Order3Int.ansatzAaBC5
+                                 Order3Int.ansatzAaBC8
+                                 map4 of ww1 { Unit# ww5 ->
+                          Tensor.Tensor
+                            @ 3
+                            @ 3
+                            @ 0
+                            @ 0
+                            @ 0
+                            @ 0
+                            @ 2
+                            @ 2
+                            @ GHC.Real.Rational
+                            (Order3Int.$sunionWith5
+                               @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                               GHC.Real.$fEnumRatio_$s$c+
+                               map4
+                               ww5) } } } })
+                         (case (Order3Int.ansatzAaBC7
+                                  BasicTensors.invEta
+                                  (BasicTensors.aSymI_2 w2))
+                                 `cast`
+                               (Tensor.Tensor
+                                  (Add0L (<0>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0L (<1>_N))
+                                  (Add0L (<0>_N))
+                                  (Add0R (<2>_N) ; Sym (AddDef (<1>_N, <1>_N)))
+                                  (Add0L (<2>_N) ; Sym (AddDef (<1>_N, <1>_N)))
+                                  <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
+                          case Tensor.$wtensorContractWith_3
+                                 @ 1
+                                 @ 1
+                                 @ GHC.Real.Rational
+                                 @ 0
+                                 @ 0
+                                 @ 0
+                                 @ 0
+                                 @ 1
+                                 @ 0
+                                 Order3Int.$stensorContractWith_1
+                                   `cast`
+                                 (Sym (GHC.TypeNats.N:SNat[0]
+                                           <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                                 Order3Int.$stensorContractWith_1
+                                   `cast`
+                                 (Sym (GHC.TypeNats.N:SNat[0]
+                                           <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                                 Order3Int.ansatzAaBC6
+                                 GHC.Real.$fEnumRatio_$s$c+
+                                 ww1 of ww2 { Unit# ww3 ->
+                          Tensor.Tensor
+                            @ 0
+                            @ 0
+                            @ 0
+                            @ 0
+                            @ 1
+                            @ 0
+                            @ 1
+                            @ 1
+                            @ GHC.Real.Rational
+                            ww3 } }))
+                        `cast`
+                      (Tensor.Tensor
+                         (Add0R (<3>_N))
+                         (Add0R (<3>_N))
+                         (Add0L (<0>_N))
+                         (Add0L (<0>_N))
+                         (Add0L (<1>_N))
+                         (Add0L (<0>_N))
+                         <2 GHC.TypeNats.+ 1>_N
+                         <2 GHC.TypeNats.+ 1>_N
+                         <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
+                 case Tensor.$wtensorContractWith_3
+                        @ 2
+                        @ 2
+                        @ GHC.Real.Rational
+                        @ 3
+                        @ 3
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        Order3Int.$stensorContractWith_7
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
+                        Order3Int.$stensorContractWith_7
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
+                        Order3Int.ansatzAaBC4
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww1 of ww2 { Unit# ww3 ->
+                 Tensor.$wtensorContractWith_3
+                   @ 1
+                   @ 1
+                   @ GHC.Real.Rational
+                   @ 3
+                   @ 3
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 0
+                   Order3Int.$stensorContractWith_1
+                     `cast`
+                   (Sym (GHC.TypeNats.N:SNat[0]
+                             <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                   Order3Int.$stensorContractWith_1
+                     `cast`
+                   (Sym (GHC.TypeNats.N:SNat[0]
+                             <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                   Order3Int.ansatzAaBC1
+                   GHC.Real.$fEnumRatio_$s$c+
+                   ww3
+                     `cast`
+                   (Data.Map.Internal.Map
+                      ((,,,,,,,)
+                         <Index.Ind 3 Index.Uind_20>_N
+                         <Index.Ind 3 Index.Lind_20>_N
+                         <Index.Ind 0 Index.Uind_19>_N
+                         <Index.Ind 0 Index.Lind_19>_N
+                         <Index.Ind 1 Index.Uind_9>_N
+                         <Index.Ind 0 Index.Lind_9>_N
+                         (Index.Ind (Sym (AddDef (<1>_N, <1>_N))) <Index.Uind_3>_N)_N
+                         (Index.Ind (Sym (AddDef (<1>_N, <1>_N))) <Index.Lind_3>_N)_N)_N
+                      <GHC.Real.Rational>_R)_R } }) -}
+3be9e707df1cd8a3692db8f5eed560c9
   $wansatzAaBbC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -477,14 +1006,14 @@ f4d1dc745828387703bc6190fe3fc4d1
 b20668e78fddd21cfbcb0df195ea7a3c
   $wf :: GHC.Prim.Int# -> GHC.Integer.Type.Integer -> GHC.Prim.Int#
   {- Arity: 2, Strictness: <S,U><S,U>, Inline: [0] -}
-ff36c378948f91786fe97ff05615d4d0
+10dc7c3bc9dbfbbf6457ade6c9008a64
   $wintABC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
     -> (# Data.Map.Internal.Map
             (Index.Index 2 3 0 0 0 0 2 2) GHC.Real.Rational #)
   {- Arity: 2, Strictness: <L,U><L,U>, Inline: [0] -}
-b2a2c6e846b68dfa56218eb4f2438bc3
+aff80577ba07c46f5082ac7bf718dcb4
   $wintAIBC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -493,21 +1022,30 @@ b2a2c6e846b68dfa56218eb4f2438bc3
     -> (# Data.Map.Internal.Map
             (Index.Index 2 3 0 0 1 1 2 2) GHC.Real.Rational #)
   {- Arity: 4, Strictness: <L,U><L,U><L,U><L,U>, Inline: [0] -}
-650be51050da4e5991efec96ce179794
+d4a52a732d1e28a038492f47e37d82b6
+  $wintAIBJC ::
+    Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
+    -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
+    -> Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
+    -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
+    -> (# Data.Map.Internal.Map
+            (Index.Index 2 3 0 0 2 2 2 2) GHC.Real.Rational #)
+  {- Arity: 4, Strictness: <L,U><L,U><L,U><L,U>, Inline: [0] -}
+aa0c26d6cdd5669e622a8a7a54a4ac1a
   $wintAaBbC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
     -> (# Data.Map.Internal.Map
             (Index.Index 2 3 0 0 0 0 4 4) GHC.Real.Rational #)
   {- Arity: 2, Strictness: <L,U><L,U>, Inline: [0] -}
-ec3c350353e0f5da7f37d3bfead5bb81
+84176617bccf92092cd1d9e7d1c80ebc
   $wintAaBbC2 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
     -> (# Data.Map.Internal.Map
             (Index.Index 2 3 0 0 0 0 4 4) GHC.Real.Rational #)
   {- Arity: 2, Strictness: <L,U><L,U>, Inline: [0] -}
-b33aa073f9ce1af4f357ff2f78d41754
+f46173aad2837233f2a41761fa333f35
   $wmkEqnSparseAnsatzABCTrian ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
     -> Data.Map.Internal.Map
@@ -515,7 +1053,7 @@ b33aa073f9ce1af4f357ff2f78d41754
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
   {- Arity: 2, Strictness: <L,U><S,1*U>, Inline: [0] -}
-f13fd5e82a010e5868bc9f121843ce2f
+cf4b73aaed88e0c0653a8919ea387811
   $wmkEqnSparseAnsatzAaBbCTrian ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
     -> Data.Map.Internal.Map
@@ -523,7 +1061,7 @@ f13fd5e82a010e5868bc9f121843ce2f
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
   {- Arity: 2, Strictness: <L,U><S,1*U>, Inline: [0] -}
-0fd4a847bf7831536afc8f82f68fefbb
+e40f6ffcadde831dccc1e491c0250c64
   $wmkEqnSparseIntABCTrian ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
     -> Data.Map.Internal.Map
@@ -531,7 +1069,15 @@ f13fd5e82a010e5868bc9f121843ce2f
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
   {- Arity: 2, Strictness: <L,U><S,1*U>, Inline: [0] -}
-72464f74f7757214a7abc6996805756a
+128936ce23dbf917702d9f0ba078b324
+  $wmkEqnSparseintAIBJCTrian ::
+    Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+    -> Data.Map.Internal.Map
+         (Index.Index 2 3 0 0 2 2 2 2) GHC.Real.Rational
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
+  {- Arity: 2, Strictness: <L,U><S,1*U>, Inline: [0] -}
+66521a686c4cd26fbc0bedaae1ac74ed
   $wmkEqnSparseintAaBbCTrian ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
     -> Data.Map.Internal.Map
@@ -546,7 +1092,7 @@ b5959151e5618a6adfa19d31b7e1b6dd
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-989a94fcd48ebdc7798a13033ec9cf34
+a99641929880b77786ceaad82ecaad40
   ansatzABC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -571,7 +1117,7 @@ b5959151e5618a6adfa19d31b7e1b6dd
                    @ 0
                    @ GHC.Real.Rational
                    ww1 }) -}
-6b2bb4d7ae3159fac23f17af3d5edadd
+3b32102ced10fd4ad365476a695df784
   ansatzABC2 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -596,7 +1142,7 @@ b5959151e5618a6adfa19d31b7e1b6dd
                    @ 0
                    @ GHC.Real.Rational
                    ww1 }) -}
-c1c9468df7d2aa2cdfa91f195ac182ca
+170242b748e9f08e738bbe46225aa973
   ansatzAIBC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -621,7 +1167,7 @@ c1c9468df7d2aa2cdfa91f195ac182ca
                    @ 0
                    @ GHC.Real.Rational
                    ww1 }) -}
-7765649d471c029ff79a1aafd54bac02
+6bbf389670720c6967764ec6fe591b4a
   ansatzAIBbC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -646,7 +1192,7 @@ c1c9468df7d2aa2cdfa91f195ac182ca
                    @ 1
                    @ GHC.Real.Rational
                    ww1 }) -}
-a85f5d5c8fd2ae24739a10a2bdba4bc3
+594805ae9af805d3827d1f16ba4b8f5b
   ansatzAaBC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -671,7 +1217,304 @@ a85f5d5c8fd2ae24739a10a2bdba4bc3
                    @ 1
                    @ GHC.Real.Rational
                    ww1 }) -}
-51f7750fd2786eb366aab2876cc0b3e9
+87948b9bf7f66ade25715e64c229ce48
+  ansatzAaBC1 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Order3Int.ansatzAaBC3, Order3Int.ansatzAaBC2)) -}
+519c15189201eaa1efe4aa62aaaa20bd
+  ansatzAaBC10 ::
+    Tensor.Tensor 1 1 0 0 0 0 0 0 GHC.Real.Rational
+    -> Tensor.Tensor 1 1 0 0 0 0 0 0 GHC.Real.Rational
+    -> Tensor.Tensor
+         (1 GHC.TypeNats.+ 1)
+         (1 GHC.TypeNats.+ 1)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         GHC.Real.Rational
+  {- Unfolding: (Tensor.tensorProductNumeric
+                   @ GHC.Real.Rational
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   GHC.Real.$fFractionalRatio_$s$fNumRatio
+                   GHC.Real.$fOrdRatio_$s$fEqRatio) -}
+778cb14b119ca6289a73732afe4f1d6c
+  ansatzAaBC11 ::
+    Tensor.Tensor 1 1 0 0 0 0 2 2 GHC.Real.Rational
+    -> Tensor.Tensor 2 2 0 0 0 0 0 0 GHC.Real.Rational
+    -> Tensor.Tensor
+         (1 GHC.TypeNats.+ 2)
+         (1 GHC.TypeNats.+ 2)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (2 GHC.TypeNats.+ 0)
+         (2 GHC.TypeNats.+ 0)
+         GHC.Real.Rational
+  {- Unfolding: (Tensor.tensorProductNumeric
+                   @ GHC.Real.Rational
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 2
+                   @ 2
+                   @ 2
+                   @ 2
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   GHC.Real.$fFractionalRatio_$s$fNumRatio
+                   GHC.Real.$fOrdRatio_$s$fEqRatio) -}
+354527840b659475565774ca3a10d8a2
+  ansatzAaBC12 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Order3Int.ansatzAaBC3, Order3Int.ansatzAaBC5)) -}
+4b832bc0c2743540476bcd4dbb5b655b
+  ansatzAaBC13 ::
+    Tensor.Tensor
+      (1 GHC.TypeNats.+ 0)
+      (1 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 1)
+      (0 GHC.TypeNats.+ 1)
+      GHC.Real.Rational
+  {- Unfolding: (Order3Int.ansatzAaBC14
+                   BasicTensors.delta_20
+                   BasicTensors.delta_3) -}
+0313e3f1fb35b97fd8943cff7ba8e45e
+  ansatzAaBC14 ::
+    Tensor.Tensor 1 1 0 0 0 0 0 0 GHC.Real.Rational
+    -> Tensor.Tensor 0 0 0 0 0 0 1 1 GHC.Real.Rational
+    -> Tensor.Tensor
+         (1 GHC.TypeNats.+ 0)
+         (1 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 1)
+         (0 GHC.TypeNats.+ 1)
+         GHC.Real.Rational
+  {- Unfolding: (Tensor.tensorProductNumeric
+                   @ GHC.Real.Rational
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 1
+                   GHC.Real.$fFractionalRatio_$s$fNumRatio
+                   GHC.Real.$fOrdRatio_$s$fEqRatio) -}
+49012fb0867a2d4be5290ca84d6ae710
+  ansatzAaBC15 ::
+    Tensor.Tensor 1 1 0 0 0 0 1 1 GHC.Real.Rational
+    -> Tensor.Tensor 1 1 0 0 0 0 1 1 GHC.Real.Rational
+    -> Tensor.Tensor
+         (1 GHC.TypeNats.+ 1)
+         (1 GHC.TypeNats.+ 1)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (1 GHC.TypeNats.+ 1)
+         (1 GHC.TypeNats.+ 1)
+         GHC.Real.Rational
+  {- Unfolding: (Tensor.tensorProductNumeric
+                   @ GHC.Real.Rational
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 1
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 1
+                   GHC.Real.$fFractionalRatio_$s$fNumRatio
+                   GHC.Real.$fOrdRatio_$s$fEqRatio) -}
+1d2517ded8f1146aee0ea434e4f07f7a
+  ansatzAaBC16 ::
+    Tensor.Tensor 1 1 0 0 0 0 0 0 GHC.Real.Rational
+    -> Tensor.Tensor 2 2 0 0 0 0 2 2 GHC.Real.Rational
+    -> Tensor.Tensor
+         (1 GHC.TypeNats.+ 2)
+         (1 GHC.TypeNats.+ 2)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 2)
+         (0 GHC.TypeNats.+ 2)
+         GHC.Real.Rational
+  {- Unfolding: (Tensor.tensorProductNumeric
+                   @ GHC.Real.Rational
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 2
+                   @ 2
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 2
+                   @ 2
+                   GHC.Real.$fFractionalRatio_$s$fNumRatio
+                   GHC.Real.$fOrdRatio_$s$fEqRatio) -}
+d115186fd7cf0d5396f54271f648ee4d
+  ansatzAaBC17 ::
+    Tensor.Tensor 3 3 0 0 0 0 2 2 GHC.Real.Rational
+    -> Tensor.Tensor 0 0 0 0 1 0 1 1 GHC.Real.Rational
+    -> Tensor.Tensor
+         (3 GHC.TypeNats.+ 0)
+         (3 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 1)
+         (0 GHC.TypeNats.+ 0)
+         (2 GHC.TypeNats.+ 1)
+         (2 GHC.TypeNats.+ 1)
+         GHC.Real.Rational
+  {- Unfolding: (Tensor.tensorProductNumeric
+                   @ GHC.Real.Rational
+                   @ 3
+                   @ 3
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 2
+                   @ 2
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 0
+                   @ 1
+                   @ 1
+                   GHC.Real.$fFractionalRatio_$s$fNumRatio
+                   GHC.Real.$fOrdRatio_$s$fEqRatio) -}
+6badb12f2188b508c7984bfea3560b8f
+  ansatzAaBC2 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
+904fbb2786fa1edfaf625ae2aadf8d5d
+  ansatzAaBC3 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 1#) -}
+073f0325165cd73d740c17960b6b7c83
+  ansatzAaBC4 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Order3Int.ansatzAaBC2, Order3Int.ansatzAaBC5)) -}
+2e1b37c87c7e83b156fc481f412d5528
+  ansatzAaBC5 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 2#) -}
+267f256b01f90f561f70aa72131d155e
+  ansatzAaBC6 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Order3Int.ansatzAaBC3, Order3Int.ansatzAaBC3)) -}
+fc0dc8a3518b324e6eb78a09cd22a161
+  ansatzAaBC7 ::
+    Tensor.Tensor 0 0 0 0 0 0 2 0 GHC.Real.Rational
+    -> Tensor.Tensor 0 0 0 0 1 0 0 2 GHC.Real.Rational
+    -> Tensor.Tensor
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 1)
+         (0 GHC.TypeNats.+ 0)
+         (2 GHC.TypeNats.+ 0)
+         (0 GHC.TypeNats.+ 2)
+         GHC.Real.Rational
+  {- Unfolding: (Tensor.tensorProductNumeric
+                   @ GHC.Real.Rational
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 2
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 2
+                   GHC.Real.$fFractionalRatio_$s$fNumRatio
+                   GHC.Real.$fOrdRatio_$s$fEqRatio) -}
+dcb84c3829f62ef59c7750c5462e3d9c
+  ansatzAaBC8 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Order3Int.ansatzAaBC2, Order3Int.ansatzAaBC3)) -}
+5e7af5b642eef903daf7c3cd297b4297
+  ansatzAaBC9 ::
+    Tensor.Tensor
+      (1 GHC.TypeNats.+ 1)
+      (1 GHC.TypeNats.+ 1)
+      (0 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 0)
+      (0 GHC.TypeNats.+ 0)
+      GHC.Real.Rational
+  {- Unfolding: (Order3Int.ansatzAaBC10
+                   BasicTensors.delta_20
+                   BasicTensors.delta_20) -}
+dc43fb5b5833a510113fb6cc57e44dd6
   ansatzAaBbC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -696,7 +1539,7 @@ a85f5d5c8fd2ae24739a10a2bdba4bc3
                    @ 2
                    @ GHC.Real.Rational
                    ww1 }) -}
-ee21dfb81b3dda22022d0e276a44cfe5
+f2310b763e9b8ac9a265c840dfd49a30
   intABC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -721,7 +1564,7 @@ ee21dfb81b3dda22022d0e276a44cfe5
                    @ 2
                    @ GHC.Real.Rational
                    ww1 }) -}
-516dc552e4250227096a34b8a159f9dd
+415ce0c037b76ee99e6fd17b4a40dabb
   intAIBC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -746,7 +1589,32 @@ ee21dfb81b3dda22022d0e276a44cfe5
                    @ 2
                    @ GHC.Real.Rational
                    ww1 }) -}
-a0cd70ffee261630a8d36007a1d9ee90
+32e31a5dcce00d2b19a6e8d6c3181898
+  intAIBJC ::
+    Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
+    -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
+    -> Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9
+    -> Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9
+    -> Tensor.Tensor 2 3 0 0 2 2 2 2 GHC.Real.Rational
+  {- Arity: 4, Strictness: <L,U><L,U><L,U><L,U>m, Inline: [0],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20)
+                   (w1 :: Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20)
+                   (w2 :: Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9)
+                   (w3 :: Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9) ->
+                 case Order3Int.$wintAIBJC w w1 w2 w3 of ww { Unit# ww1 ->
+                 Tensor.Tensor
+                   @ 2
+                   @ 3
+                   @ 0
+                   @ 0
+                   @ 2
+                   @ 2
+                   @ 2
+                   @ 2
+                   @ GHC.Real.Rational
+                   ww1 }) -}
+673fe62550e18878cc9e8ffa29bc139b
   intAaBbC ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -771,7 +1639,7 @@ a0cd70ffee261630a8d36007a1d9ee90
                    @ 4
                    @ GHC.Real.Rational
                    ww1 }) -}
-f7f2ed833ae615a9f1ed9e5faf7f84ab
+d05624d639fd6e24e05e3bc2035f0dce
   intAaBbC2 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -796,7 +1664,7 @@ f7f2ed833ae615a9f1ed9e5faf7f84ab
                    @ 4
                    @ GHC.Real.Rational
                    ww1 }) -}
-a82c04b8545a5ffd53ceaafdf60051d7
+bdba7efda9a3c61d214b601ad8ee3637
   mkEqnSparseAnsatzABC2 ::
     Tensor.Tensor 3 3 0 0 1 0 0 0 GHC.Real.Rational
     -> Data.Map.Internal.Map
@@ -804,24 +1672,21 @@ a82c04b8545a5ffd53ceaafdf60051d7
   {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 3 3 0 0 1 0 0 0 GHC.Real.Rational) ->
-                 {__scc {main:Order3Int.mkEqnSparseAnsatzABC2} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                          Order3Int.$sfromList
-                                                                            @ (GHC.Real.Ratio
-                                                                                 GHC.Integer.Type.Integer)
-                                                                            (Order3Int.mkEqnSparseAnsatzABC2_go13
-                                                                               (GHC.Types.[]
-                                                                                  @ ((GHC.Types.Int,
-                                                                                      GHC.Types.Int),
-                                                                                     GHC.Real.Rational))
-                                                                               map1) }) -}
-b488342f12e807fcfb7dfabe9975c341
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order3Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order3Int.mkEqnSparseAnsatzABC2_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+a32e93d7b996f45d233f7aa5015a0101
   mkEqnSparseAnsatzABC2_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 3 3 0 0 1 0 0 0) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-afdbda9455ece9f575e3a347a5e0eef8
+ef42af0a5cfab0f01e162b9fdfafe1e8
   mkEqnSparseAnsatzABCTrian ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
     -> Tensor.Tensor 3 3 0 0 1 0 0 0 GHC.Real.Rational
@@ -833,7 +1698,7 @@ afdbda9455ece9f575e3a347a5e0eef8
                    (w1 :: Tensor.Tensor 3 3 0 0 1 0 0 0 GHC.Real.Rational) ->
                  case w1 of ww { Tensor.Tensor ww1 ->
                  Order3Int.$wmkEqnSparseAnsatzABCTrian w ww1 }) -}
-363a1339f29d02d55c8130a173225bd2
+cfca11c853fbed26276d231caec0f3b2
   mkEqnSparseAnsatzAIBC ::
     Tensor.Tensor 3 3 0 0 2 1 0 0 GHC.Real.Rational
     -> Data.Map.Internal.Map
@@ -841,24 +1706,21 @@ afdbda9455ece9f575e3a347a5e0eef8
   {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 3 3 0 0 2 1 0 0 GHC.Real.Rational) ->
-                 {__scc {main:Order3Int.mkEqnSparseAnsatzAIBC} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                          Order3Int.$sfromList
-                                                                            @ (GHC.Real.Ratio
-                                                                                 GHC.Integer.Type.Integer)
-                                                                            (Order3Int.mkEqnSparseAnsatzAIBC_go13
-                                                                               (GHC.Types.[]
-                                                                                  @ ((GHC.Types.Int,
-                                                                                      GHC.Types.Int),
-                                                                                     GHC.Real.Rational))
-                                                                               map1) }) -}
-bc905034818f2b93455e49f3d74982e5
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order3Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order3Int.mkEqnSparseAnsatzAIBC_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+05eddc37718651582f9ffd8d864ce990
   mkEqnSparseAnsatzAIBC_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 3 3 0 0 2 1 0 0) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-f8efc5a2465e6ef6644603fd01d8c194
+34fe30911c549912ae92fd20fd617bfb
   mkEqnSparseAnsatzAIBbC ::
     Tensor.Tensor 3 3 0 0 2 1 1 1 GHC.Real.Rational
     -> Data.Map.Internal.Map
@@ -866,24 +1728,21 @@ f8efc5a2465e6ef6644603fd01d8c194
   {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 3 3 0 0 2 1 1 1 GHC.Real.Rational) ->
-                 {__scc {main:Order3Int.mkEqnSparseAnsatzAIBbC} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                           Order3Int.$sfromList
-                                                                             @ (GHC.Real.Ratio
-                                                                                  GHC.Integer.Type.Integer)
-                                                                             (Order3Int.mkEqnSparseAnsatzAIBbC_go13
-                                                                                (GHC.Types.[]
-                                                                                   @ ((GHC.Types.Int,
-                                                                                       GHC.Types.Int),
-                                                                                      GHC.Real.Rational))
-                                                                                map1) }) -}
-44a9ac145d9c68e090d9dd1f9654f366
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order3Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order3Int.mkEqnSparseAnsatzAIBbC_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+e42653b273762255c894989b6e115d99
   mkEqnSparseAnsatzAIBbC_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 3 3 0 0 2 1 1 1) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-1ef9ef55b3553ef567144b91f8f433ef
+27170017bdc996b38e399b3d01661f94
   mkEqnSparseAnsatzAaBC ::
     Tensor.Tensor 3 3 0 0 1 0 1 1 GHC.Real.Rational
     -> Data.Map.Internal.Map
@@ -891,24 +1750,21 @@ f8efc5a2465e6ef6644603fd01d8c194
   {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 3 3 0 0 1 0 1 1 GHC.Real.Rational) ->
-                 {__scc {main:Order3Int.mkEqnSparseAnsatzAaBC} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                          Order3Int.$sfromList
-                                                                            @ (GHC.Real.Ratio
-                                                                                 GHC.Integer.Type.Integer)
-                                                                            (Order3Int.mkEqnSparseAnsatzAaBC_go13
-                                                                               (GHC.Types.[]
-                                                                                  @ ((GHC.Types.Int,
-                                                                                      GHC.Types.Int),
-                                                                                     GHC.Real.Rational))
-                                                                               map1) }) -}
-8a024fcaa75a9dc7d1a40f7dfbedc007
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order3Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order3Int.mkEqnSparseAnsatzAaBC_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+63aa4484b25f9ff72a142baaf0153846
   mkEqnSparseAnsatzAaBC_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 3 3 0 0 1 0 1 1) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-2381aca7ff667582c84ed05b3375644e
+2b61de9d8b3ce683f9a77375d8801bb4
   mkEqnSparseAnsatzAaBbC ::
     Tensor.Tensor 3 3 0 0 1 0 2 2 GHC.Real.Rational
     -> Data.Map.Internal.Map
@@ -916,17 +1772,14 @@ f8efc5a2465e6ef6644603fd01d8c194
   {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 3 3 0 0 1 0 2 2 GHC.Real.Rational) ->
-                 {__scc {main:Order3Int.mkEqnSparseAnsatzAaBbC} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                           Order3Int.$sfromList
-                                                                             @ (GHC.Real.Ratio
-                                                                                  GHC.Integer.Type.Integer)
-                                                                             (Order3Int.mkEqnSparseAnsatzAaBbC_go13
-                                                                                (GHC.Types.[]
-                                                                                   @ ((GHC.Types.Int,
-                                                                                       GHC.Types.Int),
-                                                                                      GHC.Real.Rational))
-                                                                                map1) }) -}
-4d90c5042e5c52a5c5f0c22759443483
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order3Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order3Int.mkEqnSparseAnsatzAaBbC_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+33915ea2973b081fbe5b6cf7d2bf24a8
   mkEqnSparseAnsatzAaBbCTrian ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
     -> Tensor.Tensor 3 3 0 0 1 0 2 2 GHC.Real.Rational
@@ -938,14 +1791,14 @@ f8efc5a2465e6ef6644603fd01d8c194
                    (w1 :: Tensor.Tensor 3 3 0 0 1 0 2 2 GHC.Real.Rational) ->
                  case w1 of ww { Tensor.Tensor ww1 ->
                  Order3Int.$wmkEqnSparseAnsatzAaBbCTrian w ww1 }) -}
-c7fd697f35026c3c4302017f3abf61e8
+b3a5761d5fcf7c8b98cdd25390df4ab2
   mkEqnSparseAnsatzAaBbC_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 3 3 0 0 1 0 2 2) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-a96463fa42862e8509fc194d2ac284f1
+9b0a7160d1ca42ac3319e8d77d79d12f
   mkEqnSparseIntABC2 ::
     Tensor.Tensor 2 3 0 0 0 0 2 2 GHC.Real.Rational
     -> Data.Map.Internal.Map
@@ -953,24 +1806,21 @@ a96463fa42862e8509fc194d2ac284f1
   {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 2 3 0 0 0 0 2 2 GHC.Real.Rational) ->
-                 {__scc {main:Order3Int.mkEqnSparseIntABC2} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                       Order3Int.$sfromList
-                                                                         @ (GHC.Real.Ratio
-                                                                              GHC.Integer.Type.Integer)
-                                                                         (Order3Int.mkEqnSparseIntABC2_go13
-                                                                            (GHC.Types.[]
-                                                                               @ ((GHC.Types.Int,
-                                                                                   GHC.Types.Int),
-                                                                                  GHC.Real.Rational))
-                                                                            map1) }) -}
-38551d764ba619ffdb67bf5c27d49b44
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order3Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order3Int.mkEqnSparseIntABC2_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+5018bd362c6d484ecf92258d5a8c3226
   mkEqnSparseIntABC2_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 2 3 0 0 0 0 2 2) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-7f3a6795c8aaec5e50228edd92925fc5
+874ac8b366910158034ef58a2cb074b6
   mkEqnSparseIntABCTrian ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
     -> Tensor.Tensor 2 3 0 0 0 0 2 2 GHC.Real.Rational
@@ -982,7 +1832,7 @@ a96463fa42862e8509fc194d2ac284f1
                    (w1 :: Tensor.Tensor 2 3 0 0 0 0 2 2 GHC.Real.Rational) ->
                  case w1 of ww { Tensor.Tensor ww1 ->
                  Order3Int.$wmkEqnSparseIntABCTrian w ww1 }) -}
-5295fa10134586df2748d0ce1b76fd0a
+ad69dbf5d306a0cd96b944f42f4dd7d6
   mkEqnSparseintAIBC ::
     Tensor.Tensor 2 3 0 0 1 1 2 2 GHC.Real.Rational
     -> Data.Map.Internal.Map
@@ -990,24 +1840,33 @@ a96463fa42862e8509fc194d2ac284f1
   {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 2 3 0 0 1 1 2 2 GHC.Real.Rational) ->
-                 {__scc {main:Order3Int.mkEqnSparseintAIBC} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                       Order3Int.$sfromList
-                                                                         @ (GHC.Real.Ratio
-                                                                              GHC.Integer.Type.Integer)
-                                                                         (Order3Int.mkEqnSparseintAIBC_go13
-                                                                            (GHC.Types.[]
-                                                                               @ ((GHC.Types.Int,
-                                                                                   GHC.Types.Int),
-                                                                                  GHC.Real.Rational))
-                                                                            map1) }) -}
-5f33d943b024e38c960775b317ef15b5
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order3Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order3Int.mkEqnSparseintAIBC_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+f0464628818e460d8bd92b75ad269f6c
   mkEqnSparseintAIBC_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 2 3 0 0 1 1 2 2) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-55ed5476e2f680f7cb2a043da84d1afc
+f8138be0a11977f426afc4a607f3f46c
+  mkEqnSparseintAIBJCTrian ::
+    Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
+    -> Tensor.Tensor 2 3 0 0 2 2 2 2 GHC.Real.Rational
+    -> Data.Map.Internal.Map
+         (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
+  {- Arity: 2, Strictness: <L,U><S(S),1*U(1*U)>, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int)
+                   (w1 :: Tensor.Tensor 2 3 0 0 2 2 2 2 GHC.Real.Rational) ->
+                 case w1 of ww { Tensor.Tensor ww1 ->
+                 Order3Int.$wmkEqnSparseintAIBJCTrian w ww1 }) -}
+df0e7ac98dce11362554da9051a5f216
   mkEqnSparseintAaBbC ::
     Tensor.Tensor 2 3 0 0 0 0 4 4 GHC.Real.Rational
     -> Data.Map.Internal.Map
@@ -1015,17 +1874,14 @@ a96463fa42862e8509fc194d2ac284f1
   {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 2 3 0 0 0 0 4 4 GHC.Real.Rational) ->
-                 {__scc {main:Order3Int.mkEqnSparseintAaBbC} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                        Order3Int.$sfromList
-                                                                          @ (GHC.Real.Ratio
-                                                                               GHC.Integer.Type.Integer)
-                                                                          (Order3Int.mkEqnSparseintAaBbC_go13
-                                                                             (GHC.Types.[]
-                                                                                @ ((GHC.Types.Int,
-                                                                                    GHC.Types.Int),
-                                                                                   GHC.Real.Rational))
-                                                                             map1) }) -}
-f4a7ab6635a02dfce74171bd4ed3a497
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order3Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order3Int.mkEqnSparseintAaBbC_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+195d245cf151a9f5b0b91db59fc3c112
   mkEqnSparseintAaBbCTrian ::
     Data.Map.Internal.Map [GHC.Types.Int] GHC.Types.Int
     -> Tensor.Tensor 2 3 0 0 0 0 4 4 GHC.Real.Rational
@@ -1037,7 +1893,7 @@ f4a7ab6635a02dfce74171bd4ed3a497
                    (w1 :: Tensor.Tensor 2 3 0 0 0 0 4 4 GHC.Real.Rational) ->
                  case w1 of ww { Tensor.Tensor ww1 ->
                  Order3Int.$wmkEqnSparseintAaBbCTrian w ww1 }) -}
-d64bdf8865728df7d54ac2aa74491888
+7854742b11960ba976f085806e15c693
   mkEqnSparseintAaBbC_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
@@ -1061,6 +1917,132 @@ d64bdf8865728df7d54ac2aa74491888
                                 @ k1
                                 $dOrd
   = Order3Int.$smapKeysWith @ a @ k1
+"SPEC/Order3Int unionWith @ (Index 2 3 0 0 0 0 4 4) _" [orphan] forall @ a
+                                                                       ($dOrd :: GHC.Classes.Ord
+                                                                                   (Index.Index
+                                                                                      2
+                                                                                      3
+                                                                                      0
+                                                                                      0
+                                                                                      0
+                                                                                      0
+                                                                                      4
+                                                                                      4))
+  Data.Map.Strict.Internal.unionWith @ (Index.Uinds_20 2,
+                                        Index.Linds_20 3, Index.Uinds_19 0, Index.Linds_19 0,
+                                        Index.Uinds_9 0, Index.Linds_9 0, Index.Uinds_3 4,
+                                        Index.Linds_3 4)
+                                     @ a
+                                     $dOrd
+  = Order3Int.$sunionWith2 @ a
+"SPEC/Order3Int unionWith @ (Index 2 3 0 0 2 2 2 2) _" [orphan] forall @ a
+                                                                       ($dOrd :: GHC.Classes.Ord
+                                                                                   (Index.Index
+                                                                                      2
+                                                                                      3
+                                                                                      0
+                                                                                      0
+                                                                                      2
+                                                                                      2
+                                                                                      2
+                                                                                      2))
+  Data.Map.Strict.Internal.unionWith @ (Index.Uinds_20 2,
+                                        Index.Linds_20 3, Index.Uinds_19 0, Index.Linds_19 0,
+                                        Index.Uinds_9 2, Index.Linds_9 2, Index.Uinds_3 2,
+                                        Index.Linds_3 2)
+                                     @ a
+                                     $dOrd
+  = Order3Int.$sunionWith @ a
+"SPEC/Order3Int unionWith @ (Index 3 3 0 0 0 0 1 1) _" [orphan] forall @ a
+                                                                       ($dOrd :: GHC.Classes.Ord
+                                                                                   (Index.Index
+                                                                                      3
+                                                                                      3
+                                                                                      0
+                                                                                      0
+                                                                                      0
+                                                                                      0
+                                                                                      1
+                                                                                      1))
+  Data.Map.Strict.Internal.unionWith @ (Index.Uinds_20 3,
+                                        Index.Linds_20 3, Index.Uinds_19 0, Index.Linds_19 0,
+                                        Index.Uinds_9 0, Index.Linds_9 0, Index.Uinds_3 1,
+                                        Index.Linds_3 1)
+                                     @ a
+                                     $dOrd
+  = Order3Int.$sunionWith6 @ a
+"SPEC/Order3Int unionWith @ (Index 3 3 0 0 0 0 2 2) _" [orphan] forall @ a
+                                                                       ($dOrd :: GHC.Classes.Ord
+                                                                                   (Index.Index
+                                                                                      3
+                                                                                      3
+                                                                                      0
+                                                                                      0
+                                                                                      0
+                                                                                      0
+                                                                                      2
+                                                                                      2))
+  Data.Map.Strict.Internal.unionWith @ (Index.Uinds_20 3,
+                                        Index.Linds_20 3, Index.Uinds_19 0, Index.Linds_19 0,
+                                        Index.Uinds_9 0, Index.Linds_9 0, Index.Uinds_3 2,
+                                        Index.Linds_3 2)
+                                     @ a
+                                     $dOrd
+  = Order3Int.$sunionWith5 @ a
+"SPEC/Order3Int unionWith @ (Index 3 3 0 0 0 0 3 3) _" [orphan] forall @ a
+                                                                       ($dOrd :: GHC.Classes.Ord
+                                                                                   (Index.Index
+                                                                                      3
+                                                                                      3
+                                                                                      0
+                                                                                      0
+                                                                                      0
+                                                                                      0
+                                                                                      3
+                                                                                      3))
+  Data.Map.Strict.Internal.unionWith @ (Index.Uinds_20 3,
+                                        Index.Linds_20 3, Index.Uinds_19 0, Index.Linds_19 0,
+                                        Index.Uinds_9 0, Index.Linds_9 0, Index.Uinds_3 3,
+                                        Index.Linds_3 3)
+                                     @ a
+                                     $dOrd
+  = Order3Int.$sunionWith3 @ a
+"SPEC/Order3Int unionWith @ (Index 3 3 0 0 1 1 1 1) _" [orphan] forall @ a
+                                                                       ($dOrd :: GHC.Classes.Ord
+                                                                                   (Index.Index
+                                                                                      3
+                                                                                      3
+                                                                                      0
+                                                                                      0
+                                                                                      1
+                                                                                      1
+                                                                                      1
+                                                                                      1))
+  Data.Map.Strict.Internal.unionWith @ (Index.Uinds_20 3,
+                                        Index.Linds_20 3, Index.Uinds_19 0, Index.Linds_19 0,
+                                        Index.Uinds_9 1, Index.Linds_9 1, Index.Uinds_3 1,
+                                        Index.Linds_3 1)
+                                     @ a
+                                     $dOrd
+  = Order3Int.$sunionWith4 @ a
+"SPEC/Order3Int unionWith @ (Index 3 3 0 0 2 1 1 1) _" [orphan] forall @ a
+                                                                       ($dOrd :: GHC.Classes.Ord
+                                                                                   (Index.Index
+                                                                                      3
+                                                                                      3
+                                                                                      0
+                                                                                      0
+                                                                                      2
+                                                                                      1
+                                                                                      1
+                                                                                      1))
+  Data.Map.Strict.Internal.unionWith @ (Index.Uinds_20 3,
+                                        Index.Linds_20 3, Index.Uinds_19 0, Index.Linds_19 0,
+                                        Index.Uinds_9 2, Index.Linds_9 1, Index.Uinds_3 1,
+                                        Index.Linds_3 1)
+                                     @ a
+                                     $dOrd
+  = Order3Int.$sunionWith1 @ a
 vectorised variables:
 vectorised tycons:
 vectorised reused tycons:

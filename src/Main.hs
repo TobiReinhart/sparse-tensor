@@ -42,10 +42,11 @@ module Main (
     import Order3Int
     import qualified Data.Map.Strict as M
     import PerturbationTree
+    import Data.Tree
+    import Data.Functor
      
 
     main = do
-
         let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
         let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
 
@@ -812,10 +813,18 @@ module Main (
         --print $ length $ getVarsForest epsTrees14
 
 
-        writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree10.txt" $ printForest epsTrees14
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Tree10.txt" $ printForest epsTrees14
 
+        --putStr $ concat $ map drawTree.(map (fmap show)) $ mkForest [(1,2),(2,3),(5,6),(6,8)] [] 
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Eps.txt"  $ show   $ getAllIndsEpsilon [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
 
         --putStr $ printForest etaTrees18 
+
+        let intAIBJC = mkEqnSparseintAIBJCTrian trian $ intAIBJC map1Area map2Area map1Metric map2Metric
+
+        writeFile "/cip/austausch/cgg/intAIBJC.txt" $ showEqnsFlatMatLab intAIBJC
+
 
 
 

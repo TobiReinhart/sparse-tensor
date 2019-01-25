@@ -839,7 +839,6 @@ module Main (
 
         putStr  pdeOrd2
         
-        putStr  pdeOrd2
 
 
 

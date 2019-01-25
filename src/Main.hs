@@ -833,9 +833,9 @@ module Main (
 
         let pdeOrd3Eval = evalPdeRand 315 trian flatAreaM totalPdeOrd3
 
-        writeFile "/cip/austausch/cgg/pdeOrd2.txt" $ evalPdeRand 315 trian flatAreaM pdeTotal
+        --writeFile "/cip/austausch/cgg/pdeOrd2.txt" $ evalPdeRand 315 trian flatAreaM pdeTotal
 
-
+        print trian 
 
 
 

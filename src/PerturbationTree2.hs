@@ -115,14 +115,14 @@ module PerturbationTree2 (
                 where
                     nextNode = head $ M.keys m
     
-    
+    {-
     sortForest :: AnsatzForest -> AnsatzForest
     sortForest EmptyForest = EmptyForest
     sortForest (Leaf var) = Leaf var
     sortForest (Forest m) = foldr addForests EmptyForest newM 
             where
                 sortedSubForest = M.map (forestMap.sortForest) m 
-                newM = map (M.map (\(k,f) -> if (isSortedNode k f) then (k,f) else (swap1Node k f))) $ M.assocs $ sortedSubForest
+                newM = map (\(k,f) -> if (isSortedNode k f) then (k,f) else (swap1Node k f)) $ M.assocs $ sortedSubForest
     
              
     swap1Node :: AnsatzNode -> AnsatzForest -> AnsatzForest
@@ -130,7 +130,7 @@ module PerturbationTree2 (
                 where
                     l = M.assocs m 
     
-    
+    -}
     
 
     

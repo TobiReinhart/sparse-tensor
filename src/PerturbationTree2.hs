@@ -73,7 +73,7 @@ module PerturbationTree2 (
         compare (EpsilonNode eps1) (EpsilonNode eps2) = compare eps1 eps2
         compare (EtaNode _) (EpsilonNode _) =  GT
 
-    data AnsatzForest = Leaf Var | Forest (M.Map AnsatzNode AnsatzForest) | EmptyForest deriving (Show, Eq)
+    data AnsatzForest = Leaf Var | Forest { forestMap :: (M.Map AnsatzNode AnsatzForest)}| EmptyForest deriving (Show, Eq)
 
     isLeaf :: AnsatzForest -> Bool
     isLeaf (Leaf var) = True
@@ -90,6 +90,8 @@ module PerturbationTree2 (
     --add 2 sorted forests
 
     addForests :: AnsatzForest -> AnsatzForest -> AnsatzForest
+    addForests ans EmptyForest = ans
+    addForests EmptyForest ans = ans 
     addForests (Leaf (fac1,lab1)) (Leaf (fac2,lab2))
             | lab1 /= lab2 = error "should not be necessary to add Forests with different label"
             | fac1 + fac2 == 0 = EmptyForest
@@ -112,19 +114,25 @@ module PerturbationTree2 (
                 | otherwise = node < nextNode
                 where
                     nextNode = head $ M.keys m
+    
     {-
     sortForest :: AnsatzForest -> AnsatzForest
+    sortForest EmptyForest = EmptyForest
     sortForest (Leaf var) = Leaf var
-    sortForest (Forest m) = M.foldrWithKey 
+    sortForest (Forest m) = foldr addForests newM 
             where
-                sortedSubForest = Forest $ (M.map sortForest) m 
-                foldF = \node 
+                sortedSubForest = (M.map (forestMap.sortForest) m 
+                sortedF = \k f ->  if (isSortedNode k f) then f else (swap1Node k f)
+                newM = map sortedF $ M.assocs $ sortedSubForest
+    
              
-    swap1Node :: (AnsatzNode,AnsatzForest) -> [(AnsatzNode,AnsatzForest)]
-    swap1Node (node,Forest m) = M.traverseWithKey (\k a -> M.singleton $ (a))
+    swap1Node :: AnsatzNode -> AnsatzForest -> AnsatzForest
+    swap1Node node (Forest m) = foldr addForests EmptyForest $ map (\(k,f) -> Forest $ M.singleton k $ sortForest $ Forest $ M.singleton node f) l 
+                where
+                    l = M.assocs m 
+    
+    
     -}
-    
-    
 
     
 

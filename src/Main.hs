@@ -126,7 +126,7 @@ module Main (
 
         let pdeProlonged = prolongPdeAll mults pde
 
-        let pdeTotal = combinePdes pde pdeProlonged
+        let pdeTotal = combinePdesIvar pde pdeProlonged
 
         --now the same for the metric
 
@@ -821,9 +821,23 @@ module Main (
 
         --putStr $ printForest etaTrees18 
 
-        let intCondAIBJC = mkEqnSparseintAIBJCTrian trian $ intAIBJC map1Area map2Area map1Metric map2Metric
+        --let intCondAIBJC = mkEqnSparseintAIBJCTrian trian $ intAIBJC map1Area map2Area map1Metric map2Metric
 
-        writeFile "/cip/austausch/cgg/intAIBJC.txt" $ showEqnsFlatMatLab intCondAIBJC
+        --writeFile "/cip/austausch/cgg/intAIBJC.txt" $ showEqnsFlatMatLab intCondAIBJC
+
+        --print $ delta_20
+
+        let pdeProlongedOrd3 = prolongPdeAll mults pdeProlonged
+
+        let totalPdeOrd3 = combinePdesIvar pde $ combinePdesIvar pdeProlonged pdeProlongedOrd3
+
+        let pdeOrd3Eval = evalPdeRand 315 trian flatAreaM totalPdeOrd3
+
+        writeFile "/cip/austausch/cgg/pdeOrd3.txt" $ pdeOrd3Eval
+
+
+
+
 
 
 

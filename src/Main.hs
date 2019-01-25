@@ -835,7 +835,9 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/pdeOrd2.txt" $ evalPdeRand 315 trian flatAreaM pdeTotal
 
-        print totalPdeOrd3 
+        putStr $ pdeTotal
+        
+        putStr $ pdeTotal
 
 
 

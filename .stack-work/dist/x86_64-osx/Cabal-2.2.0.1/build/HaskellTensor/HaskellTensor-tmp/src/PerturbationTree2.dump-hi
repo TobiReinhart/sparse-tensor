@@ -1,0 +1,2442 @@
+
+==================== FINAL INTERFACE ====================
+2019-01-26 20:02:18.832812 UTC
+
+interface main:PerturbationTree2 8043
+  interface hash: efa00836bbbade134b84bb2531251431
+  ABI hash: 150966dd162f3b1e3c31e2afbadd8abd
+  export-list hash: a65b6c3a7faee712440f32ed46eedeac
+  orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
+  flag hash: 707c86cfbee6a9c65f08462953a21ad8
+  opt_hash: 14e536840aca4e889cad654e6f9b79c1
+  hpc_hash: 93b885adfe0da089cdf634904fd59f71
+  sig of: Nothing
+  used TH splices: False
+  where
+exports:
+  PerturbationTree2.flattenForest
+  PerturbationTree2.getEpsForest
+  PerturbationTree2.getEpsilonInds
+  PerturbationTree2.getEtaForest
+  PerturbationTree2.getEtaInds
+  PerturbationTree2.getForestLabels
+  PerturbationTree2.mapNodes
+  PerturbationTree2.mkAllVars
+  PerturbationTree2.mkEpsilonList
+  PerturbationTree2.mkEtaList
+  PerturbationTree2.mkForestFromAscList
+  PerturbationTree2.printAnsatz
+  PerturbationTree2.reduceAnsatzEps
+  PerturbationTree2.reduceAnsatzEta
+  PerturbationTree2.relabelAnsatzForest
+  PerturbationTree2.showAnsatzNode
+  PerturbationTree2.symAnsatzForestEps
+  PerturbationTree2.symAnsatzForestEta
+  PerturbationTree2.AnsatzForest
+  PerturbationTree2.AnsatzNode
+  PerturbationTree2.Symmetry
+module dependencies:
+package dependencies: array-0.5.2.0 base-4.11.1.0*
+                      containers-0.5.11.0* deepseq-1.4.3.0 ghc-prim-0.5.2.0
+                      integer-gmp-1.0.2.0
+orphans: base-4.11.1.0:GHC.Float base-4.11.1.0:GHC.Base
+family instance modules: base-4.11.1.0:Control.Applicative
+                         base-4.11.1.0:Data.Complex base-4.11.1.0:Data.Functor.Compose
+                         base-4.11.1.0:Data.Functor.Const
+                         base-4.11.1.0:Data.Functor.Identity
+                         base-4.11.1.0:Data.Functor.Product base-4.11.1.0:Data.Functor.Sum
+                         base-4.11.1.0:Data.Monoid base-4.11.1.0:Data.Semigroup
+                         base-4.11.1.0:Data.Semigroup.Internal base-4.11.1.0:Data.Version
+                         base-4.11.1.0:Data.Void base-4.11.1.0:GHC.Exts
+                         base-4.11.1.0:GHC.Generics base-4.11.1.0:GHC.IO.Exception
+                         containers-0.5.11.0:Data.IntMap.Internal
+                         containers-0.5.11.0:Data.IntSet.Internal
+                         containers-0.5.11.0:Data.Map.Internal
+                         containers-0.5.11.0:Data.Set.Internal
+import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
+import  -/  base-4.11.1.0:Data.Functor f522c3501272159820fd6f242510732f
+import  -/  base-4.11.1.0:Data.List 83dc843e47bfc0c5af51e19c6f3476d5
+import  -/  base-4.11.1.0:Data.Maybe 409c3da2b142470b68be39ce1d97a9f7
+import  -/  base-4.11.1.0:Data.OldList 1b35aa3c6805ff7c8887a35a866fe006
+import  -/  base-4.11.1.0:GHC.Base 604111500e81281298777e721c75643b
+import  -/  base-4.11.1.0:GHC.Err 5e26aa744981f14e0f1e4d29c44ac52e
+import  -/  base-4.11.1.0:GHC.List 1e4357702d8d00cded0703bd293e50e8
+import  -/  base-4.11.1.0:GHC.Num 8e54b26dce4495382dc4b50cf36ab754
+import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
+import  -/  base-4.11.1.0:GHC.Show 73be67392447c974f19c3befd83c46c0
+import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
+import  -/  containers-0.5.11.0:Data.IntMap.Internal ef73a09d9589b16c95e337bc0715aa57
+import  -/  containers-0.5.11.0:Data.IntMap.Strict 79a3c61ca2c76eb71c4304029717e288
+import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
+import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
+import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
+import  -/  ghc-prim-0.5.2.0:GHC.Classes 122abfcd7450c6c11602933c9ca5f80d
+import  -/  ghc-prim-0.5.2.0:GHC.Types d9b3023de7feae4a5308d643da5543f7
+1191b8140eaba8122ae4967bc6483f20
+  $fEqAnsatzForest ::
+    GHC.Classes.Eq a =>
+    GHC.Classes.Eq (PerturbationTree2.AnsatzForest a)
+  DFunId
+  {- Arity: 1, Strictness: <L,U(C(C1(U)),A)>m, Inline: CONLIKE,
+     Unfolding: DFun: @ a (v :: GHC.Classes.Eq a).
+                  @ (PerturbationTree2.AnsatzForest a)
+                  (PerturbationTree2.$fEqAnsatzForest_$c== @ a v)
+                  (PerturbationTree2.$fEqAnsatzForest_$c/= @ a v) -}
+1191b8140eaba8122ae4967bc6483f20
+  $fEqAnsatzForest_$c/= ::
+    GHC.Classes.Eq a =>
+    PerturbationTree2.AnsatzForest a
+    -> PerturbationTree2.AnsatzForest a -> GHC.Types.Bool
+  {- Arity: 3, Strictness: <L,U(C(C1(U)),A)><L,U><L,U>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (3, False, False)
+                (\ @ a
+                   ($dEq1 :: GHC.Classes.Eq a)
+                   (x :: PerturbationTree2.AnsatzForest a)
+                   (y :: PerturbationTree2.AnsatzForest a) ->
+                 case PerturbationTree2.$fEqAnsatzForest_$c==
+                        @ a
+                        $dEq1
+                        x
+                        y of wild {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False }) -}
+1191b8140eaba8122ae4967bc6483f20
+  $fEqAnsatzForest_$c== ::
+    GHC.Classes.Eq a =>
+    PerturbationTree2.AnsatzForest a
+    -> PerturbationTree2.AnsatzForest a -> GHC.Types.Bool
+  {- Arity: 1, Strictness: <L,U(C(C1(U)),A)> -}
+51d1ae2a2f17e2ad2d08d69e618864fb
+  $fEqAnsatzForest_$s$c== ::
+    PerturbationTree2.AnsatzForest
+      (PerturbationTree2.AnsatzNode GHC.Types.Int)
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+    -> GHC.Types.Bool
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fEqAnsatzNode ::
+    GHC.Classes.Eq a => GHC.Classes.Eq (PerturbationTree2.AnsatzNode a)
+  DFunId
+  {- Arity: 1, HasNoCafRefs, Strictness: <L,U(C(C1(U)),A)>m,
+     Inline: CONLIKE,
+     Unfolding: DFun: @ a (v :: GHC.Classes.Eq a).
+                  @ (PerturbationTree2.AnsatzNode a)
+                  (PerturbationTree2.$fEqAnsatzNode_$c== @ a v)
+                  (PerturbationTree2.$fEqAnsatzNode_$c/= @ a v) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fEqAnsatzNode_$c/= ::
+    GHC.Classes.Eq a =>
+    PerturbationTree2.AnsatzNode a
+    -> PerturbationTree2.AnsatzNode a -> GHC.Types.Bool
+  {- Arity: 3, HasNoCafRefs,
+     Strictness: <L,U(C(C1(U)),A)><S,1*U><S,1*U>, Inline: (sat-args=2),
+     Unfolding: InlineRule (3, False, False)
+                (\ @ a
+                   ($dEq1 :: GHC.Classes.Eq a)
+                   (x :: PerturbationTree2.AnsatzNode a)
+                   (y :: PerturbationTree2.AnsatzNode a) ->
+                 case PerturbationTree2.$fEqAnsatzNode_$c== @ a $dEq1 x y of wild {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fEqAnsatzNode_$c== ::
+    GHC.Classes.Eq a =>
+    PerturbationTree2.AnsatzNode a
+    -> PerturbationTree2.AnsatzNode a -> GHC.Types.Bool
+  {- Arity: 3, HasNoCafRefs,
+     Strictness: <L,U(C(C1(U)),A)><S,1*U><S,1*U>,
+     Unfolding: (\ @ a
+                   ($dEq1 :: GHC.Classes.Eq a)
+                   (ds :: PerturbationTree2.AnsatzNode a)
+                   (ds1 :: PerturbationTree2.AnsatzNode a) ->
+                 case ds of wild {
+                   PerturbationTree2.Epsilon a1 a2 a3 a4
+                   -> case ds1 of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case GHC.Classes.== @ a $dEq1 a1 b1 of wild2 {
+                             GHC.Types.False -> GHC.Types.False
+                             GHC.Types.True
+                             -> case GHC.Classes.== @ a $dEq1 a2 b2 of wild3 {
+                                  GHC.Types.False -> GHC.Types.False
+                                  GHC.Types.True
+                                  -> case GHC.Classes.== @ a $dEq1 a3 b3 of wild4 {
+                                       GHC.Types.False -> GHC.Types.False
+                                       GHC.Types.True -> GHC.Classes.== @ a $dEq1 a4 b4 } } } }
+                   PerturbationTree2.Eta a1 a2
+                   -> case ds1 of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Eta b1 b2
+                        -> case GHC.Classes.== @ a $dEq1 a1 b1 of wild2 {
+                             GHC.Types.False -> GHC.Types.False
+                             GHC.Types.True -> GHC.Classes.== @ a $dEq1 a2 b2 } }
+                   PerturbationTree2.Var a1 a2
+                   -> case ds1 of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Var b1 b2
+                        -> case a1 of wild2 { GHC.Real.:% a4 a5 ->
+                           case b1 of wild3 { GHC.Real.:% b4 b5 ->
+                           case GHC.Integer.Type.eqInteger# a4 b4 of wild4 {
+                             DEFAULT -> GHC.Types.False
+                             1#
+                             -> case GHC.Integer.Type.eqInteger# a5 b5 of wild5 {
+                                  DEFAULT -> GHC.Types.False
+                                  1# -> GHC.Classes.eqInt a2 b2 } } } } } }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fEqAnsatzNode_$s$c/= ::
+    PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><S,1*U>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ (x :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                   (y :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                 case PerturbationTree2.$fEqAnsatzNode_$s$c== x y of wild {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fEqAnsatzNode_$s$c== ::
+    PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><S,1*U>,
+     Unfolding: (\ (ds :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                   (ds1 :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                 case ds of wild {
+                   PerturbationTree2.Epsilon a1 a2 a3 a4
+                   -> case ds1 of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case a1 of wild2 { GHC.Types.I# x ->
+                           case b1 of wild3 { GHC.Types.I# y ->
+                           case GHC.Prim.==# x y of lwild {
+                             DEFAULT -> GHC.Types.False
+                             1#
+                             -> case a2 of wild4 { GHC.Types.I# x1 ->
+                                case b2 of wild5 { GHC.Types.I# y1 ->
+                                case GHC.Prim.==# x1 y1 of lwild1 {
+                                  DEFAULT -> GHC.Types.False
+                                  1#
+                                  -> case a3 of wild6 { GHC.Types.I# x2 ->
+                                     case b3 of wild7 { GHC.Types.I# y2 ->
+                                     case GHC.Prim.==# x2 y2 of lwild2 {
+                                       DEFAULT -> GHC.Types.False
+                                       1# -> GHC.Classes.eqInt a4 b4 } } } } } } } } } }
+                   PerturbationTree2.Eta a1 a2
+                   -> case ds1 of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Eta b1 b2
+                        -> case a1 of wild2 { GHC.Types.I# x ->
+                           case b1 of wild3 { GHC.Types.I# y ->
+                           case GHC.Prim.==# x y of lwild {
+                             DEFAULT -> GHC.Types.False 1# -> GHC.Classes.eqInt a2 b2 } } } }
+                   PerturbationTree2.Var a1 a2
+                   -> case ds1 of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Var b1 b2
+                        -> case a1 of wild2 { GHC.Real.:% a4 a5 ->
+                           case b1 of wild3 { GHC.Real.:% b4 b5 ->
+                           case GHC.Integer.Type.eqInteger# a4 b4 of wild4 {
+                             DEFAULT -> GHC.Types.False
+                             1#
+                             -> case GHC.Integer.Type.eqInteger# a5 b5 of wild5 {
+                                  DEFAULT -> GHC.Types.False
+                                  1# -> GHC.Classes.eqInt a2 b2 } } } } } }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fEqAnsatzNode_$s$fEqAnsatzNode ::
+    GHC.Classes.Eq (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (PerturbationTree2.AnsatzNode GHC.Types.Int)
+                  PerturbationTree2.$fEqAnsatzNode_$s$c==
+                  PerturbationTree2.$fEqAnsatzNode_$s$c/= -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode ::
+    GHC.Classes.Ord a =>
+    GHC.Classes.Ord (PerturbationTree2.AnsatzNode a)
+  DFunId
+  {- Arity: 1,
+     Strictness: <L,U(1*U(C(C1(U)),A),C(C1(U)),C(C1(U)),A,A,A,A,A)>m,
+     Inline: CONLIKE,
+     Unfolding: DFun: @ a (v :: GHC.Classes.Ord a).
+                  @ (PerturbationTree2.AnsatzNode a)
+                  (PerturbationTree2.$fOrdAnsatzNode_$cp1Ord @ a v)
+                  (PerturbationTree2.$fOrdAnsatzNode_$ccompare @ a v)
+                  (PerturbationTree2.$fOrdAnsatzNode_$c< @ a v)
+                  (PerturbationTree2.$fOrdAnsatzNode_$c<= @ a v)
+                  (\ (a1 :: PerturbationTree2.AnsatzNode a)
+                     (b :: PerturbationTree2.AnsatzNode a) ->
+                   PerturbationTree2.$fOrdAnsatzNode_$c< @ a v b a1)
+                  (PerturbationTree2.$fOrdAnsatzNode_$c>= @ a v)
+                  (PerturbationTree2.$fOrdAnsatzNode_$cmax @ a v)
+                  (PerturbationTree2.$fOrdAnsatzNode_$cmin @ a v) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$c< ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.AnsatzNode a
+    -> PerturbationTree2.AnsatzNode a -> GHC.Types.Bool
+  {- Arity: 3,
+     Strictness: <L,U(A,C(C1(U)),1*C1(C1(U)),A,A,A,A,A)><S,1*U><S,1*U>,
+     Unfolding: (\ @ a
+                   ($dOrd :: GHC.Classes.Ord a)
+                   (a1 :: PerturbationTree2.AnsatzNode a)
+                   (b :: PerturbationTree2.AnsatzNode a) ->
+                 case a1 of wild {
+                   PerturbationTree2.Epsilon a2 a3 a4 a5
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.True
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case GHC.Classes.compare @ a $dOrd a2 b1 of wild2 {
+                             GHC.Types.LT -> GHC.Types.True
+                             GHC.Types.EQ
+                             -> case GHC.Classes.compare @ a $dOrd a3 b2 of wild3 {
+                                  GHC.Types.LT -> GHC.Types.True
+                                  GHC.Types.EQ
+                                  -> case GHC.Classes.compare @ a $dOrd a4 b3 of wild4 {
+                                       GHC.Types.LT -> GHC.Types.True
+                                       GHC.Types.EQ -> GHC.Classes.< @ a $dOrd a5 b4
+                                       GHC.Types.GT -> GHC.Types.False }
+                                  GHC.Types.GT -> GHC.Types.False }
+                             GHC.Types.GT -> GHC.Types.False } }
+                   PerturbationTree2.Eta a2 a3
+                   -> case b of wild1 {
+                        PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> GHC.Types.False
+                        PerturbationTree2.Eta b1 b2
+                        -> case GHC.Classes.compare @ a $dOrd a2 b1 of wild2 {
+                             GHC.Types.LT -> GHC.Types.True
+                             GHC.Types.EQ -> GHC.Classes.< @ a $dOrd a3 b2
+                             GHC.Types.GT -> GHC.Types.False }
+                        PerturbationTree2.Var ipv ipv1 -> GHC.Types.True }
+                   PerturbationTree2.Var a2 a3
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Var b1 b2
+                        -> case a2 of ww { GHC.Real.:% ww1 ww2 ->
+                           case b1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                           case GHC.Real.$w$s$ccompare ww1 ww2 ww4 ww5 of wild2 {
+                             GHC.Types.LT -> GHC.Types.True
+                             GHC.Types.EQ -> GHC.Classes.ltInt a3 b2
+                             GHC.Types.GT -> GHC.Types.False } } } } }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$c<= ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.AnsatzNode a
+    -> PerturbationTree2.AnsatzNode a -> GHC.Types.Bool
+  {- Arity: 3,
+     Strictness: <L,U(A,C(C1(U)),C(C1(U)),A,A,A,A,A)><S,1*U><S,1*U>,
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   ($dOrd :: GHC.Classes.Ord a)
+                   (a1 :: PerturbationTree2.AnsatzNode a)
+                   (b :: PerturbationTree2.AnsatzNode a) ->
+                 case PerturbationTree2.$fOrdAnsatzNode_$c< @ a $dOrd b a1 of wild {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$c>= ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.AnsatzNode a
+    -> PerturbationTree2.AnsatzNode a -> GHC.Types.Bool
+  {- Arity: 3,
+     Strictness: <L,U(A,C(C1(U)),C(C1(U)),A,A,A,A,A)><S,1*U><S,1*U>,
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   ($dOrd :: GHC.Classes.Ord a)
+                   (a1 :: PerturbationTree2.AnsatzNode a)
+                   (b :: PerturbationTree2.AnsatzNode a) ->
+                 case PerturbationTree2.$fOrdAnsatzNode_$c< @ a $dOrd a1 b of wild {
+                   GHC.Types.False -> GHC.Types.True
+                   GHC.Types.True -> GHC.Types.False }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$ccompare ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.AnsatzNode a
+    -> PerturbationTree2.AnsatzNode a -> GHC.Types.Ordering
+  {- Arity: 3,
+     Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><S,1*U><S,1*U>,
+     Unfolding: (\ @ a
+                   ($dOrd :: GHC.Classes.Ord a)
+                   (a1 :: PerturbationTree2.AnsatzNode a)
+                   (b :: PerturbationTree2.AnsatzNode a) ->
+                 case a1 of wild {
+                   PerturbationTree2.Epsilon a2 a3 a4 a5
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.LT
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case GHC.Classes.compare @ a $dOrd a2 b1 of wild2 {
+                             GHC.Types.LT -> GHC.Types.LT
+                             GHC.Types.EQ
+                             -> case GHC.Classes.compare @ a $dOrd a3 b2 of wild3 {
+                                  GHC.Types.LT -> GHC.Types.LT
+                                  GHC.Types.EQ
+                                  -> case GHC.Classes.compare @ a $dOrd a4 b3 of wild4 {
+                                       GHC.Types.LT -> GHC.Types.LT
+                                       GHC.Types.EQ -> GHC.Classes.compare @ a $dOrd a5 b4
+                                       GHC.Types.GT -> GHC.Types.GT }
+                                  GHC.Types.GT -> GHC.Types.GT }
+                             GHC.Types.GT -> GHC.Types.GT } }
+                   PerturbationTree2.Eta a2 a3
+                   -> case b of wild1 {
+                        PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> GHC.Types.GT
+                        PerturbationTree2.Eta b1 b2
+                        -> case GHC.Classes.compare @ a $dOrd a2 b1 of wild2 {
+                             GHC.Types.LT -> GHC.Types.LT
+                             GHC.Types.EQ -> GHC.Classes.compare @ a $dOrd a3 b2
+                             GHC.Types.GT -> GHC.Types.GT }
+                        PerturbationTree2.Var ipv ipv1 -> GHC.Types.LT }
+                   PerturbationTree2.Var a2 a3
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.GT
+                        PerturbationTree2.Var b1 b2
+                        -> case a2 of ww { GHC.Real.:% ww1 ww2 ->
+                           case b1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                           case GHC.Real.$w$s$ccompare ww1 ww2 ww4 ww5 of wild2 {
+                             GHC.Types.LT -> GHC.Types.LT
+                             GHC.Types.EQ -> GHC.Classes.compareInt a3 b2
+                             GHC.Types.GT -> GHC.Types.GT } } } } }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$cmax ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.AnsatzNode a
+    -> PerturbationTree2.AnsatzNode a -> PerturbationTree2.AnsatzNode a
+  {- Arity: 3,
+     Strictness: <L,U(A,C(C1(U)),C(C1(U)),A,A,A,A,A)><S,U><S,U>,
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   ($dOrd :: GHC.Classes.Ord a)
+                   (x :: PerturbationTree2.AnsatzNode a)
+                   (y :: PerturbationTree2.AnsatzNode a) ->
+                 case PerturbationTree2.$fOrdAnsatzNode_$c< @ a $dOrd y x of wild {
+                   GHC.Types.False -> y GHC.Types.True -> x }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$cmin ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.AnsatzNode a
+    -> PerturbationTree2.AnsatzNode a -> PerturbationTree2.AnsatzNode a
+  {- Arity: 3,
+     Strictness: <L,U(A,C(C1(U)),C(C1(U)),A,A,A,A,A)><S,U><S,U>,
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   ($dOrd :: GHC.Classes.Ord a)
+                   (x :: PerturbationTree2.AnsatzNode a)
+                   (y :: PerturbationTree2.AnsatzNode a) ->
+                 case PerturbationTree2.$fOrdAnsatzNode_$c< @ a $dOrd y x of wild {
+                   GHC.Types.False -> x GHC.Types.True -> y }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$cp1Ord ::
+    GHC.Classes.Ord a =>
+    GHC.Classes.Eq (PerturbationTree2.AnsatzNode a)
+  {- Arity: 1, HasNoCafRefs,
+     Strictness: <L,1*U(1*U(C(C1(U)),A),A,A,A,A,A,A,A)>m,
+     Unfolding: InlineRule (1, True, False)
+                (\ @ a ($dOrd :: GHC.Classes.Ord a) ->
+                 PerturbationTree2.$fEqAnsatzNode
+                   @ a
+                   (GHC.Classes.$p1Ord @ a $dOrd)) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$s$c< ::
+    PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int -> GHC.Types.Bool
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>,
+     Unfolding: (\ (a :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                   (b :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                 case a of wild {
+                   PerturbationTree2.Epsilon a1 a2 a3 a4
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.True
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> GHC.Types.False
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                     case b2 of wild5 { GHC.Types.I# y#1 ->
+                                     case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                       DEFAULT
+                                       -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                            DEFAULT -> GHC.Types.False
+                                            1#
+                                            -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                               case b3 of wild7 { GHC.Types.I# y#2 ->
+                                               case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                 DEFAULT
+                                                 -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                      DEFAULT -> GHC.Types.False
+                                                      1# -> GHC.Classes.ltInt a4 b4 }
+                                                 1# -> GHC.Types.True } } } }
+                                       1# -> GHC.Types.True } } } }
+                             1# -> GHC.Types.True } } } }
+                   PerturbationTree2.Eta a1 a2
+                   -> case b of wild1 {
+                        PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> GHC.Types.False
+                        PerturbationTree2.Eta b1 b2
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> GHC.Types.False 1# -> GHC.Classes.ltInt a2 b2 }
+                             1# -> GHC.Types.True } } }
+                        PerturbationTree2.Var ipv ipv1 -> GHC.Types.True }
+                   PerturbationTree2.Var a1 a2
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Var b1 b2
+                        -> case a1 of ww { GHC.Real.:% ww1 ww2 ->
+                           case b1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                           case GHC.Real.$w$s$ccompare ww1 ww2 ww4 ww5 of wild2 {
+                             GHC.Types.LT -> GHC.Types.True
+                             GHC.Types.EQ -> GHC.Classes.ltInt a2 b2
+                             GHC.Types.GT -> GHC.Types.False } } } } }) -}
+788fd3e94f46d2dcaae93b39d2a3fcd9
+  $fOrdAnsatzNode_$s$c<= ::
+    PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int -> GHC.Types.Bool
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>,
+     Unfolding: (\ (a :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                   (b :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                 case b of wild {
+                   PerturbationTree2.Epsilon a1 a2 a3 a4
+                   -> case a of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> GHC.Types.True
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                     case b2 of wild5 { GHC.Types.I# y#1 ->
+                                     case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                       DEFAULT
+                                       -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                            DEFAULT -> GHC.Types.True
+                                            1#
+                                            -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                               case b3 of wild7 { GHC.Types.I# y#2 ->
+                                               case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                 DEFAULT
+                                                 -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                      DEFAULT -> GHC.Types.True
+                                                      1#
+                                                      -> case a4 of wild8 { GHC.Types.I# x ->
+                                                         case b4 of wild9 { GHC.Types.I# y ->
+                                                         case GHC.Prim.<# x y of lwild6 {
+                                                           DEFAULT -> GHC.Types.True
+                                                           1# -> GHC.Types.False } } } }
+                                                 1# -> GHC.Types.False } } } }
+                                       1# -> GHC.Types.False } } } }
+                             1# -> GHC.Types.False } } } }
+                   PerturbationTree2.Eta a1 a2
+                   -> case a of wild1 {
+                        PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> GHC.Types.True
+                        PerturbationTree2.Eta b1 b2
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> GHC.Types.True
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x ->
+                                     case b2 of wild5 { GHC.Types.I# y ->
+                                     case GHC.Prim.<# x y of lwild2 {
+                                       DEFAULT -> GHC.Types.True 1# -> GHC.Types.False } } } }
+                             1# -> GHC.Types.False } } }
+                        PerturbationTree2.Var ipv ipv1 -> GHC.Types.False }
+                   PerturbationTree2.Var a1 a2
+                   -> case a of wild1 {
+                        DEFAULT -> GHC.Types.True
+                        PerturbationTree2.Var b1 b2
+                        -> case a1 of ww { GHC.Real.:% ww1 ww2 ->
+                           case b1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                           case GHC.Real.$w$s$ccompare ww1 ww2 ww4 ww5 of wild2 {
+                             GHC.Types.LT -> GHC.Types.False
+                             GHC.Types.EQ
+                             -> case a2 of wild3 { GHC.Types.I# x ->
+                                case b2 of wild4 { GHC.Types.I# y ->
+                                case GHC.Prim.<# x y of lwild {
+                                  DEFAULT -> GHC.Types.True 1# -> GHC.Types.False } } }
+                             GHC.Types.GT -> GHC.Types.True } } } } }) -}
+100c124c474d3c3cc4bba698b9f8ad8b
+  $fOrdAnsatzNode_$s$c>= ::
+    PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int -> GHC.Types.Bool
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>,
+     Unfolding: (\ (a :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                   (b :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                 case a of wild {
+                   PerturbationTree2.Epsilon a1 a2 a3 a4
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> GHC.Types.True
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                     case b2 of wild5 { GHC.Types.I# y#1 ->
+                                     case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                       DEFAULT
+                                       -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                            DEFAULT -> GHC.Types.True
+                                            1#
+                                            -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                               case b3 of wild7 { GHC.Types.I# y#2 ->
+                                               case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                 DEFAULT
+                                                 -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                      DEFAULT -> GHC.Types.True
+                                                      1#
+                                                      -> case a4 of wild8 { GHC.Types.I# x ->
+                                                         case b4 of wild9 { GHC.Types.I# y ->
+                                                         case GHC.Prim.<# x y of lwild6 {
+                                                           DEFAULT -> GHC.Types.True
+                                                           1# -> GHC.Types.False } } } }
+                                                 1# -> GHC.Types.False } } } }
+                                       1# -> GHC.Types.False } } } }
+                             1# -> GHC.Types.False } } } }
+                   PerturbationTree2.Eta a1 a2
+                   -> case b of wild1 {
+                        PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> GHC.Types.True
+                        PerturbationTree2.Eta b1 b2
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> GHC.Types.True
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x ->
+                                     case b2 of wild5 { GHC.Types.I# y ->
+                                     case GHC.Prim.<# x y of lwild2 {
+                                       DEFAULT -> GHC.Types.True 1# -> GHC.Types.False } } } }
+                             1# -> GHC.Types.False } } }
+                        PerturbationTree2.Var ipv ipv1 -> GHC.Types.False }
+                   PerturbationTree2.Var a1 a2
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.True
+                        PerturbationTree2.Var b1 b2
+                        -> case a1 of ww { GHC.Real.:% ww1 ww2 ->
+                           case b1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                           case GHC.Real.$w$s$ccompare ww1 ww2 ww4 ww5 of wild2 {
+                             GHC.Types.LT -> GHC.Types.False
+                             GHC.Types.EQ
+                             -> case a2 of wild3 { GHC.Types.I# x ->
+                                case b2 of wild4 { GHC.Types.I# y ->
+                                case GHC.Prim.<# x y of lwild {
+                                  DEFAULT -> GHC.Types.True 1# -> GHC.Types.False } } }
+                             GHC.Types.GT -> GHC.Types.True } } } } }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$s$ccompare ::
+    PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int -> GHC.Types.Ordering
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>,
+     Unfolding: (\ (a :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                   (b :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                 case a of wild {
+                   PerturbationTree2.Epsilon a1 a2 a3 a4
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.LT
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> GHC.Types.GT
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                     case b2 of wild5 { GHC.Types.I# y#1 ->
+                                     case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                       DEFAULT
+                                       -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                            DEFAULT -> GHC.Types.GT
+                                            1#
+                                            -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                               case b3 of wild7 { GHC.Types.I# y#2 ->
+                                               case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                 DEFAULT
+                                                 -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                      DEFAULT -> GHC.Types.GT
+                                                      1# -> GHC.Classes.compareInt a4 b4 }
+                                                 1# -> GHC.Types.LT } } } }
+                                       1# -> GHC.Types.LT } } } }
+                             1# -> GHC.Types.LT } } } }
+                   PerturbationTree2.Eta a1 a2
+                   -> case b of wild1 {
+                        PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> GHC.Types.GT
+                        PerturbationTree2.Eta b1 b2
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> GHC.Types.GT 1# -> GHC.Classes.compareInt a2 b2 }
+                             1# -> GHC.Types.LT } } }
+                        PerturbationTree2.Var ipv ipv1 -> GHC.Types.LT }
+                   PerturbationTree2.Var a1 a2
+                   -> case b of wild1 {
+                        DEFAULT -> GHC.Types.GT
+                        PerturbationTree2.Var b1 b2
+                        -> case a1 of ww { GHC.Real.:% ww1 ww2 ->
+                           case b1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                           case GHC.Real.$w$s$ccompare ww1 ww2 ww4 ww5 of wild2 {
+                             GHC.Types.LT -> GHC.Types.LT
+                             GHC.Types.EQ -> GHC.Classes.compareInt a2 b2
+                             GHC.Types.GT -> GHC.Types.GT } } } } }) -}
+421dd4cd2f97ed16344a27a0c9f44994
+  $fOrdAnsatzNode_$s$cmax ::
+    PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>,
+     Unfolding: (\ (x :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                   (y :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                 case y of wild {
+                   PerturbationTree2.Epsilon a1 a2 a3 a4
+                   -> case x of wild1 {
+                        DEFAULT -> wild1
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> wild
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                     case b2 of wild5 { GHC.Types.I# y#1 ->
+                                     case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                       DEFAULT
+                                       -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                            DEFAULT -> wild
+                                            1#
+                                            -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                               case b3 of wild7 { GHC.Types.I# y#2 ->
+                                               case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                 DEFAULT
+                                                 -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                      DEFAULT -> wild
+                                                      1#
+                                                      -> case a4 of wild8 { GHC.Types.I# x1 ->
+                                                         case b4 of wild9 { GHC.Types.I# y1 ->
+                                                         case GHC.Prim.<# x1 y1 of lwild6 {
+                                                           DEFAULT -> wild 1# -> wild1 } } } }
+                                                 1# -> wild1 } } } }
+                                       1# -> wild1 } } } }
+                             1# -> wild1 } } } }
+                   PerturbationTree2.Eta a1 a2
+                   -> case x of wild1 {
+                        PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> wild
+                        PerturbationTree2.Eta b1 b2
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> wild
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x1 ->
+                                     case b2 of wild5 { GHC.Types.I# y1 ->
+                                     case GHC.Prim.<# x1 y1 of lwild2 {
+                                       DEFAULT -> wild 1# -> wild1 } } } }
+                             1# -> wild1 } } }
+                        PerturbationTree2.Var ipv ipv1 -> wild1 }
+                   PerturbationTree2.Var a1 a2
+                   -> case x of wild1 {
+                        DEFAULT -> wild
+                        PerturbationTree2.Var b1 b2
+                        -> case a1 of ww { GHC.Real.:% ww1 ww2 ->
+                           case b1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                           case GHC.Real.$w$s$ccompare ww1 ww2 ww4 ww5 of wild2 {
+                             GHC.Types.LT -> wild1
+                             GHC.Types.EQ
+                             -> case a2 of wild3 { GHC.Types.I# x1 ->
+                                case b2 of wild4 { GHC.Types.I# y1 ->
+                                case GHC.Prim.<# x1 y1 of lwild { DEFAULT -> wild 1# -> wild1 } } }
+                             GHC.Types.GT -> wild } } } } }) -}
+7fa6b5978400f8a25bf6a0cf7021507a
+  $fOrdAnsatzNode_$s$cmin ::
+    PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> PerturbationTree2.AnsatzNode GHC.Types.Int
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>,
+     Unfolding: (\ (x :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                   (y :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                 case y of wild {
+                   PerturbationTree2.Epsilon a1 a2 a3 a4
+                   -> case x of wild1 {
+                        DEFAULT -> wild
+                        PerturbationTree2.Epsilon b1 b2 b3 b4
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> wild1
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                     case b2 of wild5 { GHC.Types.I# y#1 ->
+                                     case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                       DEFAULT
+                                       -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                            DEFAULT -> wild1
+                                            1#
+                                            -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                               case b3 of wild7 { GHC.Types.I# y#2 ->
+                                               case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                 DEFAULT
+                                                 -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                      DEFAULT -> wild1
+                                                      1#
+                                                      -> case a4 of wild8 { GHC.Types.I# x1 ->
+                                                         case b4 of wild9 { GHC.Types.I# y1 ->
+                                                         case GHC.Prim.<# x1 y1 of lwild6 {
+                                                           DEFAULT -> wild1 1# -> wild } } } }
+                                                 1# -> wild } } } }
+                                       1# -> wild } } } }
+                             1# -> wild } } } }
+                   PerturbationTree2.Eta a1 a2
+                   -> case x of wild1 {
+                        PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> wild1
+                        PerturbationTree2.Eta b1 b2
+                        -> case a1 of wild2 { GHC.Types.I# x# ->
+                           case b1 of wild3 { GHC.Types.I# y# ->
+                           case GHC.Prim.<# x# y# of lwild {
+                             DEFAULT
+                             -> case GHC.Prim.==# x# y# of lwild1 {
+                                  DEFAULT -> wild1
+                                  1#
+                                  -> case a2 of wild4 { GHC.Types.I# x1 ->
+                                     case b2 of wild5 { GHC.Types.I# y1 ->
+                                     case GHC.Prim.<# x1 y1 of lwild2 {
+                                       DEFAULT -> wild1 1# -> wild } } } }
+                             1# -> wild } } }
+                        PerturbationTree2.Var ipv ipv1 -> wild }
+                   PerturbationTree2.Var a1 a2
+                   -> case x of wild1 {
+                        DEFAULT -> wild1
+                        PerturbationTree2.Var b1 b2
+                        -> case a1 of ww { GHC.Real.:% ww1 ww2 ->
+                           case b1 of ww3 { GHC.Real.:% ww4 ww5 ->
+                           case GHC.Real.$w$s$ccompare ww1 ww2 ww4 ww5 of wild2 {
+                             GHC.Types.LT -> wild
+                             GHC.Types.EQ
+                             -> case a2 of wild3 { GHC.Types.I# x1 ->
+                                case b2 of wild4 { GHC.Types.I# y1 ->
+                                case GHC.Prim.<# x1 y1 of lwild { DEFAULT -> wild1 1# -> wild } } }
+                             GHC.Types.GT -> wild1 } } } } }) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fOrdAnsatzNode_$s$fOrdAnsatzNode ::
+    GHC.Classes.Ord (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ (PerturbationTree2.AnsatzNode GHC.Types.Int)
+                  PerturbationTree2.$fEqAnsatzNode_$s$fEqAnsatzNode
+                  PerturbationTree2.$fOrdAnsatzNode_$s$ccompare
+                  PerturbationTree2.$fOrdAnsatzNode_$s$c<
+                  (\ (a :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                     (b :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                   case b of wild {
+                     PerturbationTree2.Epsilon a1 a2 a3 a4
+                     -> case a of wild1 {
+                          DEFAULT -> GHC.Types.False
+                          PerturbationTree2.Epsilon b1 b2 b3 b4
+                          -> case a1 of wild2 { GHC.Types.I# x# ->
+                             case b1 of wild3 { GHC.Types.I# y# ->
+                             case GHC.Prim.<# x# y# of lwild {
+                               DEFAULT
+                               -> case GHC.Prim.==# x# y# of lwild1 {
+                                    DEFAULT -> GHC.Types.True
+                                    1#
+                                    -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                       case b2 of wild5 { GHC.Types.I# y#1 ->
+                                       case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                         DEFAULT
+                                         -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                              DEFAULT -> GHC.Types.True
+                                              1#
+                                              -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                                 case b3 of wild7 { GHC.Types.I# y#2 ->
+                                                 case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                   DEFAULT
+                                                   -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                        DEFAULT -> GHC.Types.True
+                                                        1#
+                                                        -> case GHC.Classes.ltInt a4 b4 of wild8 {
+                                                             GHC.Types.False -> GHC.Types.True
+                                                             GHC.Types.True -> GHC.Types.False } }
+                                                   1# -> GHC.Types.False } } } }
+                                         1# -> GHC.Types.False } } } }
+                               1# -> GHC.Types.False } } } }
+                     PerturbationTree2.Eta a1 a2
+                     -> case a of wild1 {
+                          PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> GHC.Types.True
+                          PerturbationTree2.Eta b1 b2
+                          -> case a1 of wild2 { GHC.Types.I# x# ->
+                             case b1 of wild3 { GHC.Types.I# y# ->
+                             case GHC.Prim.<# x# y# of lwild {
+                               DEFAULT
+                               -> case GHC.Prim.==# x# y# of lwild1 {
+                                    DEFAULT -> GHC.Types.True
+                                    1#
+                                    -> case GHC.Classes.ltInt a2 b2 of wild4 {
+                                         GHC.Types.False -> GHC.Types.True
+                                         GHC.Types.True -> GHC.Types.False } }
+                               1# -> GHC.Types.False } } }
+                          PerturbationTree2.Var ipv ipv1 -> GHC.Types.False }
+                     PerturbationTree2.Var a1 a2
+                     -> case a of wild1 {
+                          DEFAULT -> GHC.Types.True
+                          PerturbationTree2.Var b1 b2
+                          -> case GHC.Real.$fEnumRatio_$s$ccompare a1 b1 of wild2 {
+                               GHC.Types.LT -> GHC.Types.False
+                               GHC.Types.EQ
+                               -> case GHC.Classes.ltInt a2 b2 of wild3 {
+                                    GHC.Types.False -> GHC.Types.True
+                                    GHC.Types.True -> GHC.Types.False }
+                               GHC.Types.GT -> GHC.Types.True } } })
+                  (\ (a :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                     (b :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                   PerturbationTree2.$fOrdAnsatzNode_$s$c< b a)
+                  (\ (a :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                     (b :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                   case a of wild {
+                     PerturbationTree2.Epsilon a1 a2 a3 a4
+                     -> case b of wild1 {
+                          DEFAULT -> GHC.Types.False
+                          PerturbationTree2.Epsilon b1 b2 b3 b4
+                          -> case a1 of wild2 { GHC.Types.I# x# ->
+                             case b1 of wild3 { GHC.Types.I# y# ->
+                             case GHC.Prim.<# x# y# of lwild {
+                               DEFAULT
+                               -> case GHC.Prim.==# x# y# of lwild1 {
+                                    DEFAULT -> GHC.Types.True
+                                    1#
+                                    -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                       case b2 of wild5 { GHC.Types.I# y#1 ->
+                                       case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                         DEFAULT
+                                         -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                              DEFAULT -> GHC.Types.True
+                                              1#
+                                              -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                                 case b3 of wild7 { GHC.Types.I# y#2 ->
+                                                 case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                   DEFAULT
+                                                   -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                        DEFAULT -> GHC.Types.True
+                                                        1#
+                                                        -> case GHC.Classes.ltInt a4 b4 of wild8 {
+                                                             GHC.Types.False -> GHC.Types.True
+                                                             GHC.Types.True -> GHC.Types.False } }
+                                                   1# -> GHC.Types.False } } } }
+                                         1# -> GHC.Types.False } } } }
+                               1# -> GHC.Types.False } } } }
+                     PerturbationTree2.Eta a1 a2
+                     -> case b of wild1 {
+                          PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> GHC.Types.True
+                          PerturbationTree2.Eta b1 b2
+                          -> case a1 of wild2 { GHC.Types.I# x# ->
+                             case b1 of wild3 { GHC.Types.I# y# ->
+                             case GHC.Prim.<# x# y# of lwild {
+                               DEFAULT
+                               -> case GHC.Prim.==# x# y# of lwild1 {
+                                    DEFAULT -> GHC.Types.True
+                                    1#
+                                    -> case GHC.Classes.ltInt a2 b2 of wild4 {
+                                         GHC.Types.False -> GHC.Types.True
+                                         GHC.Types.True -> GHC.Types.False } }
+                               1# -> GHC.Types.False } } }
+                          PerturbationTree2.Var ipv ipv1 -> GHC.Types.False }
+                     PerturbationTree2.Var a1 a2
+                     -> case b of wild1 {
+                          DEFAULT -> GHC.Types.True
+                          PerturbationTree2.Var b1 b2
+                          -> case GHC.Real.$fEnumRatio_$s$ccompare a1 b1 of wild2 {
+                               GHC.Types.LT -> GHC.Types.False
+                               GHC.Types.EQ
+                               -> case GHC.Classes.ltInt a2 b2 of wild3 {
+                                    GHC.Types.False -> GHC.Types.True
+                                    GHC.Types.True -> GHC.Types.False }
+                               GHC.Types.GT -> GHC.Types.True } } })
+                  (\ (x :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                     (y :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                   case y of wild {
+                     PerturbationTree2.Epsilon a1 a2 a3 a4
+                     -> case x of wild1 {
+                          DEFAULT -> wild1
+                          PerturbationTree2.Epsilon b1 b2 b3 b4
+                          -> case a1 of wild2 { GHC.Types.I# x# ->
+                             case b1 of wild3 { GHC.Types.I# y# ->
+                             case GHC.Prim.<# x# y# of lwild {
+                               DEFAULT
+                               -> case GHC.Prim.==# x# y# of lwild1 {
+                                    DEFAULT -> wild
+                                    1#
+                                    -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                       case b2 of wild5 { GHC.Types.I# y#1 ->
+                                       case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                         DEFAULT
+                                         -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                              DEFAULT -> wild
+                                              1#
+                                              -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                                 case b3 of wild7 { GHC.Types.I# y#2 ->
+                                                 case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                   DEFAULT
+                                                   -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                        DEFAULT -> wild
+                                                        1#
+                                                        -> case GHC.Classes.ltInt a4 b4 of wild8 {
+                                                             GHC.Types.False -> wild
+                                                             GHC.Types.True -> wild1 } }
+                                                   1# -> wild1 } } } }
+                                         1# -> wild1 } } } }
+                               1# -> wild1 } } } }
+                     PerturbationTree2.Eta a1 a2
+                     -> case x of wild1 {
+                          PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> wild
+                          PerturbationTree2.Eta b1 b2
+                          -> case a1 of wild2 { GHC.Types.I# x# ->
+                             case b1 of wild3 { GHC.Types.I# y# ->
+                             case GHC.Prim.<# x# y# of lwild {
+                               DEFAULT
+                               -> case GHC.Prim.==# x# y# of lwild1 {
+                                    DEFAULT -> wild
+                                    1#
+                                    -> case GHC.Classes.ltInt a2 b2 of wild4 {
+                                         GHC.Types.False -> wild GHC.Types.True -> wild1 } }
+                               1# -> wild1 } } }
+                          PerturbationTree2.Var ipv ipv1 -> wild1 }
+                     PerturbationTree2.Var a1 a2
+                     -> case x of wild1 {
+                          DEFAULT -> wild
+                          PerturbationTree2.Var b1 b2
+                          -> case GHC.Real.$fEnumRatio_$s$ccompare a1 b1 of wild2 {
+                               GHC.Types.LT -> wild1
+                               GHC.Types.EQ
+                               -> case GHC.Classes.ltInt a2 b2 of wild3 {
+                                    GHC.Types.False -> wild GHC.Types.True -> wild1 }
+                               GHC.Types.GT -> wild } } })
+                  (\ (x :: PerturbationTree2.AnsatzNode GHC.Types.Int)
+                     (y :: PerturbationTree2.AnsatzNode GHC.Types.Int) ->
+                   case y of wild {
+                     PerturbationTree2.Epsilon a1 a2 a3 a4
+                     -> case x of wild1 {
+                          DEFAULT -> wild
+                          PerturbationTree2.Epsilon b1 b2 b3 b4
+                          -> case a1 of wild2 { GHC.Types.I# x# ->
+                             case b1 of wild3 { GHC.Types.I# y# ->
+                             case GHC.Prim.<# x# y# of lwild {
+                               DEFAULT
+                               -> case GHC.Prim.==# x# y# of lwild1 {
+                                    DEFAULT -> wild1
+                                    1#
+                                    -> case a2 of wild4 { GHC.Types.I# x#1 ->
+                                       case b2 of wild5 { GHC.Types.I# y#1 ->
+                                       case GHC.Prim.<# x#1 y#1 of lwild2 {
+                                         DEFAULT
+                                         -> case GHC.Prim.==# x#1 y#1 of lwild3 {
+                                              DEFAULT -> wild1
+                                              1#
+                                              -> case a3 of wild6 { GHC.Types.I# x#2 ->
+                                                 case b3 of wild7 { GHC.Types.I# y#2 ->
+                                                 case GHC.Prim.<# x#2 y#2 of lwild4 {
+                                                   DEFAULT
+                                                   -> case GHC.Prim.==# x#2 y#2 of lwild5 {
+                                                        DEFAULT -> wild1
+                                                        1#
+                                                        -> case GHC.Classes.ltInt a4 b4 of wild8 {
+                                                             GHC.Types.False -> wild1
+                                                             GHC.Types.True -> wild } }
+                                                   1# -> wild } } } }
+                                         1# -> wild } } } }
+                               1# -> wild } } } }
+                     PerturbationTree2.Eta a1 a2
+                     -> case x of wild1 {
+                          PerturbationTree2.Epsilon ds ds1 ds2 ds3 -> wild1
+                          PerturbationTree2.Eta b1 b2
+                          -> case a1 of wild2 { GHC.Types.I# x# ->
+                             case b1 of wild3 { GHC.Types.I# y# ->
+                             case GHC.Prim.<# x# y# of lwild {
+                               DEFAULT
+                               -> case GHC.Prim.==# x# y# of lwild1 {
+                                    DEFAULT -> wild1
+                                    1#
+                                    -> case GHC.Classes.ltInt a2 b2 of wild4 {
+                                         GHC.Types.False -> wild1 GHC.Types.True -> wild } }
+                               1# -> wild } } }
+                          PerturbationTree2.Var ipv ipv1 -> wild }
+                     PerturbationTree2.Var a1 a2
+                     -> case x of wild1 {
+                          DEFAULT -> wild1
+                          PerturbationTree2.Var b1 b2
+                          -> case GHC.Real.$fEnumRatio_$s$ccompare a1 b1 of wild2 {
+                               GHC.Types.LT -> wild
+                               GHC.Types.EQ
+                               -> case GHC.Classes.ltInt a2 b2 of wild3 {
+                                    GHC.Types.False -> wild1 GHC.Types.True -> wild }
+                               GHC.Types.GT -> wild1 } } }) -}
+1191b8140eaba8122ae4967bc6483f20
+  $fShowAnsatzForest ::
+    GHC.Show.Show a => GHC.Show.Show (PerturbationTree2.AnsatzForest a)
+  DFunId
+  {- Arity: 1, Strictness: <L,U(C(C1(C(U))),A,A)>m, Inline: CONLIKE,
+     Unfolding: DFun: @ a (v :: GHC.Show.Show a).
+                  @ (PerturbationTree2.AnsatzForest a)
+                  (PerturbationTree2.$fShowAnsatzForest_$cshowsPrec @ a v)
+                  (PerturbationTree2.$fShowAnsatzForest_$cshow @ a v)
+                  (PerturbationTree2.$fShowAnsatzForest_$cshowList @ a v) -}
+b9c60370c211bcf29306cde13cda3bdd
+  $fShowAnsatzForest1 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
+1191b8140eaba8122ae4967bc6483f20
+  $fShowAnsatzForest_$cshow ::
+    GHC.Show.Show a =>
+    PerturbationTree2.AnsatzForest a -> GHC.Base.String
+  {- Arity: 2, Strictness: <L,U(C(C1(C(U))),A,A)><L,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a
+                   ($dShow :: GHC.Show.Show a)
+                   (x :: PerturbationTree2.AnsatzForest a) ->
+                 PerturbationTree2.$fShowAnsatzForest_$cshowsPrec
+                   @ a
+                   $dShow
+                   PerturbationTree2.$fShowAnsatzForest1
+                   x
+                   (GHC.Types.[] @ GHC.Types.Char)) -}
+1191b8140eaba8122ae4967bc6483f20
+  $fShowAnsatzForest_$cshowList ::
+    GHC.Show.Show a =>
+    [PerturbationTree2.AnsatzForest a] -> GHC.Show.ShowS
+  {- Arity: 3, Strictness: <L,U(C(C1(C(U))),A,A)><S,1*U><L,U>,
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   ($dShow :: GHC.Show.Show a)
+                   (ls :: [PerturbationTree2.AnsatzForest a])
+                   (s :: GHC.Base.String) ->
+                 GHC.Show.showList__
+                   @ (PerturbationTree2.AnsatzForest a)
+                   (PerturbationTree2.$fShowAnsatzForest_$cshowsPrec
+                      @ a
+                      $dShow
+                      PerturbationTree2.$fShowAnsatzForest1)
+                   ls
+                   s) -}
+1191b8140eaba8122ae4967bc6483f20
+  $fShowAnsatzForest_$cshowsPrec ::
+    GHC.Show.Show a =>
+    GHC.Types.Int -> PerturbationTree2.AnsatzForest a -> GHC.Show.ShowS
+  {- Arity: 1, Strictness: <L,U(C(C1(C(U))),A,A)> -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fShowAnsatzNode ::
+    GHC.Show.Show a => GHC.Show.Show (PerturbationTree2.AnsatzNode a)
+  DFunId
+  {- Arity: 1, Strictness: <L,U(C(C1(C(U))),A,A)>m, Inline: CONLIKE,
+     Unfolding: DFun: @ a (v :: GHC.Show.Show a).
+                  @ (PerturbationTree2.AnsatzNode a)
+                  (PerturbationTree2.$fShowAnsatzNode_$cshowsPrec @ a v)
+                  (PerturbationTree2.$fShowAnsatzNode_$cshow @ a v)
+                  (PerturbationTree2.$fShowAnsatzNode_$cshowList @ a v) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fShowAnsatzNode_$cshow ::
+    GHC.Show.Show a =>
+    PerturbationTree2.AnsatzNode a -> GHC.Base.String
+  {- Arity: 2, Strictness: <L,U(C(C1(C(U))),A,A)><S,1*U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a
+                   ($dShow :: GHC.Show.Show a)
+                   (x :: PerturbationTree2.AnsatzNode a) ->
+                 PerturbationTree2.$fShowAnsatzNode_$cshowsPrec
+                   @ a
+                   $dShow
+                   PerturbationTree2.$fShowAnsatzForest1
+                   x
+                   (GHC.Types.[] @ GHC.Types.Char)) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fShowAnsatzNode_$cshowList ::
+    GHC.Show.Show a =>
+    [PerturbationTree2.AnsatzNode a] -> GHC.Show.ShowS
+  {- Arity: 3, Strictness: <L,U(C(C1(C(U))),A,A)><S,1*U><L,U>,
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   ($dShow :: GHC.Show.Show a)
+                   (ls :: [PerturbationTree2.AnsatzNode a])
+                   (s :: GHC.Base.String) ->
+                 GHC.Show.showList__
+                   @ (PerturbationTree2.AnsatzNode a)
+                   (PerturbationTree2.$fShowAnsatzNode_$cshowsPrec
+                      @ a
+                      $dShow
+                      PerturbationTree2.$fShowAnsatzForest1)
+                   ls
+                   s) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $fShowAnsatzNode_$cshowsPrec ::
+    GHC.Show.Show a =>
+    GHC.Types.Int -> PerturbationTree2.AnsatzNode a -> GHC.Show.ShowS
+  {- Arity: 3,
+     Strictness: <L,U(C(C1(C(U))),A,A)><S(S),1*U(U)><S,1*U>,
+     Inline: [0],
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   (w :: GHC.Show.Show a)
+                   (w1 :: GHC.Types.Int)
+                   (w2 :: PerturbationTree2.AnsatzNode a) ->
+                 case w1 of ww { GHC.Types.I# ww1 ->
+                 PerturbationTree2.$w$cshowsPrec @ a w ww1 w2 }) -}
+df335fcae23a3499c71939e53e984e6e
+  $slookup1 ::
+    PerturbationTree2.AnsatzNode GHC.Types.Int
+    -> Data.Map.Internal.Map
+         (PerturbationTree2.AnsatzNode GHC.Types.Int) a
+    -> GHC.Base.Maybe a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
+679574d99491d31218b6a480cc2f7efc
+  $tc'EmptyForest :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   16383830790063041581##
+                   10521790908862821293##
+                   PerturbationTree2.$trModule
+                   PerturbationTree2.$tc'EmptyForest2
+                   1#
+                   PerturbationTree2.$tc'EmptyForest1) -}
+bdc0a2f17eb0d1fd56584bf1d141f05b
+  $tc'EmptyForest1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m1, Inline: [~] -}
+60bd5cf9ba6672cb211c378ae7027ecf
+  $tc'EmptyForest2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS
+                   PerturbationTree2.$tc'EmptyForest3) -}
+235514a0cdfa4f56338df4ef82f554de
+  $tc'EmptyForest3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'EmptyForest"#) -}
+d7cca1bd704bf9dbe5487f87cd330994
+  $tc'Epsilon :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   12079225788781256355##
+                   14553847118470367466##
+                   PerturbationTree2.$trModule
+                   PerturbationTree2.$tc'Epsilon2
+                   1#
+                   PerturbationTree2.$tc'Epsilon1) -}
+650e56389befad60624449bfd95c1a8d
+  $tc'Epsilon1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
+61ef1e12e53311fcdad14606013434ba
+  $tc'Epsilon2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS PerturbationTree2.$tc'Epsilon3) -}
+89afe0c2c95cf9a95c0407e4e478721b
+  $tc'Epsilon3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'Epsilon"#) -}
+ab81ac90189af9453e47425b879c268c
+  $tc'Eta :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   7852645482568365830##
+                   16982176084161520644##
+                   PerturbationTree2.$trModule
+                   PerturbationTree2.$tc'Eta2
+                   1#
+                   PerturbationTree2.$tc'Eta1) -}
+342ef1b682ff5c5f4886137e32d4a73e
+  $tc'Eta1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
+6204d9ac5e440c3e2df7da0625456f84
+  $tc'Eta2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS PerturbationTree2.$tc'Eta3) -}
+fc63e64c69c0a7d9cab77bf826770ca0
+  $tc'Eta3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'Eta"#) -}
+52c0d60649d8a430aef6bea05ac7d686
+  $tc'Forest :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   10415893409300108553##
+                   15886801042903742402##
+                   PerturbationTree2.$trModule
+                   PerturbationTree2.$tc'Forest2
+                   1#
+                   PerturbationTree2.$tc'Forest1) -}
+0aa1abbef16b83e3166aa641bfe26aec
+  $tc'Forest1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
+b458ea8c705e4ea9b0e805ae3a27aad3
+  $tc'Forest2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS PerturbationTree2.$tc'Forest3) -}
+313cfa47ec9a6147d3419e9bed3b9df1
+  $tc'Forest3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'Forest"#) -}
+5140e163fa212d148cb762d1d4a98446
+  $tc'Leaf :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   18890327851819462##
+                   6343889344455347731##
+                   PerturbationTree2.$trModule
+                   PerturbationTree2.$tc'Leaf2
+                   1#
+                   PerturbationTree2.$tc'Leaf1) -}
+3687da64e33771c95e3e73570d902974
+  $tc'Leaf1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
+161d45520a8a764cc3f6913f45b33696
+  $tc'Leaf2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS PerturbationTree2.$tc'Leaf3) -}
+5b788ab3f8fec4599fab8d5474d2758b
+  $tc'Leaf3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'Leaf"#) -}
+1844a7c5c6f97582c908b5cda98586f2
+  $tc'Var :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   2422175850322654441##
+                   15498694520185293782##
+                   PerturbationTree2.$trModule
+                   PerturbationTree2.$tc'Var2
+                   1#
+                   PerturbationTree2.$tc'Var1) -}
+250d4c41f0d4df2f237f238c163531f8
+  $tc'Var1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m4, Inline: [~] -}
+3d6fe78dfa1b3e276342e740081ba93c
+  $tc'Var2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS PerturbationTree2.$tc'Var3) -}
+f38f10065b4fddd326b0b9136b4ca5bb
+  $tc'Var3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'Var"#) -}
+3fa9f3b69f9cd1cb4278556a3f1db961
+  $tcAnsatzForest :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   11197574214373676524##
+                   10818330031283122330##
+                   PerturbationTree2.$trModule
+                   PerturbationTree2.$tcAnsatzForest1
+                   0#
+                   GHC.Types.krep$*Arr*) -}
+6c4d8429bc1a4cc2c8dd52e217b2c148
+  $tcAnsatzForest1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS
+                   PerturbationTree2.$tcAnsatzForest2) -}
+a4a155275b275870f41bff8d57abe67c
+  $tcAnsatzForest2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("AnsatzForest"#) -}
+4a67c76058eb92d5824fe8d5e3512bad
+  $tcAnsatzNode :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   5651067835222125043##
+                   6066944754555504014##
+                   PerturbationTree2.$trModule
+                   PerturbationTree2.$tcAnsatzNode1
+                   0#
+                   GHC.Types.krep$*Arr*) -}
+27387c3304e90a47879caf2f6db2957b
+  $tcAnsatzNode1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS PerturbationTree2.$tcAnsatzNode2) -}
+937fb516f307f28bdb77252508d42ac8
+  $tcAnsatzNode2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("AnsatzNode"#) -}
+5022dde2700869bb7e12703a5843c061
+  $trModule :: GHC.Types.Module
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.Module
+                   PerturbationTree2.$trModule3
+                   PerturbationTree2.$trModule1) -}
+5fae8e21ba76767fc6ac08286021580c
+  $trModule1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS PerturbationTree2.$trModule2) -}
+3873d7c92afb1b72b596bbad052f3f90
+  $trModule2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("PerturbationTree2"#) -}
+fcbf918661693eb8f035b43ac3ff4fee
+  $trModule3 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS PerturbationTree2.$trModule4) -}
+36ff7194a4e383f5fe03ad2a33d91f14
+  $trModule4 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("main"#) -}
+a3d0dabb92c0575fe224e58bca106d6e
+  $w$cshowsPrec ::
+    GHC.Show.Show a =>
+    GHC.Prim.Int# -> PerturbationTree2.AnsatzNode a -> GHC.Show.ShowS
+  {- Arity: 3, Strictness: <L,U(C(C1(C(U))),A,A)><S,U><S,1*U>,
+     Inline: [0] -}
+cd70c5cffc93306de85301d0e7f04bee
+  $w$ssymAnsatzForestEta ::
+    [(GHC.Types.Int, GHC.Types.Int)]
+    -> [(GHC.Types.Int, GHC.Types.Int)]
+    -> [([GHC.Types.Int], [GHC.Types.Int])]
+    -> [[GHC.Types.Int]]
+    -> [[[GHC.Types.Int]]]
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Arity: 6, Strictness: <S,1*U><S,1*U><S,1*U><S,1*U><S,1*U><S,U>,
+     Inline: [0] -}
+ae9c7373a1707c09359849743b242daf
+  $wgetEpsForest ::
+    [GHC.Types.Int]
+    -> [(GHC.Types.Int, GHC.Types.Int)]
+    -> GHC.Prim.Int#
+    -> PerturbationTree2.Symmetry GHC.Types.Int
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Arity: 4, Strictness: <S,U><L,U><S,U><L,U(U,U,U,U,U)>,
+     Inline: [0],
+     Unfolding: (\ (w :: [GHC.Types.Int])
+                   (w1 :: [(GHC.Types.Int, GHC.Types.Int)])
+                   (ww :: GHC.Prim.Int#)
+                   (w2 :: PerturbationTree2.Symmetry GHC.Types.Int) ->
+                 PerturbationTree2.getEpsForest_$sreduceAnsatzEta
+                   w2
+                   (PerturbationTree2.getEpsForest_go
+                      ww
+                      (PerturbationTree2.getEpsilonInds w w1))) -}
+20358aca43fe7593acf960db2ca68d45
+  $wgetEtaForest ::
+    [GHC.Types.Int]
+    -> [(GHC.Types.Int, GHC.Types.Int)]
+    -> GHC.Prim.Int#
+    -> PerturbationTree2.Symmetry GHC.Types.Int
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Arity: 4, Strictness: <S,1*U><L,U><S,U><L,U(U,U,U,U,U)>,
+     Inline: [0],
+     Unfolding: (\ (w :: [GHC.Types.Int])
+                   (w1 :: [(GHC.Types.Int, GHC.Types.Int)])
+                   (ww :: GHC.Prim.Int#)
+                   (w2 :: PerturbationTree2.Symmetry GHC.Types.Int) ->
+                 PerturbationTree2.getEpsForest_$sreduceAnsatzEta
+                   w2
+                   (PerturbationTree2.getEtaForest_go
+                      ww
+                      (GHC.List.filter
+                         @ [GHC.Types.Int]
+                         (\ (x :: [GHC.Types.Int]) -> PerturbationTree2.getEtaForest1 x w1)
+                           `cast`
+                         (<[GHC.Types.Int]>_R ->_R Data.Semigroup.Internal.N:All[0])
+                         (PerturbationTree2.getAllIndsEta w)))) -}
+c7986e6fe62e669b28893d6d4b90d3b2
+  $wmapNodes ::
+    GHC.Classes.Ord b =>
+    (a -> b)
+    -> PerturbationTree2.AnsatzForest a
+    -> PerturbationTree2.AnsatzForest b
+  {- Arity: 3,
+     Strictness: <L,U(A,C(C1(U)),A,A,A,C(C1(U)),A,A)><L,C(U)><S,1*U>,
+     Inline: [0] -}
+2d4db34883d28ffec73ade6108d0dfd6
+  $wmkEpsilonList ::
+    PerturbationTree2.AnsatzNode a
+    -> [a]
+    -> (# PerturbationTree2.AnsatzNode a,
+          [PerturbationTree2.AnsatzNode a] #)
+  {- Arity: 2, Strictness: <L,U><S,1*U>, Inline: [0],
+     Unfolding: (\ @ a
+                   (w :: PerturbationTree2.AnsatzNode a)
+                   (w1 :: [a]) ->
+                 case w1 of wild {
+                   [] -> (# w, GHC.Types.[] @ (PerturbationTree2.AnsatzNode a) #)
+                   : ipv ipv1
+                   -> let {
+                        ds :: (a, a, a, a)
+                        = case GHC.List.$wunsafeTake @ a 4# wild of wild1 {
+                            [] -> PerturbationTree2.mkEpsilonList1 @ a
+                            : i ds1
+                            -> case ds1 of wild2 {
+                                 [] -> PerturbationTree2.mkEpsilonList1 @ a
+                                 : j ds2
+                                 -> case ds2 of wild3 {
+                                      [] -> PerturbationTree2.mkEpsilonList1 @ a
+                                      : k ds3
+                                      -> case ds3 of wild4 {
+                                           [] -> PerturbationTree2.mkEpsilonList1 @ a
+                                           : l ds4
+                                           -> case ds4 of wild5 {
+                                                [] -> (i, j, k, l)
+                                                : ipv2 ipv3
+                                                -> PerturbationTree2.mkEpsilonList1 @ a } } } } }
+                      } in
+                      (# PerturbationTree2.Epsilon
+                           @ a
+                           (case ds of ds1 { (,,,) i j k l -> i })
+                           (case ds of ds1 { (,,,) i j k l -> j })
+                           (case ds of ds1 { (,,,) i j k l -> k })
+                           (case ds of ds1 { (,,,) i j k l -> l }),
+                         case PerturbationTree2.$wmkEtaList
+                                @ a
+                                w
+                                (PerturbationTree2.$wunsafeDrop
+                                   @ a
+                                   4#
+                                   wild) of ww { (#,#) ww1 ww2 ->
+                         GHC.Types.: @ (PerturbationTree2.AnsatzNode a) ww1 ww2 } #) }) -}
+b296950278248f71459c596cf19599c1
+  $wmkEtaList ::
+    PerturbationTree2.AnsatzNode a
+    -> [a]
+    -> (# PerturbationTree2.AnsatzNode a,
+          [PerturbationTree2.AnsatzNode a] #)
+  {- Arity: 2, Strictness: <L,U><S,1*U>, Inline: [0] -}
+ba8fc27c4caddfc4ea6a3b75eae16833
+  $wmkForestFromAscList :: [a] -> PerturbationTree2.AnsatzForest a
+  {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U>, Inline: [0] -}
+d8861eedaf94835378c76aee12c63619
+  $wshowAnsatzNode ::
+    GHC.Show.Show a =>
+    PerturbationTree2.AnsatzNode a
+    -> (# GHC.Types.Char, [GHC.Types.Char] #)
+  {- Arity: 2, Strictness: <L,U(C(C1(U)),A,A)><S,1*U>, Inline: [0],
+     Unfolding: (\ @ a
+                   (w :: GHC.Show.Show a)
+                   (w1 :: PerturbationTree2.AnsatzNode a) ->
+                 case w1 of wild {
+                   PerturbationTree2.Epsilon i j k l
+                   -> GHC.Show.$w$cshowsPrec2
+                        @ a
+                        @ a
+                        @ a
+                        @ a
+                        w
+                        w
+                        w
+                        w
+                        i
+                        j
+                        k
+                        l
+                        (GHC.Types.[] @ GHC.Types.Char)
+                   PerturbationTree2.Eta i b
+                   -> (# GHC.Show.$fShow(,)4,
+                         GHC.Show.showsPrec
+                           @ a
+                           w
+                           GHC.Show.$fShow(,)1
+                           i
+                           (GHC.Types.:
+                              @ GHC.Types.Char
+                              GHC.Show.showList__1
+                              (GHC.Show.$fShow(,)_$sgo1
+                                 PerturbationTree2.showAnsatzNode3
+                                 (GHC.Show.showsPrec @ a w GHC.Show.$fShow(,)1 b)
+                                 (GHC.Types.[] @ GHC.Show.ShowS))) #)
+                   PerturbationTree2.Var i j
+                   -> case i of ww { GHC.Real.:% ww1 ww2 ->
+                      case GHC.Real.$w$s$cshow ww1 ww2 of ww3 { (#,#) ww4 ww5 ->
+                      case GHC.Base.++_$s++
+                             @ GHC.Types.Char
+                             (GHC.CString.unpackAppendCString#
+                                PerturbationTree2.showAnsatzNode2
+                                (GHC.CString.unpackAppendCString#
+                                   PerturbationTree2.showAnsatzNode1
+                                   (case j of ww7 { GHC.Types.I# ww8 ->
+                                    case GHC.Show.$wshowSignedInt
+                                           0#
+                                           ww8
+                                           (GHC.Types.[]
+                                              @ GHC.Types.Char) of ww9 { (#,#) ww10 ww6 ->
+                                    GHC.Types.: @ GHC.Types.Char ww10 ww6 } })))
+                             ww4
+                             ww5 of ww7 { : ww8 ww9 ->
+                      (# ww8, ww9 #) } } } }) -}
+4a295c0773998978a1e8eef1c47b84a5
+  $wsymAnsatzForestEps ::
+    GHC.Classes.Ord a =>
+    [(a, a)]
+    -> [(a, a)]
+    -> [([a], [a])]
+    -> [[a]]
+    -> [[[a]]]
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+  {- Arity: 7,
+     Strictness: <L,U(U(C(C1(U)),A),C(C1(U)),C(C1(U)),A,C(C1(U)),A,A,A)><S,1*U><S,1*U><S,1*U><S,1*U><S,1*U><S,U>,
+     Inline: [0] -}
+4dac73cb90444df1e92465596cbdd05a
+  $wsymAnsatzForestEta ::
+    GHC.Classes.Ord a =>
+    [(a, a)]
+    -> [(a, a)]
+    -> [([a], [a])]
+    -> [[a]]
+    -> [[[a]]]
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+  {- Arity: 7,
+     Strictness: <L,U(U(C(C1(U)),A),C(C1(U)),C(C1(U)),A,A,A,A,A)><S,1*U><S,1*U><S,1*U><S,1*U><S,1*U><S,U>,
+     Inline: [0] -}
+afe1ba193d92dc7c7c1fb29f208ae273
+  $wunsafeDrop :: GHC.Prim.Int# -> [a1] -> [a1]
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,1*U><S,1*U>,
+     Inline: [0] -}
+1191b8140eaba8122ae4967bc6483f20
+  type role AnsatzForest nominal
+  data AnsatzForest a
+    = Forest (Data.Map.Internal.Map
+                a (PerturbationTree2.AnsatzForest a))
+    | Leaf a
+    | EmptyForest
+a3d0dabb92c0575fe224e58bca106d6e
+  data AnsatzNode a
+    = Epsilon a a a a | Eta a a | Var GHC.Real.Rational GHC.Types.Int
+7e7e5d9948fe58fc2fe4e390735bb02c
+  type Symmetry a =
+    ([(a, a)], [(a, a)], [([a], [a])], [[a]], [[[a]]])
+0a487eb3035876036b5834d04015d60f
+  addForests ::
+    GHC.Classes.Ord a =>
+    (a -> GHC.Types.Bool)
+    -> (a -> a -> a)
+    -> PerturbationTree2.AnsatzForest a
+    -> PerturbationTree2.AnsatzForest a
+    -> PerturbationTree2.AnsatzForest a
+  {- Arity: 5,
+     Strictness: <L,U(U(C(C1(U)),A),C(C1(U)),A,A,A,A,A,A)><L,C(U)><L,C(C1(U))><S,1*U><S,1*U> -}
+f8150d6c856ec397768a96553c39fc43
+  addVars ::
+    PerturbationTree2.AnsatzNode a
+    -> PerturbationTree2.AnsatzNode a -> PerturbationTree2.AnsatzNode a
+  {- Arity: 2, Strictness: <S,1*U><S,1*U>m3, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a
+                   (w :: PerturbationTree2.AnsatzNode a)
+                   (w1 :: PerturbationTree2.AnsatzNode a) ->
+                 case w of wild {
+                   DEFAULT
+                   -> case PerturbationTree2.getEpsForest2
+                      ret_ty (PerturbationTree2.AnsatzNode a)
+                      of {}
+                   PerturbationTree2.Var x y
+                   -> case w1 of wild1 {
+                        DEFAULT
+                        -> case PerturbationTree2.getEpsForest2
+                           ret_ty (PerturbationTree2.AnsatzNode a)
+                           of {}
+                        PerturbationTree2.Var x' y'
+                        -> case y of wild2 { GHC.Types.I# x1 ->
+                           case y' of wild3 { GHC.Types.I# y1 ->
+                           case GHC.Prim.==# x1 y1 of lwild {
+                             DEFAULT
+                             -> case PerturbationTree2.getEpsForest1
+                                ret_ty (PerturbationTree2.AnsatzNode a)
+                                of {}
+                             1#
+                             -> PerturbationTree2.Var
+                                  @ a
+                                  (GHC.Real.$fEnumRatio_$s$c+ x x')
+                                  wild2 } } } } }) -}
+3e88579103d356d0d385b9d641b9a5f9
+  flattenForest ::
+    GHC.Classes.Ord a => PerturbationTree2.AnsatzForest a -> [[a]]
+  {- Arity: 2, HasNoCafRefs,
+     Strictness: <L,U(A,C(C1(U)),A,A,A,A,A,A)><S,1*U> -}
+14c2c7887572f86bdbef9286ac24c9d8
+  getAllIndsEta :: [GHC.Types.Int] -> [[GHC.Types.Int]]
+  {- Arity: 1, Strictness: <S,1*U> -}
+f6b16bc2880bdac035b2f7a4cc6b1e0d
+  getEpsForest ::
+    [GHC.Types.Int]
+    -> [(GHC.Types.Int, GHC.Types.Int)]
+    -> GHC.Types.Int
+    -> PerturbationTree2.Symmetry GHC.Types.Int
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Arity: 4, Strictness: <S,U><L,U><S(S),1*U(U)><L,U(U,U,U,U,U)>,
+     Inline: [0],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: [GHC.Types.Int])
+                   (w1 :: [(GHC.Types.Int, GHC.Types.Int)])
+                   (w2 :: GHC.Types.Int)
+                   (w3 :: PerturbationTree2.Symmetry GHC.Types.Int) ->
+                 case w2 of ww { GHC.Types.I# ww1 ->
+                 PerturbationTree2.$wgetEpsForest w w1 ww1 w3 }) -}
+71b0f27d13accb4bf3cdb8644e078961
+  getEpsForest1 :: PerturbationTree2.AnsatzNode a
+  {- Strictness: x -}
+caa03cd1ff6f694f80c3ed72aad7b8a2
+  getEpsForest2 :: PerturbationTree2.AnsatzNode a
+  {- Strictness: x -}
+77af3e8877998ce14a2c47ef5b188141
+  getEpsForest3 :: GHC.Integer.Type.Integer
+  {- HasNoCafRefs, Unfolding: (0) -}
+136aa46fb7198c11b7ecca6f5d9504bb
+  getEpsForest_$saddForests ::
+    (PerturbationTree2.AnsatzNode GHC.Types.Int -> GHC.Types.Bool)
+    -> (PerturbationTree2.AnsatzNode GHC.Types.Int
+        -> PerturbationTree2.AnsatzNode GHC.Types.Int
+        -> PerturbationTree2.AnsatzNode GHC.Types.Int)
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Arity: 4, Strictness: <L,C(U)><L,C(C1(U))><S,1*U><S,1*U> -}
+f8c1251eb8932e044a533876f6a03c34
+  getEpsForest_$sisElem ::
+    [PerturbationTree2.AnsatzNode GHC.Types.Int]
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+    -> GHC.Types.Bool
+  {- Arity: 2, Strictness: <S,1*U><L,1*U> -}
+2046caa0697d45a3550311131ed313e3
+  getEpsForest_$smkForestFromAscList ::
+    [PerturbationTree2.AnsatzNode GHC.Types.Int]
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U> -}
+de228da41b7966be2eb4f5d3727b7876
+  getEpsForest_$sreduceAnsatzEta ::
+    PerturbationTree2.Symmetry GHC.Types.Int
+    -> [[PerturbationTree2.AnsatzNode GHC.Types.Int]]
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Arity: 2, Strictness: <L,U(U,U,U,U,U)><S,1*U>,
+     Unfolding: (\ (sym :: PerturbationTree2.Symmetry GHC.Types.Int)
+                   (ds :: [[PerturbationTree2.AnsatzNode GHC.Types.Int]]) ->
+                 case ds of wild {
+                   []
+                   -> PerturbationTree2.EmptyForest
+                        @ (PerturbationTree2.AnsatzNode GHC.Types.Int)
+                   : ipv ipv1
+                   -> letrec {
+                        go1 :: [[PerturbationTree2.AnsatzNode GHC.Types.Int]]
+                               -> PerturbationTree2.AnsatzForest
+                                    (PerturbationTree2.AnsatzNode GHC.Types.Int)
+                          {- Arity: 1, Strictness: <S,1*U> -}
+                        = \ (ds1 :: [[PerturbationTree2.AnsatzNode GHC.Types.Int]]) ->
+                          case ds1 of wild1 {
+                            []
+                            -> PerturbationTree2.EmptyForest
+                                 @ (PerturbationTree2.AnsatzNode GHC.Types.Int)
+                            : y ys
+                            -> let {
+                                 f6 :: PerturbationTree2.AnsatzForest
+                                         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+                                 = go1 ys
+                               } in
+                               case PerturbationTree2.getEpsForest_$sisElem y f6 of wild2 {
+                                 GHC.Types.False
+                                 -> case sym of ww { (,,,,) ww1 ww2 ww3 ww4 ww5 ->
+                                    PerturbationTree2.getEpsForest_$saddForests
+                                      (PerturbationTree2.isZeroVar @ GHC.Types.Int)
+                                      (PerturbationTree2.addVars @ GHC.Types.Int)
+                                      f6
+                                      (PerturbationTree2.$w$ssymAnsatzForestEta
+                                         ww1
+                                         ww2
+                                         ww3
+                                         ww4
+                                         ww5
+                                         (PerturbationTree2.getEpsForest_$smkForestFromAscList y)) }
+                                 GHC.Types.True -> f6 } }
+                      } in
+                      go1 wild }) -}
+23f3405567f63dbedd6b3bdd6fa22dc0
+  getEpsForest_go ::
+    GHC.Prim.Int#
+    -> [[GHC.Types.Int]]
+    -> [[PerturbationTree2.AnsatzNode GHC.Types.Int]]
+  {- Arity: 2, Strictness: <L,U><S,1*U> -}
+3e831b9306795ef141a3098f18acd740
+  getEpsilonInds ::
+    [GHC.Types.Int]
+    -> [(GHC.Types.Int, GHC.Types.Int)] -> [[GHC.Types.Int]]
+  {- Arity: 2, Strictness: <S,U><L,U> -}
+1335d9bb6b9f2610036a74b022de3ecc
+  getEtaForest ::
+    [GHC.Types.Int]
+    -> [(GHC.Types.Int, GHC.Types.Int)]
+    -> GHC.Types.Int
+    -> PerturbationTree2.Symmetry GHC.Types.Int
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Arity: 4, Strictness: <S,1*U><L,U><S(S),1*U(U)><L,U(U,U,U,U,U)>,
+     Inline: [0],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: [GHC.Types.Int])
+                   (w1 :: [(GHC.Types.Int, GHC.Types.Int)])
+                   (w2 :: GHC.Types.Int)
+                   (w3 :: PerturbationTree2.Symmetry GHC.Types.Int) ->
+                 case w2 of ww { GHC.Types.I# ww1 ->
+                 PerturbationTree2.$wgetEtaForest w w1 ww1 w3 }) -}
+ba2ba62937c1df7b5be13bb977b7e2c7
+  getEtaForest1 ::
+    [GHC.Types.Int]
+    -> [(GHC.Types.Int, GHC.Types.Int)] -> Data.Semigroup.Internal.All
+  {- Arity: 2, Strictness: <L,U><S,1*U>,
+     Unfolding: (\ (l :: [GHC.Types.Int])
+                   (inds :: [(GHC.Types.Int, GHC.Types.Int)]) ->
+                 letrec {
+                   go1 :: [(GHC.Types.Int, GHC.Types.Int)]
+                          -> Data.Semigroup.Internal.All
+                     <join 1> {- Arity: 1, Strictness: <S,1*U> -}
+                   = \ (ds :: [(GHC.Types.Int, GHC.Types.Int)]) ->
+                     case ds of wild {
+                       []
+                       -> GHC.Types.True `cast` (Sym (Data.Semigroup.Internal.N:All[0]))
+                       : y ys
+                       -> case y of wild1 { (,) i j ->
+                          let {
+                            exit :: GHC.Prim.Int#
+                                    -> GHC.Prim.Int# -> Data.Semigroup.Internal.All
+                              <join 2> {- Arity: 2, Strictness: <S,U><S,U> -}
+                            = \ (x :: GHC.Prim.Int#)[OneShot] (y1 :: GHC.Prim.Int#)[OneShot] ->
+                              case GHC.Prim.==# x y1 of lwild {
+                                DEFAULT
+                                -> GHC.Types.False `cast` (Sym (Data.Semigroup.Internal.N:All[0]))
+                                1# -> go1 ys }
+                          } in
+                          let {
+                            exit1 :: GHC.Prim.Int#
+                                     -> GHC.Prim.Int# -> Data.Semigroup.Internal.All
+                              <join 2> {- Arity: 2, Strictness: <S,U><S,U> -}
+                            = \ (x :: GHC.Prim.Int#)[OneShot] (y1 :: GHC.Prim.Int#)[OneShot] ->
+                              case GHC.Prim.==# x y1 of lwild {
+                                DEFAULT
+                                -> GHC.Types.False `cast` (Sym (Data.Semigroup.Internal.N:All[0]))
+                                1# -> go1 ys }
+                          } in
+                          letrec {
+                            go2 :: [GHC.Types.Int] -> Data.Semigroup.Internal.All
+                              <join 1> {- Arity: 1, Strictness: <S,1*U> -}
+                            = \ (ds1 :: [GHC.Types.Int]) ->
+                              case ds1 of wild2 {
+                                []
+                                -> case Data.Maybe.fromJust1
+                                   ret_ty Data.Semigroup.Internal.All
+                                   of {}
+                                : y1 ys1
+                                -> case y1 of wild3 { GHC.Types.I# x ->
+                                   case i of wild4 { GHC.Types.I# y2 ->
+                                   case GHC.Prim.==# x y2 of lwild {
+                                     DEFAULT
+                                     -> case j of wild5 { GHC.Types.I# y3 ->
+                                        case GHC.Prim.==# x y3 of lwild1 {
+                                          DEFAULT -> go2 ys1 1# -> exit x y2 } }
+                                     1# -> exit1 x y2 } } } }
+                          } in
+                          go2 l } }
+                 } in
+                 go1 inds) -}
+d84258e9c97f9c558e55dec7a884f1ae
+  getEtaForest_go ::
+    GHC.Prim.Int#
+    -> [[GHC.Types.Int]]
+    -> [[PerturbationTree2.AnsatzNode GHC.Types.Int]]
+  {- Arity: 2, Strictness: <L,U><S,1*U> -}
+44a405ebc1954e4751cc5b9380766a09
+  getEtaInds ::
+    [GHC.Types.Int]
+    -> [(GHC.Types.Int, GHC.Types.Int)] -> [[GHC.Types.Int]]
+  {- Arity: 2, Strictness: <S,1*U><L,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (l :: [GHC.Types.Int])
+                   (sym :: [(GHC.Types.Int, GHC.Types.Int)]) ->
+                 GHC.Base.build
+                   @ [GHC.Types.Int]
+                   (\ @ b
+                      (c :: [GHC.Types.Int] -> b -> b)[OneShot]
+                      (n :: b)[OneShot] ->
+                    GHC.Base.foldr
+                      @ [GHC.Types.Int]
+                      @ b
+                      (GHC.List.filterFB
+                         @ [GHC.Types.Int]
+                         @ b
+                         c
+                         (\ (x :: [GHC.Types.Int]) -> PerturbationTree2.getEtaForest1 x sym)
+                           `cast`
+                         (<[GHC.Types.Int]>_R ->_R Data.Semigroup.Internal.N:All[0]))
+                      n
+                      (PerturbationTree2.getAllIndsEta l))) -}
+431b0cbef322d789a6467455e0710b34
+  getForestLabels ::
+    PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+    -> [GHC.Types.Int]
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: InlineRule (1, True, False)
+                (\ @ a
+                   (ans :: PerturbationTree2.AnsatzForest
+                             (PerturbationTree2.AnsatzNode a)) ->
+                 Data.OldList.nubBy
+                   @ GHC.Types.Int
+                   GHC.Classes.eqInt
+                   (GHC.Base.build
+                      @ GHC.Types.Int
+                      (\ @ b1
+                         (c :: GHC.Types.Int -> b1 -> b1)[OneShot]
+                         (n :: b1)[OneShot] ->
+                       case ans of wild {
+                         PerturbationTree2.Forest m
+                         -> GHC.Base.foldr
+                              @ (PerturbationTree2.AnsatzNode a)
+                              @ b1
+                              (GHC.Base.mapFB
+                                 @ GHC.Types.Int
+                                 @ b1
+                                 @ (PerturbationTree2.AnsatzNode a)
+                                 c
+                                 (PerturbationTree2.getVarLabels @ a))
+                              n
+                              (PerturbationTree2.getForestLabels2
+                                 @ (PerturbationTree2.AnsatzNode a)
+                                 (GHC.Types.[] @ (PerturbationTree2.AnsatzNode a))
+                                 m)
+                         PerturbationTree2.Leaf var
+                         -> GHC.Base.mapFB
+                              @ GHC.Types.Int
+                              @ b1
+                              @ (PerturbationTree2.AnsatzNode a)
+                              c
+                              (PerturbationTree2.getVarLabels @ a)
+                              var
+                              n
+                         PerturbationTree2.EmptyForest
+                         -> case PerturbationTree2.getForestLabels1 ret_ty b1 of {} }))) -}
+835bc6956ad78fa286a1b90f7722735d
+  getForestLabels1 :: [a]
+  {- Strictness: x -}
+025c24834d9746ced4ee79e613efd60e
+  getForestLabels2 ::
+    [a]
+    -> Data.Map.Internal.Map a (PerturbationTree2.AnsatzForest a)
+    -> [a]
+  {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+7cbc76f12531a3d959096cd2f0759280
+  getForestLabels3 :: GHC.Types.Int
+  {- Strictness: x -}
+aa1ba2d04dfe5816f9d85513a1790d15
+  getVarLabels :: PerturbationTree2.AnsatzNode a -> GHC.Types.Int
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: InlineRule (1, True, False)
+                (\ @ a (ds :: PerturbationTree2.AnsatzNode a) ->
+                 case ds of wild {
+                   DEFAULT -> PerturbationTree2.getForestLabels3
+                   PerturbationTree2.Var i j -> j }) -}
+67e15ad1a528b8138a95e1f940faa61f
+  isElem ::
+    GHC.Classes.Ord a =>
+    [PerturbationTree2.AnsatzNode a]
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+    -> GHC.Types.Bool
+  {- Arity: 3,
+     Strictness: <L,U(U(C(C1(U)),A),C(C1(U)),C(C1(U)),A,A,A,A,A)><S,1*U><L,1*U> -}
+81569ce664dc1ddea1274b674373096d
+  isZeroVar :: PerturbationTree2.AnsatzNode a -> GHC.Types.Bool
+  {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U>,
+     Unfolding: (\ @ a (ds :: PerturbationTree2.AnsatzNode a) ->
+                 case ds of wild {
+                   DEFAULT -> GHC.Types.False
+                   PerturbationTree2.Var ds1 x
+                   -> case ds1 of wild1 { GHC.Real.:% a1 a2 ->
+                      case GHC.Integer.Type.eqInteger#
+                             a1
+                             PerturbationTree2.getEpsForest3 of wild2 {
+                        DEFAULT -> GHC.Types.False
+                        1#
+                        -> case GHC.Integer.Type.eqInteger#
+                                  a2
+                                  GHC.Real.$fEnumRatio1 of wild3 { DEFAULT ->
+                           GHC.Prim.tagToEnum# @ GHC.Types.Bool wild3 } } } }) -}
+d7099a49b92b9e05ac55944207092ea5
+  mapNodes ::
+    (GHC.Classes.Ord a, GHC.Classes.Ord b) =>
+    (a -> b)
+    -> PerturbationTree2.AnsatzForest a
+    -> PerturbationTree2.AnsatzForest b
+  {- Arity: 4,
+     Strictness: <L,A><L,U(A,C(C1(U)),A,A,A,C(C1(U)),A,A)><L,C(U)><S,1*U>,
+     Inline: [0],
+     Unfolding: InlineRule (4, True, True)
+                (\ @ a
+                   @ b
+                   (w :: GHC.Classes.Ord a)
+                   (w1 :: GHC.Classes.Ord b)
+                   (w2 :: a -> b)
+                   (w3 :: PerturbationTree2.AnsatzForest a) ->
+                 PerturbationTree2.$wmapNodes @ a @ b w1 w2 w3) -}
+2c75e07294d96e593c349cf8dd45334a
+  mapNodes_$smapNodes ::
+    (PerturbationTree2.AnsatzNode GHC.Types.Int
+     -> PerturbationTree2.AnsatzNode GHC.Types.Int)
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+    -> PerturbationTree2.AnsatzForest
+         (PerturbationTree2.AnsatzNode GHC.Types.Int)
+  {- Arity: 2, Strictness: <L,C(U)><S,1*U> -}
+0d22342a33b6d214eb5d43bed84f1149
+  mkAllVars :: GHC.Types.Int -> [PerturbationTree2.AnsatzNode a]
+  {- Arity: 1, HasNoCafRefs, Strictness: <S(S),1*U(U)>m2,
+     Inline: [0],
+     Unfolding: InlineRule (1, True, False)
+                (\ @ a (w :: GHC.Types.Int) ->
+                 case w of ww { GHC.Types.I# ww1 ->
+                 PerturbationTree2.mkAllVars1 @ a ww1 }) -}
+5bc17c4391af321b9a59a2661e82428a
+  mkAllVars1 :: GHC.Prim.Int# -> [PerturbationTree2.AnsatzNode a]
+  {- Arity: 1, HasNoCafRefs, Strictness: <L,U>m2 -}
+065808443ac3cf19253dcf15e0719ca9
+  mkEpsilonList ::
+    PerturbationTree2.AnsatzNode a
+    -> [a] -> [PerturbationTree2.AnsatzNode a]
+  {- Arity: 2, Strictness: <L,U><S,1*U>m2, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a (w :: PerturbationTree2.AnsatzNode a) (w1 :: [a]) ->
+                 case PerturbationTree2.$wmkEpsilonList
+                        @ a
+                        w
+                        w1 of ww { (#,#) ww1 ww2 ->
+                 GHC.Types.: @ (PerturbationTree2.AnsatzNode a) ww1 ww2 }) -}
+1b7e40a7cc9f8d320abb3b80e7385715
+  mkEpsilonList1 :: (a, a, a, a)
+  {- Strictness: x -}
+4b94ff75e07f2baeb3efce6192656a65
+  mkEtaList ::
+    PerturbationTree2.AnsatzNode a
+    -> [a] -> [PerturbationTree2.AnsatzNode a]
+  {- Arity: 2, Strictness: <L,U><S,1*U>m2, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a (w :: PerturbationTree2.AnsatzNode a) (w1 :: [a]) ->
+                 case PerturbationTree2.$wmkEtaList
+                        @ a
+                        w
+                        w1 of ww { (#,#) ww1 ww2 ->
+                 GHC.Types.: @ (PerturbationTree2.AnsatzNode a) ww1 ww2 }) -}
+34dd799fe2849812812f3f7d63e3eb2f
+  mkForestFromAscList ::
+    GHC.Classes.Ord a => [a] -> PerturbationTree2.AnsatzForest a
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,A><S,1*U>, Inline: [0],
+     Unfolding: InlineRule (2, True, True)
+                (\ @ a (w :: GHC.Classes.Ord a) (w1 :: [a]) ->
+                 PerturbationTree2.$wmkForestFromAscList @ a w1) -}
+6d40f58d8f64903a9a763a3e46dbad49
+  printAnsatz ::
+    PerturbationTree2.AnsatzForest GHC.Base.String -> [GHC.Base.String]
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: (\ (ds :: PerturbationTree2.AnsatzForest
+                            GHC.Base.String) ->
+                 case ds of wild {
+                   PerturbationTree2.Forest m
+                   -> PerturbationTree2.printAnsatz_go1
+                        PerturbationTree2.printAnsatz2
+                        m
+                        (PerturbationTree2.printAnsatz_go13
+                           (GHC.Types.[] @ [[GHC.Types.Char]])
+                           m)
+                   PerturbationTree2.Leaf var
+                   -> GHC.Types.:
+                        @ GHC.Base.String
+                        var
+                        (GHC.Types.[] @ GHC.Base.String)
+                   PerturbationTree2.EmptyForest
+                   -> PerturbationTree2.printAnsatz1 }) -}
+2b7c7a638ceee2d6eb5868ba5104e934
+  printAnsatz1 :: [GHC.Base.String]
+  {- Strictness: x -}
+e258d8b51e67ed5b91c1ebd56525681f
+  printAnsatz2 :: [[GHC.Base.String]] -> [[GHC.Types.Char]]
+  {- Arity: 1, HasNoCafRefs, Strictness: <L,A>,
+     Unfolding: (\ (ds :: [[GHC.Base.String]]) ->
+                 GHC.Types.[] @ [GHC.Types.Char]) -}
+042a498444cb59b9b76e42e78dbf8797
+  printAnsatz_go1 ::
+    ([[GHC.Base.String]] -> [[GHC.Types.Char]])
+    -> Data.Map.Internal.Map
+         [GHC.Types.Char] (PerturbationTree2.AnsatzForest GHC.Base.String)
+    -> [[GHC.Base.String]]
+    -> [[GHC.Types.Char]]
+  {- Arity: 2, HasNoCafRefs, Strictness: <L,1*U><S,1*U> -}
+0846e556a4e371e790398c9b54741457
+  printAnsatz_go13 ::
+    [[[GHC.Types.Char]]]
+    -> Data.Map.Internal.Map
+         [GHC.Types.Char] (PerturbationTree2.AnsatzForest GHC.Base.String)
+    -> [[[GHC.Types.Char]]]
+  {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+9571abb5c3046bff7710ce2fd5e0afbe
+  reduceAnsatzEps ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.Symmetry a
+    -> [[PerturbationTree2.AnsatzNode a]]
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+  {- Arity: 3,
+     Strictness: <L,U(U(C(C1(U)),A),C(C1(U)),C(C1(U)),A,C(C1(U)),A,A,A)><L,U(U,U,U,U,U)><S,1*U>,
+     Unfolding: (\ @ a
+                   ($dOrd :: GHC.Classes.Ord a)
+                   (sym :: PerturbationTree2.Symmetry a)
+                   (ds :: [[PerturbationTree2.AnsatzNode a]]) ->
+                 case ds of wild {
+                   []
+                   -> PerturbationTree2.EmptyForest @ (PerturbationTree2.AnsatzNode a)
+                   : ipv ipv1
+                   -> let {
+                        $dOrd1 :: GHC.Classes.Ord (PerturbationTree2.AnsatzNode a)
+                        = PerturbationTree2.$fOrdAnsatzNode @ a $dOrd
+                      } in
+                      letrec {
+                        go1 :: [[PerturbationTree2.AnsatzNode a]]
+                               -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+                          {- Arity: 1, Strictness: <S,1*U> -}
+                        = \ (ds1 :: [[PerturbationTree2.AnsatzNode a]]) ->
+                          case ds1 of wild1 {
+                            []
+                            -> PerturbationTree2.EmptyForest @ (PerturbationTree2.AnsatzNode a)
+                            : y ys
+                            -> let {
+                                 f6 :: PerturbationTree2.AnsatzForest
+                                         (PerturbationTree2.AnsatzNode a)
+                                 = go1 ys
+                               } in
+                               case PerturbationTree2.isElem @ a $dOrd y f6 of wild2 {
+                                 GHC.Types.False
+                                 -> case sym of ww { (,,,,) ww1 ww2 ww3 ww4 ww5 ->
+                                    PerturbationTree2.addForests
+                                      @ (PerturbationTree2.AnsatzNode a)
+                                      $dOrd1
+                                      (PerturbationTree2.isZeroVar @ a)
+                                      (PerturbationTree2.addVars @ a)
+                                      f6
+                                      (PerturbationTree2.$wsymAnsatzForestEps
+                                         @ a
+                                         $dOrd
+                                         ww1
+                                         ww2
+                                         ww3
+                                         ww4
+                                         ww5
+                                         (PerturbationTree2.$wmkForestFromAscList
+                                            @ (PerturbationTree2.AnsatzNode a)
+                                            y)) }
+                                 GHC.Types.True -> f6 } }
+                      } in
+                      go1 wild }) -}
+1ebf7e206f688229af8ace7e0dddf816
+  reduceAnsatzEta ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.Symmetry a
+    -> [[PerturbationTree2.AnsatzNode a]]
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+  {- Arity: 3,
+     Strictness: <L,U(U(C(C1(U)),A),C(C1(U)),C(C1(U)),A,A,A,A,A)><L,U(U,U,U,U,U)><S,1*U>,
+     Unfolding: (\ @ a
+                   ($dOrd :: GHC.Classes.Ord a)
+                   (sym :: PerturbationTree2.Symmetry a)
+                   (ds :: [[PerturbationTree2.AnsatzNode a]]) ->
+                 case ds of wild {
+                   []
+                   -> PerturbationTree2.EmptyForest @ (PerturbationTree2.AnsatzNode a)
+                   : ipv ipv1
+                   -> let {
+                        $dOrd1 :: GHC.Classes.Ord (PerturbationTree2.AnsatzNode a)
+                        = PerturbationTree2.$fOrdAnsatzNode @ a $dOrd
+                      } in
+                      letrec {
+                        go1 :: [[PerturbationTree2.AnsatzNode a]]
+                               -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+                          {- Arity: 1, Strictness: <S,1*U> -}
+                        = \ (ds1 :: [[PerturbationTree2.AnsatzNode a]]) ->
+                          case ds1 of wild1 {
+                            []
+                            -> PerturbationTree2.EmptyForest @ (PerturbationTree2.AnsatzNode a)
+                            : y ys
+                            -> let {
+                                 f6 :: PerturbationTree2.AnsatzForest
+                                         (PerturbationTree2.AnsatzNode a)
+                                 = go1 ys
+                               } in
+                               case PerturbationTree2.isElem @ a $dOrd y f6 of wild2 {
+                                 GHC.Types.False
+                                 -> case sym of ww { (,,,,) ww1 ww2 ww3 ww4 ww5 ->
+                                    PerturbationTree2.addForests
+                                      @ (PerturbationTree2.AnsatzNode a)
+                                      $dOrd1
+                                      (PerturbationTree2.isZeroVar @ a)
+                                      (PerturbationTree2.addVars @ a)
+                                      f6
+                                      (PerturbationTree2.$wsymAnsatzForestEta
+                                         @ a
+                                         $dOrd
+                                         ww1
+                                         ww2
+                                         ww3
+                                         ww4
+                                         ww5
+                                         (PerturbationTree2.$wmkForestFromAscList
+                                            @ (PerturbationTree2.AnsatzNode a)
+                                            y)) }
+                                 GHC.Types.True -> f6 } }
+                      } in
+                      go1 wild }) -}
+abd71f2c4880e7527cd68a57e4611fd1
+  relabelAnsatzForest ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+  {- Arity: 1,
+     Strictness: <L,U(U(C(C1(U)),A),C(C1(U)),C(C1(U)),A,A,A,A,A)>,
+     Unfolding: (\ @ a ($dOrd :: GHC.Classes.Ord a) ->
+                 let {
+                   $dOrd1 :: GHC.Classes.Ord (PerturbationTree2.AnsatzNode a)
+                   = PerturbationTree2.$fOrdAnsatzNode @ a $dOrd
+                 } in
+                 \ (ans :: PerturbationTree2.AnsatzForest
+                             (PerturbationTree2.AnsatzNode a)) ->
+                 PerturbationTree2.$wmapNodes
+                   @ (PerturbationTree2.AnsatzNode a)
+                   @ (PerturbationTree2.AnsatzNode a)
+                   $dOrd1
+                   (let {
+                      f6 :: Data.IntMap.Internal.IntMap GHC.Types.Int
+                      = case ans of wild {
+                          PerturbationTree2.Forest m
+                          -> Data.IntMap.Strict.fromList1
+                               @ GHC.Types.Int
+                               (Data.IntMap.Internal.Nil @ GHC.Types.Int)
+                               (GHC.List.zip
+                                  @ GHC.Types.Int
+                                  @ GHC.Types.Int
+                                  (Data.OldList.nubBy
+                                     @ GHC.Types.Int
+                                     GHC.Classes.eqInt
+                                     (GHC.Base.map
+                                        @ (PerturbationTree2.AnsatzNode a)
+                                        @ GHC.Types.Int
+                                        (PerturbationTree2.getVarLabels @ a)
+                                        (PerturbationTree2.getForestLabels2
+                                           @ (PerturbationTree2.AnsatzNode a)
+                                           (GHC.Types.[] @ (PerturbationTree2.AnsatzNode a))
+                                           m)))
+                                  PerturbationTree2.relabelAnsatzForest1)
+                          PerturbationTree2.Leaf var
+                          -> Data.IntMap.Strict.fromList1
+                               @ GHC.Types.Int
+                               (Data.IntMap.Internal.Nil @ GHC.Types.Int)
+                               (GHC.List.zip
+                                  @ GHC.Types.Int
+                                  @ GHC.Types.Int
+                                  (Data.OldList.nubBy
+                                     @ GHC.Types.Int
+                                     GHC.Classes.eqInt
+                                     (GHC.Base.map
+                                        @ (PerturbationTree2.AnsatzNode a)
+                                        @ GHC.Types.Int
+                                        (PerturbationTree2.getVarLabels @ a)
+                                        (GHC.Types.:
+                                           @ (PerturbationTree2.AnsatzNode a)
+                                           var
+                                           (GHC.Types.[] @ (PerturbationTree2.AnsatzNode a)))))
+                                  PerturbationTree2.relabelAnsatzForest1)
+                          PerturbationTree2.EmptyForest
+                          -> case PerturbationTree2.getForestLabels1
+                             ret_ty (Data.IntMap.Internal.IntMap GHC.Types.Int)
+                             of {} }
+                    } in
+                    \ (ds :: PerturbationTree2.AnsatzNode a) ->
+                    case ds of wild {
+                      DEFAULT -> wild
+                      PerturbationTree2.Var i j
+                      -> PerturbationTree2.Var
+                           @ a
+                           i
+                           (Data.IntMap.Internal.! @ GHC.Types.Int f6 j) })
+                   ans) -}
+1b1a99914fa4d67c1b92d66c8787af2a
+  relabelAnsatzForest1 :: [GHC.Types.Int]
+  {- Unfolding: (GHC.Enum.eftInt 1# 9223372036854775807#) -}
+77e04ad156e45dde6d560972aac139c7
+  showAnsatzNode ::
+    GHC.Show.Show a =>
+    PerturbationTree2.AnsatzNode a -> GHC.Base.String
+  {- Arity: 2, Strictness: <L,U(C(C1(U)),A,A)><S,1*U>m2, Inline: [0],
+     Unfolding: InlineRule (2, True, False)
+                (\ @ a
+                   (w :: GHC.Show.Show a)
+                   (w1 :: PerturbationTree2.AnsatzNode a) ->
+                 case PerturbationTree2.$wshowAnsatzNode
+                        @ a
+                        w
+                        w1 of ww { (#,#) ww1 ww2 ->
+                 GHC.Types.: @ GHC.Types.Char ww1 ww2 }) -}
+779bb0f4c3e98b2d720c546c6a9840b3
+  showAnsatzNode1 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("x"#) -}
+0fb42f4e6aebae89f53280f245045e07
+  showAnsatzNode2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("*"#) -}
+5e700fdb819c491aea884d7a7a462a91
+  showAnsatzNode3 :: [GHC.Types.Char]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Char
+                   GHC.Show.$fShow(,)2
+                   (GHC.Types.[] @ GHC.Types.Char)) -}
+248d98c78a31fbc59c613a111a7ea64e
+  symAnsatzForestEps ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.Symmetry a
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+  {- Arity: 3,
+     Strictness: <L,U(U(C(C1(U)),A),C(C1(U)),C(C1(U)),A,C(C1(U)),A,A,A)><S(SSSSS),1*U(1*U,1*U,1*U,1*U,1*U)><S,U>,
+     Inline: [0],
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   (w :: GHC.Classes.Ord a)
+                   (w1 :: PerturbationTree2.Symmetry a)
+                   (w2 :: PerturbationTree2.AnsatzForest
+                            (PerturbationTree2.AnsatzNode a)) ->
+                 case w1 of ww { (,,,,) ww1 ww2 ww3 ww4 ww5 ->
+                 PerturbationTree2.$wsymAnsatzForestEps
+                   @ a
+                   w
+                   ww1
+                   ww2
+                   ww3
+                   ww4
+                   ww5
+                   w2 }) -}
+d77198be09c9a613c0ccbe565154579c
+  symAnsatzForestEta ::
+    GHC.Classes.Ord a =>
+    PerturbationTree2.Symmetry a
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+    -> PerturbationTree2.AnsatzForest (PerturbationTree2.AnsatzNode a)
+  {- Arity: 3,
+     Strictness: <L,U(U(C(C1(U)),A),C(C1(U)),C(C1(U)),A,A,A,A,A)><S(SSSSS),1*U(1*U,1*U,1*U,1*U,1*U)><S,U>,
+     Inline: [0],
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   (w :: GHC.Classes.Ord a)
+                   (w1 :: PerturbationTree2.Symmetry a)
+                   (w2 :: PerturbationTree2.AnsatzForest
+                            (PerturbationTree2.AnsatzNode a)) ->
+                 case w1 of ww { (,,,,) ww1 ww2 ww3 ww4 ww5 ->
+                 PerturbationTree2.$wsymAnsatzForestEta
+                   @ a
+                   w
+                   ww1
+                   ww2
+                   ww3
+                   ww4
+                   ww5
+                   w2 }) -}
+instance [safe] GHC.Classes.Eq [PerturbationTree2.AnsatzForest]
+  = PerturbationTree2.$fEqAnsatzForest
+instance [safe] GHC.Classes.Eq [PerturbationTree2.AnsatzNode]
+  = PerturbationTree2.$fEqAnsatzNode
+instance [safe] GHC.Classes.Ord [PerturbationTree2.AnsatzNode]
+  = PerturbationTree2.$fOrdAnsatzNode
+instance [safe] GHC.Show.Show [PerturbationTree2.AnsatzForest]
+  = PerturbationTree2.$fShowAnsatzForest
+instance [safe] GHC.Show.Show [PerturbationTree2.AnsatzNode]
+  = PerturbationTree2.$fShowAnsatzNode
+"SPEC $c/= @ Int" forall ($dEq1 :: GHC.Classes.Eq GHC.Types.Int)
+  PerturbationTree2.$fEqAnsatzNode_$c/= @ GHC.Types.Int $dEq1
+  = PerturbationTree2.$fEqAnsatzNode_$s$c/=
+"SPEC $c< @ Int" forall ($dOrd :: GHC.Classes.Ord GHC.Types.Int)
+  PerturbationTree2.$fOrdAnsatzNode_$c< @ GHC.Types.Int $dOrd
+  = PerturbationTree2.$fOrdAnsatzNode_$s$c<
+"SPEC $c<= @ Int" forall ($dOrd :: GHC.Classes.Ord GHC.Types.Int)
+  PerturbationTree2.$fOrdAnsatzNode_$c<= @ GHC.Types.Int $dOrd
+  = PerturbationTree2.$fOrdAnsatzNode_$s$c<=
+"SPEC $c== @ (AnsatzNode Int)" forall ($dEq1 :: GHC.Classes.Eq
+                                                  (PerturbationTree2.AnsatzNode GHC.Types.Int))
+  PerturbationTree2.$fEqAnsatzForest_$c== @ (PerturbationTree2.AnsatzNode
+                                               GHC.Types.Int)
+                                          $dEq1
+  = PerturbationTree2.$fEqAnsatzForest_$s$c==
+"SPEC $c== @ Int" forall ($dEq1 :: GHC.Classes.Eq GHC.Types.Int)
+  PerturbationTree2.$fEqAnsatzNode_$c== @ GHC.Types.Int $dEq1
+  = PerturbationTree2.$fEqAnsatzNode_$s$c==
+"SPEC $c>= @ Int" forall ($dOrd :: GHC.Classes.Ord GHC.Types.Int)
+  PerturbationTree2.$fOrdAnsatzNode_$c>= @ GHC.Types.Int $dOrd
+  = PerturbationTree2.$fOrdAnsatzNode_$s$c>=
+"SPEC $ccompare @ Int" forall ($dOrd :: GHC.Classes.Ord
+                                          GHC.Types.Int)
+  PerturbationTree2.$fOrdAnsatzNode_$ccompare @ GHC.Types.Int $dOrd
+  = PerturbationTree2.$fOrdAnsatzNode_$s$ccompare
+"SPEC $cmax @ Int" forall ($dOrd :: GHC.Classes.Ord GHC.Types.Int)
+  PerturbationTree2.$fOrdAnsatzNode_$cmax @ GHC.Types.Int $dOrd
+  = PerturbationTree2.$fOrdAnsatzNode_$s$cmax
+"SPEC $cmin @ Int" forall ($dOrd :: GHC.Classes.Ord GHC.Types.Int)
+  PerturbationTree2.$fOrdAnsatzNode_$cmin @ GHC.Types.Int $dOrd
+  = PerturbationTree2.$fOrdAnsatzNode_$s$cmin
+"SPEC $cp1Ord @ Int" forall ($dOrd :: GHC.Classes.Ord
+                                        GHC.Types.Int)
+  PerturbationTree2.$fOrdAnsatzNode_$cp1Ord @ GHC.Types.Int $dOrd
+  = PerturbationTree2.$fEqAnsatzNode_$s$fEqAnsatzNode
+"SPEC $fEqAnsatzNode @ Int" forall ($dEq1 :: GHC.Classes.Eq
+                                               GHC.Types.Int)
+  PerturbationTree2.$fEqAnsatzNode @ GHC.Types.Int $dEq1
+  = PerturbationTree2.$fEqAnsatzNode_$s$fEqAnsatzNode
+"SPEC $fOrdAnsatzNode @ Int" forall ($dOrd :: GHC.Classes.Ord
+                                                GHC.Types.Int)
+  PerturbationTree2.$fOrdAnsatzNode @ GHC.Types.Int $dOrd
+  = PerturbationTree2.$fOrdAnsatzNode_$s$fOrdAnsatzNode
+"SPEC addForests @ (AnsatzNode Int)" forall ($dOrd :: GHC.Classes.Ord
+                                                        (PerturbationTree2.AnsatzNode
+                                                           GHC.Types.Int))
+  PerturbationTree2.addForests @ (PerturbationTree2.AnsatzNode
+                                    GHC.Types.Int)
+                               $dOrd
+  = PerturbationTree2.getEpsForest_$saddForests
+"SPEC isElem @ Int" forall ($dOrd :: GHC.Classes.Ord GHC.Types.Int)
+  PerturbationTree2.isElem @ GHC.Types.Int $dOrd
+  = PerturbationTree2.getEpsForest_$sisElem
+"SPEC mapNodes @ (AnsatzNode Int) @ (AnsatzNode Int)" forall ($dOrd :: GHC.Classes.Ord
+                                                                         (PerturbationTree2.AnsatzNode
+                                                                            GHC.Types.Int))
+                                                             ($dOrd1 :: GHC.Classes.Ord
+                                                                          (PerturbationTree2.AnsatzNode
+                                                                             GHC.Types.Int))
+  PerturbationTree2.mapNodes @ (PerturbationTree2.AnsatzNode
+                                  GHC.Types.Int)
+                             @ (PerturbationTree2.AnsatzNode GHC.Types.Int)
+                             $dOrd1
+                             $dOrd
+  = PerturbationTree2.mapNodes_$smapNodes
+"SPEC mkForestFromAscList @ (AnsatzNode Int)" forall ($dOrd :: GHC.Classes.Ord
+                                                                 (PerturbationTree2.AnsatzNode
+                                                                    GHC.Types.Int))
+  PerturbationTree2.mkForestFromAscList @ (PerturbationTree2.AnsatzNode
+                                             GHC.Types.Int)
+                                        $dOrd
+  = PerturbationTree2.getEpsForest_$smkForestFromAscList
+"SPEC reduceAnsatzEta @ Int" forall ($dOrd :: GHC.Classes.Ord
+                                                GHC.Types.Int)
+  PerturbationTree2.reduceAnsatzEta @ GHC.Types.Int $dOrd
+  = PerturbationTree2.getEpsForest_$sreduceAnsatzEta
+vectorised variables:
+vectorised tycons:
+vectorised reused tycons:
+parallel variables:
+parallel tycons:
+trusted: safe
+require own pkg trusted: False
+

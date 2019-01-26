@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-25 09:25:35.52316 UTC
+2019-01-26 20:08:50.288465 UTC
 
 interface main:Main 8043
-  interface hash: ff8c48135710fd3e9c2f718ec3c86e05
-  ABI hash: 465495e620bee8efaee7d30c4fc60355
+  interface hash: 794bfd10a1685b721a641def3b9f30cf
+  ABI hash: e653497af20d13168430f7d5fa1d804b
   export-list hash: e9c409922be23e577ec0b27ff6e41517
   orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
   flag hash: 26906880275f8331bc9f1651bb2d3f20
@@ -17,7 +17,7 @@ exports:
   Main.main
 module dependencies: Ansatz AnsatzEqns2 BasicTensors
                      EquivarianceEqns EquivarianceMetric Index Integrabillity Ivar
-                     Order1Int Order2Int Order3Int Pde Perturbation PerturbationTree
+                     Order1Int Order2Int Order3Int Pde Perturbation PerturbationTree2
                      Symmetrize Tensor
 package dependencies: array-0.5.2.0 base-4.11.1.0
                       containers-0.5.11.0 deepseq-1.4.3.0 ghc-prim-0.5.2.0
@@ -47,288 +47,50 @@ family instance modules: base-4.11.1.0:Control.Applicative
                          primitive-0.6.3.0:Data.Primitive.ByteArray
 import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
 import  -/  base-4.11.1.0:Data.Functor f522c3501272159820fd6f242510732f
-import  -/  base-4.11.1.0:GHC.Base 604111500e81281298777e721c75643b
-import  -/  base-4.11.1.0:GHC.List 1e4357702d8d00cded0703bd293e50e8
-import  -/  base-4.11.1.0:GHC.Num 8e54b26dce4495382dc4b50cf36ab754
-import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
 import  -/  base-4.11.1.0:GHC.TypeNats 8f7c6aed0d8e1900cac5f62a9bc0fd0b
 import  -/  base-4.11.1.0:Numeric.Natural da273ddb373e0510fde98e17e4aa338f
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  base-4.11.1.0:System.IO ce09fff7d191d14067bddc2efd9b53a4
 import  -/  containers-0.5.11.0:Data.IntMap.Strict 79a3c61ca2c76eb71c4304029717e288
-import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
 import  -/  containers-0.5.11.0:Data.Map.Strict 40ac55e8c7db7b7f0f7e3d9769233909
-import  -/  containers-0.5.11.0:Data.Map.Strict.Internal 372117aaabc2f1ff2039eaf324fdb5c6
 import  -/  containers-0.5.11.0:Data.Sequence 21c58838329d44e2dc13db7c04e3a8d8
-import  -/  containers-0.5.11.0:Data.Sequence.Internal a2eae372f67713826bf16d410fc6cd8f
 import  -/  containers-0.5.11.0:Data.Tree 334e5590b70599cff00c9af57a2f6140
 import  -/  Ansatz e80d045561c506e0590aa431c0cd1e76
   exports: d003aa5bf1bb4010f41a5bd7e042ed4f
-  getAllInds fdcfec767009d3cd2156df4fbc07fb58
-  getAllIndsInverse e3e05f4bb277a21977b25f8b238155bf
-  getAllIndsLabel 422ef2f66d3ba6211872917c2803609d
-  getAllIndsLabelInverse b2c79ab5f32cfa90331a19303d6d35ec
 import  -/  AnsatzEqns2 b9cdc479bbf2a6f292a15efec317a648
   exports: bd8b11d3f00127ad64ee51525e015ce0
-  ansatzAB fae7acd10a0487cab8723ed17b206572
-  ansatzABb be060eb98cc35975fbff967d86cf45f1
-  ansatzAIB e707c07833c661f78a365b5faaf5d037
-  ansatzAIBJ 6c2c61cc2df8b5320781fb01bafdb09d
-  ansatzAaBI 05cd312bc73ebd6101fdebf520f69f00
-  ansatzAaBb 49935f6a038581eb36a0e82a123cd587
-  intCond2NoSym 0eb3fa277fa541fffaddc2ae01415858
-  intCondfirstOrder bfd28ca3e964fa0f0ab3748976381624
-  mkEqnSparseAnsatzAB 598455ba716d6459e167e3f5083a855c
-  mkEqnSparseAnsatzABSolo 9377e34f1edc634e5a9f1d488cd31bee
-  mkEqnSparseAnsatzABb 822c0def7863c4c6e2482d1fb7be4d20
-  mkEqnSparseAnsatzAIB c65749a95566ad859d83fd19dd241fbc
-  mkEqnSparseAnsatzAIBJ ee981ca062dc508ee375243833244240
-  mkEqnSparseAnsatzAaBI 8d103f04f3917ac1ca589baa0a438e69
-  mkEqnSparseAnsatzAaBb ccd57c1d8a8de43ef15367a6b093bc85
-  mkEqnSparseRemoveAIB 71cefdd1eaab28f75feac013691e8ca1
-  mkEqnSparsefirstOrder 271aeaead60e3162686e5e627f3f919c
-  mkEqnSparseintCond2NoSym 355e5b29017277fb61d7a6d33360b992
-  removeAIB c79a79e5ff4f133fb6c4989d23b0bf08
 import  -/  BasicTensors 459e760670e17113d11708f22d917aa1
   exports: b16000811d6d04867ef2d7f77be3b83b
-  delta_20 cc7ac0d02f645bebaef7e7d6a42c65ec
-  delta_9 e75aa262356472dc198559ec7f775732
-  flatArea c50387668f8e570ba03b4875269be9e8
-  flatAreaMap 45fc69ea838313a3be4b563d5cc8f021
-  interI_3 9ebbcc686d6c1e79936e1e48d95b2145
-  interJ_2 2f0595593070d5b724a7c4cfafd49d1c
-  invEta 654a36e8807dd2df11817151dcb7615d
-  invEtaAbs 8c61a1a1828dcde141516155f97f410e
-  ivar3M 7fccb231ed4c1eb7a6c6b5ef86484e1d
-  triangleMap2 e9d6524b1e8bf49505f134508bfb94ca
-  triangleMap3 daa6a0056d907db7646fa3352c855f31
-  triangleMapArea a91b35fbeac767f993b935761009c80c
 import  -/  EquivarianceEqns 97e2971cea94f78bc7f1d6c830b407a4
   exports: e7c82201f15d6bde89e88afb140ca87d
-  eqn1_1 7266898c421bab0e5fcf02e80fee66c3
-  eqn1_1Flat 90008274854544991e51ea033d9729a8
-  eqn1_2 b780bf0cf0a524ff01321c1bf815b8aa
-  eqn1_3 7cf932876158292848f4e73c6f589e77
-  eqn1_4 87196d66631068545cecea1ba08f4cd7
-  eqn2_2 a6d554ea67216956391d155f4e2fbc9f
-  eqn2_2Flat 637cd4e719c7ae1e1b7e860ff44411bf
-  eqn2_3 443a7987077f34cf3355188b9175d5ec
-  eqn3_3 423d57d576425a2a062a635668d63188
-  eqn3_3Flat 2edb310d0e5056ffcd32d42b904a6e15
-  mkEqn1Sparse 3e6aa2db07e386eb01b91074f468ad72
-  mkEqn2Sparse 08de88a0a5dc3ef369cbded15ab694a8
-  mkEqn3Sparse 6d6fd4a2dcad7a755130b17d3c658eab
-  mkEqn4Sparse 9276dc81a3506154e7435e57f848e3f0
-  mkEqn5Sparse f3c57ed8ae07262036a677030df95542
-  mkEqn6Sparse 512b9a62f4b560b9b70c68e248b5d70b
-  mkEqnConstSparse bac4327cf53946d31ed0521542939366
-  mkEqnConstSparseFlat 5aab3ca1a14086ac683e435f1d1a69a5
 import  -/  EquivarianceMetric 5ef872ff20416f37b44c997b2e1cca27
   exports: 70c5689f919659ae1a2e8e7443db1155
-  eqn1_1M cd1424fb18b39ffebacce1a2d6c60b21
-  eqn1_2M c84419e84fc766484f3ef29ab20db6a8
-  eqn1_3M a0315a83fea1a2c07cd3fb75d923c676
-  eqn2_2M 7c0c7a102c749cc14a4be35fc1aa3b9a
-  eqn2_3M 3eb6416e21bf927f51e0eb8496fa075f
-  eqn3_3M 085dd8588301de439cbb4b61b92118de
-  mkEqn1SparseM fc035248924c172327018ffbbd84e6bc
-  mkEqn2SparseM 257e718cf22263b686c27bd9105bf364
-  mkEqn3SparseM f23ae2e0a4cf2d133ddeb8664388eed0
-  mkEqn4SparseM 1aa9d8fce788a8999bd7fb84646272c9
-  mkEqn5SparseM aeed38c88758bf5a5f85a3f274b31d07
-  mkEqn6SparseM 46f64c87982cefbe3780949e37795ab8
-  mkEqn6SparseMPulled ed65c43fb34f564a5ce5327a206b3680
 import  -/  Index 60260ed90a129e1e10b6c5fafcb2ded1
   exports: 02acfc58131cc32506762c89c9bc64b7
-  Lind_20 8a3588434be3c9662430693d2d2e332f
-  Lind_9 89b0e08dbee85927dc2463ead2b84188
-  Linds_3 562700c5f35c258ae2adef3c77ddc1b1
-  Uind_19 bb9e43f50d34b9bc0ad289f9375995d1
-  Uind_20 f2c1b76a3e7f0dd431510d7cb9f659a1
-  Uind_9 ab8f3576b9e9258982a5d77295330a40
-  Uinds_3 63ef11ca566ba01817ced09e779f86a0
-  mkInd c1470ba25733eac9d3cf9089c612a176
 import  -/  Integrabillity b98997e6d0cbb188f9d4afd8231fc205
   exports: b3d864313b2a08bb056385f669d33af1
-  areaMetricMetric1 7b6455ed4debced7e37a08686087f8cc
-  areaMetricMetric1intCond 32f9d1b0b3c2b0f33550aa45a1aefc37
-  densityEqnArea1 9c6c0e74d92eff800c5a675a36b26fee
-  densityEqnArea2 2d82a87b37fccb3388787d45de953879
-  densityEqnMetric1 5fac2236410880058533f6e3de086ed1
-  densityEqnMetric2 25e2128d31918ad3518d12763933371d
-  flatMetricInter 42963c5237a6d7ef7b2327680943d2b9
-  flatMetricInterProlong 26fa5f989bfe23fc8a4601141497b420
-  int1Test ddc5a6760e0dbee5dbbf2c15fddf2798
-  int1Test2 b90c888c62389fb2ed007bb2c273d218
-  int1Test3 0544861b6ebe2ab1d82e5f6e9354bfc7
-  int1Zero 22c8fb9bdd42362fd0e5384eb79fea15
-  intCond1 8dea49b3099aa67da9e62024b8ecc630
-  intCond1RelFac 1c6f496338fbcb2dd3696e73733335fd
-  intCond1Zero 928a4f32b3d2e491d0313a1e7342095c
-  intCond1noFactor 306d28b2f664b171529d18b3dbd45e76
-  intCond2 a1d5da34a90d2e854c8cf66c19eabc3f
-  intCond2_1 58eaaad365fd8f9e07934608ffb5d017
-  intCond2_1Symbol 7a3016a2ca5a8a1e579ab2e012a21b71
-  intCond2_1SymbolPure 41350bb07e004022719d970bf97176cd
-  intCond2_1SymbolRed acbae621ae09c04ee3a7309b92ec0f97
-  intCond2_1SymbolRedWrong 3f9f28241654d12c36c161cf7100da00
-  intCond3 b0435e3eaf184b12a0cc25b1d4daf071
-  intCondComp 8d035470cd7473a460b0b83f5ad85435
-  intCondCompNoSym 408a4816a48b2955931b6e9852cb7164
-  intCondCompZero 284bc6ed1561e43264725e2c3d1cec0f
-  intCondOrd2 02aedc5c07028225bb6e889d81704813
-  intCondSym 10ce178cf59fee31effdf188bcfc41f0
-  intRankDef1 7f90a9c310d018da3f1552aeb38c0182
-  intRankDef2 26a3a7c53343d7e6b3ebb85502ff8c5e
-  intRankDef3 95314079179b1cc40a799672276c8b22
-  intRankDef5 0609e71593927cd556ea8a57b16835c5
-  inter4Factor 4c09ba0bfb3011f68557947024fdf05e
-  inter4noFactor cee7574c498f364a5f0ec7b1107706ef
-  inter6Factor 67f4c44e2eab9a0e3786b30848bf148c
-  inter6noFactor e2cb093262ba44f80cc280c1e5284475
-  mkEqnSparseAreaM 5041494bad28de566d92935b50c4989c
-  mkEqnSparseAreaMintCond 210e601dab688a318fe9a0b3f462a9ac
-  mkEqnSparseBlock1Eta 019efd5345d6ab0a082984a3e7194546
-  mkEqnSparseCond1 ab666ffee812c459f6a106e3e7380c2b
-  mkEqnSparseCond1Zero 71e478ea2f5ccc170cf6448826f3d6ed
-  mkEqnSparseCond2 d72b0cb9e804c0c542f317e32f51cdf3
-  mkEqnSparseCond3 cdc51e6d9413378bcdf24b432bb3c889
-  mkEqnSparseDens1 61503779c1b5af1162adc0df17083f07
-  mkEqnSparseDens1Area a001c8e2d760f59e24966e02df8bc1ee
-  mkEqnSparseDens2 b22f68ff85cbe8bd0379368e45a3208f
-  mkEqnSparseDens2Area 39fb541183794525263ba5d5b5d6fe66
-  mkEqnSparseProjector ccc838a26218d76ca6d17298e35750d3
-  mkEqnSparseProjector2 873e3757adb9d000a5eb6f8333b6e896
-  mkEqnSparseflatMetricInter 0daec6f27360600c463fd5a2a0e674fe
-  mkEqnSparseflatMetricInterProlong c57afc2159bbddaacb25f4a5c54ea394
-  mkEqnSparseintCond2_1 dd0c0248ea34424c15c9cac99f8855c6
-  mkEqnSparseintCond2_1New 27e56c3a2f7aa127333f18da7d893059
-  mkEqnSparseintCond2_1Symbol 43df950d4b7597094058d7f79f7838a0
-  mkEqnSparseintCond2_1SymbolPure 1dbd24a84f2fc06a6819fc14bc904ad0
-  mkEqnSparseintCond2_1SymbolRed 3f6f9588c689c80fe0fe183c9c929a66
-  mkEqnSparseintCond2_1SymbolRedFull 281f2f1a23f81fc3a57ef0a426b88c71
-  mkEqnSparseintCondComp 2e01fc02cd5ba94c54e28aa850a34b36
-  mkEqnSparseintCondCompNew a766670756ae9623ed540d225a413d7b
-  mkEqnSparseintCondCompNoSym b458a723af974662084d00b9ef116144
-  mkEqnSparseintCondOrd2 766e39425e8c3f3450df07ae4f4107d2
-  mkEqnSparseintCondSym 20226e398c98fb5e4857b2fb94012e11
-  mkEqnSparseintRankDef1 a8b3f7a8ec033e71250891aa413e8586
-  mkEqnSparseintRankDef3 87e3a82eed0f3d2f36e137235941eca5
-  mkEqnSparseinter6Mat 8a7d119014f02154c340f4d6315c0437
-  mkEqnSparseinterMat 754fecf5e4d6e1d876ceb0b36cbde407
-  mkEqnSparseprolongation1AI_ACK 9b7e96300143de75debd37b495bbf272
-  mkEqnSparseprolongation1AI_AI a0357637a7234d25937dbb77c09c9bab
-  mkEqnSparseprolongation2AaBb b13f65b4358eb4d0ea6b3172342e515a
-  mkEqnSparseprolongation2AaBbC b29bd36f8f2e4fe6c67ebc88157f9e47
-  projectorMatrix 20d718300423ff766bb99023f42eb7ec
-  projectorMatrix2 f9b15f38e08f1953318eb026d185fc7d
-  prolongation1AI_ACK 1eb8ba96199271c39d6644da4dd1660c
-  prolongation1AI_AI 77d3019d03cb80b5b93a9ae923b884be
-  prolongation2AaBb 0719e916356bc57dede3fd9b8cb04cbd
-  prolongation2AaBbC 0ae612ae5b811505b7437e098e4a5f4b
 import  -/  Ivar 59828d84f4f392dde7d157e78b1e20aa
   exports: 847b7f62b7be31da91814bf314ffd8e5
-  Ivar 6fb5b1c62e6ccfd9020c45c8471a027a
-  addIvar d292753012f6d0425a83cacf61d3f780
-  sMultIvar 9041089729d8e9da4cfe3d58c70439ce
 import  -/  Order1Int db05f68d23e7026f8a2041beadd5e492
   exports: e2076df8d899dd7f49f2ce06a4107b13
-  ansatzA 106dd969794509eae81c17b511ceecf5
-  ansatzAI3 b9d0b91a1bbbd043d13462c6fafb9011
-  ansatzAa 56fb9adc8fd80396680f19aec7aeefe3
-  int1A 63323c9890fd694fc26a94ff328f4311
-  mkEqnSparseAnsatzA aed115b7e408499309b9c1ce749dcf48
-  mkEqnSparseAnsatzAI c19ec3720a6592e4a1c90f97040219b0
-  mkEqnSparseAnsatzAa 348b8b8af32f855abe89cc48e32ce226
-  mkEqnSparseint1A de2f0c14d7f0d02d1da28327b9777625
 import  -/  Order2Int 79ffcb31d81223f333553ff0359978fa
   exports: 30a63d6248e77b9e95e0f4abf6813891
-  ansatzAB2 cc81561c8818080eac258f7ee4f87523
-  ansatzABb2 55db6d6a23b597c1b0be28672d95e5da
-  ansatzAI2 6663af9fe69604d30a66e7d95148f9dc
-  ansatzAIB2 568825756bdacba0ccc63c8400800664
-  intAB1 cda43af8568da92bcc2ba3321cbaff81
-  intAB2 c7857a414c8d4d1947b73ffbe5c4e849
-  intAI c573195d27805d083fe306c93a3c4ea6
-  intAIB 760ce6026eea92cb3512f8211d59c16a
-  intAIBsym c88d3abcb2f00b79aa425b6c377479f5
-  intAIBsymRed bbbb06344b76edd48c432747887f7ff0
-  intAIBsymZero afcae71b4fa7fff2245b85870f4400bb
-  mkEqnSparseAnsatzAB2 0b99fc6ed58bcf059316fed52fce22ec
-  mkEqnSparseAnsatzABb2 5f8c9431891361fa4b70e03efb546365
-  mkEqnSparseAnsatzAI2 2f91267d5ac92f9b4a15dffea11401fc
-  mkEqnSparseAnsatzAIB2 6ca993394f6b771255b7a22753d03ba6
-  mkEqnSparseIntAB 4b0b879eb75f639b8c22b60bd5aa4356
-  mkEqnSparseIntABTrian 64838ec247e65240c80ba11cf53b3060
-  mkEqnSparseIntAI 89d1585523c20f08729e9933eae095bf
-  mkEqnSparseIntAIB a44742ab597d1a9cbc82c001bfa073f8
-  mkEqnSparseIntAIBsym 21675cd0adc4f95a8fb8df3d67cc5307
 import  -/  Order3Int 634b4f7b77c29e711bf409a48894aede
   exports: 4866d9d4a6a86c7c57b2cc398fe1586b
-  ansatzABC2 3b32102ced10fd4ad365476a695df784
-  ansatzAIBC 170242b748e9f08e738bbe46225aa973
-  ansatzAIBbC 6bbf389670720c6967764ec6fe591b4a
-  ansatzAaBC 594805ae9af805d3827d1f16ba4b8f5b
-  ansatzAaBbC dc43fb5b5833a510113fb6cc57e44dd6
-  intABC f2310b763e9b8ac9a265c840dfd49a30
-  intAIBC 415ce0c037b76ee99e6fd17b4a40dabb
-  intAaBbC2 d05624d639fd6e24e05e3bc2035f0dce
-  mkEqnSparseAnsatzABC2 bdba7efda9a3c61d214b601ad8ee3637
-  mkEqnSparseAnsatzAIBC cfca11c853fbed26276d231caec0f3b2
-  mkEqnSparseAnsatzAIBbC 34fe30911c549912ae92fd20fd617bfb
-  mkEqnSparseAnsatzAaBC 27170017bdc996b38e399b3d01661f94
-  mkEqnSparseAnsatzAaBbC 2b61de9d8b3ce683f9a77375d8801bb4
-  mkEqnSparseAnsatzAaBbCTrian 33915ea2973b081fbe5b6cf7d2bf24a8
-  mkEqnSparseIntABC2 9b0a7160d1ca42ac3319e8d77d79d12f
-  mkEqnSparseintAIBC ad69dbf5d306a0cd96b944f42f4dd7d6
-  mkEqnSparseintAaBbC df0e7ac98dce11362554da9051a5f216
-  mkEqnSparseintAaBbCTrian 195d245cf151a9f5b0b91db59fc3c112
 import  -/  Pde 01727937c27ae17d2b109d09ad686ca8
   exports: b2cd66be74d90ac4a27aea2ce34825a2
-  combinePdes 23c55130ad10a088f7d25a2a5aa48a54
-  combinePdesIvar 7742e64466acb1199b6329af06e9b46f
-  evalPdeRand f3974d1091c7c239243d972cfe3e9e0f
-  mkAllMultInds 3e531cb074fd39791bcea39b2595cd89
-  mkPdefromTens 864db75ba0d863ca2945736fd5bff7be
-  print2MaplePde 2c6e9a9f849fe249f636eeeaeb5bba80
-  prolongPdeAll 20f7158b4dd6faf85a9fa44fc46b7bb7
-  prolongPdeAllBlock1 e19caaf3aff30c882d9ba374e4833ad3
-  triangleMap c56bb2c7de30fa89ffb58bbc7e221a17
 import  -/  Perturbation 0c5594cb695f7286ac07f1e3a60cf237
   exports: 94e25b3c86d4e670faac492ecf8a0eda
-  getRepIndsPert c28f45fc3f3a3071be08ebe4be72fe39
-  mkPertAns f7899695a9b4f8d4b2b36c3a4b720c46
-  mkPertAnsEpsilon 16e753e3368c057da5e76ad244215205
-  symAnsSetPert 2dc22dcb1b0de462f8027f9a29873628
-  symAnsSetPertEpsilon 2ddee4395ae4c54bf95671edcc134e99
-import  -/  PerturbationTree 9b921458f177ee31d6e4fc678b3bdd38
-  exports: 95ea0105078fba4fd2827412c567f1d9
-  addForests 5cf3848c5c74fb22a9fef7a720b3f6d1
-  mkAllVarsfrom2 c560272379e8fe7058699ff6545cc83e
-  mkEpsilonSeq e1773a9100c139e0b634428ec6012dfb
-  mkEtaSeq cd6871dd3b8b76b8dbb6016f266c3035
-  mkTreeEta b61d71b7d6faeea6560496fa0c75d308
-  reduceAnsatzEpsilon e55afab8a7f4fde76569109c9ab21207
-  reduceAnsatzEta d59c8003dcb461d56cbd8879fd097fd7
-  swapBlockLabelForest 5bface4dacc36e3f4c9e8653007a9572
-  swapBlockLabelTree 26700b6c01ee103b5055571ad5dc390f
-  swapLabelForest ec2e55dfbb4111a763c10e33c04b6e98
-  symAnsatzForest aee2ab5f9dc4f70952a740b2fe4636d7
+import  -/  PerturbationTree2 150966dd162f3b1e3c31e2afbadd8abd
+  exports: a65b6c3a7faee712440f32ed46eedeac
+  getEtaForest 1335d9bb6b9f2610036a74b022de3ecc
+  getForestLabels 431b0cbef322d789a6467455e0710b34
 import  -/  Symmetrize a6ed2605ac858eebc9579a2a0ea3bf31
   exports: c79a0ef965b8f406eb0b9e72ceb58ef0
-  getRepInds f922b78b9c7032ff96f8cb74395ef2ce
-  mkAns 06d0925877023ff7f5a7034b2c348be4
-  symAnsSet 3e28567e813dc1dfde267efbdbdbad70
 import  -/  Tensor 176e25c77f5f937264699042a39a34a2
   exports: 9a68ab01e29b77db9280f7aa573b73ab
-  Tensor de2cb2f95a4c3ff6ea3ffdde0ef67deb
-  evalTensorVals 0507cf8ef5ddf6a3d1fa8a94ad34a9da
-  tensorContractWith_3 529107206dcaa10693fc48c26137b94b
-  tensorContractWith_9 cc576f2038f8bd555f142bcde424c5f8
-  tensorProductWith 6e1300f3b6ea8f7dd056901f69230be2
 import  -/  tf-random-0.5:System.Random.TF 8abc0839ff798088d7b0fe5da790c9f8
 import  -/  tf-random-0.5:System.Random.TF.Gen edab7920943edb50441b167dda441e39
-import  -/  tf-random-0.5:System.Random.TF.Init 28db424486cba3a1801495a4cd020295
 import  -/  tf-random-0.5:System.Random.TF.Instances 38b1c99a14c0f48d6db9f4a900310278
 be86c9d078d3acbf19ba91fe74a24273
   $trModule :: GHC.Types.Module
@@ -348,57 +110,491 @@ e5875966b74dad2d29772660b8a75e33
 d026be77cb9ced20e35a61514e0458aa
   $trModule4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("main"#) -}
-2a579c970b611c0ba3a62bf4e4d00af8
+37472eeb34fa8585910533a3623c97dd
   main :: GHC.Types.IO ()
-  {- Arity: 1, Strictness: <S,U>,
+  {- Arity: 1,
      Unfolding: InlineRule (0, True, True)
                 Main.main1 `cast` (Sym (GHC.Types.N:IO[0] <()>_R)) -}
-971e9c942d966d6f7ccfcd41a1ad5916
+0f27fcb2d3b19146aba713c91c045a01
   main1 ::
     GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
-  {- Arity: 1, Strictness: <S,U>,
-     Unfolding: (\ (s :: GHC.Prim.State# GHC.Prim.RealWorld) ->
-                 case System.Random.TF.Init.theTFGen
-                        `cast`
-                      (GHC.IORef.N:IORef[0] <System.Random.TF.Gen.TFGen>_N) of wild { GHC.STRef.STRef r# ->
-                 case GHC.Prim.atomicModifyMutVar#
-                        @ GHC.Prim.RealWorld
-                        @ System.Random.TF.Gen.TFGen
-                        @ (System.Random.TF.Gen.TFGen, System.Random.TF.Gen.TFGen)
-                        @ System.Random.TF.Gen.TFGen
-                        r#
-                        System.Random.TF.Gen.tfGenSplit
-                        s of ds1 { (#,#) ipv ipv1 ->
-                 GHC.IO.Handle.Text.hPutStr2
+  {- Arity: 1,
+     Unfolding: (GHC.IO.Handle.Text.hPutStr2
                    GHC.IO.Handle.FD.stdout
                    Main.main2
-                   GHC.Types.True
-                   ipv } }) -}
-524bf9f1af176ec1a18a5618530efdc1
+                   GHC.Types.True) -}
+ef4150d7c32b5883be3b897223c1af9c
+  main10 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main19 Main.main11) -}
+da565bf1f053dee5f3794873aeb5802c
+  main11 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main18 Main.main12) -}
+7b9e87722ef0074cc0a82a4476b149a2
+  main12 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main17 Main.main13) -}
+8311b34645dccd33b3557011be418e82
+  main13 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main16 Main.main14) -}
+35310cd7f2fcec5d08a162365d3e3872
+  main14 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main15
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+e79395a74b0cdaccd63ecc01b7b7ecc7
+  main15 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 18#) -}
+e7714d2820390a1bfe35ca7c566a7371
+  main16 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 8#) -}
+6595744f26665cbc302d20995e2ee649
+  main17 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 7#) -}
+8488d162a23a0150e1586fadd29baa93
+  main18 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 6#) -}
+fc8899e2a607d3e1bae3a98688fb4314
+  main19 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 5#) -}
+11ca5aa793b8803974675e91d48dcccd
   main2 :: GHC.Base.String
-  {- Unfolding: (case BasicTensors.delta_20 of ww { Tensor.Tensor ww1 ->
-                 GHC.Base.++
-                   @ GHC.Types.Char
-                   Tensor.$fShowTensor2
-                   (Data.Map.Internal.$w$cshowsPrec
-                      @ (Index.Uinds_20 1, Index.Linds_20 1, Index.Uinds_19 0,
-                         Index.Linds_19 0, Index.Uinds_9 0, Index.Linds_9 0,
-                         Index.Uinds_3 0, Index.Linds_3 0)
-                      @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
-                      (Tensor.$fShowTensor4 @ 1 @ 1 @ 0 @ 0 @ 0 @ 0 @ 0 @ 0)
-                      GHC.Real.$fShowRatio_$s$fShowRatio
-                      11#
-                      ww1
-                      (GHC.Types.[] @ GHC.Types.Char)) }) -}
-301285f5b16a1d527218422a98ab7482
+  {- Unfolding: (case PerturbationTree2.$wgetEtaForest
+                        (GHC.Enum.eftInt 1# 18#)
+                        Main.main74
+                        1#
+                        Main.main3 of wild {
+                   PerturbationTree2.Forest m
+                   -> case GHC.List.$wlenAcc
+                             @ GHC.Types.Int
+                             (Data.OldList.nubBy
+                                @ GHC.Types.Int
+                                GHC.Classes.eqInt
+                                (GHC.Base.map
+                                   @ (PerturbationTree2.AnsatzNode GHC.Types.Int)
+                                   @ GHC.Types.Int
+                                   (PerturbationTree2.getVarLabels @ GHC.Types.Int)
+                                   (PerturbationTree2.getForestLabels2
+                                      @ (PerturbationTree2.AnsatzNode GHC.Types.Int)
+                                      (GHC.Types.[] @ (PerturbationTree2.AnsatzNode GHC.Types.Int))
+                                      m)))
+                             0# of ww2 { DEFAULT ->
+                      case GHC.Show.$wshowSignedInt
+                             0#
+                             ww2
+                             (GHC.Types.[] @ GHC.Types.Char) of ww4 { (#,#) ww5 ww6 ->
+                      GHC.Types.: @ GHC.Types.Char ww5 ww6 } }
+                   PerturbationTree2.Leaf var
+                   -> case GHC.List.$wlenAcc
+                             @ GHC.Types.Int
+                             (Data.OldList.nubBy
+                                @ GHC.Types.Int
+                                GHC.Classes.eqInt
+                                (GHC.Types.:
+                                   @ GHC.Types.Int
+                                   (PerturbationTree2.getVarLabels @ GHC.Types.Int var)
+                                   (GHC.Types.[] @ GHC.Types.Int)))
+                             0# of ww2 { DEFAULT ->
+                      case GHC.Show.$wshowSignedInt
+                             0#
+                             ww2
+                             (GHC.Types.[] @ GHC.Types.Char) of ww4 { (#,#) ww5 ww6 ->
+                      GHC.Types.: @ GHC.Types.Char ww5 ww6 } }
+                   PerturbationTree2.EmptyForest
+                   -> case PerturbationTree2.getForestLabels1
+                      ret_ty GHC.Base.String
+                      of {} }) -}
+c490342b8b9a0b0e267b0a00491a6531
+  main20 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main29 Main.main21) -}
+46f45fa459bcffbcfc2efdcd7d93e04a
+  main21 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main28 Main.main22) -}
+3e57ad3546c45cd5217b0ded62f3ad69
+  main22 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main27 Main.main23) -}
+4e206bcb6b3132f63d56e123320a7956
+  main23 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main26 Main.main24) -}
+b016074ad3a47f7a01fa9bd119d8ae08
+  main24 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main25
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+55aadd4e16c4a5f83e811ff099063bff
+  main25 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 17#) -}
+047570e825ee1d622d5f9cec4fad4fb0
+  main26 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 4#) -}
+24b995e09b314864eb8bc6e63cdaa14a
+  main27 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 3#) -}
+8085844a921f7bac5e528aaed826d291
+  main28 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 2#) -}
+e0887bd2801f48f108ede1ba6ce7b392
+  main29 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 1#) -}
+a898de34cd8168ae08f5e7f091ce5faa
   main3 ::
+    ([(GHC.Types.Int, GHC.Types.Int)],
+     [(GHC.Types.Int, GHC.Types.Int)],
+     [([GHC.Types.Int], [GHC.Types.Int])], [[GHC.Types.Int]],
+     [[[GHC.Types.Int]]])
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((GHC.Types.[] @ (GHC.Types.Int, GHC.Types.Int),
+                  Main.main58, Main.main4, GHC.Types.[] @ [GHC.Types.Int],
+                  GHC.Types.[] @ [[GHC.Types.Int]])) -}
+9f5c03c43aaa42841a0815fa6ef0154b
+  main30 :: ([GHC.Types.Int], [GHC.Types.Int])
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main35, Main.main31)) -}
+ecf978f319c4dae14bd0da735e690d71
+  main31 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main34 Main.main32) -}
+7c3d85568a5e15527699adb1ab4d77e6
+  main32 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main33
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+bf07ff20e61821cdd30d6e68dd178745
+  main33 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 16#) -}
+21ff3e15eff45be9172120ccd474b2e1
+  main34 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 15#) -}
+bb3ad75c7470f0682cc06e762b042010
+  main35 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main38 Main.main36) -}
+de436c0c719ebebb243247e7ede596ad
+  main36 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main37
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+117a7ceb0152d89776370fe6fa9aa1cc
+  main37 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 14#) -}
+39418931eb481a4993d5f4a6821e970e
+  main38 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 13#) -}
+43cc17893f9879054f464dfcc71052f7
+  main39 :: ([GHC.Types.Int], [GHC.Types.Int])
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main44, Main.main40)) -}
+3f1a6fa51cfaa2ec05a41259797dad34
+  main4 :: [([GHC.Types.Int], [GHC.Types.Int])]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ ([GHC.Types.Int], [GHC.Types.Int])
+                   Main.main53
+                   Main.main5) -}
+acdf7cdde3aade745e1567dfbf002e70
+  main40 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main43 Main.main41) -}
+a21fcd458e2720c1c79e61a95b869465
+  main41 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main42
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+2a08d92f0f99ba67158203af607462c4
+  main42 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 12#) -}
+fa317aa5c96669fa39dfab3f2127d6a9
+  main43 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 11#) -}
+2bb1303c47681bb6f1170386482608f2
+  main44 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main47 Main.main45) -}
+677b8c61863b0c2fc9888dd61e1d343c
+  main45 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main46
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+14d8ff405cd664f11f4b98c6a9a2d796
+  main46 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 10#) -}
+a1bab5f05aa7db63cb0752e911c9400b
+  main47 :: GHC.Types.Int
+  {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 9#) -}
+4003426b439b8bd8148efca7552f1f5d
+  main48 :: ([GHC.Types.Int], [GHC.Types.Int])
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main51, Main.main49)) -}
+ebb0ef15d652f294190531134db3efca
+  main49 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main17 Main.main50) -}
+c902234375b1569907c5621f7b4699f5
+  main5 :: [([GHC.Types.Int], [GHC.Types.Int])]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ ([GHC.Types.Int], [GHC.Types.Int])
+                   Main.main48
+                   Main.main6) -}
+e91abb9d20452c2b36816e60d182ef59
+  main50 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main16
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+4a154ad75b4aa7c367a34f0aa7c1da97
+  main51 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main19 Main.main52) -}
+6e72936d77fbec4d79ee0aa5bd96f04e
+  main52 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main18
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+c937e9916b7bb279cab5eb3181f914b9
+  main53 :: ([GHC.Types.Int], [GHC.Types.Int])
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main56, Main.main54)) -}
+ccd114375e81ec1b32a933bcdd62f1bb
+  main54 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main27 Main.main55) -}
+222dd179b269752df28abf1406f08dbe
+  main55 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main26
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+bed05ff664a5e084750cc3883c8fe44a
+  main56 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main29 Main.main57) -}
+797aad263e31b8478a3271ed940647d9
+  main57 :: [GHC.Types.Int]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ GHC.Types.Int
+                   Main.main28
+                   (GHC.Types.[] @ GHC.Types.Int)) -}
+9762b69724d689ccabaf71c46ecb0018
+  main58 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main73
+                   Main.main59) -}
+c19d79d6ce3bb1297203db5d6ccaa306
+  main59 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main72
+                   Main.main60) -}
+6e0eff2d5a15e0da28b28eebf48d1080
+  main6 :: [([GHC.Types.Int], [GHC.Types.Int])]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ ([GHC.Types.Int], [GHC.Types.Int])
+                   Main.main39
+                   Main.main7) -}
+8cf2602374da73b5a9f65edf9b026065
+  main60 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main71
+                   Main.main61) -}
+a88db01320a88d19b848ab8906c4922a
+  main61 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main70
+                   Main.main62) -}
+4470d9158970e7e730141529bbfcf2be
+  main62 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main69
+                   Main.main63) -}
+501307c003c78fda4ef743068449024a
+  main63 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main68
+                   Main.main64) -}
+0922e1a0db89c510ffedbb70305dd954
+  main64 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main67
+                   Main.main65) -}
+6584296c9960a44aa5a195ac97e878aa
+  main65 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main66
+                   (GHC.Types.[] @ (GHC.Types.Int, GHC.Types.Int))) -}
+022ff0b155af6efc34e00c0302faece0
+  main66 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main34, Main.main33)) -}
+3813f31a1ac88b90f63b22cbe696563e
+  main67 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main38, Main.main37)) -}
+10e6a92849fee5cdc27d7525aedbac15
+  main68 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main43, Main.main42)) -}
+ae710a4329cdd1f7291299bf90125dc2
+  main69 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main47, Main.main46)) -}
+736f69e240995661674809db8a002d6d
+  main7 :: [([GHC.Types.Int], [GHC.Types.Int])]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ ([GHC.Types.Int], [GHC.Types.Int])
+                   Main.main30
+                   Main.main8) -}
+18edffd9d5b46289020258f1dccb590e
+  main70 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main17, Main.main16)) -}
+fd1f9e4f60b44a5e20800f7d1922e84a
+  main71 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main19, Main.main18)) -}
+27f02992770e29f17351454aa88821b6
+  main72 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main27, Main.main26)) -}
+0c49dfc0d1942f80444d7eb5843dff81
+  main73 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main29, Main.main28)) -}
+82ba897d39bd09ea4f954154a173a75c
+  main74 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main73
+                   Main.main75) -}
+5136a523e075fa6a6e1ef32972722921
+  main75 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main72
+                   Main.main76) -}
+b2a8f5268f1e67d0f6b9ae6616873139
+  main76 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main85
+                   Main.main77) -}
+fbe8c023f552a1bd74d69b54cf953169
+  main77 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main71
+                   Main.main78) -}
+26b4c6abaffe3446b9d8f14c114919f1
+  main78 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main70
+                   Main.main79) -}
+6f4bec28054bb6b60e7b9604f88e24fc
+  main79 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main84
+                   Main.main80) -}
+bbf657530736da1e091a77daa2ae47f3
+  main8 :: [([GHC.Types.Int], [GHC.Types.Int])]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ ([GHC.Types.Int], [GHC.Types.Int])
+                   Main.main9
+                   (GHC.Types.[] @ ([GHC.Types.Int], [GHC.Types.Int]))) -}
+7efa48f57a6ae4aa6980786d5bf759e8
+  main80 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main69
+                   Main.main81) -}
+d7e0149f7f27622675d60e9e7c3990ad
+  main81 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main68
+                   Main.main82) -}
+aabb9118ada8c69593c9c4008fb51b46
+  main82 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Types.Int, GHC.Types.Int)
+                   Main.main83
+                   Main.main64) -}
+229de1e1ec26096ac16d427e9916eb09
+  main83 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main47, Main.main43)) -}
+8625796b6951bc4598c92c0b5700fe92
+  main84 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main19, Main.main17)) -}
+cfbd4dd68cbc93426358fb5cab88602e
+  main85 :: (GHC.Types.Int, GHC.Types.Int)
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main29, Main.main27)) -}
+47759d1805bd15ad60ebeb8778962489
+  main86 ::
     GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
   {- Arity: 1,
      Unfolding: (GHC.TopHandler.runMainIO1
                    @ ()
                    Main.main1 `cast` (Sym (GHC.Types.N:IO[0] <()>_R))) -}
+c7759d38150a37d27e0b7439169094dc
+  main9 :: ([GHC.Types.Int], [GHC.Types.Int])
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Main.main20, Main.main10)) -}
 vectorised variables:
 vectorised tycons:
 vectorised reused tycons:

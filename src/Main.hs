@@ -41,12 +41,13 @@ module Main (
     import Order2Int
     import Order3Int
     import qualified Data.Map.Strict as M
-    import PerturbationTree
+    import PerturbationTree2
     import Data.Tree
     import Data.Functor
      
 
     main = do
+        {-
         let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
         let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
 
@@ -837,9 +838,16 @@ module Main (
 
         let pdeOrd2 = evalPdeRand 315 trian flatAreaM pdeTotal
 
-        putStr  pdeOrd2
-        
+        --putStr  pdeOrd2
+        -}
 
+        let testFilters = [(1,2),(3,4),(1,3),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11),(13,14),(15,16),(17,18)] 
+
+        let testSym = ([(13,14),(15,16),(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], [[[1,2,3,4,13,14],[5,6,7,8,15,16],[9,10,11,12,17,18]]])
+
+        let epsAnsatz = getEpsForest [1..18] testFilters 1 testSym
+
+        print $ length $ getForestLabels epsAnsatz
 
 
 

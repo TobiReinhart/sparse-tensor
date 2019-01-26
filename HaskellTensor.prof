@@ -1,47 +1,224 @@
-	Wed Jan 23 20:40 2019 Time and Allocation Profiling Report  (Final)
+	Sat Jan 26 11:47 2019 Time and Allocation Profiling Report  (Final)
 
 	   HaskellTensor +RTS -N -p -RTS
 
-	total time  =        9.42 secs   (37692 ticks @ 1000 us, 4 processors)
-	total alloc = 93,412,280,600 bytes  (excludes profiling overheads)
+	total time  =        2.25 secs   (8996 ticks @ 1000 us, 4 processors)
+	total alloc = 14,015,846,104 bytes  (excludes profiling overheads)
 
-COST CENTRE            MODULE  SRC                            %time %alloc
+COST CENTRE            MODULE            SRC                                        %time %alloc
 
-main                   Main    src/Main.hs:(49,5)-(821,161)    62.3   55.9
-getAllIndsEta.res.\    Ansatz2 src/Ansatz2.hs:62:47-74         15.5   20.7
-getAllIndsEta.res      Ansatz2 src/Ansatz2.hs:62:17-77          5.3    6.4
-getAllIndsEta.l        Ansatz2 src/Ansatz2.hs:61:17-54          4.8    5.7
-getAllIndsEta.l.\      Ansatz2 src/Ansatz2.hs:61:32-50          4.7    2.5
-getAllIndsEpsilon.l3.\ Ansatz2 src/Ansatz2.hs:72:42-86          4.6    6.3
-getAllIndsEta          Ansatz2 src/Ansatz2.hs:(58,5)-(62,77)    2.1    1.5
-getAllIndsEpsilon.l3   Ansatz2 src/Ansatz2.hs:72:17-90          0.7    1.1
+mapNodes               PerturbationTree2 src/PerturbationTree2.hs:(95,5)-(97,75)     13.9   17.1
+addForests             PerturbationTree2 src/PerturbationTree2.hs:(102,5)-(107,79)    9.8    6.0
+showsPrec              PerturbationTree2 src/PerturbationTree2.hs:92:110-113          7.6   14.5
+main                   Main              src/Main.hs:(49,5)-(848,59)                  7.3    0.1
+swapBlockLabelF.swapF  PerturbationTree2 src/PerturbationTree2.hs:146:17-52           6.7    8.5
+showsPrec              PerturbationTree2 src/PerturbationTree2.hs:55:81-84            6.4    7.9
+sortAnsatzNode.(...)   PerturbationTree2 src/PerturbationTree2.hs:63:17-36            5.1    8.0
+flattenForest.l.\      PerturbationTree2 src/PerturbationTree2.hs:125:38-70           4.5    4.9
+compare                PerturbationTree2 src/PerturbationTree2.hs:55:91-93            3.3    0.0
+rmZeros                PerturbationTree2 src/PerturbationTree2.hs:(111,5)-(115,68)    2.9    0.8
+sortAnsatzNode         PerturbationTree2 src/PerturbationTree2.hs:(61,5)-(67,40)      2.8    3.3
+mkForestFromAscList    PerturbationTree2 src/PerturbationTree2.hs:(128,5)-(130,80)    2.2    2.9
+swapBlockLabelNode.f   PerturbationTree2 src/PerturbationTree2.hs:161:21-44           2.1    1.0
+swapBlockLabelNode     PerturbationTree2 src/PerturbationTree2.hs:(159,5)-(165,47)    2.0    2.2
+flattenForest          PerturbationTree2 src/PerturbationTree2.hs:(120,5)-(125,78)    1.8    2.5
+filter1Sym.first       PerturbationTree2 src/PerturbationTree2.hs:42:16-65            1.6    0.4
+swapLabelF             PerturbationTree2 src/PerturbationTree2.hs:(138,5)-(141,27)    1.6    0.0
+flattenForest.l        PerturbationTree2 src/PerturbationTree2.hs:125:17-78           1.5    2.6
+flattenForest.mPairs   PerturbationTree2 src/PerturbationTree2.hs:124:17-35           1.3    2.0
+getAllIndsEta.res.\    PerturbationTree2 src/PerturbationTree2.hs:24:47-74            1.1    3.4
+filter1Sym.first.\     PerturbationTree2 src/PerturbationTree2.hs:42:47-62            1.1    0.0
+getAllIndsEta.res      PerturbationTree2 src/PerturbationTree2.hs:24:17-77            0.7    1.7
+getAllIndsEta.l        PerturbationTree2 src/PerturbationTree2.hs:23:17-54            0.7    1.9
+filterSym.boolList     PerturbationTree2 src/PerturbationTree2.hs:47:16-49            0.7    2.1
+getAllIndsEpsilon.l3.\ PerturbationTree2 src/PerturbationTree2.hs:35:42-86            0.6    1.8
 
 
-                                                                                                    individual      inherited
-COST CENTRE                 MODULE                SRC                           no.      entries  %time %alloc   %time %alloc
+                                                                                                                            individual      inherited
+COST CENTRE                            MODULE                SRC                                        no.      entries  %time %alloc   %time %alloc
 
-MAIN                        MAIN                  <built-in>                    1027          0    0.0    0.0   100.0  100.0
- CAF                        GHC.Conc.Signal       <entire-module>               1122          0    0.0    0.0     0.0    0.0
- CAF                        GHC.IO.Encoding       <entire-module>               1104          0    0.0    0.0     0.0    0.0
- CAF                        GHC.IO.Encoding.Iconv <entire-module>               1102          0    0.0    0.0     0.0    0.0
- CAF                        GHC.IO.FD             <entire-module>               1095          0    0.0    0.0     0.0    0.0
- CAF                        GHC.IO.Handle.FD      <entire-module>               1093          0    0.0    0.0     0.0    0.0
- CAF                        GHC.Event.Poll        <entire-module>               1044          0    0.0    0.0     0.0    0.0
- CAF                        GHC.Event.Thread      <entire-module>               1043          0    0.0    0.0     0.0    0.0
- CAF:main1                  Main                  <no location info>            1259          0    0.0    0.0     0.0    0.0
-  main                      Main                  src/Main.hs:(49,5)-(821,161)  2054          1    0.0    0.0     0.0    0.0
- CAF:main3                  Main                  <no location info>            1258          0    0.0    0.0    72.6   99.7
-  main                      Main                  src/Main.hs:(49,5)-(821,161)  2056          0   34.9   55.6    72.6   99.7
-   getAllIndsEpsilon        Ansatz2               src/Ansatz2.hs:(68,5)-(72,90) 2057          1    0.0    0.0    37.7   44.1
-    getAllIndsEpsilon.l2    Ansatz2               src/Ansatz2.hs:71:17-37       2059          1    0.0    0.0     0.0    0.0
-     getIndsEpsilon         Ansatz2               src/Ansatz2.hs:65:5-101       2060          1    0.0    0.0     0.0    0.0
-    getAllIndsEpsilon.l3    Ansatz2               src/Ansatz2.hs:72:17-90       2061          1    0.7    1.1    37.7   44.1
-     getAllIndsEpsilon.l3.\ Ansatz2               src/Ansatz2.hs:72:42-86       2062       1820    4.6    6.3    37.0   43.0
-      getAllIndsEta         Ansatz2               src/Ansatz2.hs:(58,5)-(62,77) 2063   26688480    2.1    1.5    32.4   36.7
-       getAllIndsEta.l      Ansatz2               src/Ansatz2.hs:61:17-54       2064    7769580    4.8    5.7     9.5    8.2
-        getAllIndsEta.l.\   Ansatz2               src/Ansatz2.hs:61:32-50       2066   26686660    4.7    2.5     4.7    2.5
-       getAllIndsEta.res    Ansatz2               src/Ansatz2.hs:62:17-77       2065    7769580    5.3    6.4    20.8   27.1
-        getAllIndsEta.res.\ Ansatz2               src/Ansatz2.hs:62:47-74       2067   26686660   15.5   20.7    15.5   20.7
-    getAllIndsEpsilon.s     Ansatz2               src/Ansatz2.hs:70:17-28       2058          1    0.0    0.0     0.0    0.0
- CAF:main36                 Main                  <no location info>            1257          0    0.0    0.0     0.0    0.0
- main                       Main                  src/Main.hs:(49,5)-(821,161)  2055          0   27.4    0.3    27.4    0.3
+MAIN                                   MAIN                  <built-in>                                 1079          0    0.1    0.0   100.0  100.0
+ CAF                                   GHC.Conc.Signal       <entire-module>                            1174          0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.Encoding       <entire-module>                            1156          0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.Encoding.Iconv <entire-module>                            1154          0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.Handle.FD      <entire-module>                            1145          0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.Handle.Text    <entire-module>                            1143          0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.Event.Poll        <entire-module>                            1096          0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.Event.Thread      <entire-module>                            1095          0    0.0    0.0     0.0    0.0
+ CAF:f1_rcwi                           PerturbationTree2     <no location info>                         1741          0    0.0    0.0     0.0    0.0
+ CAF:f_rcwb                            PerturbationTree2     <no location info>                         1737          0    0.0    0.0     0.0    0.0
+ CAF:lvl23_rcwc                        PerturbationTree2     <no location info>                         1738          0    0.0    0.0     0.0    0.0
+ CAF:lvl24_rcwd                        PerturbationTree2     <no location info>                         1739          0    0.0    0.0     0.0    0.0
+ CAF:lvl32_rcwm                        PerturbationTree2     <no location info>                         1742          0    0.0    0.0     0.0    0.0
+ CAF:lvl33_rcwn                        PerturbationTree2     <no location info>                         1743          0    0.0    0.0     0.0    0.0
+ CAF:lvl34_rcwo                        PerturbationTree2     <no location info>                         1744          0    0.0    0.0     0.0    0.0
+ CAF:main1                             Main                  <no location info>                         1313          0    0.0    0.0     0.0    0.0
+  main                                 Main                  src/Main.hs:(49,5)-(848,59)                2158          1    0.0    0.0     0.0    0.0
+ CAF:main2                             Main                  <no location info>                         1312          0    0.0    0.0    14.2   22.4
+  main                                 Main                  src/Main.hs:(49,5)-(848,59)                2160          0    0.1    0.0    14.2   22.4
+   showsPrec                           PerturbationTree2     src/PerturbationTree2.hs:92:110-113        2162    1075328    7.6   14.5    14.0   22.4
+    showsPrec                          PerturbationTree2     src/PerturbationTree2.hs:55:81-84          2326    1471663    6.4    7.9     6.4    7.9
+ CAF:main3                             Main                  <no location info>                         1310          0    0.0    0.0    78.5   77.5
+  main                                 Main                  src/Main.hs:(49,5)-(848,59)                2163          0    0.0    0.0    78.5   77.5
+   getEpsForest                        PerturbationTree2     src/PerturbationTree2.hs:(325,5)-(329,70)  2164          1    0.0    0.0    78.5   77.5
+    getEpsForest.allForests            PerturbationTree2     src/PerturbationTree2.hs:329:21-70         2167          1    0.0    0.0     0.2    0.1
+     mkEpsilonList                     PerturbationTree2     src/PerturbationTree2.hs:(285,5)-(289,31)  2193      10126    0.0    0.0     0.2    0.1
+      mkEtaList                        PerturbationTree2     src/PerturbationTree2.hs:(278,5)-(282,31)  2197      60756    0.1    0.1     0.1    0.1
+       mkEtaList.(...)                 PerturbationTree2     src/PerturbationTree2.hs:281:17-32         2226      50630    0.0    0.0     0.0    0.0
+       mkEtaList.a                     PerturbationTree2     src/PerturbationTree2.hs:281:17-32         2225      50630    0.0    0.0     0.0    0.0
+       mkEtaList.b                     PerturbationTree2     src/PerturbationTree2.hs:281:17-32         2227      50630    0.0    0.0     0.0    0.0
+       mkEtaList.rest                  PerturbationTree2     src/PerturbationTree2.hs:282:17-31         2209      50630    0.0    0.0     0.0    0.0
+      mkEpsilonList.(...)              PerturbationTree2     src/PerturbationTree2.hs:288:17-36         2239      10126    0.0    0.0     0.0    0.0
+      mkEpsilonList.i                  PerturbationTree2     src/PerturbationTree2.hs:288:17-36         2238      10126    0.0    0.0     0.0    0.0
+      mkEpsilonList.j                  PerturbationTree2     src/PerturbationTree2.hs:288:17-36         2240      10126    0.0    0.0     0.0    0.0
+      mkEpsilonList.k                  PerturbationTree2     src/PerturbationTree2.hs:288:17-36         2241      10126    0.0    0.0     0.0    0.0
+      mkEpsilonList.l                  PerturbationTree2     src/PerturbationTree2.hs:288:17-36         2242      10126    0.0    0.0     0.0    0.0
+      mkEpsilonList.rest               PerturbationTree2     src/PerturbationTree2.hs:289:17-31         2196      10126    0.0    0.0     0.0    0.0
+    getEpsForest.allInds               PerturbationTree2     src/PerturbationTree2.hs:327:21-57         2168          1    0.0    0.0     8.2   13.0
+     getEpsilonInds                    PerturbationTree2     src/PerturbationTree2.hs:53:5-79           2169          1    0.1    0.0     8.2   13.0
+      getEpsilonInds.\                 PerturbationTree2     src/PerturbationTree2.hs:53:42-56          2182     945945    0.1    0.0     4.0    2.5
+       filterSym                       PerturbationTree2     src/PerturbationTree2.hs:(45,5)-(47,49)    2183     945945    0.2    0.0     3.9    2.5
+        filterSym.boolList             PerturbationTree2     src/PerturbationTree2.hs:47:16-49          2184     945945    0.7    2.1     3.7    2.5
+         filter1Sym                    PerturbationTree2     src/PerturbationTree2.hs:(38,5)-(42,65)    2186    3249401    0.3    0.0     3.1    0.4
+          filter1Sym.first             PerturbationTree2     src/PerturbationTree2.hs:42:16-65          2187    3249401    1.6    0.4     2.7    0.4
+           filter1Sym.first.\          PerturbationTree2     src/PerturbationTree2.hs:42:47-62          2188   11450312    1.1    0.0     1.1    0.0
+      getAllIndsEpsilon                PerturbationTree2     src/PerturbationTree2.hs:(31,5)-(35,90)    2170          1    0.0    0.0     4.1   10.5
+       getAllIndsEpsilon.l2            PerturbationTree2     src/PerturbationTree2.hs:34:17-37          2173          1    0.0    0.0     0.0    0.0
+        getIndsEpsilon                 PerturbationTree2     src/PerturbationTree2.hs:28:5-101          2174          1    0.0    0.0     0.0    0.0
+       getAllIndsEpsilon.l3            PerturbationTree2     src/PerturbationTree2.hs:35:17-90          2175          1    0.1    0.4     4.1   10.5
+        getAllIndsEpsilon.l3.\         PerturbationTree2     src/PerturbationTree2.hs:35:42-86          2176       1001    0.6    1.8     4.0   10.1
+         getAllIndsEta                 PerturbationTree2     src/PerturbationTree2.hs:(20,5)-(24,77)    2177    1334333    0.3    0.5     3.4    8.3
+          getAllIndsEta.l              PerturbationTree2     src/PerturbationTree2.hs:23:17-54          2178     388388    0.7    1.9     1.3    2.7
+           getAllIndsEta.l.\           PerturbationTree2     src/PerturbationTree2.hs:23:32-50          2180    1333332    0.6    0.8     0.6    0.8
+          getAllIndsEta.res            PerturbationTree2     src/PerturbationTree2.hs:24:17-77          2179     388388    0.7    1.7     1.9    5.1
+           getAllIndsEta.res.\         PerturbationTree2     src/PerturbationTree2.hs:24:47-74          2181    1333332    1.1    3.4     1.1    3.4
+       getAllIndsEpsilon.s             PerturbationTree2     src/PerturbationTree2.hs:33:17-28          2171          1    0.0    0.0     0.0    0.0
+    getEpsForest.allVars               PerturbationTree2     src/PerturbationTree2.hs:328:21-46         2165          1    0.0    0.0     0.0    0.0
+     mkAllVars                         PerturbationTree2     src/PerturbationTree2.hs:58:5-35           2166          1    0.0    0.0     0.0    0.0
+    reduceAnsatzEta                    PerturbationTree2     src/PerturbationTree2.hs:(305,5)-(308,150) 2189          1    0.0    0.0    70.2   64.4
+     reduceAnsatzEta.addOrRem          PerturbationTree2     src/PerturbationTree2.hs:308:17-150        2190          1    0.0    0.0    70.2   64.4
+      reduceAnsatzEta.addOrRem.\       PerturbationTree2     src/PerturbationTree2.hs:308:38-150        2191      10126    0.0    0.0    70.2   64.4
+       addForests                      PerturbationTree2     src/PerturbationTree2.hs:(102,5)-(107,79)  2316     689384    3.0    1.4     4.9    1.6
+        compare                        PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2321    1788449    0.7    0.0     0.7    0.0
+        addForests.filteredSum         PerturbationTree2     src/PerturbationTree2.hs:107:17-79         2322     367095    0.0    0.0     1.2    0.2
+         addForests.filteredSum.\      PerturbationTree2     src/PerturbationTree2.hs:107:40-79         2323     681027    0.1    0.0     1.2    0.2
+          rmZeros                      PerturbationTree2     src/PerturbationTree2.hs:(111,5)-(115,68)  2324     681027    0.9    0.2     1.1    0.2
+           ==                          PerturbationTree2     src/PerturbationTree2.hs:92:116-117        2325    2510443    0.2    0.0     0.2    0.0
+       mkForestFromAscList             PerturbationTree2     src/PerturbationTree2.hs:(128,5)-(130,80)  2195      58499    0.0    0.0     0.0    0.0
+       isElem                          PerturbationTree2     src/PerturbationTree2.hs:(295,5)-(302,42)  2192      51976    0.0    0.0     0.1    0.0
+        isElem.mForest                 PerturbationTree2     src/PerturbationTree2.hs:302:21-42         2317      50206    0.1    0.0     0.1    0.0
+         compare                       PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2318     172312    0.0    0.0     0.0    0.0
+       symAnsatzForestEta              PerturbationTree2     src/PerturbationTree2.hs:(251,5)-(260,24)  2198       8357    0.0    0.0    65.1   62.7
+        pairASymForestEta              PerturbationTree2     src/PerturbationTree2.hs:210:5-117         2199      50142    0.1    0.0    14.4   14.0
+         mapNodes                      PerturbationTree2     src/PerturbationTree2.hs:(95,5)-(97,75)    2228     702897    1.3    1.4     1.7    1.5
+          multVar                      PerturbationTree2     src/PerturbationTree2.hs:(85,5)-(86,19)    2230     812402    0.3    0.1     0.3    0.1
+          >=                           PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2252     132493    0.0    0.0     0.1    0.0
+           <                           PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2253     132493    0.1    0.0     0.1    0.0
+         addForests                    PerturbationTree2     src/PerturbationTree2.hs:(102,5)-(107,79)  2229     351283    0.8    0.4     1.3    0.5
+          compare                      PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2231     361207    0.2    0.0     0.2    0.0
+          addForests.filteredSum       PerturbationTree2     src/PerturbationTree2.hs:107:17-79         2254     232739    0.0    0.0     0.3    0.1
+           addForests.filteredSum.\    PerturbationTree2     src/PerturbationTree2.hs:107:40-79         2255     301141    0.0    0.0     0.3    0.1
+            rmZeros                    PerturbationTree2     src/PerturbationTree2.hs:(111,5)-(115,68)  2256     301141    0.2    0.1     0.2    0.1
+             ==                        PerturbationTree2     src/PerturbationTree2.hs:92:116-117        2257     318994    0.0    0.0     0.0    0.0
+             isZeroVar                 PerturbationTree2     src/PerturbationTree2.hs:(89,5)-(90,23)    2319      63738    0.0    0.0     0.0    0.0
+          addVars                      PerturbationTree2     src/PerturbationTree2.hs:(79,5)-(82,43)    2320      63738    0.1    0.0     0.1    0.0
+         swapLabelEta                  PerturbationTree2     src/PerturbationTree2.hs:(179,5)-(182,43)  2200      50142    0.1    0.0    11.3   12.0
+          canonicalizeAnsatzEta        PerturbationTree2     src/PerturbationTree2.hs:168:5-52          2201      50142    0.0    0.0     3.5    4.9
+           mapNodes                    PerturbationTree2     src/PerturbationTree2.hs:(95,5)-(97,75)    2202     930661    1.2    1.9     3.5    4.9
+            sortAnsatzNode             PerturbationTree2     src/PerturbationTree2.hs:(61,5)-(67,40)    2213    1040166    0.6    0.8     2.2    2.9
+             sortAnsatzNode.(...)      PerturbationTree2     src/PerturbationTree2.hs:63:17-36          2220     655023    1.1    1.8     1.1    1.8
+             sortAnsatzNode.x'         PerturbationTree2     src/PerturbationTree2.hs:63:17-36          2219     655023    0.1    0.0     0.1    0.0
+             sortAnsatzNode.y'         PerturbationTree2     src/PerturbationTree2.hs:63:17-36          2250     655023    0.1    0.0     0.1    0.0
+             sortAnsatzNode.(...)      PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2233      67814    0.2    0.3     0.2    0.3
+             sortAnsatzNode.i'         PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2232      67814    0.0    0.0     0.0    0.0
+             sortAnsatzNode.j'         PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2243      67814    0.0    0.0     0.0    0.0
+             sortAnsatzNode.k'         PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2248      66956    0.0    0.0     0.0    0.0
+             sortAnsatzNode.l'         PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2249      60916    0.0    0.0     0.0    0.0
+            >=                         PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2246     170623    0.0    0.0     0.1    0.0
+             <                         PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2247     170623    0.1    0.0     0.1    0.0
+          sortForest                   PerturbationTree2     src/PerturbationTree2.hs:(133,5)-(135,69)  2205      50142    0.0    0.0     4.4    4.3
+           addForests                  PerturbationTree2     src/PerturbationTree2.hs:(102,5)-(107,79)  2216     464774    0.9    0.6     1.4    0.7
+            compare                    PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2251     509746    0.2    0.0     0.2    0.0
+            addForests.filteredSum     PerturbationTree2     src/PerturbationTree2.hs:107:17-79         2258     305127    0.1    0.0     0.3    0.1
+             addForests.filteredSum.\  PerturbationTree2     src/PerturbationTree2.hs:107:40-79         2259     305127    0.0    0.0     0.3    0.1
+              rmZeros                  PerturbationTree2     src/PerturbationTree2.hs:(111,5)-(115,68)  2260     305127    0.2    0.1     0.3    0.1
+               ==                      PerturbationTree2     src/PerturbationTree2.hs:92:116-117        2261     483907    0.1    0.0     0.1    0.0
+           sortForest.fList            PerturbationTree2     src/PerturbationTree2.hs:135:21-69         2206      50142    0.1    0.1     3.0    3.6
+            mkForestFromAscList        PerturbationTree2     src/PerturbationTree2.hs:(128,5)-(130,80)  2217    1117529    0.4    0.7     0.4    0.7
+            flattenForest              PerturbationTree2     src/PerturbationTree2.hs:(120,5)-(125,78)  2207     930661    0.4    0.6     2.5    2.8
+             flattenForest.l           PerturbationTree2     src/PerturbationTree2.hs:125:17-78         2214     771014    0.4    0.6     1.7    1.7
+              flattenForest.l.\        PerturbationTree2     src/PerturbationTree2.hs:125:38-70         2215     880519    1.2    1.1     1.4    1.1
+               compare                 PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2218     989906    0.2    0.0     0.2    0.0
+             flattenForest.mPairs      PerturbationTree2     src/PerturbationTree2.hs:124:17-35         2208     771014    0.3    0.5     0.3    0.5
+          swapLabelEta.f               PerturbationTree2     src/PerturbationTree2.hs:181:17-38         2210      50142    0.0    0.0     0.0    0.0
+          swapLabelEta.swapAnsatz      PerturbationTree2     src/PerturbationTree2.hs:182:17-43         2203      50142    0.0    0.0     3.2    2.8
+           mapNodes                    PerturbationTree2     src/PerturbationTree2.hs:(95,5)-(97,75)    2204     930661    1.5    1.9     3.2    2.8
+            >=                         PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2244     170623    0.1    0.0     0.1    0.0
+             <                         PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2245     170623    0.0    0.0     0.0    0.0
+            swapLabelEta.f             PerturbationTree2     src/PerturbationTree2.hs:181:17-38         2211          0    0.3    0.0     1.6    0.9
+             swapLabelNode             PerturbationTree2     src/PerturbationTree2.hs:(149,5)-(155,42)  2212    1040166    0.7    0.8     1.3    0.9
+              swapLabelNode.f          PerturbationTree2     src/PerturbationTree2.hs:151:21-39         2223     655023    0.2    0.1     0.5    0.1
+               swapLabelF              PerturbationTree2     src/PerturbationTree2.hs:(138,5)-(141,27)  2224    1310046    0.3    0.0     0.3    0.0
+              swapLabelNode.f          PerturbationTree2     src/PerturbationTree2.hs:154:21-39         2236      67814    0.1    0.0     0.1    0.0
+               swapLabelF              PerturbationTree2     src/PerturbationTree2.hs:(138,5)-(141,27)  2237     271256    0.0    0.0     0.0    0.0
+        pairBlockSymForestEta          PerturbationTree2     src/PerturbationTree2.hs:216:5-100         2262      33428    0.0    0.0    50.7   48.6
+         addForests                    PerturbationTree2     src/PerturbationTree2.hs:(102,5)-(107,79)  2299     485664    1.2    0.7     2.3    0.8
+          compare                      PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2306     619933    0.3    0.0     0.3    0.0
+          addForests.filteredSum       PerturbationTree2     src/PerturbationTree2.hs:107:17-79         2307     307412    0.0    0.0     0.5    0.1
+           addForests.filteredSum.\    PerturbationTree2     src/PerturbationTree2.hs:107:40-79         2308     452236    0.0    0.0     0.4    0.1
+            rmZeros                    PerturbationTree2     src/PerturbationTree2.hs:(111,5)-(115,68)  2309     452236    0.3    0.1     0.4    0.1
+             ==                        PerturbationTree2     src/PerturbationTree2.hs:92:116-117        2312     546628    0.0    0.0     0.0    0.0
+             isZeroVar                 PerturbationTree2     src/PerturbationTree2.hs:(89,5)-(90,23)    2314     105024    0.0    0.0     0.0    0.0
+          addVars                      PerturbationTree2     src/PerturbationTree2.hs:(79,5)-(82,43)    2315     105024    0.3    0.0     0.3    0.0
+         swapBlockLabelEta             PerturbationTree2     src/PerturbationTree2.hs:(191,5)-(194,43)  2263      33428    0.1    0.0    48.4   47.8
+          canonicalizeAnsatzEta        PerturbationTree2     src/PerturbationTree2.hs:168:5-52          2264      33428    0.0    0.0    13.1   15.2
+           mapNodes                    PerturbationTree2     src/PerturbationTree2.hs:(95,5)-(97,75)    2265    2733804    4.5    6.0    13.1   15.2
+            sortAnsatzNode             PerturbationTree2     src/PerturbationTree2.hs:(61,5)-(67,40)    2283    3219976    2.2    2.5     7.9    9.3
+             sortAnsatzNode.(...)      PerturbationTree2     src/PerturbationTree2.hs:63:17-36          2294    2228092    4.0    6.2     4.0    6.2
+             sortAnsatzNode.x'         PerturbationTree2     src/PerturbationTree2.hs:63:17-36          2293    2228092    0.5    0.0     0.5    0.0
+             sortAnsatzNode.y'         PerturbationTree2     src/PerturbationTree2.hs:63:17-36          2295    2197884    0.7    0.0     0.7    0.0
+             sortAnsatzNode.(...)      PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2285     121196    0.5    0.6     0.5    0.6
+             sortAnsatzNode.i'         PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2284     121196    0.0    0.0     0.0    0.0
+             sortAnsatzNode.j'         PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2286     120056    0.0    0.0     0.0    0.0
+             sortAnsatzNode.k'         PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2301     117136    0.0    0.0     0.0    0.0
+             sortAnsatzNode.l'         PerturbationTree2     src/PerturbationTree2.hs:66:17-46          2302     104012    0.0    0.0     0.0    0.0
+            >=                         PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2281     738435    0.3    0.0     0.6    0.0
+             <                         PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2282     738435    0.3    0.0     0.3    0.0
+            compare                    PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2310     160356    0.0    0.0     0.0    0.0
+          sortForest                   PerturbationTree2     src/PerturbationTree2.hs:(133,5)-(135,69)  2268      33428    0.1    0.0    16.0   14.8
+           addForests                  PerturbationTree2     src/PerturbationTree2.hs:(102,5)-(107,79)  2296    1707860    3.9    2.8     6.2    3.2
+            compare                    PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2300    3654207    0.8    0.0     0.8    0.0
+            addForests.filteredSum     PerturbationTree2     src/PerturbationTree2.hs:107:17-79         2303    1188260    0.1    0.0     1.5    0.3
+             addForests.filteredSum.\  PerturbationTree2     src/PerturbationTree2.hs:107:40-79         2304    1188260    0.1    0.0     1.4    0.3
+              rmZeros                  PerturbationTree2     src/PerturbationTree2.hs:(111,5)-(115,68)  2305    1188260    1.2    0.3     1.4    0.3
+               ==                      PerturbationTree2     src/PerturbationTree2.hs:92:116-117        2311    2280048    0.1    0.0     0.1    0.0
+           sortForest.fList            PerturbationTree2     src/PerturbationTree2.hs:135:21-69         2269      33428    0.1    0.3     9.6   11.7
+            mkForestFromAscList        PerturbationTree2     src/PerturbationTree2.hs:(128,5)-(130,80)  2297    3637200    1.8    2.2     1.8    2.2
+            flattenForest              PerturbationTree2     src/PerturbationTree2.hs:(120,5)-(125,78)  2270    2733804    1.4    1.9     7.7    9.2
+             flattenForest.l           PerturbationTree2     src/PerturbationTree2.hs:125:17-78         2287    2214204    1.2    1.9     5.3    5.7
+              flattenForest.l.\        PerturbationTree2     src/PerturbationTree2.hs:125:38-70         2288    2700376    3.3    3.8     4.2    3.8
+               compare                 PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2298    3770120    0.8    0.0     0.8    0.0
+             flattenForest.mPairs      PerturbationTree2     src/PerturbationTree2.hs:124:17-35         2271    2214204    1.0    1.5     1.0    1.5
+          swapBlockLabelEta.f          PerturbationTree2     src/PerturbationTree2.hs:193:17-43         2274      33428    0.0    0.0     0.0    0.0
+          swapBlockLabelEta.swapAnsatz PerturbationTree2     src/PerturbationTree2.hs:194:17-43         2266      33428    0.0    0.0    19.2   17.7
+           mapNodes                    PerturbationTree2     src/PerturbationTree2.hs:(95,5)-(97,75)    2267    2733804    5.3    5.9    19.2   17.7
+            >=                         PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2272     762258    0.3    0.0     0.6    0.0
+             <                         PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2273     762258    0.3    0.0     0.3    0.0
+            compare                    PerturbationTree2     src/PerturbationTree2.hs:55:91-93          2313      25230    0.0    0.0     0.0    0.0
+            swapBlockLabelEta.f        PerturbationTree2     src/PerturbationTree2.hs:193:17-43         2275          0    0.4    0.0    13.3   11.8
+             swapBlockLabelNode        PerturbationTree2     src/PerturbationTree2.hs:(159,5)-(165,47)  2276    3219976    2.0    2.2    12.9   11.8
+              swapBlockLabelNode.f     PerturbationTree2     src/PerturbationTree2.hs:161:21-44         2289    2228092    2.1    1.0     9.7    8.6
+               swapBlockLabelF         PerturbationTree2     src/PerturbationTree2.hs:(144,5)-(146,52)  2290    4456184    0.5    0.0     7.6    7.6
+                swapBlockLabelF.swapF  PerturbationTree2     src/PerturbationTree2.hs:146:17-52         2291    4456184    5.9    7.6     7.1    7.6
+                 swapLabelF            PerturbationTree2     src/PerturbationTree2.hs:(138,5)-(141,27)  2292   10376032    1.2    0.0     1.2    0.0
+              swapBlockLabelNode.f     PerturbationTree2     src/PerturbationTree2.hs:164:21-44         2277     121196    0.2    0.1     1.1    1.0
+               swapBlockLabelF         PerturbationTree2     src/PerturbationTree2.hs:(144,5)-(146,52)  2278     484784    0.1    0.0     0.9    0.9
+                swapBlockLabelF.swapF  PerturbationTree2     src/PerturbationTree2.hs:146:17-52         2279     484784    0.7    0.9     0.8    0.9
+                 swapLabelF            PerturbationTree2     src/PerturbationTree2.hs:(138,5)-(141,27)  2280    1202248    0.1    0.0     0.1    0.0
+   main.testFilters                    Main                  src/Main.hs:844:13-91                      2185          1    0.0    0.0     0.0    0.0
+   main.testSym                        Main                  src/Main.hs:846:13-152                     2194          1    0.0    0.0     0.0    0.0
+ CAF:main74                            Main                  <no location info>                         1309          0    0.0    0.0     0.0    0.0
+  main                                 Main                  src/Main.hs:(49,5)-(848,59)                2172          0    0.0    0.0     0.0    0.0
+ CAF:main75                            Main                  <no location info>                         1311          0    0.0    0.0     0.0    0.0
+  main                                 Main                  src/Main.hs:(49,5)-(848,59)                2161          0    0.0    0.0     0.0    0.0
+ main                                  Main                  src/Main.hs:(49,5)-(848,59)                2159          0    7.2    0.1     7.2    0.1

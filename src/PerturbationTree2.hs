@@ -175,7 +175,7 @@ module PerturbationTree2 (
     canonicalizeAnsatzEpsilon (Leaf var) = Leaf var
     canonicalizeAnsatzEpsilon (Forest m) = Forest newMap
                 where
-                    newMap = M.mapWithKey (\ k v -> mapNodes ((multVar $ getEpsSign k).sortAnsatzNode) v ) m
+                    newMap = M.mapKeys sortAnsatzNode  $ M.mapWithKey (\ k v -> mapNodes ((multVar $ getEpsSign k).sortAnsatzNode) v ) m
             
 
     swapLabelEta :: Ord a => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
@@ -325,7 +325,7 @@ module PerturbationTree2 (
                     allForests = zipWith mkEtaList allVars allInds
 
     getEpsForest :: [Int] -> [(Int,Int)] -> Int -> Symmetry Int -> AnsatzForest (AnsatzNode Int)
-    getEpsForest inds filters label1 syms = reduceAnsatzEta syms allForests
+    getEpsForest inds filters label1 syms = reduceAnsatzEps syms allForests
                 where
                     allInds = getEpsilonInds inds filters
                     allVars = mkAllVars label1 
@@ -360,14 +360,21 @@ module PerturbationTree2 (
     showAnsatzNode (Eta i b) = show (i,b)
     showAnsatzNode (Epsilon i j k l) = show (i,j,k,l)
     
-    --does not work
+
+    shiftAnsatzForest :: AnsatzForest String -> AnsatzForest String
+    shiftAnsatzForest EmptyForest = EmptyForest
+    shiftAnsatzForest (Leaf var) = Leaf var 
+    shiftAnsatzForest (Forest m) = Forest $ M.map shiftAnsatzForest shiftedForestMap
+            where
+                mapElems f (Forest m) =  Forest $ M.mapKeys f m
+                mapElems f (Leaf var) = Leaf (f var)
+                shiftedForestMap = M.map (\f -> mapElems (\x -> "     " ++ x) f) m
 
     printAnsatz ::  AnsatzForest String -> [String]
     printAnsatz (Leaf var) = [var] 
-    printAnsatz (Forest m) = map unlines pairString
+    printAnsatz (Forest m) = map (init.unlines) subForests
             where
-                keys = M.keys m 
-                subForests = map (map (\x -> "     " ++ x)) $ map printAnsatz $ M.elems m 
-                pairString = zipWith (:) keys subForests
-
+                shiftedForest = shiftAnsatzForest (Forest m)
+                pairs = M.assocs $ forestMap shiftedForest
+                subForests = map (\(k,v) -> k : (printAnsatz v)) pairs
                 

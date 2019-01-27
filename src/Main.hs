@@ -841,13 +841,18 @@ module Main (
         --putStr  pdeOrd2
         -}
 
-        let testFilters = [(1,2),(3,4),(1,3),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11),(13,14),(15,16),(17,18)] 
+        let filters18 = [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(5,9),(9,10),(11,12),(9,11),(13,14),(15,16),(17,18)] 
 
-        let testSym = ([(13,14),(15,16),(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], [[[1,2,3,4,13,14],[5,6,7,8,15,16],[9,10,11,12,17,18]]])
+        let sym18 = ([(13,14),(15,16),(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], [[[1,2,3,4,13,14],[5,6,7,8,15,16],[9,10,11,12,17,18]]])
 
-        let epsAnsatz = getEpsForest [1..18] testFilters 1 testSym
+        let epsAnsatz18 = getEpsForest [1..18] filters18 1 sym18
 
-        print $ length $ getForestLabels epsAnsatz
+        --putStr $ unlines $ printAnsatz $ mapNodes showAnsatzNode $  relabelAnsatzForest epsAnsatz
+
+        print $ length  $ getForestLabels epsAnsatz18
+
+
+        
 
 
 

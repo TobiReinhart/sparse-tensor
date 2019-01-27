@@ -852,7 +852,12 @@ module Main (
 
         let epsAnsatz14 = getEpsForest [1..14] filter14 1 sym14 
 
-        let epsAnsatz18 = getEpsForest [1..18] filter18 sym18
+        let epsAnsatz18 = getEpsForest [1..18] filter18 1 sym18
 
-        print $ length $ getForestLabels epsAnsatz18 
+        let testForest = mkForestFromAscList $ [Eta 1 2, Eta 3 4, Eta 5 6, Eta 7 8 , Var 1 1]
+
+        let testForestSym = symAnsatzForestEta ([],[],[],[[1,2,3,4,5]],[]) testForest
+
+        putStr $ unlines $ printAnsatz $ mapNodes showAnsatzNode testForestSym
         
+        print $ length $ getForestLabels epsAnsatz18 

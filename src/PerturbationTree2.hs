@@ -4,7 +4,7 @@
 
 
 module PerturbationTree2 (
-    AnsatzForest, AnsatzNode, mkEtaList, mkEpsilonList, Symmetry, reduceAnsatzEta, reduceAnsatzEps, getEtaInds, getEpsilonInds, mkAllVars, symAnsatzForestEta, symAnsatzForestEps, mkForestFromAscList, getEtaForest, getEpsForest, flattenForest, relabelAnsatzForest, getForestLabels, printAnsatz, showAnsatzNode, mapNodes
+    AnsatzForest(..), AnsatzNode(..), mkEtaList, mkEpsilonList, Symmetry, reduceAnsatzEta, reduceAnsatzEps, getEtaInds, getEpsilonInds, mkAllVars, symAnsatzForestEta, symAnsatzForestEps, mkForestFromAscList, getEtaForest, getEpsForest, flattenForest, relabelAnsatzForest, getForestLabels, printAnsatz, showAnsatzNode, mapNodes, addForests, isZeroVar, addVars
 
 ) where
 
@@ -75,10 +75,10 @@ module PerturbationTree2 (
     getEpsSign x = error "should only be called for Epsilon"
 
     
-    addVars :: AnsatzNode a -> AnsatzNode a -> AnsatzNode a 
+    addVars :: Show a => AnsatzNode a -> AnsatzNode a -> AnsatzNode a 
     addVars (Var x y) (Var x' y') 
             | y == y' = Var (x + x') y
-            | otherwise = error "should only be necessary to add vars with the same label"
+            | otherwise = error $ "should only be necessary to add vars with the same label: tried to add:" ++ "  " ++ (show y) ++ "  and   " ++ (show y')
     addVars x y = error "can only add Vars"
 
     multVar :: Rational -> AnsatzNode a -> AnsatzNode a
@@ -143,10 +143,12 @@ module PerturbationTree2 (
             | y == z = x
             | otherwise = z 
 
-    swapBlockLabelF :: Ord a => ([a],[a]) -> a -> a 
-    swapBlockLabelF (x,y) z = swapF
+    --there is a problem        
+
+    swapBlockLabelMap :: Ord a => ([a],[a]) -> M.Map a a
+    swapBlockLabelMap (x,y) = swapF 
             where
-                swapF = foldr swapLabelF z $ zip x y
+                swapF = M.fromList $ (zip x y)++(zip y x)
             
     swapLabelNode :: Ord a => (a,a) -> AnsatzNode a -> AnsatzNode a
     swapLabelNode inds (Eta i j) = Eta (f i) (f j)
@@ -158,14 +160,14 @@ module PerturbationTree2 (
     swapLabelNode inds (Var x y) = Var x y
 
 
-    swapBlockLabelNode :: Ord a => ([a],[a]) -> AnsatzNode a -> AnsatzNode a
-    swapBlockLabelNode inds (Eta i j) = Eta (f i) (f j)
+    swapBlockLabelNode :: Ord a => M.Map a a -> AnsatzNode a -> AnsatzNode a
+    swapBlockLabelNode swapF (Eta i j) = Eta (f i) (f j)
                 where
-                    f = swapBlockLabelF inds
-    swapBlockLabelNode inds (Epsilon i j k l) = Epsilon (f i) (f j) (f k) (f l)
+                    f = \z -> fromMaybe z $ M.lookup z swapF 
+    swapBlockLabelNode swapF (Epsilon i j k l) = Epsilon (f i) (f j) (f k) (f l)
                 where
-                    f = swapBlockLabelF inds
-    swapBlockLabelNode inds (Var x y) = Var x y
+                    f = \z -> fromMaybe z $ M.lookup z swapF 
+    swapBlockLabelNode sapF (Var x y) = Var x y
 
     canonicalizeAnsatzEta :: Ord a => AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     canonicalizeAnsatzEta  = mapNodes sortAnsatzNode
@@ -190,67 +192,69 @@ module PerturbationTree2 (
                 f = swapLabelNode inds 
                 swapAnsatz = mapNodes f ans           
 
-    swapBlockLabelEta :: Ord a => ([a],[a]) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    swapBlockLabelEta inds ans = (sortForest isZeroVar).canonicalizeAnsatzEta $ swapAnsatz
+    swapBlockLabelEta :: Ord a => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    swapBlockLabelEta swapF ans = (sortForest isZeroVar).canonicalizeAnsatzEta $ swapAnsatz
             where
-                f = swapBlockLabelNode inds 
+                f = swapBlockLabelNode swapF 
                 swapAnsatz = mapNodes f ans
 
-    swapBlockLabelEps :: Ord a => ([a],[a]) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    swapBlockLabelEps inds ans = (sortForest isZeroVar).canonicalizeAnsatzEpsilon $ swapAnsatz
+    swapBlockLabelEps :: Ord a => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    swapBlockLabelEps swapF ans = (sortForest isZeroVar).canonicalizeAnsatzEpsilon $ swapAnsatz
             where
-                f = swapBlockLabelNode inds 
+                f = swapBlockLabelNode swapF 
                 swapAnsatz = mapNodes f ans
             
 
-    pairSymForestEta :: Ord a => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    pairSymForestEta :: (Ord a, Show a) => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     pairSymForestEta inds ans = (addForests isZeroVar addVars) ans $ swapLabelEta inds ans 
 
-    pairSymForestEps :: Ord a => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    pairSymForestEps :: (Ord a, Show a) => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     pairSymForestEps inds ans = (addForests isZeroVar addVars) ans $ swapLabelEps inds ans 
 
-    pairASymForestEta :: Ord a => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    pairASymForestEta :: (Ord a, Show a) => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     pairASymForestEta inds ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapLabelEta inds ans 
 
-    pairASymForestEps :: Ord a => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    pairASymForestEps :: (Ord a, Show a) => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     pairASymForestEps inds ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapLabelEps inds ans 
 
-    pairBlockSymForestEta :: Ord a => ([a],[a]) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairBlockSymForestEta inds ans = (addForests isZeroVar addVars) ans $ swapBlockLabelEta inds ans 
+    pairBlockSymForestEta :: (Ord a, Show a) => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    pairBlockSymForestEta swapF ans = (addForests isZeroVar addVars) ans $ swapBlockLabelEta swapF ans 
 
-    pairBlockSymForestEps :: Ord a => ([a],[a]) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairBlockSymForestEps inds ans = (addForests isZeroVar addVars) ans $ swapBlockLabelEps inds ans 
+    pairBlockSymForestEps :: (Ord a, Show a) => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    pairBlockSymForestEps swapF ans = (addForests isZeroVar addVars) ans $ swapBlockLabelEps swapF ans 
 
-    pairBlockASymForestEta :: Ord a => ([a],[a]) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairBlockASymForestEta inds ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapBlockLabelEta inds ans
+    pairBlockASymForestEta :: (Ord a, Show a) => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    pairBlockASymForestEta swapF ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapBlockLabelEta swapF ans
 
-    pairBlockASymForestEps :: Ord a => ([a],[a]) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairBlockASymForestEps inds ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapBlockLabelEps inds ans
+    pairBlockASymForestEps :: (Ord a, Show a) => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    pairBlockASymForestEps swapF ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapBlockLabelEps swapF ans
+
+    --cyclic symmetrization does not work !!!
     
-    cyclicSymForestEta :: Ord a => [a] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    cyclicSymForestEta :: (Ord a, Show a) => [a] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     cyclicSymForestEta inds ans = foldr (\y x -> (addForests isZeroVar addVars) x $ swapBlockLabelEta y ans ) ans perms
             where
-                perms = map (\a -> (inds,a)) $ tail $ permutations inds 
+                perms = map (\a -> M.fromList (zip inds a)) $ tail $ permutations inds 
 
-    cyclicSymForestEps :: Ord a => [a] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    cyclicSymForestEps :: (Ord a, Show a) => [a] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     cyclicSymForestEps inds ans = foldr (\y x -> (addForests isZeroVar addVars) x $ swapBlockLabelEps y ans ) ans perms
             where
-                perms = map (\a -> (inds,a)) $ tail $ permutations inds 
+                perms = map (\a -> M.fromList (zip inds a)) $ tail $ permutations inds 
 
 
-    cyclicBlockSymForestEta :: Ord a => [[a]] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    cyclicBlockSymForestEta :: (Ord a, Show a) => [[a]] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     cyclicBlockSymForestEta inds ans = foldr (\y x -> (addForests isZeroVar addVars) x $ swapBlockLabelEta y ans ) ans perms
             where
-                perms = map (\a -> ( concat inds, concat a)) $ tail $ permutations inds 
+                perms = map (\a -> M.fromList $ zip (concat inds) (concat a)) $ tail $ permutations inds 
 
-    cyclicBlockSymForestEps :: Ord a => [[a]] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
+    cyclicBlockSymForestEps :: (Ord a, Show a) => [[a]] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     cyclicBlockSymForestEps inds ans = foldr (\y x -> (addForests isZeroVar addVars) x $ swapBlockLabelEps y ans ) ans perms
             where
-                perms = map (\a -> ( concat inds, concat a)) $ tail $ permutations inds 
+                perms = map (\a -> M.fromList $ zip (concat inds) (concat a)) $ tail $ permutations inds 
 
     type Symmetry a = ( [(a,a)] , [(a,a)] , [([a],[a])] , [[a]], [[[a]]] )
 
-    symAnsatzForestEta :: Ord a => Symmetry a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a) 
+    symAnsatzForestEta :: (Ord a, Show a) => Symmetry a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a) 
     symAnsatzForestEta (sym,asym,blocksym,cyclicsym,cyclicblocksym) ans =
         foldr cyclicBlockSymForestEta (
             foldr cyclicSymForestEta (
@@ -258,11 +262,13 @@ module PerturbationTree2 (
                     foldr pairASymForestEta (
                         foldr pairSymForestEta ans sym
                     ) asym
-                ) blocksym
+                ) blockSymMap
             ) cyclicsym
         ) cyclicblocksym  
+        where
+            blockSymMap = map swapBlockLabelMap blocksym
 
-    symAnsatzForestEps :: Ord a => Symmetry a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a) 
+    symAnsatzForestEps :: (Ord a, Show a) => Symmetry a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a) 
     symAnsatzForestEps (sym,asym,blocksym,cyclicsym,cyclicblocksym) ans =
           foldr cyclicBlockSymForestEps (
               foldr cyclicSymForestEps (
@@ -270,10 +276,12 @@ module PerturbationTree2 (
                       foldr pairASymForestEps (
                           foldr pairSymForestEps ans sym
                       ) asym
-                  ) blocksym
+                  ) blockSymMap
               ) cyclicsym
           ) cyclicblocksym  
-    
+          where
+            blockSymMap = map swapBlockLabelMap blocksym
+
 
     --if symmetrizing an ansatz this way is too slow we can symmetrize by using a map and then insert in the big tree 
     
@@ -304,13 +312,13 @@ module PerturbationTree2 (
                 where
                     mForest = M.lookup x m
 
-    reduceAnsatzEta :: Ord a => Symmetry a -> [[AnsatzNode a]] -> AnsatzForest (AnsatzNode a)
+    reduceAnsatzEta :: (Ord a, Show a) => Symmetry a -> [[AnsatzNode a]] -> AnsatzForest (AnsatzNode a)
     reduceAnsatzEta sym [] = EmptyForest
     reduceAnsatzEta sym l = foldr addOrRem EmptyForest l
             where
                 addOrRem = \ans f -> if (isElem ans f) then f else (addForests isZeroVar addVars) f (symAnsatzForestEta sym $ mkForestFromAscList ans)
 
-    reduceAnsatzEps :: Ord a => Symmetry a -> [[AnsatzNode a]] -> AnsatzForest (AnsatzNode a)
+    reduceAnsatzEps :: (Ord a, Show a) => Symmetry a -> [[AnsatzNode a]] -> AnsatzForest (AnsatzNode a)
     reduceAnsatzEps sym [] = EmptyForest
     reduceAnsatzEps sym l = foldr addOrRem EmptyForest l
             where

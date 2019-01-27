@@ -1,10 +1,10 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-27 13:06:34.112957 UTC
+2019-01-27 20:45:17.124599 UTC
 
 interface main:Main [hpc] 8043
-  interface hash: b58476e7b4024d4d3f9d8f701bafbac6
-  ABI hash: 010037e48919b6323060bc2bb7f4bf6d
+  interface hash: 1351c5062420bf1726fcc97102c80b67
+  ABI hash: 743e9fcc08478a931f3da72edd728efc
   export-list hash: e9c409922be23e577ec0b27ff6e41517
   orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
   flag hash: 8371069d9a3c93df4564b1c967507c8a
@@ -47,6 +47,7 @@ family instance modules: base-4.11.1.0:Control.Applicative
                          primitive-0.6.3.0:Data.Primitive.ByteArray
 import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
 import  -/  base-4.11.1.0:Data.Functor f522c3501272159820fd6f242510732f
+import  -/  base-4.11.1.0:Data.List 83dc843e47bfc0c5af51e19c6f3476d5
 import  -/  base-4.11.1.0:GHC.TypeNats 8f7c6aed0d8e1900cac5f62a9bc0fd0b
 import  -/  base-4.11.1.0:Numeric.Natural da273ddb373e0510fde98e17e4aa338f
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
@@ -81,10 +82,10 @@ import  -/  Pde ee46c0f08935aa69c73c37bcf3103bae
   exports: 5f26c9b1fc31234bc17b520659bce428
 import  -/  Perturbation 1a0e86698ec5a31cdfef7b507847abb4
   exports: afe5ee48f916c87e6d4d8513ac5538a7
-import  -/  PerturbationTree2 26f6d548603bd51706899564188401e5
-  exports: 7bc9ef096bdb1f5c85b28e768516f22a
-  getEpsForest 7d4b662bb4545d6c6f860dcd3ad3dac8
-  getForestLabels e7775689d77726d410b894cd3bb08db5
+import  -/  PerturbationTree2 ebf70c4b1caee4ff6709b530226ccf09
+  exports: 839fa9d52d79510573164c35e970ae28
+  getEpsForest a44a51750cb1b52318e07f9912f58530
+  getForestLabels f407735fa47690cde6f45b5c28e92f16
 import  -/  Symmetrize 9eee972227eba3994cb0eb9abca1881f
   exports: c79a0ef965b8f406eb0b9e72ceb58ef0
 import  -/  Tensor 506762f61e5eb09856fcdcf668e157fa
@@ -110,11 +111,11 @@ e5875966b74dad2d29772660b8a75e33
 d026be77cb9ced20e35a61514e0458aa
   $trModule4 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("main"#) -}
-118a288925756b9488bd28fb50fdfa04
+04a83372551c9b3a20f873109206f6a7
   main :: GHC.Types.IO ()
   {- Unfolding: InlineRule (0, True, True)
                 Main.main1 `cast` (Sym (GHC.Types.N:IO[0] <()>_R)) -}
-b3480503244e4421f4c5b4aafadcc245
+e3d829a686d6cd9ea17ceffaa5cfa7ac
   main1 ::
     GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
@@ -160,7 +161,7 @@ b6581ffae58a20f7c8e3d25805f081e1
   main19 :: [GHC.Types.Int]
   {- HasNoCafRefs, Strictness: m2,
      Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main26 Main.main20) -}
-58495abf892014408d388e964df511e7
+b2b030c7a6216c5d2a347d40ca3f01ad
   main2 :: GHC.Base.String
   {- Unfolding: ({__scc {main:Main.main} False True} case GHC.List.$wlenAcc
                                                             @ GHC.Types.Int
@@ -498,12 +499,12 @@ ff5d2dadba908864673194840557047a
   main71 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
      Unfolding: ((Main.main27, Main.main25)) -}
-e055cacc9e74d4dc8a08f076a02cfac7
+f70a16e275e2cb5499c952c44b89e4b4
   main72 :: [GHC.Types.Int]
   {- Unfolding: ({__scc {main:Main.main} False True} {__scc {main:Main.main.epsAnsatz14} False True} GHC.Enum.eftInt
                                                                                                        1#
                                                                                                        14#) -}
-49580a6d9949c90772de7e68b25563d6
+11b0b5e277aaafa294b142d7a0e090f6
   main73 ::
     GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
@@ -519,27 +520,27 @@ d4e3b1b19fee9950c00c8ffb13fd5c3c
   main9 :: [GHC.Types.Int]
   {- HasNoCafRefs, Strictness: m2,
      Unfolding: (GHC.Types.: @ GHC.Types.Int Main.main16 Main.main10) -}
-7cb7f7318def4227961a25fb7046c91a
+b692a8bac25ca7fb2390db460494b677
   main_ans ::
     PerturbationTree2.AnsatzForest
       (PerturbationTree2.AnsatzNode GHC.Types.Int)
   {- Unfolding: ({__scc {main:Main.main} False True} {__scc {main:Main.main.epsAnsatz14} True True} PerturbationTree2.$wgetEpsForest
                                                                                                       Main.main72
-                                                                                                      Main.main_filters14
+                                                                                                      Main.main_filter14
                                                                                                       1#
                                                                                                       (Main.main_sym14
                                                                                                          @ (GHC.Types.Int,
                                                                                                             GHC.Types.Int)
                                                                                                          @ [GHC.Types.Int]
                                                                                                          @ [[GHC.Types.Int]])) -}
-50f48c2d2e2604af463c0aeaf9718813
-  main_filters14 :: [(GHC.Types.Int, GHC.Types.Int)]
-  {- Unfolding: ({__scc {main:Main.main} False True} {__scc {main:Main.main.filters14} True False} GHC.Types.:
-                                                                                                     @ (GHC.Types.Int,
-                                                                                                        GHC.Types.Int)
-                                                                                                     Main.main58
-                                                                                                     Main.main59) -}
-e1e5e6fa1156e7f1910890dc509392c7
+206783159a7d751a6f80590a41ad0198
+  main_filter14 :: [(GHC.Types.Int, GHC.Types.Int)]
+  {- Unfolding: ({__scc {main:Main.main} False True} {__scc {main:Main.main.filter14} True False} GHC.Types.:
+                                                                                                    @ (GHC.Types.Int,
+                                                                                                       GHC.Types.Int)
+                                                                                                    Main.main58
+                                                                                                    Main.main59) -}
+77fa695b02f40fb0240b4bbdf2277d73
   main_sym14 ::
     ([a1], [(GHC.Types.Int, GHC.Types.Int)],
      [([GHC.Types.Int], [GHC.Types.Int])], [a2], [a3])

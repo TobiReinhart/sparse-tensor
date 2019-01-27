@@ -44,6 +44,7 @@ module Main (
     import PerturbationTree2
     import Data.Tree
     import Data.Functor
+    import Data.List
      
 
     main = do
@@ -845,22 +846,11 @@ module Main (
 
         let sym18 = ([(13,14),(15,16),(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], [[[1,2,3,4,13,14],[5,6,7,8,15,16],[9,10,11,12,17,18]]])
 
-        let epsAnsatz18 = getEpsForest [1..18] filters18 1 sym18
+        let filter14 = [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11)] 
 
-        --putStr $ unlines $ printAnsatz $ mapNodes showAnsatzNode $  relabelAnsatzForest epsAnsatz
+        let sym14 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4,13],[5,6,7,8,14])], [], [])
 
-        print $ length  $ getForestLabels epsAnsatz18
+        let epsAnsatz14 = getEpsForest [1..14] filter14 1 sym14 
 
-
+        print $ length $ getForestLabels epsAnsatz14 
         
-
-
-
-
-
-
-
-
-
-
-

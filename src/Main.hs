@@ -852,5 +852,7 @@ module Main (
 
         let epsAnsatz14 = getEpsForest [1..14] filter14 1 sym14 
 
-        print $ length $ getForestLabels epsAnsatz14 
+        let epsAnsatz18 = getEpsForest [1..18] filter18 sym18
+
+        print $ length $ getForestLabels epsAnsatz18 
         

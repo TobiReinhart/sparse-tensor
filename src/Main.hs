@@ -842,7 +842,7 @@ module Main (
         --putStr  pdeOrd2
         -}
 
-        let filters18 = [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(5,9),(9,10),(11,12),(9,11),(13,14),(15,16),(17,18)] 
+        let filter18 = [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(5,9),(9,10),(11,12),(9,11),(13,14),(15,16),(17,18)] 
 
         let sym18 = ([(13,14),(15,16),(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], [[[1,2,3,4,13,14],[5,6,7,8,15,16],[9,10,11,12,17,18]]])
 
@@ -858,6 +858,6 @@ module Main (
 
         let testForestSym = symAnsatzForestEta ([],[],[],[[1,2,3,4,5]],[]) testForest
 
-        putStr $ unlines $ printAnsatz $ mapNodes showAnsatzNode testForestSym
+        --putStr $ unlines $ printAnsatz $ mapNodes showAnsatzNode testForestSym
         
         print $ length $ getForestLabels epsAnsatz18 

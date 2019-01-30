@@ -20,7 +20,8 @@ module Index (
     Uind_3(..), Lind_3(..), Uind_9(..), Lind_9(..), Uind_19(..), Lind_19(..), Uind_20(..), Lind_20(..),
     Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
      indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
-     delContractionIndex_20, delContractionIndex_19, delContractionIndex_9, delContractionIndex_3, checkInd, delInd
+     delContractionIndex_20, delContractionIndex_19, delContractionIndex_9, delContractionIndex_3, checkInd, delInd,
+     splitIndex, contractionIndexList_20, contractionIndexList_19, contractionIndexList_9, contractionIndexList_3
 
 ) where
 
@@ -135,6 +136,16 @@ module Index (
 
     contractionInd :: (KnownNat n, KnownNat m) => (Int,Int) -> (Ind (n+1) a, Ind (m+1) a) -> (Ind n a, Ind m a)
     contractionInd (i,j) (ind1, ind2) = (delInd i ind1, delInd j ind2)
+
+    --for Tensors as functions
+
+    splitInd :: (KnownNat n, KnownNat m) => Int -> (Ind (n+m) a) -> (Ind n a, Ind m a)
+    splitInd i (UnsafemkInd s) = (mkInd s1, mkInd s2)
+                where
+                    (s1, s2) = S.splitAt i s 
+
+    contractionIndList :: Int -> Ind n a -> [a] -> [Ind (n+1) a]
+    contractionIndList pos (UnsafemkInd s) range = (map (\r -> UnsafemkInd $ S.insertAt pos r s) range)
 
     --to proceedfurther we need to define the concrete data types for the 8 different indices needed
 
@@ -293,8 +304,54 @@ module Index (
     checkInd :: Eq a => Ind n a -> Int -> a -> Bool
     checkInd (UnsafemkInd s) i val = (fromJust $ S.lookup i s) == val  
 
+    splitIndex :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8, 
+        KnownNat m1, KnownNat m2, KnownNat m3, KnownNat m4, KnownNat m5, KnownNat m6, KnownNat m7, KnownNat m8) =>
+        (Int,Int,Int,Int,Int,Int,Int,Int) -> Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) -> 
+        (Index n1 n2 n3 n4 n5 n6 n7 n8, Index m1 m2 m3 m4 m5 m6 m7 m8)
+    splitIndex (a,b,c,d,e,f,g,h) (i1,i2,i3,i4,i5,i6,i7,i8) = ((j1,j2,j3,j4,j5,j6,j7,j8),(k1,k2,k3,k4,k5,k6,k7,k8))
+                where
+                    (j1,k1) = splitInd a i1 
+                    (j2,k2) = splitInd b i2  
+                    (j3,k3) = splitInd c i3  
+                    (j4,k4) = splitInd d i4  
+                    (j5,k5) = splitInd e i5  
+                    (j6,k6) = splitInd f i6  
+                    (j7,k7) = splitInd g i7  
+                    (j8,k8) = splitInd h i8  
+ 
+
+    contractionIndexList_20 :: (KnownNat n1, KnownNat n2) =>
+        (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> [Index (n1+1) (n2+1) n3 n4 n5 n6 n7 n8]
+    contractionIndexList_20 (i,j) (a,b,c,d,e,f,g,h) = zipWith (\x y -> (x,y,c,d,e,f,g,h)) a' b' 
+                where
+                    rangeList = [0..20]
+                    a' = contractionIndList i a $ map toEnum rangeList
+                    b' = contractionIndList j b $ map toEnum rangeList 
+
+
+    contractionIndexList_19 :: (KnownNat n3, KnownNat n4) =>
+        (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> [Index n1 n2 (n3+1) (n4+1) n5 n6 n7 n8]
+    contractionIndexList_19 (i,j) (a,b,c,d,e,f,g,h) = zipWith (\x y -> (a,b,x,y,e,f,g,h)) c' d' 
+                where
+                    rangeList = [0..19]
+                    c' = contractionIndList i c $ map toEnum rangeList
+                    d' = contractionIndList j d $ map toEnum rangeList
+
+    contractionIndexList_9 :: (KnownNat n5, KnownNat n6) =>
+        (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> [Index n1 n2 n3 n4 (n5+1) (n6+1) n7 n8]
+    contractionIndexList_9 (i,j) (a,b,c,d,e,f,g,h) = zipWith (\x y -> (a,b,c,d,x,y,g,h)) e' f' 
+                where
+                    rangeList = [0..9]
+                    e' = contractionIndList i e $ map toEnum rangeList
+                    f' = contractionIndList j f $ map toEnum rangeList
+
+    contractionIndexList_3 :: (KnownNat n7, KnownNat n8) =>
+        (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> [Index n1 n2 n3 n4 n5 n6 (n7+1) (n8+1)]
+    contractionIndexList_3 (i,j) (a,b,c,d,e,f,g,h) = zipWith (\x y -> (a,b,c,d,e,f,x,y)) g' h' 
+                where
+                    rangeList = [0..3]
+                    g' = contractionIndList i g $ map toEnum rangeList
+                    h' = contractionIndList j h $ map toEnum rangeList
 
 
 
-
-    

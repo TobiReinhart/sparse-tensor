@@ -203,6 +203,8 @@ module Index (
 
     --we need to push all functions for Ind to the IndexLevel (must do all cases individually)
 
+    --maybe write this into seperate functions
+
     swapPosIndex :: Int -> (Int,Int) -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> Index n1 n2 n3 n4 n5 n6 n7 n8
     swapPosIndex i j (a,b,c,d,e,f,g,h) 
                 | i == 1 = (swapPosInd j a, b, c, d, e, f, g, h)

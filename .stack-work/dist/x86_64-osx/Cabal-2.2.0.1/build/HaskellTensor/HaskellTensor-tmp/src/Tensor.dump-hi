@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-14 17:30:51.011457 UTC
+2019-01-30 12:17:18.560101 UTC
 
 interface main:Tensor 8043
-  interface hash: 64d1eb285e1fa8e6d2c0c9a6f42d5275
-  ABI hash: 176e25c77f5f937264699042a39a34a2
-  export-list hash: 9a68ab01e29b77db9280f7aa573b73ab
+  interface hash: 92181bdf21f05b1ffdd7798db5694544
+  ABI hash: 02459344b0b9ad04ebcd9d37c9b45d9d
+  export-list hash: ac50faf7d49eb558617599c9cfd00940
   orphan hash: a5ac230787a679843ebf1598745ea270
   flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
@@ -32,7 +32,9 @@ exports:
   Tensor.tensorIndList
   Tensor.tensorProductNew
   Tensor.tensorProductNumeric
+  Tensor.tensorProductNumeric2
   Tensor.tensorProductWith
+  Tensor.tensorProductWith2
   Tensor.tensorSMult
   Tensor.tensorSub
   Tensor.tensorTranspose
@@ -56,6 +58,7 @@ family instance modules: base-4.11.1.0:Control.Applicative
                          containers-0.5.11.0:Data.Sequence.Internal
                          containers-0.5.11.0:Data.Set.Internal
 import  -/  base-4.11.1.0:Data.Foldable 8ed35c38958063956af33c935ea03444
+import  -/  base-4.11.1.0:Data.Functor f522c3501272159820fd6f242510732f
 import  -/  base-4.11.1.0:Data.Maybe 409c3da2b142470b68be39ce1d97a9f7
 import  -/  base-4.11.1.0:Data.Proxy a80a60a2fdceabfeb4d110d23b808844
 import  -/  base-4.11.1.0:GHC.Base 604111500e81281298777e721c75643b
@@ -3322,8 +3325,228 @@ cec78cdbdcdc804a0ab5fb5784fdd1ec
                             w2
                             k)
                          ww) #)) -}
-18f01472045acbf572f94bac2462095e
+a49587e21664c3d1f9ec08e3dfdffb0c
   $wtensorProductWith ::
+    (a -> b -> c)
+    -> Data.Map.Internal.Map (Index.Index n1 n2 n3 n4 n5 n6 n7 n8) a
+    -> Data.Map.Internal.Map (Index.Index m1 m2 m3 m4 m5 m6 m7 m8) b
+    -> (# Data.Map.Internal.Map
+            (Index.Index
+               (n1 GHC.TypeNats.+ m1)
+               (n2 GHC.TypeNats.+ m2)
+               (n3 GHC.TypeNats.+ m3)
+               (n4 GHC.TypeNats.+ m4)
+               (n5 GHC.TypeNats.+ m5)
+               (n6 GHC.TypeNats.+ m6)
+               (n7 GHC.TypeNats.+ m7)
+               (n8 GHC.TypeNats.+ m8))
+            c #)
+  {- Arity: 3, Strictness: <L,C(C1(U))><L,1*U><L,1*U>, Inline: [0],
+     Unfolding: (\ @ a
+                   @ b
+                   @ c
+                   @ n1 :: GHC.Types.Nat
+                   @ n2 :: GHC.Types.Nat
+                   @ n3 :: GHC.Types.Nat
+                   @ n4 :: GHC.Types.Nat
+                   @ n5 :: GHC.Types.Nat
+                   @ n6 :: GHC.Types.Nat
+                   @ n7 :: GHC.Types.Nat
+                   @ n8 :: GHC.Types.Nat
+                   @ m1 :: GHC.Types.Nat
+                   @ m2 :: GHC.Types.Nat
+                   @ m3 :: GHC.Types.Nat
+                   @ m4 :: GHC.Types.Nat
+                   @ m5 :: GHC.Types.Nat
+                   @ m6 :: GHC.Types.Nat
+                   @ m7 :: GHC.Types.Nat
+                   @ m8 :: GHC.Types.Nat
+                   (w :: a -> b -> c)
+                   (ww :: Data.Map.Internal.Map
+                            (Index.Index n1 n2 n3 n4 n5 n6 n7 n8) a)
+                   (ww1 :: Data.Map.Internal.Map
+                             (Index.Index m1 m2 m3 m4 m5 m6 m7 m8) b) ->
+                 (# let {
+                      xs :: [(Index.Index m1 m2 m3 m4 m5 m6 m7 m8, b)]
+                      = Data.Map.Internal.$fDataMap_go
+                          @ (Index.Uinds_20 m1, Index.Linds_20 m2, Index.Uinds_19 m3,
+                             Index.Linds_19 m4, Index.Uinds_9 m5, Index.Linds_9 m6,
+                             Index.Uinds_3 m7, Index.Linds_3 m8)
+                          @ b
+                          (GHC.Types.[]
+                             @ ((Index.Uinds_20 m1, Index.Linds_20 m2, Index.Uinds_19 m3,
+                                 Index.Linds_19 m4, Index.Uinds_9 m5, Index.Linds_9 m6,
+                                 Index.Uinds_3 m7, Index.Linds_3 m8),
+                                b))
+                          ww1
+                    } in
+                    letrec {
+                      go13 :: [(Index.Index
+                                  (n1 GHC.TypeNats.+ m1)
+                                  (n2 GHC.TypeNats.+ m2)
+                                  (n3 GHC.TypeNats.+ m3)
+                                  (n4 GHC.TypeNats.+ m4)
+                                  (n5 GHC.TypeNats.+ m5)
+                                  (n6 GHC.TypeNats.+ m6)
+                                  (n7 GHC.TypeNats.+ m7)
+                                  (n8 GHC.TypeNats.+ m8),
+                                c)]
+                              -> Data.Map.Internal.Map (Index.Index n1 n2 n3 n4 n5 n6 n7 n8) a
+                              -> [(Index.Index
+                                     (n1 GHC.TypeNats.+ m1)
+                                     (n2 GHC.TypeNats.+ m2)
+                                     (n3 GHC.TypeNats.+ m3)
+                                     (n4 GHC.TypeNats.+ m4)
+                                     (n5 GHC.TypeNats.+ m5)
+                                     (n6 GHC.TypeNats.+ m6)
+                                     (n7 GHC.TypeNats.+ m7)
+                                     (n8 GHC.TypeNats.+ m8),
+                                   c)]
+                        {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                      = \ (z' :: [(Index.Index
+                                     (n1 GHC.TypeNats.+ m1)
+                                     (n2 GHC.TypeNats.+ m2)
+                                     (n3 GHC.TypeNats.+ m3)
+                                     (n4 GHC.TypeNats.+ m4)
+                                     (n5 GHC.TypeNats.+ m5)
+                                     (n6 GHC.TypeNats.+ m6)
+                                     (n7 GHC.TypeNats.+ m7)
+                                     (n8 GHC.TypeNats.+ m8),
+                                   c)])
+                          (ds :: Data.Map.Internal.Map
+                                   (Index.Index n1 n2 n3 n4 n5 n6 n7 n8) a) ->
+                        case ds of wild {
+                          Data.Map.Internal.Bin dt kx x l r
+                          -> go13
+                               (let {
+                                  ds1 :: [(Index.Index
+                                             (n1 GHC.TypeNats.+ m1)
+                                             (n2 GHC.TypeNats.+ m2)
+                                             (n3 GHC.TypeNats.+ m3)
+                                             (n4 GHC.TypeNats.+ m4)
+                                             (n5 GHC.TypeNats.+ m5)
+                                             (n6 GHC.TypeNats.+ m6)
+                                             (n7 GHC.TypeNats.+ m7)
+                                             (n8 GHC.TypeNats.+ m8),
+                                           c)]
+                                  = go13 z' r
+                                } in
+                                letrec {
+                                  go :: [(Index.Index m1 m2 m3 m4 m5 m6 m7 m8, b)]
+                                        -> [(Index.Index
+                                               (n1 GHC.TypeNats.+ m1)
+                                               (n2 GHC.TypeNats.+ m2)
+                                               (n3 GHC.TypeNats.+ m3)
+                                               (n4 GHC.TypeNats.+ m4)
+                                               (n5 GHC.TypeNats.+ m5)
+                                               (n6 GHC.TypeNats.+ m6)
+                                               (n7 GHC.TypeNats.+ m7)
+                                               (n8 GHC.TypeNats.+ m8),
+                                             c)]
+                                    {- Arity: 1, Strictness: <S,1*U> -}
+                                  = \ (ds2 :: [(Index.Index m1 m2 m3 m4 m5 m6 m7 m8, b)]) ->
+                                    case ds2 of wild1 {
+                                      [] -> ds1
+                                      : y ys
+                                      -> GHC.Types.:
+                                           @ (Index.Index
+                                                (n1 GHC.TypeNats.+ m1)
+                                                (n2 GHC.TypeNats.+ m2)
+                                                (n3 GHC.TypeNats.+ m3)
+                                                (n4 GHC.TypeNats.+ m4)
+                                                (n5 GHC.TypeNats.+ m5)
+                                                (n6 GHC.TypeNats.+ m6)
+                                                (n7 GHC.TypeNats.+ m7)
+                                                (n8 GHC.TypeNats.+ m8),
+                                              c)
+                                           (case y of wild2 { (,) c1 d ->
+                                            (Index.combineIndex
+                                               @ n1
+                                               @ n2
+                                               @ n3
+                                               @ n4
+                                               @ n5
+                                               @ n6
+                                               @ n7
+                                               @ n8
+                                               @ m1
+                                               @ m2
+                                               @ m3
+                                               @ m4
+                                               @ m5
+                                               @ m6
+                                               @ m7
+                                               @ m8
+                                               kx
+                                               c1,
+                                             w x d) })
+                                           (go ys) }
+                                } in
+                                go xs)
+                               l
+                          Data.Map.Internal.Tip -> z' }
+                    } in
+                    Data.Map.Strict.Internal.fromAscListWithKey
+                      @ (Index.Index
+                           (n1 GHC.TypeNats.+ m1)
+                           (n2 GHC.TypeNats.+ m2)
+                           (n3 GHC.TypeNats.+ m3)
+                           (n4 GHC.TypeNats.+ m4)
+                           (n5 GHC.TypeNats.+ m5)
+                           (n6 GHC.TypeNats.+ m6)
+                           (n7 GHC.TypeNats.+ m7)
+                           (n8 GHC.TypeNats.+ m8))
+                      @ c
+                      (Tensor.tensorProductWith1
+                         @ n8
+                         @ m8
+                         @ n7
+                         @ m7
+                         @ n6
+                         @ m6
+                         @ n5
+                         @ m5
+                         @ n4
+                         @ m4
+                         @ n3
+                         @ m3
+                         @ n2
+                         @ m2
+                         @ n1
+                         @ m1)
+                      (Tensor.tensorProductNumeric1
+                         @ n1
+                         @ m1
+                         @ n2
+                         @ m2
+                         @ n3
+                         @ m3
+                         @ n4
+                         @ m4
+                         @ n5
+                         @ m5
+                         @ n6
+                         @ m6
+                         @ n7
+                         @ m7
+                         @ n8
+                         @ m8
+                         @ c)
+                      (go13
+                         (GHC.Types.[]
+                            @ (Index.Index
+                                 (n1 GHC.TypeNats.+ m1)
+                                 (n2 GHC.TypeNats.+ m2)
+                                 (n3 GHC.TypeNats.+ m3)
+                                 (n4 GHC.TypeNats.+ m4)
+                                 (n5 GHC.TypeNats.+ m5)
+                                 (n6 GHC.TypeNats.+ m6)
+                                 (n7 GHC.TypeNats.+ m7)
+                                 (n8 GHC.TypeNats.+ m8),
+                               c))
+                         ww) #)) -}
+7d921f5afa97c4e9846722c372be6bbf
+  $wtensorProductWith2 ::
     (a -> b -> c)
     -> Data.Map.Internal.Map (Index.Index n1 n2 n3 n4 n5 n6 n7 n8) a
     -> Data.Map.Internal.Map (Index.Index m1 m2 m3 m4 m5 m6 m7 m8) b
@@ -3595,7 +3818,7 @@ cec78cdbdcdc804a0ab5fb5784fdd1ec
                                              (n7 GHC.TypeNats.+ m7)
                                              (n8 GHC.TypeNats.+ m8))
                                         @ a
-                                        (Tensor.tensorProductWith2
+                                        (Tensor.tensorProductWith4
                                            @ n8
                                            @ m8
                                            @ n7
@@ -3629,7 +3852,7 @@ cec78cdbdcdc804a0ab5fb5784fdd1ec
                                l
                           Data.Map.Internal.Tip -> z' }
                     } in
-                    Tensor.tensorProductWith1
+                    Tensor.tensorProductWith3
                       @ n1
                       @ m1
                       @ n2
@@ -5010,7 +5233,7 @@ e58b5d5074b0a956d3ccdcab5c0b6c74
                    (Tensor.$s$fOrdInd2 @ (n6 GHC.TypeNats.+ m6))
                    (Tensor.$s$fOrdInd1 @ (n7 GHC.TypeNats.+ m7))
                    (Tensor.$s$fOrdInd @ (n8 GHC.TypeNats.+ m8))) -}
-0a352647ad8349c5cc4ef731b863771f
+d94332147e4941c5fd3abedb055ce62d
   tensorProductNumeric ::
     (GHC.Num.Num a, GHC.Classes.Eq a) =>
     Tensor.Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
@@ -5026,8 +5249,358 @@ e58b5d5074b0a956d3ccdcab5c0b6c74
          (n8 GHC.TypeNats.+ m8)
          a
   {- Arity: 2,
+     Strictness: <L,U(A,A,C(C1(U)),A,A,A,1*C1(U))><L,U(A,C(C1(U)))>,
+     Unfolding: (\ @ a
+                   @ n1 :: GHC.Types.Nat
+                   @ n2 :: GHC.Types.Nat
+                   @ n3 :: GHC.Types.Nat
+                   @ n4 :: GHC.Types.Nat
+                   @ n5 :: GHC.Types.Nat
+                   @ n6 :: GHC.Types.Nat
+                   @ n7 :: GHC.Types.Nat
+                   @ n8 :: GHC.Types.Nat
+                   @ m1 :: GHC.Types.Nat
+                   @ m2 :: GHC.Types.Nat
+                   @ m3 :: GHC.Types.Nat
+                   @ m4 :: GHC.Types.Nat
+                   @ m5 :: GHC.Types.Nat
+                   @ m6 :: GHC.Types.Nat
+                   @ m7 :: GHC.Types.Nat
+                   @ m8 :: GHC.Types.Nat
+                   ($dNum :: GHC.Num.Num a)
+                   ($dEq :: GHC.Classes.Eq a) ->
+                 let {
+                   ds :: a = GHC.Num.fromInteger @ a $dNum Tensor.cyclicSymTensor1
+                 } in
+                 let {
+                   lvl19 :: Index.Index m1 m2 m3 m4 m5 m6 m7 m8 -> a -> GHC.Types.Bool
+                     {- Arity: 2, Strictness: <L,A><L,U>,
+                        Unfolding: InlineRule (2, True, False)
+                                   (\ (ds1 :: Index.Index m1 m2 m3 m4 m5 m6 m7 m8)
+                                      (x :: a)[OneShot] ->
+                                    GHC.Classes./= @ a $dEq x ds) -}
+                   = \ (ds1 :: Index.Index m1 m2 m3 m4 m5 m6 m7 m8)
+                       (x :: a)[OneShot] ->
+                     GHC.Classes./= @ a $dEq x ds
+                 } in
+                 let {
+                   lvl20 :: Index.Index n1 n2 n3 n4 n5 n6 n7 n8 -> a -> GHC.Types.Bool
+                     {- Arity: 2, Strictness: <L,A><L,U>,
+                        Unfolding: InlineRule (2, True, False)
+                                   (\ (ds1 :: Index.Index n1 n2 n3 n4 n5 n6 n7 n8)
+                                      (x :: a)[OneShot] ->
+                                    GHC.Classes./= @ a $dEq x ds) -}
+                   = \ (ds1 :: Index.Index n1 n2 n3 n4 n5 n6 n7 n8)
+                       (x :: a)[OneShot] ->
+                     GHC.Classes./= @ a $dEq x ds
+                 } in
+                 \ (ds1 :: Tensor.Tensor n1 n2 n3 n4 n5 n6 n7 n8 a)
+                   (ds2 :: Tensor.Tensor m1 m2 m3 m4 m5 m6 m7 m8 a) ->
+                 case ds1 of wild { Tensor.Tensor map1 ->
+                 case ds2 of wild1 { Tensor.Tensor map2 ->
+                 Tensor.Tensor
+                   @ (n1 GHC.TypeNats.+ m1)
+                   @ (n2 GHC.TypeNats.+ m2)
+                   @ (n3 GHC.TypeNats.+ m3)
+                   @ (n4 GHC.TypeNats.+ m4)
+                   @ (n5 GHC.TypeNats.+ m5)
+                   @ (n6 GHC.TypeNats.+ m6)
+                   @ (n7 GHC.TypeNats.+ m7)
+                   @ (n8 GHC.TypeNats.+ m8)
+                   @ a
+                   (let {
+                      xs :: [(Index.Index m1 m2 m3 m4 m5 m6 m7 m8, a)]
+                      = Data.Map.Internal.$fDataMap_go
+                          @ (Index.Uinds_20 m1, Index.Linds_20 m2, Index.Uinds_19 m3,
+                             Index.Linds_19 m4, Index.Uinds_9 m5, Index.Linds_9 m6,
+                             Index.Uinds_3 m7, Index.Linds_3 m8)
+                          @ a
+                          (GHC.Types.[]
+                             @ ((Index.Uinds_20 m1, Index.Linds_20 m2, Index.Uinds_19 m3,
+                                 Index.Linds_19 m4, Index.Uinds_9 m5, Index.Linds_9 m6,
+                                 Index.Uinds_3 m7, Index.Linds_3 m8),
+                                a))
+                          (Data.Map.Internal.filterWithKey
+                             @ (Index.Index m1 m2 m3 m4 m5 m6 m7 m8)
+                             @ a
+                             lvl19
+                             map2)
+                    } in
+                    letrec {
+                      go13 :: [(Index.Index
+                                  (n1 GHC.TypeNats.+ m1)
+                                  (n2 GHC.TypeNats.+ m2)
+                                  (n3 GHC.TypeNats.+ m3)
+                                  (n4 GHC.TypeNats.+ m4)
+                                  (n5 GHC.TypeNats.+ m5)
+                                  (n6 GHC.TypeNats.+ m6)
+                                  (n7 GHC.TypeNats.+ m7)
+                                  (n8 GHC.TypeNats.+ m8),
+                                a)]
+                              -> Data.Map.Internal.Map (Index.Index n1 n2 n3 n4 n5 n6 n7 n8) a
+                              -> [(Index.Index
+                                     (n1 GHC.TypeNats.+ m1)
+                                     (n2 GHC.TypeNats.+ m2)
+                                     (n3 GHC.TypeNats.+ m3)
+                                     (n4 GHC.TypeNats.+ m4)
+                                     (n5 GHC.TypeNats.+ m5)
+                                     (n6 GHC.TypeNats.+ m6)
+                                     (n7 GHC.TypeNats.+ m7)
+                                     (n8 GHC.TypeNats.+ m8),
+                                   a)]
+                        {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
+                      = \ (z' :: [(Index.Index
+                                     (n1 GHC.TypeNats.+ m1)
+                                     (n2 GHC.TypeNats.+ m2)
+                                     (n3 GHC.TypeNats.+ m3)
+                                     (n4 GHC.TypeNats.+ m4)
+                                     (n5 GHC.TypeNats.+ m5)
+                                     (n6 GHC.TypeNats.+ m6)
+                                     (n7 GHC.TypeNats.+ m7)
+                                     (n8 GHC.TypeNats.+ m8),
+                                   a)])
+                          (ds3 :: Data.Map.Internal.Map
+                                    (Index.Index n1 n2 n3 n4 n5 n6 n7 n8) a) ->
+                        case ds3 of wild2 {
+                          Data.Map.Internal.Bin dt kx x l r
+                          -> go13
+                               (let {
+                                  ds4 :: [(Index.Index
+                                             (n1 GHC.TypeNats.+ m1)
+                                             (n2 GHC.TypeNats.+ m2)
+                                             (n3 GHC.TypeNats.+ m3)
+                                             (n4 GHC.TypeNats.+ m4)
+                                             (n5 GHC.TypeNats.+ m5)
+                                             (n6 GHC.TypeNats.+ m6)
+                                             (n7 GHC.TypeNats.+ m7)
+                                             (n8 GHC.TypeNats.+ m8),
+                                           a)]
+                                  = go13 z' r
+                                } in
+                                letrec {
+                                  go :: [(Index.Index m1 m2 m3 m4 m5 m6 m7 m8, a)]
+                                        -> [(Index.Index
+                                               (n1 GHC.TypeNats.+ m1)
+                                               (n2 GHC.TypeNats.+ m2)
+                                               (n3 GHC.TypeNats.+ m3)
+                                               (n4 GHC.TypeNats.+ m4)
+                                               (n5 GHC.TypeNats.+ m5)
+                                               (n6 GHC.TypeNats.+ m6)
+                                               (n7 GHC.TypeNats.+ m7)
+                                               (n8 GHC.TypeNats.+ m8),
+                                             a)]
+                                    {- Arity: 1, Strictness: <S,1*U> -}
+                                  = \ (ds5 :: [(Index.Index m1 m2 m3 m4 m5 m6 m7 m8, a)]) ->
+                                    case ds5 of wild3 {
+                                      [] -> ds4
+                                      : y ys
+                                      -> GHC.Types.:
+                                           @ (Index.Index
+                                                (n1 GHC.TypeNats.+ m1)
+                                                (n2 GHC.TypeNats.+ m2)
+                                                (n3 GHC.TypeNats.+ m3)
+                                                (n4 GHC.TypeNats.+ m4)
+                                                (n5 GHC.TypeNats.+ m5)
+                                                (n6 GHC.TypeNats.+ m6)
+                                                (n7 GHC.TypeNats.+ m7)
+                                                (n8 GHC.TypeNats.+ m8),
+                                              a)
+                                           (case y of wild4 { (,) c d ->
+                                            (Index.combineIndex
+                                               @ n1
+                                               @ n2
+                                               @ n3
+                                               @ n4
+                                               @ n5
+                                               @ n6
+                                               @ n7
+                                               @ n8
+                                               @ m1
+                                               @ m2
+                                               @ m3
+                                               @ m4
+                                               @ m5
+                                               @ m6
+                                               @ m7
+                                               @ m8
+                                               kx
+                                               c,
+                                             GHC.Num.* @ a $dNum x d) })
+                                           (go ys) }
+                                } in
+                                go xs)
+                               l
+                          Data.Map.Internal.Tip -> z' }
+                    } in
+                    Data.Map.Strict.Internal.fromAscListWithKey
+                      @ (Index.Index
+                           (n1 GHC.TypeNats.+ m1)
+                           (n2 GHC.TypeNats.+ m2)
+                           (n3 GHC.TypeNats.+ m3)
+                           (n4 GHC.TypeNats.+ m4)
+                           (n5 GHC.TypeNats.+ m5)
+                           (n6 GHC.TypeNats.+ m6)
+                           (n7 GHC.TypeNats.+ m7)
+                           (n8 GHC.TypeNats.+ m8))
+                      @ a
+                      (Tensor.tensorProductNumeric3
+                         @ n1
+                         @ m1
+                         @ n2
+                         @ m2
+                         @ n3
+                         @ m3
+                         @ n4
+                         @ m4
+                         @ n5
+                         @ m5
+                         @ n6
+                         @ m6
+                         @ n7
+                         @ m7
+                         @ n8
+                         @ m8)
+                      (Tensor.tensorProductNumeric1
+                         @ n1
+                         @ m1
+                         @ n2
+                         @ m2
+                         @ n3
+                         @ m3
+                         @ n4
+                         @ m4
+                         @ n5
+                         @ m5
+                         @ n6
+                         @ m6
+                         @ n7
+                         @ m7
+                         @ n8
+                         @ m8
+                         @ a)
+                      (go13
+                         (GHC.Types.[]
+                            @ (Index.Index
+                                 (n1 GHC.TypeNats.+ m1)
+                                 (n2 GHC.TypeNats.+ m2)
+                                 (n3 GHC.TypeNats.+ m3)
+                                 (n4 GHC.TypeNats.+ m4)
+                                 (n5 GHC.TypeNats.+ m5)
+                                 (n6 GHC.TypeNats.+ m6)
+                                 (n7 GHC.TypeNats.+ m7)
+                                 (n8 GHC.TypeNats.+ m8),
+                               a))
+                         (Data.Map.Internal.filterWithKey
+                            @ (Index.Index n1 n2 n3 n4 n5 n6 n7 n8)
+                            @ a
+                            lvl20
+                            map1))) } }) -}
+9bb924572f75ee37afc658c8ef40d41d
+  tensorProductNumeric1 ::
+    Index.Index
+      (n1 GHC.TypeNats.+ m1)
+      (n2 GHC.TypeNats.+ m2)
+      (n3 GHC.TypeNats.+ m3)
+      (n4 GHC.TypeNats.+ m4)
+      (n5 GHC.TypeNats.+ m5)
+      (n6 GHC.TypeNats.+ m6)
+      (n7 GHC.TypeNats.+ m7)
+      (n8 GHC.TypeNats.+ m8)
+    -> a -> a -> a
+  {- Arity: 3, HasNoCafRefs, Strictness: <L,A><S,1*U><L,A>,
+     Unfolding: InlineRule (3, True, True)
+                (\ @ n1 :: GHC.Types.Nat
+                   @ m1 :: GHC.Types.Nat
+                   @ n2 :: GHC.Types.Nat
+                   @ m2 :: GHC.Types.Nat
+                   @ n3 :: GHC.Types.Nat
+                   @ m3 :: GHC.Types.Nat
+                   @ n4 :: GHC.Types.Nat
+                   @ m4 :: GHC.Types.Nat
+                   @ n5 :: GHC.Types.Nat
+                   @ m5 :: GHC.Types.Nat
+                   @ n6 :: GHC.Types.Nat
+                   @ m6 :: GHC.Types.Nat
+                   @ n7 :: GHC.Types.Nat
+                   @ m7 :: GHC.Types.Nat
+                   @ n8 :: GHC.Types.Nat
+                   @ m8 :: GHC.Types.Nat
+                   @ a
+                   (ds :: Index.Index
+                            (n1 GHC.TypeNats.+ m1)
+                            (n2 GHC.TypeNats.+ m2)
+                            (n3 GHC.TypeNats.+ m3)
+                            (n4 GHC.TypeNats.+ m4)
+                            (n5 GHC.TypeNats.+ m5)
+                            (n6 GHC.TypeNats.+ m6)
+                            (n7 GHC.TypeNats.+ m7)
+                            (n8 GHC.TypeNats.+ m8))
+                   (x :: a)[OneShot]
+                   (ds1 :: a)[OneShot] ->
+                 x) -}
+a958b67716bd3fcf0bccb6cc5b13ac2a
+  tensorProductNumeric2 ::
+    (GHC.Num.Num a, GHC.Classes.Eq a) =>
+    Tensor.Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    -> Tensor.Tensor m1 m2 m3 m4 m5 m6 m7 m8 a
+    -> Tensor.Tensor
+         (n1 GHC.TypeNats.+ m1)
+         (n2 GHC.TypeNats.+ m2)
+         (n3 GHC.TypeNats.+ m3)
+         (n4 GHC.TypeNats.+ m4)
+         (n5 GHC.TypeNats.+ m5)
+         (n6 GHC.TypeNats.+ m6)
+         (n7 GHC.TypeNats.+ m7)
+         (n8 GHC.TypeNats.+ m8)
+         a
+  {- Arity: 2,
      Strictness: <L,U(A,A,C(C1(U)),A,A,A,1*C1(U))><L,U(A,C(C1(U)))> -}
-6e1300f3b6ea8f7dd056901f69230be2
+ae2ee666f125b71f5f03440b021dcb69
+  tensorProductNumeric3 ::
+    GHC.Classes.Eq
+      (Index.Index
+         (n1 GHC.TypeNats.+ m1)
+         (n2 GHC.TypeNats.+ m2)
+         (n3 GHC.TypeNats.+ m3)
+         (n4 GHC.TypeNats.+ m4)
+         (n5 GHC.TypeNats.+ m5)
+         (n6 GHC.TypeNats.+ m6)
+         (n7 GHC.TypeNats.+ m7)
+         (n8 GHC.TypeNats.+ m8))
+  {- Unfolding: (\ @ n1 :: GHC.Types.Nat
+                   @ m1 :: GHC.Types.Nat
+                   @ n2 :: GHC.Types.Nat
+                   @ m2 :: GHC.Types.Nat
+                   @ n3 :: GHC.Types.Nat
+                   @ m3 :: GHC.Types.Nat
+                   @ n4 :: GHC.Types.Nat
+                   @ m4 :: GHC.Types.Nat
+                   @ n5 :: GHC.Types.Nat
+                   @ m5 :: GHC.Types.Nat
+                   @ n6 :: GHC.Types.Nat
+                   @ m6 :: GHC.Types.Nat
+                   @ n7 :: GHC.Types.Nat
+                   @ m7 :: GHC.Types.Nat
+                   @ n8 :: GHC.Types.Nat
+                   @ m8 :: GHC.Types.Nat ->
+                 GHC.Classes.$fEq(,,,,,,,)
+                   @ (Index.Ind (n1 GHC.TypeNats.+ m1) Index.Uind_20)
+                   @ (Index.Ind (n2 GHC.TypeNats.+ m2) Index.Lind_20)
+                   @ (Index.Ind (n3 GHC.TypeNats.+ m3) Index.Uind_19)
+                   @ (Index.Ind (n4 GHC.TypeNats.+ m4) Index.Lind_19)
+                   @ (Index.Ind (n5 GHC.TypeNats.+ m5) Index.Uind_9)
+                   @ (Index.Ind (n6 GHC.TypeNats.+ m6) Index.Lind_9)
+                   @ (Index.Ind (n7 GHC.TypeNats.+ m7) Index.Uind_3)
+                   @ (Index.Ind (n8 GHC.TypeNats.+ m8) Index.Lind_3)
+                   (Tensor.$s$fEqInd7 @ (n1 GHC.TypeNats.+ m1))
+                   (Tensor.$s$fEqInd6 @ (n2 GHC.TypeNats.+ m2))
+                   (Tensor.$s$fEqInd5 @ (n3 GHC.TypeNats.+ m3))
+                   (Tensor.$s$fEqInd4 @ (n4 GHC.TypeNats.+ m4))
+                   (Tensor.$s$fEqInd3 @ (n5 GHC.TypeNats.+ m5))
+                   (Tensor.$s$fEqInd2 @ (n6 GHC.TypeNats.+ m6))
+                   (Tensor.$s$fEqInd1 @ (n7 GHC.TypeNats.+ m7))
+                   (Tensor.$s$fEqInd @ (n8 GHC.TypeNats.+ m8))) -}
+63479f919998d9d1bc7a8445d6417492
   tensorProductWith ::
     (a -> b -> c)
     -> Tensor.Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
@@ -5042,7 +5615,7 @@ e58b5d5074b0a956d3ccdcab5c0b6c74
          (n7 GHC.TypeNats.+ m7)
          (n8 GHC.TypeNats.+ m8)
          c
-  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U(U)><S,1*U(U)>m,
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U(1*U)><S,1*U(1*U)>m,
      Inline: [0],
      Unfolding: InlineRule (3, True, False)
                 (\ @ a
@@ -5103,8 +5676,129 @@ e58b5d5074b0a956d3ccdcab5c0b6c74
                    @ (n8 GHC.TypeNats.+ m8)
                    @ c
                    ww5 } } }) -}
-475aa601a74ec1d33f7249543f352010
+7aeb2f33a945fff6dfb99f0a3ea9b457
   tensorProductWith1 ::
+    GHC.Classes.Eq
+      (Index.Index
+         (n1 GHC.TypeNats.+ m1)
+         (n2 GHC.TypeNats.+ m2)
+         (n3 GHC.TypeNats.+ m3)
+         (n4 GHC.TypeNats.+ m4)
+         (n5 GHC.TypeNats.+ m5)
+         (n6 GHC.TypeNats.+ m6)
+         (n7 GHC.TypeNats.+ m7)
+         (n8 GHC.TypeNats.+ m8))
+  {- Unfolding: (\ @ n8 :: GHC.Types.Nat
+                   @ m8 :: GHC.Types.Nat
+                   @ n7 :: GHC.Types.Nat
+                   @ m7 :: GHC.Types.Nat
+                   @ n6 :: GHC.Types.Nat
+                   @ m6 :: GHC.Types.Nat
+                   @ n5 :: GHC.Types.Nat
+                   @ m5 :: GHC.Types.Nat
+                   @ n4 :: GHC.Types.Nat
+                   @ m4 :: GHC.Types.Nat
+                   @ n3 :: GHC.Types.Nat
+                   @ m3 :: GHC.Types.Nat
+                   @ n2 :: GHC.Types.Nat
+                   @ m2 :: GHC.Types.Nat
+                   @ n1 :: GHC.Types.Nat
+                   @ m1 :: GHC.Types.Nat ->
+                 GHC.Classes.$fEq(,,,,,,,)
+                   @ (Index.Ind (n1 GHC.TypeNats.+ m1) Index.Uind_20)
+                   @ (Index.Ind (n2 GHC.TypeNats.+ m2) Index.Lind_20)
+                   @ (Index.Ind (n3 GHC.TypeNats.+ m3) Index.Uind_19)
+                   @ (Index.Ind (n4 GHC.TypeNats.+ m4) Index.Lind_19)
+                   @ (Index.Ind (n5 GHC.TypeNats.+ m5) Index.Uind_9)
+                   @ (Index.Ind (n6 GHC.TypeNats.+ m6) Index.Lind_9)
+                   @ (Index.Ind (n7 GHC.TypeNats.+ m7) Index.Uind_3)
+                   @ (Index.Ind (n8 GHC.TypeNats.+ m8) Index.Lind_3)
+                   (Tensor.$s$fEqInd7 @ (n1 GHC.TypeNats.+ m1))
+                   (Tensor.$s$fEqInd6 @ (n2 GHC.TypeNats.+ m2))
+                   (Tensor.$s$fEqInd5 @ (n3 GHC.TypeNats.+ m3))
+                   (Tensor.$s$fEqInd4 @ (n4 GHC.TypeNats.+ m4))
+                   (Tensor.$s$fEqInd3 @ (n5 GHC.TypeNats.+ m5))
+                   (Tensor.$s$fEqInd2 @ (n6 GHC.TypeNats.+ m6))
+                   (Tensor.$s$fEqInd1 @ (n7 GHC.TypeNats.+ m7))
+                   (Tensor.$s$fEqInd @ (n8 GHC.TypeNats.+ m8))) -}
+689881263afb812e034e6aab85d39a3a
+  tensorProductWith2 ::
+    (a -> b -> c)
+    -> Tensor.Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    -> Tensor.Tensor m1 m2 m3 m4 m5 m6 m7 m8 b
+    -> Tensor.Tensor
+         (n1 GHC.TypeNats.+ m1)
+         (n2 GHC.TypeNats.+ m2)
+         (n3 GHC.TypeNats.+ m3)
+         (n4 GHC.TypeNats.+ m4)
+         (n5 GHC.TypeNats.+ m5)
+         (n6 GHC.TypeNats.+ m6)
+         (n7 GHC.TypeNats.+ m7)
+         (n8 GHC.TypeNats.+ m8)
+         c
+  {- Arity: 3, Strictness: <L,C(C1(U))><S,1*U(U)><S,1*U(U)>m,
+     Inline: [0],
+     Unfolding: InlineRule (3, True, False)
+                (\ @ a
+                   @ b
+                   @ c
+                   @ n1 :: GHC.Types.Nat
+                   @ n2 :: GHC.Types.Nat
+                   @ n3 :: GHC.Types.Nat
+                   @ n4 :: GHC.Types.Nat
+                   @ n5 :: GHC.Types.Nat
+                   @ n6 :: GHC.Types.Nat
+                   @ n7 :: GHC.Types.Nat
+                   @ n8 :: GHC.Types.Nat
+                   @ m1 :: GHC.Types.Nat
+                   @ m2 :: GHC.Types.Nat
+                   @ m3 :: GHC.Types.Nat
+                   @ m4 :: GHC.Types.Nat
+                   @ m5 :: GHC.Types.Nat
+                   @ m6 :: GHC.Types.Nat
+                   @ m7 :: GHC.Types.Nat
+                   @ m8 :: GHC.Types.Nat
+                   (w :: a -> b -> c)
+                   (w1 :: Tensor.Tensor n1 n2 n3 n4 n5 n6 n7 n8 a)
+                   (w2 :: Tensor.Tensor m1 m2 m3 m4 m5 m6 m7 m8 b) ->
+                 case w1 of ww { Tensor.Tensor ww1 ->
+                 case w2 of ww2 { Tensor.Tensor ww3 ->
+                 case Tensor.$wtensorProductWith2
+                        @ a
+                        @ b
+                        @ c
+                        @ n1
+                        @ n2
+                        @ n3
+                        @ n4
+                        @ n5
+                        @ n6
+                        @ n7
+                        @ n8
+                        @ m1
+                        @ m2
+                        @ m3
+                        @ m4
+                        @ m5
+                        @ m6
+                        @ m7
+                        @ m8
+                        w
+                        ww1
+                        ww3 of ww4 { Unit# ww5 ->
+                 Tensor.Tensor
+                   @ (n1 GHC.TypeNats.+ m1)
+                   @ (n2 GHC.TypeNats.+ m2)
+                   @ (n3 GHC.TypeNats.+ m3)
+                   @ (n4 GHC.TypeNats.+ m4)
+                   @ (n5 GHC.TypeNats.+ m5)
+                   @ (n6 GHC.TypeNats.+ m6)
+                   @ (n7 GHC.TypeNats.+ m7)
+                   @ (n8 GHC.TypeNats.+ m8)
+                   @ c
+                   ww5 } } }) -}
+40b4b96793d37120d65da897eb50d77b
+  tensorProductWith3 ::
     Data.Map.Internal.Map
       (Index.Index
          (n1 GHC.TypeNats.+ m1)
@@ -5139,8 +5833,8 @@ e58b5d5074b0a956d3ccdcab5c0b6c74
             (n8 GHC.TypeNats.+ m8))
          c
   {- Arity: 2, Strictness: <S,1*U><S,1*U> -}
-d1a0ccdfa5220b937dcd92660fc93226
-  tensorProductWith2 ::
+5b62ada3d4ac4b76a4672078108fb642
+  tensorProductWith4 ::
     GHC.Classes.Ord
       (Index.Index
          (n1 GHC.TypeNats.+ m1)

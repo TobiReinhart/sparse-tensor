@@ -16,7 +16,7 @@
 module Tensor (
     Tensor(..), mkTensorfromList, mkTensorfromF, getVal, tensorProductWith, tensorProductNumeric, tensorContractWith_3, tensorContractWith_9, tensorContractWith_19,
     tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor, tensorTranspose,
-    tensorIndList, mkTensorfromFZeros, evalFullTensor, evalTensorVals, unsafeGetVal, tensorProductNew
+    tensorIndList, mkTensorfromFZeros, evalFullTensor, evalTensorVals, unsafeGetVal, tensorProductWith2, tensorProductNumeric2, tensorProductNew
 ) where
 
     import Index
@@ -143,12 +143,7 @@ module Tensor (
 
     --now tensor products and constractions
 
-    tensorProductF :: (a -> b -> c) ->  M.Map (Index n1 n2 n3 n4 n5 n6 n7 n8) a -> M.Map (Index m1 m2 m3 m4 m5 m6 m7 m8) b -> Index m1 m2 m3 m4 m5 m6 m7 m8 
-        -> M.Map (Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8)) c
-    tensorProductF f map1 map2 index =  map3
-                    where 
-                        val = (M.!) map2 index 
-                        map3 = M.map (\y -> f y val) $ M.mapKeys (\x -> combineIndex x index) map1
+    
 
     tensorProductFNew :: (Num a ,Eq a) => ((Index n1 n2 n3 n4 n5 n6 n7 n8), a) -> ((Index m1 m2 m3 m4 m5 m6 m7 m8), a) -> ((Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8)), a)
     tensorProductFNew (ind1,val1) (ind2,val2) =  (newInd, newVal)
@@ -164,6 +159,15 @@ module Tensor (
                         l2 = M.toAscList $ M.filter (/= 0) map2 
                         newList = map (\x -> tensorProductFNew x ) l1 <*> l2  
 
+    
+
+    tensorProductF :: (a -> b -> c) ->  M.Map (Index n1 n2 n3 n4 n5 n6 n7 n8) a -> M.Map (Index m1 m2 m3 m4 m5 m6 m7 m8) b -> Index m1 m2 m3 m4 m5 m6 m7 m8 
+        -> M.Map (Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8)) c
+    tensorProductF f map1 map2 index =  map3
+                    where 
+                        val = (M.!) map2 index 
+                        map3 = M.map (\y -> f y val) $ M.mapKeys (\x -> combineIndex x index) map1
+
 
     tensorProductFNumeric :: (Num a, Eq a) => M.Map (Index n1 n2 n3 n4 n5 n6 n7 n8) a -> M.Map (Index m1 m2 m3 m4 m5 m6 m7 m8) a -> Index m1 m2 m3 m4 m5 m6 m7 m8 
         -> M.Map (Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8)) a
@@ -173,9 +177,9 @@ module Tensor (
                         map3 = M.map (\y -> (*) y val) $ M.mapKeys (\x -> combineIndex x index) map1
 
     
-    tensorProductNumeric :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 a -> 
+    tensorProductNumeric2 :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 a -> 
         Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
-    tensorProductNumeric (Tensor map1) (Tensor map2) = Tensor newMap
+    tensorProductNumeric2 (Tensor map1) (Tensor map2) = Tensor newMap
                     where 
                         map1New = M.filter (/=0) map1
                         map2New = M.filter (/=0) map2
@@ -183,13 +187,33 @@ module Tensor (
                         mapList = map (tensorProductFNumeric map1New map2New) indList
                         newMap = M.unions mapList
 
-    tensorProductWith :: (a -> b -> c) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 b -> 
+    tensorProductWith2 :: (a -> b -> c) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 b -> 
         Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) c
-    tensorProductWith f (Tensor map1) (Tensor map2) = Tensor newMap
+    tensorProductWith2 f (Tensor map1) (Tensor map2) = Tensor newMap
                     where 
                         indList = M.keys map2
                         mapList = map (tensorProductF f map1 map2) indList
                         newMap = M.unions mapList
+
+    --seems like the old versions ...2 are faster
+
+    tensorProductWith :: (a -> b -> c) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 b -> 
+        Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) c
+    tensorProductWith f (Tensor map1) (Tensor map2) = Tensor newMap
+                    where
+                        pairs1 = M.assocs map1 
+                        pairs2 = M.assocs map2
+                        combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
+                        newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
+
+    tensorProductNumeric :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 a -> 
+        Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
+    tensorProductNumeric (Tensor map1) (Tensor map2) = Tensor newMap
+                    where 
+                        pairs1 = M.assocs $ M.filter (/=0) map1 
+                        pairs2 = M.assocs $ M.filter (/=0) map2
+                        combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
+                        newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
 
     --see if this implementation of the tensor product is fast enough ??
 

@@ -19,6 +19,7 @@ module Main (
  main
 ) where
 
+    {-
     import Index
     import Tensor
     import Ivar
@@ -48,11 +49,17 @@ module Main (
     import Data.Functor
     import Data.List
    
-
+    -}
+    import TensorF
+    import EquivarianceEqns
+    import Index
+    import qualified Data.Map.Strict as M
     
      
 
     main = do
+
+        {-
         
         let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
         let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
@@ -694,8 +701,42 @@ module Main (
 
         writeFile "/cip/austausch/cgg/intAIBJC.txt" $ showEqnsFlatMatLab intCondAIBJC
 
+        -}
 
-        
+        let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
+        let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
+
+        let map1Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Linds_3 2) Uind_9  
+        let map2Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Uinds_3 2) Lind_9 
+
+        let trianI_3 = M.mapKeys mkInd triangleMap3 :: M.Map (Linds_3 3) Uind_19
+        let trianJ_3 = M.mapKeys mkInd triangleMap3 :: M.Map (Uinds_3 3) Lind_19
+
+
+        let interI2 = inter_I2Map map1Metric
+        let interJ2 = inter_J2Map map2Metric
+
+        let interI3 = inter_I3Map trianI_3
+        let interJ3 = inter_J3Map trianJ_3
+
+        let interIArea = inter_IAreaMap map1Area
+        let interJArea = inter_JAreaMap map2Area
+
+        let intMetric = interMetric interI2 interJ2
+        let intArea = interArea interIArea interJArea
+
+        let int2 = interEqn1_2 intArea
+        let int3 = interEqn1_3 intMetric intArea
+
+        let flatArea = flatAreaMap interJArea $ flatAreaSTMap epsilonMap
+
+        let flatInter = flatInterMap flatArea intArea
+
+        let intCondAIB = intAIB intArea intMetric flatInter int3
+
+        let vals = evalFullTensor intCondAIB 
+
+        print vals 
         
 
 

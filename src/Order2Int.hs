@@ -340,3 +340,10 @@ module Order2Int (
     mkEqnSparseAnsatzAI2  (Tensor map1) = M.mapKeys index2SparseAnsatzAI map1
 
     --int Cond does not yield extra condition!!
+    {-
+    intAbBqMixedBlocks ::   M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> M.Map (Linds_3 2) Uind_9 ->  M.Map (Uinds_3 2) Lind_9 -> Tensor 1 1 0 0 2 1 0 0 Rational 
+    intApBqMixedBlocks map1Area map2Area map1Metric map2Metric = 
+            where
+                intArea = interArea map1Area map2Area
+                int2 = interI_2 map1Metric 
+    -}

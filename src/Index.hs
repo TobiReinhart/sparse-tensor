@@ -21,7 +21,8 @@ module Index (
     Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
      indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
      delContractionIndex_20, delContractionIndex_19, delContractionIndex_9, delContractionIndex_3, checkInd, delInd,
-     splitIndex, contractionIndexList_20, contractionIndexList_19, contractionIndexList_9, contractionIndexList_3
+     splitIndex, contractionIndexList_20, contractionIndexList_19, contractionIndexList_9, contractionIndexList_3,
+     ind2List, getSeq
 
 ) where
 
@@ -32,6 +33,7 @@ module Index (
     import GHC.TypeNats
     import Data.Proxy
     import Data.Maybe
+    import Data.Foldable
     
 
     --length indexed sequence data type
@@ -51,6 +53,12 @@ module Index (
 
     getValInd :: Ind n a -> Int -> a
     getValInd (UnsafemkInd s) i = fromJust $ S.lookup i s
+
+    ind2List :: Ind n a -> [a]
+    ind2List (UnsafemkInd s) = toList s
+
+    getSeq :: Ind n a -> S.Seq a
+    getSeq (UnsafemkInd s) = s
 
     sortInd :: Ord a => Ind n a -> Ind n a
     sortInd (UnsafemkInd s) = UnsafemkInd $ S.sort s 

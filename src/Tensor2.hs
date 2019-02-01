@@ -4,18 +4,19 @@
 module Tensor2 (
     Ind, Index, Tensor,
     triangleMap2, triangleMap3, triangleMapArea,
-    intAIB, mkEqnSparseIntAIB
+    intAIB, mkEqnSparseIntAIB, 
+    interI_2, interJ_2, interI_Area, interJ_Area
 
 
 ) where
 
-    import qualified Data.Sequence as S
     import qualified Data.Map.Strict as M
     import Data.Maybe
     import Data.Foldable
     import Data.List
+    import Data.List.Split
 
-    type Ind = S.Seq Int
+    type Ind = [Int]
 
     type Index = (Ind, Ind, Ind, Ind, Ind, Ind, Ind, Ind)
 
@@ -23,10 +24,10 @@ module Tensor2 (
 
 
     getValInd :: Ind -> Int -> Int
-    getValInd seq i = fromJust $ S.lookup i seq
+    getValInd seq i = seq !! i
 
     sortInd :: Ind -> Ind 
-    sortInd = S.sort 
+    sortInd = sort 
 
     indSign2 :: Ind -> Int
     indSign2 ind
@@ -40,16 +41,20 @@ module Tensor2 (
 
     getRangeList :: Int -> Int -> [Ind]
     getRangeList i r
-        | i == 0 = [S.Empty]
-        | i == 1 = [S.singleton a| a <- [0..r]]
-        | otherwise = [ (S.<|) a b | a <- [0.. r], b <- getRangeList (i-1) r]  
+        | i == 0 = [[]]
+        | i == 1 = [[a]| a <- [0..r]]
+        | otherwise = [ a : b | a <- [0.. r], b <- getRangeList (i-1) r]  
 
 
     swapPosInd :: (Int,Int) -> (Ind) -> (Ind)
-    swapPosInd (i,j) s = S.update j x1 $ S.update i x2 s 
+    swapPosInd (i,j) s = map f s
         where 
-            x1 = fromJust $ S.lookup i s
-            x2 = fromJust $ S.lookup j s
+            x1 = s !! i
+            x2 = s !! j
+            f x
+                | x == x1 = x2
+                | x == x2 = x1 
+                | otherwise = x 
 
     swapBlockPosInd :: ([Int],[Int]) -> (Ind) -> (Ind)
     swapBlockPosInd (i,j) s 
@@ -60,17 +65,20 @@ module Tensor2 (
 
 
     delInd :: Int -> Ind -> Ind
-    delInd = S.deleteAt
-
+    delInd 0 l = tail l 
+    delInd i l = (head l) : (delInd (i-1) $ tail l)
 
     insInd :: Int -> Int -> Ind -> Ind 
-    insInd = S.insertAt
+    insInd i x l =  l1 ++ x : l2
+            where 
+                (l1,l2) = splitAt i l
 
     repInd ::Int -> Int -> Ind -> Ind 
-    repInd = S.update
+    repInd 0 x l = x : (tail l) 
+    repInd i x l = (head l) : (repInd (i-1) x $ tail l)
 
     combineInd :: Ind -> Ind -> Ind 
-    combineInd = (S.><) 
+    combineInd = (++)
 
 
     contractionInd :: (Int,Int) -> (Ind, Ind) -> (Ind, Ind)
@@ -80,14 +88,14 @@ module Tensor2 (
     indexList :: [Int] -> [Int] -> [Int] -> [Int] -> [Int] -> [Int] -> [Int] -> [Int] -> Index
     indexList a1 b1 c1 d1 e1 f1 g1 h1 = (a2,b2,c2,d2,e2,f2,g2,h2)
         where 
-            a2 = S.fromList a1
-            b2 = S.fromList b1
-            c2 = S.fromList c1
-            d2 = S.fromList d1
-            e2 = S.fromList e1
-            f2 = S.fromList f1
-            g2 = S.fromList g1
-            h2 = S.fromList h1
+            a2 = a1
+            b2 = b1
+            c2 = c1
+            d2 = d1
+            e2 = e1
+            f2 = f1
+            g2 = g1
+            h2 = h1
 
     actOnIndex :: Int -> (a -> a) -> (a,a,a,a,a,a,a,a) -> (a,a,a,a,a,a,a,a)
     actOnIndex i funct (a,b,c,d,e,f,g,h) 
@@ -118,8 +126,8 @@ module Tensor2 (
     isContractionInd :: (Int,Int) -> Ind -> Ind  -> Bool
     isContractionInd (i,k) s1 s2 = val1 == val2
             where 
-                val1 = fromJust $ S.lookup i s1
-                val2 = fromJust $ S.lookup k s2
+                val1 = s1 !! i
+                val2 = s2 !! k
 
 
     isContractionIndex :: Int -> (Int,Int) -> Index -> Bool
@@ -144,7 +152,7 @@ module Tensor2 (
 
 
     checkInd :: Ind -> Int -> Int -> Bool
-    checkInd s i val = (fromJust $ S.lookup i s) == val  
+    checkInd s i val = (s !! i) == val  
 
     mkTensorFromList :: [(Index, a)] -> Tensor a
     mkTensorFromList = M.fromList 
@@ -226,45 +234,43 @@ module Tensor2 (
     delta_3 :: Tensor Rational
     delta_3 = mkTensorfromF (0,0,0,0,0,0,1,1) delta_3F
                     where
-                        delta_3F (S.Empty, S.Empty, S.Empty, S.Empty, S.Empty, S.Empty, (i S.:<| S.Empty), (j S.:<| S.Empty))
+                        delta_3F ([], [], [], [], [], [], (i : []), (j : []))
                             | i == j = 1
                             | otherwise = 0 
 
     delta_9 :: Tensor Rational
     delta_9 = mkTensorfromF (0,0,0,0,1,1,0,0) delta_9F
                     where
-                        delta_9F (S.Empty, S.Empty, S.Empty, S.Empty, (S.:<|) i S.Empty, (S.:<|) j S.Empty, S.Empty, S.Empty)
+                        delta_9F ([], [], [], [], i : [], j : [], [], [])
                             | i == j = 1
                             | otherwise = 0
                             
     delta_19 :: Tensor Rational
     delta_19 = mkTensorfromF (0,0,1,1,0,0,0,0) delta_19F
                     where
-                        delta_19F (S.Empty, S.Empty, (S.:<|) i S.Empty, (S.:<|) j S.Empty, S.Empty, S.Empty, S.Empty, S.Empty)
+                        delta_19F ([], [], i : [], j : [], [], [], [], [])
                             | i == j = 1
                             | otherwise = 0
 
     delta_20 :: Tensor Rational
     delta_20 = mkTensorfromF (1,1,0,0,0,0,0,0) delta_20F
                     where
-                        delta_20F ((S.:<|) i S.Empty, (S.:<|) j S.Empty, S.Empty, S.Empty, S.Empty, S.Empty, S.Empty, S.Empty)
+                        delta_20F (i : [], j : [], [], [], [], [], [], [])
                             | i == j = 1
                             | otherwise = 0
 
 
-    symIndList :: Enum a => Int -> Int -> [S.Seq a]
+    symIndList :: Enum a => Int -> Int -> [[a]]
     symIndList n j 
             | n <= toEnum 0 = error "wrong number of indices"
-            | n == 1 = [ S.singleton a | a <- [toEnum 0.. toEnum j] ]
-            | otherwise = [ (S.|>) a b | a <- (symIndList (n-1) j), b <- [(getLastSeq a)..toEnum j] ] 
-             where
-                getLastSeq ((S.:|>) xs x) = x
+            | n == 1 = [ [a] | a <- [toEnum 0.. toEnum j] ]
+            | otherwise = [ a ++ [b] | a <- (symIndList (n-1) j), b <- [(last a)..toEnum j] ] 
 
 
-    triangleMap2 :: (Enum a, Enum b, Ord a) =>  M.Map (S.Seq a) b
+    triangleMap2 :: (Enum a, Enum b, Ord a) =>  M.Map ([a]) b
     triangleMap2 = M.fromList $ zip (symIndList 2 3) [toEnum 0..]
 
-    triangleMap3 :: (Enum a, Enum b, Ord a) =>  M.Map (S.Seq a) b
+    triangleMap3 :: (Enum a, Enum b, Ord a) =>  M.Map ([a]) b
     triangleMap3 = M.fromList $ zip (symIndList 3 3) [toEnum 0..]
 
     interF_I2 :: M.Map Ind Int -> Index -> Rational
@@ -374,10 +380,10 @@ module Tensor2 (
     symI_3 :: M.Map Ind Int -> Tensor  Rational
     symI_3 map1 = mkTensorfromF (0,0,1,0,0,0,0,3) (symF_I3 map1) 
 
-    areaDofList :: (Enum a, Eq a, Ord a) => [S.Seq a]
-    areaDofList = [ S.fromList [a,b,c,d] | a <- [toEnum 0..toEnum 2], b <- [succ a .. toEnum 3], c <- [a..toEnum 2], d <- [succ c.. toEnum 3], not $ a == c && b > d  ]
+    areaDofList :: (Enum a, Eq a, Ord a) => [[a]]
+    areaDofList = [[a,b,c,d] | a <- [toEnum 0..toEnum 2], b <- [succ a .. toEnum 3], c <- [a..toEnum 2], d <- [succ c.. toEnum 3], not $ a == c && b > d  ]
 
-    triangleMapArea :: (Enum a, Enum b, Ord a) =>  M.Map (S.Seq a) b
+    triangleMapArea :: (Enum a, Enum b, Ord a) =>  M.Map ([a]) b
     triangleMapArea = M.fromList $ zip (areaDofList) [toEnum 0..]
 
     jMultArea :: Ind -> Rational
@@ -412,9 +418,9 @@ module Tensor2 (
     canonicalizeArea :: Ind -> (Ind,Rational)
     canonicalizeArea s = (newS, sign)
         where
-            [s1,s2] = sort $ map S.sort $ toList $ S.chunksOf 2 s 
+            [s1,s2] = sort $ map sort $ toList $ chunksOf 2 s 
             sign = areaSign s
-            newS = (S.><) s1 s2
+            newS = s1 ++ s2
 
     interF_IArea :: M.Map Ind Int -> Index -> Rational
     interF_IArea map1 (x,_,_,_,_,_,_,y) 

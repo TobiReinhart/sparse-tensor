@@ -50,12 +50,13 @@ module Main (
     import Data.List
    
     -}
-    import Tensor
-    import EquivarianceEqns
-    import Index
+    import Data.List
+    import Tensor2
+    --import EquivarianceEqns
+    --import Index
     import qualified Data.Map.Strict as M
-    import Order2Int
-    import BasicTensors
+    --import Order2Int
+    --import BasicTensors
     
      
 
@@ -741,8 +742,6 @@ module Main (
 
         print vals 
         
-        -}
-
         let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
         let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
 
@@ -762,4 +761,16 @@ module Main (
 
         let intCondAIBNew = intAIBNew intArea intMetric flatInt int3
         
-        print $ evalFullTensor intCondAIBNew
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/TensorMap.txt"  $ show  intCondAIBNew
+
+        -}
+
+        let trian2 = triangleMap2 :: M.Map Ind Int
+
+        let trian3 = triangleMap3 :: M.Map Ind Int
+
+        let trianArea = triangleMapArea :: M.Map Ind Int
+
+        let intCondAIB = intAIB trianArea trianArea trian2 trian2 
+
+        print intCondAIB

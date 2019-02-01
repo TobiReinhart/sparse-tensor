@@ -122,7 +122,7 @@ module TensorF (
 
     tensorIndList :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
         Rank -> [Index n1 n2 n3 n4 n5 n6 n7 n8] 
-    tensorIndList (r1,r2,r3,r4,r5,r6,r7,r8) =  map (\(x1,x2,x3,x4,x5,x6,x7,x8) -> ((mkInd x1), (mkInd x2), (mkInd x3), (mkInd x4), (mkInd x5), (mkInd x6), (mkInd x7), (mkInd x8))) list
+    tensorIndList (r1,r2,r3,r4,r5,r6,r7,r8) =  map (\(x1,x2,x3,x4,x5,x6,x7,x8) -> ( Index (mkInd x1) (mkInd x2) (mkInd x3) (mkInd x4) (mkInd x5) (mkInd x6) (mkInd x7) (mkInd x8))) list
             where 
                 list = [ (y1,y2,y3,y4,y5,y6,y7,y8) | y1 <- (getRangeList r1 20), y2 <- (getRangeList r2 20), y3 <- (getRangeList r3 19), y4 <- (getRangeList r4 19),
                  y5 <- (getRangeList r5 9), y6 <- (getRangeList r6 9), y7 <- (getRangeList r7 3), y8 <- (getRangeList r8 3)]
@@ -137,7 +137,7 @@ module TensorF (
     --now some basic tensors
 
     delta_3F :: Index 0 0 0 0 0 0 1 1 -> Rational
-    delta_3F (_,_,_,_,_,_,a,b) 
+    delta_3F (Index _ _ _ _ _ _ a b) 
             | fromEnum (getValInd a  0) == fromEnum ( getValInd b 0) = 1
             | otherwise = 0
 
@@ -145,7 +145,7 @@ module TensorF (
     delta_3 =  Tensor delta_3F
 
     delta_9F :: Index 0 0 0 0 1 1 0 0 -> Rational
-    delta_9F (_,_,_,_,a,b,_,_) 
+    delta_9F (Index _ _ _ _ a b _ _) 
             | fromEnum (getValInd a  0) == fromEnum ( getValInd b 0) = 1
             | otherwise = 0
 
@@ -153,7 +153,7 @@ module TensorF (
     delta_9 = Tensor delta_9F
 
     delta_19F :: Index 0 0 1 1 0 0 0 0 -> Rational
-    delta_19F (_,_,a,b,_,_,_,_) 
+    delta_19F (Index _ _ a b _ _ _ _) 
             | fromEnum (getValInd a  0) == fromEnum ( getValInd b 0) = 1
             | otherwise = 0
 
@@ -161,7 +161,7 @@ module TensorF (
     delta_19 = Tensor delta_19F
 
     delta_20F :: Index 1 1 0 0 0 0 0 0 -> Rational
-    delta_20F (a,b,_,_,_,_,_,_) 
+    delta_20F (Index a b _ _ _ _ _ _) 
             | fromEnum (getValInd a  0) == fromEnum ( getValInd b 0) = 1
             | otherwise = 0
 
@@ -187,7 +187,7 @@ module TensorF (
     triangleMap3 = M.fromList $ zip (symIndList 3 3) [toEnum 0..]
 
     interF_I2 :: M.Map (Linds_3 2) Uind_9 -> Index 0 0 0 0 1 0 0 2 -> Rational
-    interF_I2 map1 (_,_,_,_,x,_,_,y) 
+    interF_I2 map1 (Index _ _ _ _ x _ _ y) 
                 | indI == xVal = 1
                 | otherwise = 0
                  where 
@@ -203,7 +203,7 @@ module TensorF (
                     j = getValInd ind 1
 
     interF_J2 :: M.Map (Uinds_3 2) Lind_9 -> Index 0 0 0 0 0 1 2 0 -> Rational
-    interF_J2 map1 (_,_,_,_,_,x,y,_) 
+    interF_J2 map1 (Index _ _ _ _ _ x y _) 
                 | indI == xVal = mult
                 | otherwise = 0
                  where 
@@ -213,7 +213,7 @@ module TensorF (
 
             
     symF_I2 :: M.Map (Linds_3 2) Uind_9 -> Index 0 0 0 0 1 0 0 2 -> Rational
-    symF_I2 map1 (_,_,_,_,x,_,_,y) 
+    symF_I2 map1 (Index _ _ _ _ x _ _ y) 
                 | indI == xVal = mult
                 | otherwise = 0
                  where 
@@ -222,7 +222,7 @@ module TensorF (
                     mult = jMult2 y 
 
     aSymF_I2 :: M.Map (Linds_3 2) Uind_9 -> Index 0 0 0 0 1 0 0 2 -> Rational
-    aSymF_I2 map1 (_,_,_,_,x,_,_,y) 
+    aSymF_I2 map1 (Index _ _ _ _ x _ _ y) 
                 | indI == xVal = sign 
                 | otherwise = 0
                  where 
@@ -232,7 +232,7 @@ module TensorF (
 
 
     interF_I3 :: M.Map (Linds_3 3) Uind_19 -> Index 0 0 1 0 0 0 0 3 -> Rational
-    interF_I3 map1 (_,_,x,_,_,_,_,y) 
+    interF_I3 map1 (Index _ _ x _ _ _ _ y) 
                 | indI == xVal = 1
                 | otherwise = 0
                  where 
@@ -250,7 +250,7 @@ module TensorF (
                     k = getValInd ind 2
 
     interF_J3 :: M.Map (Uinds_3 3) Lind_19 -> Index 0 0 0 1 0 0 3 0 -> Rational
-    interF_J3 map1 (_,_,_,x,_,_,y,_) 
+    interF_J3 map1 (Index _ _ _ x _ _ y _) 
                 | indI == xVal = mult
                 | otherwise = 0
                  where 
@@ -259,7 +259,7 @@ module TensorF (
                     mult = jMult3 y 
             
     symF_I3 :: M.Map (Linds_3 3) Uind_19 -> Index 0 0 1 0 0 0 0 3 -> Rational
-    symF_I3 map1 (_,_,x,_,_,_,_,y) 
+    symF_I3 map1 (Index _ _ x _ _ _ _ y) 
                 | indI == xVal = mult
                 | otherwise = 0
                  where 
@@ -362,7 +362,7 @@ module TensorF (
             newS = mkInd $ (S.><) s1 s2
 
     interF_IArea :: M.Map (Linds_3 4) Uind_20 -> Index 1 0 0 0 0 0 0 4 -> Rational
-    interF_IArea map1 (x,_,_,_,_,_,_,y) 
+    interF_IArea map1 (Index x _ _ _ _ _ _ y) 
                 | isZeroArea y = 0
                 | indI == xVal = snd sortY
                 | otherwise = 0
@@ -373,7 +373,7 @@ module TensorF (
 
 
     symF_IArea :: M.Map (Linds_3 4) Uind_20 -> Index 1 0 0 0 0 0 0 4 -> Rational
-    symF_IArea map1 (x,_,_,_,_,_,_,y) 
+    symF_IArea map1 (Index x _ _ _ _ _ _ y) 
                 | isZeroArea y = 0
                 | indI == xVal = snd sortY * (jMultArea (fst sortY))
                 | otherwise = 0
@@ -383,7 +383,7 @@ module TensorF (
                     xVal = getValInd x 0
 
     interF_JArea :: M.Map (Uinds_3 4) Lind_20 -> Index 0 1 0 0 0 0 4 0 -> Rational
-    interF_JArea map1 (_,x,_,_,_,_,y,_) 
+    interF_JArea map1 (Index _ x _ _ _ _ y _) 
                 | isZeroArea y = 0
                 | indI == xVal = snd sortY * (jMultArea (fst sortY))
                 | otherwise = 0
@@ -445,7 +445,7 @@ module TensorF (
                                 intTotal = tensorAdd int1 int2
 
     eta_F :: Index 0 0 0 0 0 0 0 2 -> Rational
-    eta_F (_,_,_,_,_,_,_,a) 
+    eta_F (Index _ _ _ _ _ _ _ a) 
                 | x == y && x == 0 = 1
                 | x == y = -1
                 | otherwise = 0
@@ -454,7 +454,7 @@ module TensorF (
                          y = fromEnum $ getValInd a 1
 
     invEta_F :: Index 0 0 0 0 0 0 2 0 -> Rational
-    invEta_F (_,_,_,_,_,_,a,_) 
+    invEta_F (Index _ _ _ _ _ _ a _) 
                 | x == y && x == 0 = 1
                 | x == y = -1
                 | otherwise = 0
@@ -489,7 +489,7 @@ module TensorF (
 
     
     epsilon_F :: Index 0 0 0 0 0 0 0 4 -> Rational
-    epsilon_F (_,_,_,_,_,_,_,x)
+    epsilon_F (Index _ _ _ _ _ _ _ x)
                 | a == b || a == c || a == d || b == c || b == d || c == d = 0
                 | otherwise = fromIntegral $ permSign [a,b,c,d]
                  where

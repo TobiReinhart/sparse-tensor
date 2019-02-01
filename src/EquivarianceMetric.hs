@@ -84,7 +84,7 @@ module EquivarianceMetric (
     --we need the Metric versions of these functions
 
     index2Sparse1M :: Index 0 0 0 0 0 1 1 1 -> (Int,Int) 
-    index2Sparse1M (_, _, _, _, _, x6, x7, x8) = ((m-1)*4+n,a+1)
+    index2Sparse1M (Index _  _  _  _  _  x6  x7  x8) = ((m-1)*4+n,a+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 0)
                              m = 1 + (fromEnum $ getValInd x7 0)
@@ -95,7 +95,7 @@ module EquivarianceMetric (
     --check this later on when we have extracted the equations
 
     index2Sparse2M :: Index 0 0 0 0 0 1 1 2 -> (Int,Int) 
-    index2Sparse2M (_, _, _, _, _, x6, x7, x8) = ((m-1)*4+n,10+(a-1)*4+i+1)
+    index2Sparse2M (Index _  _  _  _  _  x6  x7  x8) = ((m-1)*4+n,10+(a-1)*4+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 0)
                              i = 1 + (fromEnum $ getValInd x8 1)
@@ -103,7 +103,7 @@ module EquivarianceMetric (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse3M :: Index 0 0 0 0 0 2 1 1 -> (Int,Int) 
-    index2Sparse3M (_, _, _, _, _, x6, x7, x8) = ((m-1)*4+n,10*5+(a-1)*10+i+1)
+    index2Sparse3M (Index _  _  _  _  _  x6  x7  x8) = ((m-1)*4+n,10*5+(a-1)*10+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 0)
                              i = 1 + (fromEnum $ getValInd x6 1)
@@ -111,7 +111,7 @@ module EquivarianceMetric (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse4M :: Index 0 0 0 0 1 1 0 2 -> (Int,Int) 
-    index2Sparse4M (_, _, _, _, x5, x6, _, x8) = (16+(j-1)*4+n,10+(a-1)*4+i+1)
+    index2Sparse4M (Index _  _  _  _  x5  x6  _  x8) = (16+(j-1)*4+n,10+(a-1)*4+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 0)
                              j = 1 + (fromEnum $ getValInd x5 0)
@@ -119,7 +119,7 @@ module EquivarianceMetric (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse5M :: Index 0 0 0 0 1 2 0 1 -> (Int,Int) 
-    index2Sparse5M (_, _, _, _, x5, x6, _, x8) = (16+(j-1)*4+n,10*5+(a-1)*10+i+1)
+    index2Sparse5M (Index _  _  _  _  x5  x6  _  x8) = (16+(j-1)*4+n,10*5+(a-1)*10+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 1)
                              j = 1 + (fromEnum $ getValInd x5 0)
@@ -127,7 +127,7 @@ module EquivarianceMetric (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2Sparse6M :: Index 0 0 1 0 0 2 0 1 -> (Int,Int) 
-    index2Sparse6M (_, _, x3, _, _, x6, _, x8) = (56+(j-1)*4+n,10*5+(a-1)*10+i+1)
+    index2Sparse6M (Index _  _  x3  _  _  x6  _  x8) = (56+(j-1)*4+n,10*5+(a-1)*10+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 1)
                              j = 1 + (fromEnum $ getValInd x3 0)
@@ -156,7 +156,7 @@ module EquivarianceMetric (
     --for the equation contracted with eta
 
     index2Sparse6MPulled :: Index 0 0 1 0 0 2 1 0 -> (Int,Int) 
-    index2Sparse6MPulled (_, _, x3, _, _, x6, x8, _) = (56+(j-1)*4+n,10*5+(a-1)*10+i+1)
+    index2Sparse6MPulled (Index _  _  x3  _  _  x6  x8  _) = (56+(j-1)*4+n,10*5+(a-1)*10+i+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 1)
                              j = 1 + (fromEnum $ getValInd x3 0)

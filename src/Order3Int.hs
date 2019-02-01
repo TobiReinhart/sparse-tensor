@@ -80,7 +80,7 @@ module Order3Int (
 
 
     index2SparseAnsatzABC :: Index 3 3 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseAnsatzABC  (x1, x2, _, _, x5, _, _, _) = ((g-1)*21^2*10+(e-1)*210+(f-1)*10+j,(c-1)*21^2+(b-1)*21+a)
+    index2SparseAnsatzABC  (Index x1  x2  _  _  x5  _  _  _) = ((g-1)*21^2*10+(e-1)*210+(f-1)*10+j,(c-1)*21^2+(b-1)*21+a)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -91,7 +91,7 @@ module Order3Int (
                                                       j = 1 +  (fromEnum $ getValInd x5 0)
 
     index2SparseAnsatzABCTrian :: M.Map [Int] Int -> Index 3 3 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseAnsatzABCTrian trian (x1, x2, _, _, x5, _, _, _) = ((g-1)*21^2*10+(e-1)*210+(f-1)*10+j,316 +  (div (315*316) 2 )+ x)
+    index2SparseAnsatzABCTrian trian (Index x1  x2  _  _  x5  _  _  _) = ((g-1)*21^2*10+(e-1)*210+(f-1)*10+j,316 +  (div (315*316) 2 )+ x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -133,7 +133,7 @@ module Order3Int (
                         prodTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) prod 
 
     index2SparseIntABC :: Index 2 3 0 0 0 0 2 2 -> (Int,Int) 
-    index2SparseIntABC  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^4+(f-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,(c-1)*21^2+(b-1)*21+a)
+    index2SparseIntABC  (Index x1  x2  _  _  _  _  x7  x8) = ((e-1)*21*4^4+(f-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,(c-1)*21^2+(b-1)*21+a)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -146,7 +146,7 @@ module Order3Int (
                                                       s = 1 + (fromEnum $ getValInd x8 1)
 
     index2SparseIntABCTrian :: M.Map [Int] Int -> Index 2 3 0 0 0 0 2 2 -> (Int,Int) 
-    index2SparseIntABCTrian trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^4+(f-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,316 +  (div (315*316) 2 )+ x)
+    index2SparseIntABCTrian trian (Index x1  x2  _  _  _  _  x7  x8) = ((e-1)*21*4^4+(f-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,316 +  (div (315*316) 2 )+ x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -187,7 +187,7 @@ module Order3Int (
                         prod = tensorProductNumeric tens totalBlock2
 
     index2SparseAnsatzAaBC :: Index 3 3 0 0 1 0 1 1 -> (Int,Int) 
-    index2SparseAnsatzAaBC  (x1, x2, _, _, x5, _, x7, x8) = ((g-1)*21^2*10*4+(e-1)*210*4+(f-1)*10*4+(j-1)*4+r,(c-1)*21^2*4+(b-1)*21*4+(a-1)*4+s)
+    index2SparseAnsatzAaBC  (Index x1  x2  _  _  x5  _ x7  x8) = ((g-1)*21^2*10*4+(e-1)*210*4+(f-1)*10*4+(j-1)*4+r,(c-1)*21^2*4+(b-1)*21*4+(a-1)*4+s)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -220,7 +220,7 @@ module Order3Int (
                         prod = tensorProductNumeric tens totalBlock2
 
     index2SparseAnsatzAIBC :: Index 3 3 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseAnsatzAIBC  (x1, x2, _, _, x5, x6, _, _) = ((g-1)*21^2*10*10+(e-1)*210*10+(f-1)*10*10+(j-1)*10+k,(c-1)*21^2*10+(b-1)*21*10+(a-1)*10+i)
+    index2SparseAnsatzAIBC  (Index x1  x2  _  _  x5  x6  _  _) = ((g-1)*21^2*10*10+(e-1)*210*10+(f-1)*10*10+(j-1)*10+k,(c-1)*21^2*10+(b-1)*21*10+(a-1)*10+i)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -256,7 +256,7 @@ module Order3Int (
                         prodTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) prod
 
     index2SparseintAIBC :: Index 2 3 0 0 1 1 2 2 -> (Int,Int) 
-    index2SparseintAIBC  (x1, x2, _, _, x5, x6, x7, x8) = ((e-1)*210*4^4+(f-1)*10*4^4+(j-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,(c-1)*21^2*10+(b-1)*21*10+(a-1)*10+i)
+    index2SparseintAIBC  (Index x1  x2  _  _  x5  x6  x7  x8) = ((e-1)*210*4^4+(f-1)*10*4^4+(j-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,(c-1)*21^2*10+(b-1)*21*10+(a-1)*10+i)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -292,7 +292,7 @@ module Order3Int (
                         prod = tensorProductNumeric tens totalBlock2
 
     index2SparseAnsatzAaBbC :: Index 3 3 0 0 1 0 2 2 -> (Int,Int) 
-    index2SparseAnsatzAaBbC  (x1, x2, _, _, x5, _, x7, x8) = ((g-1)*21^2*10*4*4+(e-1)*210*4*4+(f-1)*10*4*4+(j-1)*4*4+(r-1)*4+s,(c-1)*21^2*4*4+(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
+    index2SparseAnsatzAaBbC  (Index x1  x2  _  _  x5  _  x7  x8) = ((g-1)*21^2*10*4*4+(e-1)*210*4*4+(f-1)*10*4*4+(j-1)*4*4+(r-1)*4+s,(c-1)*21^2*4*4+(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -308,7 +308,7 @@ module Order3Int (
 
 
     index2SparseAnsatzAaBbCTrian :: M.Map [Int] Int -> Index 3 3 0 0 1 0 2 2 -> (Int,Int) 
-    index2SparseAnsatzAaBbCTrian trian  (x1, x2, _, _, x5, _, x7, x8) = ((g-1)*21^2*10*4*4+(e-1)*210*4*4+(f-1)*10*4*4+(j-1)*4*4+(r-1)*4+s,316+ div (315*316) 2 + x)
+    index2SparseAnsatzAaBbCTrian trian  (Index x1  x2  _  _  x5  _  x7  x8) = ((g-1)*21^2*10*4*4+(e-1)*210*4*4+(f-1)*10*4*4+(j-1)*4*4+(r-1)*4+s,316+ div (315*316) 2 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -352,7 +352,7 @@ module Order3Int (
                         prodTrans = tensorTranspose 7 (0,3) $ tensorTranspose 8 (0,3) prod
 
     index2SparseintAaBbC :: Index 2 3 0 0 0 0 4 4 -> (Int,Int) 
-    index2SparseintAaBbC  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^6+(f-1)*4^6+(r-1)*4^5+(s-1)*4^4+(m-1)*4^3+(n-1)*4^2+(u-1)*4+v,(c-1)*21^2*4*4+(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
+    index2SparseintAaBbC  (Index x1  x2  _  _  _  _  x7  x8) = ((e-1)*21*4^6+(f-1)*4^6+(r-1)*4^5+(s-1)*4^4+(m-1)*4^3+(n-1)*4^2+(u-1)*4+v,(c-1)*21^2*4*4+(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -371,7 +371,7 @@ module Order3Int (
 
 
     index2SparseintAaBbCTrian :: M.Map [Int] Int -> Index 2 3 0 0 0 0 4 4 -> (Int,Int) 
-    index2SparseintAaBbCTrian  trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^6+(f-1)*4^6+(r-1)*4^5+(s-1)*4^4+(m-1)*4^3+(n-1)*4^2+(u-1)*4+v,316+ div (315*316) 2 + x)
+    index2SparseintAaBbCTrian  trian (Index x1  x2  _  _  _  _  x7  x8) = ((e-1)*21*4^6+(f-1)*4^6+(r-1)*4^5+(s-1)*4^4+(m-1)*4^3+(n-1)*4^2+(u-1)*4+v,316+ div (315*316) 2 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -440,7 +440,7 @@ module Order3Int (
                         tens = tensorAdd block1prod $ tensorAdd block2prod block3prod 
                        
     index2SparseAnsatzAIBbC :: Index 3 3 0 0 2 1 1 1 -> (Int,Int) 
-    index2SparseAnsatzAIBbC  (x1, x2, _, _, x5, x6, x7, x8) = ((g-1)*21^2*100*4+(e-1)*2100*4+(f-1)*100*4+(j-1)*10*4+(k-1)*4+r,(c-1)*21^2*10*4+(b-1)*21*10*4+(p-1)*21*10+(a-1)*10+i)
+    index2SparseAnsatzAIBbC  (Index x1  x2  _  _  x5  x6  x7  x8) = ((g-1)*21^2*100*4+(e-1)*2100*4+(f-1)*100*4+(j-1)*10*4+(k-1)*4+r,(c-1)*21^2*10*4+(b-1)*21*10*4+(p-1)*21*10+(a-1)*10+i)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -482,7 +482,7 @@ module Order3Int (
                         tensTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) tens
 
     index2SparseintAIBJCTrian :: M.Map [Int] Int -> Index 2 3 0 0 2 2 2 2 -> (Int,Int) 
-    index2SparseintAIBJCTrian  trian (x1, x2, _, _, x5, x6, x7, x8) = ((e-1)*21*10^2*4^4+(f-1)*10^2*4^4+(k-1)*10*4^4+(l-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,316+ div (315*316) 2 + x)
+    index2SparseintAIBJCTrian  trian (Index x1 x2  _  _  x5  x6  x7  x8) = ((e-1)*21*10^2*4^4+(f-1)*10^2*4^4+(k-1)*10*4^4+(l-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,316+ div (315*316) 2 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)

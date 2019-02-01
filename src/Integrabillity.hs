@@ -111,7 +111,7 @@ module Integrabillity (
 
 
     index2SparseCond1 :: Index 1 1 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseCond1 (x1, x2, _, _, x5, x6, _, _) = ((b-1)*100+(j-1)*10+(k),(a-1)*10+i)
+    index2SparseCond1 (Index x1  x2  _  _  x5  x6  _  _) = ((b-1)*100+(j-1)*10+(k),(a-1)*10+i)
                          where 
                              b = 1 + (fromEnum $ getValInd x1 0)
                              a = 1 + (fromEnum $ getValInd x2 0)
@@ -152,7 +152,7 @@ module Integrabillity (
                     tens = tensorAdd prod $ tensorTranspose 2 (0,1) prod 
 
     index2SparseCond1Zero :: Index 0 1 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseCond1Zero (_, x2, _, _, x5, _, _, _) = (k,a)
+    index2SparseCond1Zero (Index _  x2  _  _  x5  _  _  _) = (k,a)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              k = 1 + (fromEnum $ getValInd x5 0)
@@ -161,7 +161,7 @@ module Integrabillity (
     mkEqnSparseCond1Zero (Tensor map1) = M.mapKeys index2SparseCond1Zero map1 
 
     index2SparseBlock1Eta :: Index 0 1 0 0 0 0 2 0 -> (Int,Int) 
-    index2SparseBlock1Eta (_, x2, _, _, _, _, x7, _) = ((r-1)*4+n,a)
+    index2SparseBlock1Eta (Index _  x2  _  _  _  _  x7  _) = ((r-1)*4+n,a)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              n = 1 + (fromEnum $ getValInd x7 0)
@@ -180,7 +180,7 @@ module Integrabillity (
                         prod = tensorProductWith (*) intTotal $ tensorProductWith (*) invEta antiSym
 
     index2SparseCond2 :: Index 1 1 0 0 1 0 1 1 -> (Int,Int) 
-    index2SparseCond2 (x1, x2, _, _, x5, _, x7, x8) = (347+(b-1)*40+(k-1)*4+(r-1),21+(a-1)*4+s+1)
+    index2SparseCond2 (Index x1  x2  _  _  x5  _  x7  x8) = (347+(b-1)*40+(k-1)*4+(r-1),21+(a-1)*4+s+1)
                          where 
                              b = 1 + (fromEnum $ getValInd x1 0)
                              a = 1 + (fromEnum $ getValInd x2 0)
@@ -199,7 +199,7 @@ module Integrabillity (
                         prod = tensorProductWith (*) intTotal $ tensorProductWith (*) invEta antiSym
 
     index2SparseCond3 :: Index 1 1 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseCond3 (x1, x2, _, _, x5, _, _, _) = ((b-1)*10+k,a)
+    index2SparseCond3 (Index x1  x2  _  _  x5  _  _  _) = ((b-1)*10+k,a)
                          where 
                              b = 1 + (fromEnum $ getValInd x1 0)
                              a = 1 + (fromEnum $ getValInd x2 0)
@@ -213,7 +213,7 @@ module Integrabillity (
     projectorMatrix map1Area map1Metric = tensorProductWith (*) (interI_Area map1Area) (interI_2 map1Metric)
 
     index2SparseProjector :: Index 1 0 0 0 1 0 0 6 -> (Int,Int) 
-    index2SparseProjector (x1, _, _, _, x5, _, _, x8) = ((a-1)*10+b,i*4^5+j*4^4+k*4^3+l*4^2+p*4+q+1)
+    index2SparseProjector (Index x1  _  _  _  x5  _  _  x8) = ((a-1)*10+b,i*4^5+j*4^4+k*4^3+l*4^2+p*4+q+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x1 0)
                              b = 1 + (fromEnum $ getValInd x5 0)
@@ -240,7 +240,7 @@ module Integrabillity (
     projectorMatrix2 map1Area = (interI_Area map1Area) 
 
     index2SparseProjector2 :: Index 1 0 0 0 0 0 0 4 -> (Int,Int) 
-    index2SparseProjector2 (x1, _, _, _, _, _, _, x8) = (a,i*4^3+j*4^2+k*4+l+1)
+    index2SparseProjector2 (Index x1  _  _  _  _  _  _  x8) = (a,i*4^3+j*4^2+k*4+l+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x1 0)
                              i =  (fromEnum $ getValInd x8 0)
@@ -267,7 +267,7 @@ module Integrabillity (
                         prod = tensorProductWith (*) totalBlock1 totalBlock2
 
     index2SparseintCond2_1 :: Index 2 2 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseintCond2_1 (x1, x2, _, _, x5, x6, _, _) = ((e-1)*2100+(f-1)*100+(j-1)*10+k,(a-1)*210+(b-1)*10+i)
+    index2SparseintCond2_1 (Index x1  x2  _  _  x5  x6  _  _) = ((e-1)*2100+(f-1)*100+(j-1)*10+k,(a-1)*210+(b-1)*10+i)
                          where 
                              e = 1 + (fromEnum $ getValInd x1 0)
                              f = 1 + (fromEnum $ getValInd x1 1)
@@ -278,7 +278,7 @@ module Integrabillity (
                              i = 1 +  (fromEnum $ getValInd x6 0)
 
     index2SparseintCond2_1New :: M.Map [Int] Int -> Index 2 2 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseintCond2_1New trian (x1, x2, _, _, x5, x6, _, _) = ((e-1)*2100+(f-1)*100+(j-1)*10+k,316 + (M.!) trian [a,105+(b-1)*10+i])
+    index2SparseintCond2_1New trian (Index x1  x2  _  _  x5  x6  _  _) = ((e-1)*2100+(f-1)*100+(j-1)*10+k,316 + (M.!) trian [a,105+(b-1)*10+i])
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -312,7 +312,7 @@ module Integrabillity (
 
 
     index2SparseintCond2_1Symbol :: M.Map (Int,Int) Int -> Index 2 3 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseintCond2_1Symbol map1 (x1, x2, _, _, x5, x6, x7, x8) = (10*10*21*(e-1)+10*10*(f-1)+10*(j-1)+k,(x-1)*210+(b-1)*10+i)
+    index2SparseintCond2_1Symbol map1 (Index x1  x2  _  _  x5  x6  x7  x8) = (10*10*21*(e-1)+10*10*(f-1)+10*(j-1)+k,(x-1)*210+(b-1)*10+i)
                          where 
                              e = 1 + (fromEnum $ getValInd x1 0)
                              f = 1 + (fromEnum $ getValInd x1 1)
@@ -340,7 +340,7 @@ module Integrabillity (
                         tensTranspose = tensorTranspose 2 (0,2) tens 
 
     index2SparseintCond2_1SymbolPure :: M.Map (Int,Int) Int -> Index 2 3 0 0 1 1 1 1 -> (Int,Int) 
-    index2SparseintCond2_1SymbolPure map1 (x1, x2, _, _, x5, x6, x7, x8) = (10*16*21*(e-1)+10*16*(f-1)+16*(j-1)+(m-1)*4+n,(x-1)*210+(b-1)*10+i)
+    index2SparseintCond2_1SymbolPure map1 (Index x1  x2  _  _  x5  x6  x7  x8) = (10*16*21*(e-1)+10*16*(f-1)+16*(j-1)+(m-1)*4+n,(x-1)*210+(b-1)*10+i)
                          where 
                              e = 1 + (fromEnum $ getValInd x1 0)
                              f = 1 + (fromEnum $ getValInd x1 1)
@@ -383,7 +383,7 @@ module Integrabillity (
 
 
     index2SparseintCond2_1SymbolRed :: M.Map (Int,Int) Int -> Index 1 2 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseintCond2_1SymbolRed map1 (x1, x2, _, _, x5, x6, _, _) = (10*(e-1)+k,x)
+    index2SparseintCond2_1SymbolRed map1 (Index x1  x2  _  _  x5  x6  _  _) = (10*(e-1)+k,x)
                          where 
                              e = 1 + (fromEnum $ getValInd x1 0)
                              a = 1 + (fromEnum $ getValInd x2 0)
@@ -392,7 +392,7 @@ module Integrabillity (
                              x = (M.!) map1 (min a c, max a c)  
                              
     index2SparseintCond2_1SymbolRedFull :: Index 1 2 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseintCond2_1SymbolRedFull (x1, x2, _, _, x5, x6, _, _) = (10*(e-1)+k,21*(a-1)+c)
+    index2SparseintCond2_1SymbolRedFull (Index x1  x2  _  _  x5  x6  _  _) = (10*(e-1)+k,21*(a-1)+c)
                          where 
                              e = 1 + (fromEnum $ getValInd x1 0)
                              a = 1 + (fromEnum $ getValInd x2 0)
@@ -424,7 +424,7 @@ module Integrabillity (
                     tens2 = tensorTranspose 6 (0,1) tens
 
     index2SparseDens1 :: Index 0 0 0 0 1 1 1 1 -> (Int,Int) 
-    index2SparseDens1 (_, _, _, _, x5, x6, x7, x8) = ((b-1)*16+(m-1)*4+n,a)
+    index2SparseDens1 (Index _  _  _  _  x5  x6  x7  x8) = ((b-1)*16+(m-1)*4+n,a)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 0)
                              b = 1 + (fromEnum $ getValInd x5 0)
@@ -432,7 +432,7 @@ module Integrabillity (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2SparseDens2 :: Index 0 0 0 0 2 2 1 1 -> (Int,Int) 
-    index2SparseDens2 (_, _, _, _, x5, x6, x7, x8) = ((c-1)*160+(b-1)*16+(m-1)*4+n,(d-1)*10+a)
+    index2SparseDens2 (Index _  _  _  _  x5  x6  x7  x8) = ((c-1)*160+(b-1)*16+(m-1)*4+n,(d-1)*10+a)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 0)
                              b = 1 + (fromEnum $ getValInd x5 0)
@@ -464,7 +464,7 @@ module Integrabillity (
                     tens2 = tensorTranspose 2 (0,1) tens
 
     index2SparseDens1Area :: Index 1 1 0 0 0 0 1 1 -> (Int,Int) 
-    index2SparseDens1Area (x1 ,x2 , _, _, _, _, x7, x8) = ((b-1)*16+(m-1)*4+n,a)
+    index2SparseDens1Area (Index x1  x2   _  _  _  _  x7  x8) = ((b-1)*16+(m-1)*4+n,a)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              b = 1 + (fromEnum $ getValInd x1 0)
@@ -472,7 +472,7 @@ module Integrabillity (
                              n = 1 + (fromEnum $ getValInd x8 0)
 
     index2SparseDens2Area :: Index 2 2 0 0 0 0 1 1 -> (Int,Int) 
-    index2SparseDens2Area (x1, x2, _, _, _, _, x7, x8) = ((c-1)*16*21+(b-1)*16+(m-1)*4+n,(d-1)*21+a)
+    index2SparseDens2Area (Index x1  x2  _  _  _  _  x7  x8) = ((c-1)*16*21+(b-1)*16+(m-1)*4+n,(d-1)*21+a)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              b = 1 + (fromEnum $ getValInd x1 0)
@@ -494,7 +494,7 @@ module Integrabillity (
                     flat = tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea $ flatArea map2Area
 
     index2SparseAreaM :: Index 0 1 0 0 1 1 1 1 -> (Int,Int) 
-    index2SparseAreaM (_, x2, _, _, x5, x6, x7, x8) = ((j-1)*16+(m-1)*4+n,(a-1)*10+i)
+    index2SparseAreaM (Index _  x2  _  _  x5  x6  x7  x8) = ((j-1)*16+(m-1)*4+n,(a-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              i = 1 + (fromEnum $ getValInd x6 0)
@@ -519,7 +519,7 @@ module Integrabillity (
                     tens = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (0,1) (+) $ tensorProductWith (*) diff block2
 
     index2SparseAreaMintCond :: Index 1 1 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseAreaMintCond (x1, x2, _, _, x5, x6, _, _) = ((b-1)*100+(j-1)*10+k,(a-1)*10+i)
+    index2SparseAreaMintCond (Index x1  x2  _  _  x5  x6  _  _) = ((b-1)*100+(j-1)*10+k,(a-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0)
                              b = 1 + (fromEnum $ getValInd x1 0)
@@ -538,7 +538,7 @@ module Integrabillity (
                 tens = tensorProductWith (*) metInter $ etaAbs map2Metric
     
     index2SparseflatMetricInter :: Index 0 0 0 0 0 1 1 1 -> (Int,Int) 
-    index2SparseflatMetricInter (_, _, _, _, _, x6, x7, x8) = (i,(n-1)*4+m)
+    index2SparseflatMetricInter (Index _  _  _  _  _  x6  x7  x8) = (i,(n-1)*4+m)
                          where 
                              i = 1 + (fromEnum $ getValInd x6 0)
                              m = 1 + (fromEnum $ getValInd x7 0)
@@ -555,7 +555,7 @@ module Integrabillity (
                     tensTrans = tensorTranspose 6 (0,1) tens
 
     index2SparseflatMetricInterProlong :: Index 0 0 0 0 1 2 1 1 -> (Int,Int) 
-    index2SparseflatMetricInterProlong (_, _, _, _, x5, x6, x7, x8) = ((l-1)*10+j,(k-1)*16+(n-1)*4+m)
+    index2SparseflatMetricInterProlong (Index _  _  _  _  x5  x6  x7  x8) = ((l-1)*10+j,(k-1)*16+(n-1)*4+m)
                          where 
                              k = 1 + (fromEnum $ getValInd x5 0) 
                              l = 1 + (fromEnum $ getValInd x6 0)
@@ -580,7 +580,7 @@ module Integrabillity (
                     tensTrans = tensorTranspose 2 (0,1) tens
 
     index2SparseintRankDef1 :: Index 0 2 0 0 3 0 0 0 -> (Int,Int) 
-    index2SparseintRankDef1 (_, x2, _, _, x5, _, _, _) = ((k-1)*100+(j-1)*10+i,(a-1)*21+c)
+    index2SparseintRankDef1 (Index _  x2  _  _  x5  _  _  _) = ((k-1)*100+(j-1)*10+i,(a-1)*21+c)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              c = 1 + (fromEnum $ getValInd x2 1)
@@ -625,7 +625,7 @@ module Integrabillity (
     --this should yield zero !!!
 
     index2SparseintRankDef3 :: Index 0 2 0 0 2 0 0 0 -> (Int,Int) 
-    index2SparseintRankDef3 (_, x2, _, _, x5, _, _, _) = ((i-1)*10+j,(a-1)*21+c)
+    index2SparseintRankDef3 (Index _  x2  _  _  x5  _  _  _) = ((i-1)*10+j,(a-1)*21+c)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              c = 1 + (fromEnum $ getValInd x2 1)
@@ -652,7 +652,7 @@ module Integrabillity (
                     proTrans = tensorTranspose 5 (0,1) pro 
 
     index2SparseintRankDef4 :: Index 0 0 0 0 2 2 0 0 -> (Int,Int) 
-    index2SparseintRankDef4 (_, _, _, _, x5, x6, _, _) = ((i-1)*10+j,(a-1)*10+c)
+    index2SparseintRankDef4 (Index _  _  _  _  x5  x6  _  _) = ((i-1)*10+j,(a-1)*10+c)
                          where 
                              a = 1 + (fromEnum $ getValInd x6 0) 
                              c = 1 + (fromEnum $ getValInd x6 1)
@@ -699,7 +699,7 @@ module Integrabillity (
 
 
     index2SparseintCondComp :: Index 1 2 0 0 3 1 0 0 -> (Int,Int) 
-    index2SparseintCondComp (x1, x2, _, _, x5, x6, _, _) = ((c-1)*1000+(j-1)*100+(k-1)*10+l,(b-1)*21*10+(a-1)*10+i)
+    index2SparseintCondComp (Index x1  x2  _  _  x5  x6  _  _) = ((c-1)*1000+(j-1)*100+(k-1)*10+l,(b-1)*21*10+(a-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              b = 1 + (fromEnum $ getValInd x2 1) 
@@ -710,7 +710,7 @@ module Integrabillity (
                              l = 1 + (fromEnum $ getValInd x5 2)
 
     index2SparseintCondCompNew :: M.Map [Int] Int -> Index 1 2 0 0 3 1 0 0 -> (Int,Int) 
-    index2SparseintCondCompNew trian (x1, x2, _, _, x5, x6, _, _) = ((c-1)*1000+(j-1)*100+(k-1)*10+l,(M.!) trian [b,105+(a-1)*10+i])
+    index2SparseintCondCompNew trian (Index x1  x2  _  _  x5  x6  _  _) = ((c-1)*1000+(j-1)*100+(k-1)*10+l,(M.!) trian [b,105+(a-1)*10+i])
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              b = 1 + (fromEnum $ getValInd x2 1) 
@@ -745,7 +745,7 @@ module Integrabillity (
                 totalTrans = tensorTranspose 5 (0,1) total 
 
     index2SparseintCondSym :: Index 0 1 0 0 2 0 0 0 -> (Int,Int) 
-    index2SparseintCondSym (_, x2, _, _, x5, _, _, _) = ((j-1)*10+k,a+1)
+    index2SparseintCondSym (Index _  x2  _  _  x5  _  _  _) = ((j-1)*10+k,a+1)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              k = 1 + (fromEnum $ getValInd x5 0)
@@ -792,7 +792,7 @@ module Integrabillity (
                 totalTrans = tensorTranspose 5 (0,2) totalTens
 
     index2SparseintCondOrd2 :: Index 1 1 0 0 3 1 0 0 -> (Int,Int) 
-    index2SparseintCondOrd2 (x1, x2, _, _, x5, x6, _, _) = ((d-1)*1000+(l-1)*100+(j-1)*10+k,(a-1)*10+i)
+    index2SparseintCondOrd2 (Index x1  x2  _  _  x5  x6  _  _) = ((d-1)*1000+(l-1)*100+(j-1)*10+k,(a-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              d = 1 + (fromEnum $ getValInd x1 0)
@@ -834,7 +834,7 @@ module Integrabillity (
                 aSym = tensorSub totalTens tensTranspose 
 
     index2SparseintCondCompNoSym :: Index 1 2 0 0 1 1 2 2 -> (Int,Int) 
-    index2SparseintCondCompNoSym (x1, x2, _, _, x5, x6, x7, x8) = ((c-1)*10*4^4+(j-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,(b-1)*21*10+(a-1)*10+i)
+    index2SparseintCondCompNoSym (Index x1  x2  _  _  x5  x6  x7  x8) = ((c-1)*10*4^4+(j-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,(b-1)*21*10+(a-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              b = 1 + (fromEnum $ getValInd x2 1) 
@@ -867,7 +867,7 @@ module Integrabillity (
                     prod = tensorProductWith (*) intI intJnoF
 
     index2SparseinterMat:: Index 1 1 0 0 0 0 0 0 -> (Int,Int) 
-    index2SparseinterMat (x1, x2, _, _, _, _, _, _) = (b,a)
+    index2SparseinterMat (Index x1  x2  _  _  _  _  _  _) = (b,a)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              b = 1 + (fromEnum $ getValInd x1 0) 
@@ -903,7 +903,7 @@ module Integrabillity (
 
 
     index2Sparseinter6Mat:: Index 1 1 0 0 1 1 0 0 -> (Int,Int) 
-    index2Sparseinter6Mat (x1, x2, _, _, x5, x6, _, _) = ((b-1)*10+j,(a-1)*10+i)
+    index2Sparseinter6Mat (Index x1  x2  _  _  x5  x6 _  _) = ((b-1)*10+j,(a-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              b = 1 + (fromEnum $ getValInd x1 0)
@@ -930,7 +930,7 @@ module Integrabillity (
 
     
     index2Sparseprolongation1AI_AI:: Index 1 1 0 0 1 1 1 1 -> (Int,Int) 
-    index2Sparseprolongation1AI_AI (x1, x2, _, _, x5, x6, x7, x8) = ((b-1)*10*16+(k-1)*16+(m-1)*4+n,(a-1)*10+i)
+    index2Sparseprolongation1AI_AI (Index x1  x2  _  _  x5  x6  x7  x8) = ((b-1)*10*16+(k-1)*16+(m-1)*4+n,(a-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              b = 1 + (fromEnum $ getValInd x1 0)
@@ -940,7 +940,7 @@ module Integrabillity (
                              n = 1 + (fromEnum $ getValInd x8 0) 
 
     index2Sparseprolongation1AI_ACK:: Index 1 2 0 0 1 1 1 1 -> (Int,Int) 
-    index2Sparseprolongation1AI_ACK (x1, x2, _, _, x5, x6, x7, x8) = ((b-1)*10*16+(k-1)*16+(m-1)*4+n,(c-1)*210+(a-1)*10+i+210)
+    index2Sparseprolongation1AI_ACK (Index x1  x2  _  _  x5  x6  x7  x8) = ((b-1)*10*16+(k-1)*16+(m-1)*4+n,(c-1)*210+(a-1)*10+i+210)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              c = 1 + (fromEnum $ getValInd x2 1) 
@@ -969,7 +969,7 @@ module Integrabillity (
                             tensTrans = tensorTranspose 2 (0,1) $ tensorTranspose 8 (1,2) tens
 
     index2Sparseprolongation2AaBbC :: Index 2 3 0 0 0 0 3 3 -> (Int,Int) 
-    index2Sparseprolongation2AaBbC  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^6+(f-1)*4^4+(r-1)*4^3+(s-1)*4^2+(m-1)*4+u,(c-1)*21^2*4*4+(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p+21^2*16)
+    index2Sparseprolongation2AaBbC  (Index x1  x2  _  _  _ _  x7  x8) = ((e-1)*21*4^6+(f-1)*4^4+(r-1)*4^3+(s-1)*4^2+(m-1)*4+u,(c-1)*21^2*4*4+(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p+21^2*16)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -997,7 +997,7 @@ module Integrabillity (
                             tensTrans = tensorTranspose 2 (0,1) $ tensorTranspose 8 (1,2) tens
 
     index2Sparseprolongation2AaBb :: Index 2 2 0 0 0 0 3 3 -> (Int,Int) 
-    index2Sparseprolongation2AaBb  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*21*4^6+(f-1)*4^4+(r-1)*4^3+(s-1)*4^2+(m-1)*4+u,(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
+    index2Sparseprolongation2AaBb  (Index x1  x2  _  _  _  _  x7  x8) = ((e-1)*21*4^6+(f-1)*4^4+(r-1)*4^3+(s-1)*4^2+(m-1)*4+u,(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)

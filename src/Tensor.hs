@@ -31,7 +31,7 @@ module Tensor (
     --start by defining the tensor data type (try using Map instead of functions)
 
     data Tensor (n1::Nat) (n2::Nat) (n3::Nat) (n4::Nat) (n5::Nat) (n6::Nat) (n7::Nat) (n8::Nat) a =
-        Tensor (M.Map (Index n1 n2 n3 n4 n5 n6 n7 n8) a) deriving Show
+        Tensor !(M.Map (Index n1 n2 n3 n4 n5 n6 n7 n8) a) deriving (Show, Read)
 
     instance Functor (Tensor n1 n2 n3 n4 n5 n6 n7 n8) where
         fmap f (Tensor tMap) = Tensor (M.map f tMap)
@@ -49,7 +49,7 @@ module Tensor (
 
     tensorIndList :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) =>
         Rank -> [Index n1 n2 n3 n4 n5 n6 n7 n8] 
-    tensorIndList (r1,r2,r3,r4,r5,r6,r7,r8) =  map (\(x1,x2,x3,x4,x5,x6,x7,x8) -> ((mkInd x1), (mkInd x2), (mkInd x3), (mkInd x4), (mkInd x5), (mkInd x6), (mkInd x7), (mkInd x8))) list
+    tensorIndList (r1,r2,r3,r4,r5,r6,r7,r8) =  map (\(x1,x2,x3,x4,x5,x6,x7,x8) -> (Index (mkInd x1) (mkInd x2) (mkInd x3) (mkInd x4) (mkInd x5) (mkInd x6) (mkInd x7) (mkInd x8))) list
             where 
                 list = [ (y1,y2,y3,y4,y5,y6,y7,y8) | y1 <- (getRangeList r1 20), y2 <- (getRangeList r2 20), y3 <- (getRangeList r3 19), y4 <- (getRangeList r4 19),
                  y5 <- (getRangeList r5 9), y6 <- (getRangeList r6 9), y7 <- (getRangeList r7 3), y8 <- (getRangeList r8 3)]
@@ -259,64 +259,64 @@ module Tensor (
     evalTensor_20_1 :: KnownNat n1 => Tensor (n1+1) n2 n3 n4 n5 n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     evalTensor_20_1 (Tensor map1) i j = Tensor map3
                     where 
-                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd a i $ toEnum j 
-                        redKey = \(a,b,c,d,e,f,g,h) -> (delInd i a,b,c,d,e,f,g,h)
+                        checkKey = \(Index a b c d e f g h) _ -> checkInd a i $ toEnum j 
+                        redKey = \(Index a b c d e f g h) -> (Index (delInd i a) b c d e f g h)
                         map2 = M.filterWithKey (checkKey) map1 
                         map3 = M.mapKeys redKey map2 
 
     evalTensor_20_2 :: KnownNat n2 => Tensor n1 (n2+1) n3 n4 n5 n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     evalTensor_20_2 (Tensor map1) i j = Tensor map3
                     where 
-                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd b i $ toEnum j 
-                        redKey = \(a,b,c,d,e,f,g,h) -> (a,delInd i b,c,d,e,f,g,h)
+                        checkKey = \(Index a b c d e f g h) _ -> checkInd b i $ toEnum j 
+                        redKey = \(Index a b c d e f g h) -> (Index a (delInd i b) c d e f g h)
                         map2 = M.filterWithKey (checkKey) map1 
                         map3 = M.mapKeys redKey map2
                         
     evalTensor_19_1 :: KnownNat n3 => Tensor n1 n2 (n3+1) n4 n5 n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     evalTensor_19_1 (Tensor map1) i j = Tensor map3
                     where 
-                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd c i $ toEnum j 
-                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,delInd i c,d,e,f,g,h)
+                        checkKey = \(Index a b c d e f g h) _ -> checkInd c i $ toEnum j 
+                        redKey = \(Index a b c d e f g h) -> (Index a b (delInd i c) d e f g h)
                         map2 = M.filterWithKey (checkKey) map1 
                         map3 = M.mapKeys redKey map2
 
     evalTensor_19_2 :: KnownNat n4 => Tensor n1 n2 n3 (n4+1) n5 n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     evalTensor_19_2 (Tensor map1) i j = Tensor map3
                     where 
-                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd d i $ toEnum j 
-                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,delInd i d,e,f,g,h)
+                        checkKey = \(Index a b c d e f g h) _ -> checkInd d i $ toEnum j 
+                        redKey = \(Index a b c d e f g h) -> (Index a b c (delInd i d) e f g h)
                         map2 = M.filterWithKey (checkKey) map1 
                         map3 = M.mapKeys redKey map2
 
     evalTensor_9_1 :: KnownNat n5 => Tensor n1 n2 n3 n4 (n5+1) n6 n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     evalTensor_9_1 (Tensor map1) i j = Tensor map3
                     where 
-                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd e i $ toEnum j 
-                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,d,delInd i e,f,g,h)
+                        checkKey = \(Index a b c d e f g h) _ -> checkInd e i $ toEnum j 
+                        redKey = \(Index a b c d e f g h) -> (Index a b c d (delInd i e) f g h)
                         map2 = M.filterWithKey (checkKey) map1 
                         map3 = M.mapKeys redKey map2
 
     evalTensor_9_2 :: KnownNat n6 => Tensor n1 n2 n3 n4 n5 (n6+1) n7 n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     evalTensor_9_2 (Tensor map1) i j = Tensor map3
                     where 
-                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd f i $ toEnum j 
-                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,d,e,delInd i f,g,h)
+                        checkKey = \(Index a b c d e f g h) _ -> checkInd f i $ toEnum j 
+                        redKey = \(Index a b c d e f g h) -> (Index a b c d e (delInd i f) g h)
                         map2 = M.filterWithKey (checkKey) map1 
                         map3 = M.mapKeys redKey map2
 
     evalTensor_3_1 :: KnownNat n7 => Tensor n1 n2 n3 n4 n5 n6 (n7+1) n8 a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     evalTensor_3_1 (Tensor map1) i j = Tensor map3
                     where 
-                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd g i $ toEnum j 
-                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,d,e,f,delInd i g,h)
+                        checkKey = \(Index a b c d e f g h) _ -> checkInd g i $ toEnum j 
+                        redKey = \(Index a b c d e f g h) -> (Index a b c d e f (delInd i g) h)
                         map2 = M.filterWithKey (checkKey) map1 
                         map3 = M.mapKeys redKey map2
 
     evalTensor_3_2 :: KnownNat n8 => Tensor n1 n2 n3 n4 n5 n6 n7 (n8+1) a -> Int -> Int -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     evalTensor_3_2 (Tensor map1) i j = Tensor map3
                     where 
-                        checkKey = \(a,b,c,d,e,f,g,h) _ -> checkInd h i $ toEnum j 
-                        redKey = \(a,b,c,d,e,f,g,h) -> (a,b,c,d,e,f,g,delInd i h)
+                        checkKey = \(Index a b c d e f g h) _ -> checkInd h i $ toEnum j 
+                        redKey = \(Index a b c d e f g h) -> (Index a b c d e f g (delInd i h))
                         map2 = M.filterWithKey (checkKey) map1 
                         map3 = M.mapKeys redKey map2
 

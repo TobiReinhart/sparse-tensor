@@ -16,9 +16,9 @@
 
 
 module Index (
-    Ind, mkInd, getValInd, getRangeList, sortInd, indSign2, 
+    Ind(..), mkInd, getValInd, getRangeList, sortInd, indSign2, 
     Uind_3(..), Lind_3(..), Uind_9(..), Lind_9(..), Uind_19(..), Lind_19(..), Uind_20(..), Lind_20(..),
-    Index, Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
+    Index(..), Uinds_3, Uinds_9, Uinds_19, Uinds_20, Linds_3, Linds_9, Linds_19, Linds_20,
      indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
      delContractionIndex_20, delContractionIndex_19, delContractionIndex_9, delContractionIndex_3, checkInd, delInd,
      splitIndex, contractionIndexList_20, contractionIndexList_19, contractionIndexList_9, contractionIndexList_3,
@@ -36,9 +36,9 @@ module Index (
     import Data.Foldable
     
 
-    --length indexed sequence data type
+    --length indexed sequence data type -> strict ??
 
-    data Ind (n::Nat) a = UnsafemkInd (S.Seq a) deriving (Show,Ord,Eq)
+    data Ind (n::Nat) a = UnsafemkInd !(S.Seq a) deriving (Show,Read,Ord,Eq)
 
     --we need a smart (value-) constructor (fromList ?)
 
@@ -159,27 +159,27 @@ module Index (
 
     --spacetimeindeices take values from 0 to 3
 
-    data Uind_3 = U0_3 | U1_3 | U2_3 | U3_3 deriving (Enum, Eq, Ord, Show)
+    data Uind_3 = U0_3 | U1_3 | U2_3 | U3_3 deriving (Enum, Eq, Ord, Show, Read)
 
-    data Lind_3 = L0_3 | L1_3 | L2_3 | L3_3 deriving (Enum, Eq, Ord, Show)
+    data Lind_3 = L0_3 | L1_3 | L2_3 | L3_3 deriving (Enum, Eq, Ord, Show, Read)
 
     --symmetric 2nd derivative indices have values from 0 to 9
 
-    data Uind_9 = U0_9 | U1_9 | U2_9 | U3_9 | U4_9 | U5_9 | U6_9 | U7_9 | U8_9 | U9_9 deriving (Enum, Eq, Ord, Show)
+    data Uind_9 = U0_9 | U1_9 | U2_9 | U3_9 | U4_9 | U5_9 | U6_9 | U7_9 | U8_9 | U9_9 deriving (Enum, Eq, Ord, Show, Read)
 
-    data Lind_9 = L0_9 | L1_9 | L2_9 | L3_9 | L4_9 | L5_9 | L6_9 | L7_9 | L8_9 | L9_9 deriving (Enum, Eq, Ord, Show)
+    data Lind_9 = L0_9 | L1_9 | L2_9 | L3_9 | L4_9 | L5_9 | L6_9 | L7_9 | L8_9 | L9_9 deriving (Enum, Eq, Ord, Show, Read)
 
     --symmetric 3rd derivative indices have values from 0 to 10
 
-    data Uind_19 = U0_19 | U1_19 | U2_19 | U3_19 | U4_19 | U5_19 | U6_19 | U7_19 | U8_19 | U9_19 | U10_19 | U11_19 | U12_19 | U13_19 | U14_19 | U15_19 | U16_19 | U17_19 | U18_19 | U19_19 deriving (Enum, Eq, Ord, Show)
+    data Uind_19 = U0_19 | U1_19 | U2_19 | U3_19 | U4_19 | U5_19 | U6_19 | U7_19 | U8_19 | U9_19 | U10_19 | U11_19 | U12_19 | U13_19 | U14_19 | U15_19 | U16_19 | U17_19 | U18_19 | U19_19 deriving (Enum, Eq, Ord, Show, Read)
 
-    data Lind_19 = L0_19 | L1_19 | L2_19 | L3_19 | L4_19 | L5_19 | L6_19 | L7_19 | L8_19 | L9_19 | L10_19 | L11_19 | L12_19 | L13_19 | L14_19 | L15_19 | L16_19 | L17_19 | L18_19 | L19_19 deriving (Enum, Eq, Ord, Show)
+    data Lind_19 = L0_19 | L1_19 | L2_19 | L3_19 | L4_19 | L5_19 | L6_19 | L7_19 | L8_19 | L9_19 | L10_19 | L11_19 | L12_19 | L13_19 | L14_19 | L15_19 | L16_19 | L17_19 | L18_19 | L19_19 deriving (Enum, Eq, Ord, Show, Read)
 
     --AreaMetric DOF indices have values form 0 to 20
 
-    data Uind_20 = U0_20 | U1_20 | U2_20 | U3_20 | U4_20 | U5_20 | U6_20 | U7_20 | U8_20 | U9_20 | U10_20 | U11_20 | U12_20 | U13_20 | U14_20 | U15_20 | U16_20 | U17_20 | U18_20 | U19_20 | U20_20 deriving (Enum, Eq, Ord, Show)
+    data Uind_20 = U0_20 | U1_20 | U2_20 | U3_20 | U4_20 | U5_20 | U6_20 | U7_20 | U8_20 | U9_20 | U10_20 | U11_20 | U12_20 | U13_20 | U14_20 | U15_20 | U16_20 | U17_20 | U18_20 | U19_20 | U20_20 deriving (Enum, Eq, Ord, Show, Read)
 
-    data Lind_20 = L0_20 | L1_20 | L2_20 | L3_20 | L4_20 | L5_20 | L6_20 | L7_20 | L8_20 | L9_20 | L10_20 | L11_20 | L12_20 | L13_20 | L14_20 | L15_20 | L16_20 | L17_20 | L18_20 | L19_20 | L20_20 deriving (Enum, Eq, Ord, Show)
+    data Lind_20 = L0_20 | L1_20 | L2_20 | L3_20 | L4_20 | L5_20 | L6_20 | L7_20 | L8_20 | L9_20 | L10_20 | L11_20 | L12_20 | L13_20 | L14_20 | L15_20 | L16_20 | L17_20 | L18_20 | L19_20 | L20_20 deriving (Enum, Eq, Ord, Show, Read)
 
     
     --now use these types to construct an index type
@@ -202,14 +202,17 @@ module Index (
 
     --now the general Index data types
 
-    type Index (n1::Nat) (n2::Nat) (n3::Nat) (n4::Nat) (n5::Nat) (n6::Nat) (n7::Nat) (n8::Nat) =  
-        (Uinds_20 n1, Linds_20 n2, Uinds_19 n3, Linds_19 n4, Uinds_9 n5, Linds_9 n6, Uinds_3 n7, Linds_3 n8) 
+   --type Index (n1::Nat) (n2::Nat) (n3::Nat) (n4::Nat) (n5::Nat) (n6::Nat) (n7::Nat) (n8::Nat) =  
+        --(Uinds_20 n1, Linds_20 n2, Uinds_19 n3, Linds_19 n4, Uinds_9 n5, Linds_9 n6, Uinds_3 n7, Linds_3 n8) 
+
+    data Index (n1::Nat) (n2::Nat) (n3::Nat) (n4::Nat) (n5::Nat) (n6::Nat) (n7::Nat) (n8::Nat) =
+        Index !(Uinds_20 n1) !(Linds_20 n2) !(Uinds_19 n3) !(Linds_19 n4) !(Uinds_9 n5) !(Linds_9 n6) !(Uinds_3 n7) !(Linds_3 n8) deriving (Show, Read, Ord, Eq)
 
     --we need constructors for Index
 
     indexList :: (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8) => 
         [Int] -> [Int] -> [Int] -> [Int] -> [Int] -> [Int] -> [Int] -> [Int] -> Index n1 n2 n3 n4 n5 n6 n7 n8
-    indexList a1 b1 c1 d1 e1 f1 g1 h1 = (a2,b2,c2,d2,e2,f2,g2,h2)
+    indexList a1 b1 c1 d1 e1 f1 g1 h1 = Index a2 b2 c2 d2 e2 f2 g2 h2
             where 
                 a2 = mkInd $ S.fromList $ map toEnum a1
                 b2 = mkInd $ S.fromList $ map toEnum b1
@@ -225,41 +228,41 @@ module Index (
     --maybe write this into seperate functions
 
     swapPosIndex :: Int -> (Int,Int) -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> Index n1 n2 n3 n4 n5 n6 n7 n8
-    swapPosIndex i j (a,b,c,d,e,f,g,h) 
-                | i == 1 = (swapPosInd j a, b, c, d, e, f, g, h)
-                | i == 2 = (a, swapPosInd j b, c, d, e, f, g, h)
-                | i == 3 = (a, b, swapPosInd j c, d, e, f, g, h)
-                | i == 4 = (a, b, c, swapPosInd j d, e, f, g, h)
-                | i == 5 = (a, b, c, d, swapPosInd j e, f, g, h)
-                | i == 6 = (a, b, c, d, e, swapPosInd j f, g, h)
-                | i == 7 = (a, b, c, d, e, f, swapPosInd j g, h)
-                | i == 8 = (a, b, c, d, e, f, g, swapPosInd j h)
+    swapPosIndex i j (Index a b c d e f g h) 
+                | i == 1 = Index (swapPosInd j a) b c d e f g h
+                | i == 2 = Index a (swapPosInd j b) c d e f g h
+                | i == 3 = Index a b (swapPosInd j c) d e f g h
+                | i == 4 = Index a b c (swapPosInd j d) e f g h
+                | i == 5 = Index a b c d (swapPosInd j e) f g h
+                | i == 6 = Index a b c d e (swapPosInd j f) g h
+                | i == 7 = Index a b c d e f (swapPosInd j g) h
+                | i == 8 = Index a b c d e f g (swapPosInd j h)
                 | otherwise = error "specified index position must be an int between 1 and 8"
 
                 
     swapBlockPosIndex :: Int -> ([Int],[Int]) -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> Index n1 n2 n3 n4 n5 n6 n7 n8
-    swapBlockPosIndex i j (a,b,c,d,e,f,g,h) 
-                | i == 1 = (swapBlockPosInd j a, b, c, d, e, f, g, h)
-                | i == 2 = (a, swapBlockPosInd j b, c, d, e, f, g, h)
-                | i == 3 = (a, b, swapBlockPosInd j c, d, e, f, g, h)
-                | i == 4 = (a, b, c, swapBlockPosInd j d, e, f, g, h)
-                | i == 5 = (a, b, c, d, swapBlockPosInd j e, f, g, h)
-                | i == 6 = (a, b, c, d, e, swapBlockPosInd j f, g, h)
-                | i == 7 = (a, b, c, d, e, f, swapBlockPosInd j g, h)
-                | i == 8 = (a, b, c, d, e, f, g, swapBlockPosInd j h)
+    swapBlockPosIndex i j (Index a b c d e f g h) 
+                | i == 1 = Index (swapBlockPosInd j a) b c d e f g h
+                | i == 2 = Index a (swapBlockPosInd j b) c d e f g h
+                | i == 3 = Index a b (swapBlockPosInd j c) d e f g h
+                | i == 4 = Index a b c (swapBlockPosInd j d) e f g h
+                | i == 5 = Index a b c d (swapBlockPosInd j e) f g h
+                | i == 6 = Index a b c d e (swapBlockPosInd j f) g h
+                | i == 7 = Index a b c d e f (swapBlockPosInd j g) h
+                | i == 8 = Index a b c d e f g (swapBlockPosInd j h)
                 | otherwise = error "specified index position must be an int between 1 and 8"
 
     
     cyclicSwapIndex :: Int -> [Int] -> (Index n1 n2 n3 n4 n5 n6 n7 n8) -> [Index n1 n2 n3 n4 n5 n6 n7 n8]
-    cyclicSwapIndex i j (a,b,c,d,e,f,g,h) 
-                 | i == 1 = map (\x -> (x,b,c,d,e,f,g,h)) (cyclicSwapInd j a)
-                 | i == 2 = map (\x -> (a,x,c,d,e,f,g,h)) (cyclicSwapInd j b)
-                 | i == 3 = map (\x -> (a,b,x,d,e,f,g,h)) (cyclicSwapInd j c)
-                 | i == 4 = map (\x -> (a,b,c,x,e,f,g,h)) (cyclicSwapInd j d)
-                 | i == 5 = map (\x -> (a,b,c,d,x,f,g,h)) (cyclicSwapInd j e)
-                 | i == 6 = map (\x -> (a,b,c,d,e,x,g,h)) (cyclicSwapInd j f)
-                 | i == 7 = map (\x -> (a,b,c,d,e,f,x,h)) (cyclicSwapInd j g)
-                 | i == 8 = map (\x -> (a,b,c,d,e,f,g,x)) (cyclicSwapInd j h)
+    cyclicSwapIndex i j (Index a b c d e f g h) 
+                 | i == 1 = map (\x -> (Index x b c d e f g h)) (cyclicSwapInd j a)
+                 | i == 2 = map (\x -> (Index a x c d e f g h)) (cyclicSwapInd j b)
+                 | i == 3 = map (\x -> (Index a b x d e f g h)) (cyclicSwapInd j c)
+                 | i == 4 = map (\x -> (Index a b c x e f g h)) (cyclicSwapInd j d)
+                 | i == 5 = map (\x -> (Index a b c d x f g h)) (cyclicSwapInd j e)
+                 | i == 6 = map (\x -> (Index a b c d e x g h)) (cyclicSwapInd j f)
+                 | i == 7 = map (\x -> (Index a b c d e f x h)) (cyclicSwapInd j g)
+                 | i == 8 = map (\x -> (Index a b c d e f g x)) (cyclicSwapInd j h)
                  | otherwise = error "specified index position must be an int between 1 and 8"
 
     --there are several other functions we might need to add later
@@ -267,8 +270,8 @@ module Index (
     --we need to be able to construct all possible combiantions of indices for the tensor product
 
     combineIndex :: Index n1 n2 n3 n4 n5 n6 n7 n8 -> Index m1 m2 m3 m4 m5 m6 m7 m8 -> Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8)
-    combineIndex (a1,b1,c1,d1,e1,f1,g1,h1) (a2,b2,c2,d2,e2,f2,g2,h2) = 
-        (combineInd a1 a2, combineInd b1 b2, combineInd c1 c2, combineInd d1 d2, combineInd e1 e2, combineInd f1 f2, combineInd g1 g2, combineInd h1 h2)
+    combineIndex (Index a1 b1 c1 d1 e1 f1 g1 h1) (Index a2 b2 c2 d2 e2 f2 g2 h2) = 
+        Index (combineInd a1 a2) (combineInd b1 b2) (combineInd c1 c2) (combineInd d1 d2) (combineInd e1 e2) (combineInd f1 f2) (combineInd g1 g2) (combineInd h1 h2)
 
     
     --we need the function for the contraction list
@@ -284,7 +287,7 @@ module Index (
     --returns true if the Index contributes to the contraction
 
     isContractionIndex :: Int -> (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> Bool
-    isContractionIndex i pair (a,b,c,d,e,f,g,h)
+    isContractionIndex i pair (Index a b c d e f g h)
                     | i == 1 = isContractionInd pair a b
                     | i == 2 = isContractionInd pair c d
                     | i == 3 = isContractionInd pair e f
@@ -293,19 +296,19 @@ module Index (
 
     delContractionIndex_20 :: (KnownNat n1, KnownNat n2) =>
         (Int,Int) -> Index (n1+1) (n2+1) n3 n4 n5 n6 n7 n8 -> Index n1 n2 n3 n4 n5 n6 n7 n8
-    delContractionIndex_20 (i,j) (a,b,c,d,e,f,g,h) = (delInd i a, delInd j b, c, d, e, f, g, h)
+    delContractionIndex_20 (i,j) (Index a b c d e f g h) = Index (delInd i a) (delInd j b) c d e f g h
 
     delContractionIndex_19 :: (KnownNat n3, KnownNat n4) =>
         (Int,Int) -> Index n1 n2 (n3+1) (n4+1) n5 n6 n7 n8 -> Index n1 n2 n3 n4 n5 n6 n7 n8
-    delContractionIndex_19 (i,j) (a,b,c,d,e,f,g,h) = (a, b, delInd i c, delInd j d, e, f, g, h)
+    delContractionIndex_19 (i,j) (Index a b c d e f g h) = Index a b (delInd i c) (delInd j d) e f g h
 
     delContractionIndex_9 :: (KnownNat n5, KnownNat n6) =>
         (Int,Int) -> Index n1 n2 n3 n4 (n5+1) (n6+1) n7 n8 -> Index n1 n2 n3 n4 n5 n6 n7 n8
-    delContractionIndex_9 (i,j) (a,b,c,d,e,f,g,h) = (a, b, c, d, delInd i e, delInd j f, g, h)
+    delContractionIndex_9 (i,j) (Index a b c d e f g h) = Index a b c d (delInd i e) (delInd j f) g h
 
     delContractionIndex_3 :: (KnownNat n7, KnownNat n8) =>
         (Int,Int) -> Index n1 n2 n3 n4 n5 n6 (n7+1) (n8+1) -> Index n1 n2 n3 n4 n5 n6 n7 n8
-    delContractionIndex_3 (i,j) (a,b,c,d,e,f,g,h) = (a, b, c, d, e, f, delInd i g, delInd j h)
+    delContractionIndex_3 (i,j) (Index a b c d e f g h) = Index a b c d e f (delInd i g) (delInd j h)
 
     --for the partial evaluation of tensor we need functions that check if a given Ind has a given value
 
@@ -316,7 +319,7 @@ module Index (
         KnownNat m1, KnownNat m2, KnownNat m3, KnownNat m4, KnownNat m5, KnownNat m6, KnownNat m7, KnownNat m8) =>
         (Int,Int,Int,Int,Int,Int,Int,Int) -> Index (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) -> 
         (Index n1 n2 n3 n4 n5 n6 n7 n8, Index m1 m2 m3 m4 m5 m6 m7 m8)
-    splitIndex (a,b,c,d,e,f,g,h) (i1,i2,i3,i4,i5,i6,i7,i8) = ((j1,j2,j3,j4,j5,j6,j7,j8),(k1,k2,k3,k4,k5,k6,k7,k8))
+    splitIndex (a,b,c,d,e,f,g,h) (Index i1 i2 i3 i4 i5 i6 i7 i8) = (Index j1 j2 j3 j4 j5 j6 j7 j8,Index k1 k2 k3 k4 k5 k6 k7 k8)
                 where
                     (j1,k1) = splitInd a i1 
                     (j2,k2) = splitInd b i2  
@@ -330,7 +333,7 @@ module Index (
 
     contractionIndexList_20 :: (KnownNat n1, KnownNat n2) =>
         (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> [Index (n1+1) (n2+1) n3 n4 n5 n6 n7 n8]
-    contractionIndexList_20 (i,j) (a,b,c,d,e,f,g,h) = zipWith (\x y -> (x,y,c,d,e,f,g,h)) a' b' 
+    contractionIndexList_20 (i,j) (Index a b c d e f g h) = zipWith (\x y -> (Index x y c d e f g h)) a' b' 
                 where
                     rangeList = [0..20]
                     a' = contractionIndList i a $ map toEnum rangeList
@@ -339,7 +342,7 @@ module Index (
 
     contractionIndexList_19 :: (KnownNat n3, KnownNat n4) =>
         (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> [Index n1 n2 (n3+1) (n4+1) n5 n6 n7 n8]
-    contractionIndexList_19 (i,j) (a,b,c,d,e,f,g,h) = zipWith (\x y -> (a,b,x,y,e,f,g,h)) c' d' 
+    contractionIndexList_19 (i,j) (Index a b c d e f g h) = zipWith (\x y -> (Index a b x y e f g h)) c' d' 
                 where
                     rangeList = [0..19]
                     c' = contractionIndList i c $ map toEnum rangeList
@@ -347,7 +350,7 @@ module Index (
 
     contractionIndexList_9 :: (KnownNat n5, KnownNat n6) =>
         (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> [Index n1 n2 n3 n4 (n5+1) (n6+1) n7 n8]
-    contractionIndexList_9 (i,j) (a,b,c,d,e,f,g,h) = zipWith (\x y -> (a,b,c,d,x,y,g,h)) e' f' 
+    contractionIndexList_9 (i,j) (Index a b c d e f g h) = zipWith (\x y -> (Index a b c d x y g h)) e' f' 
                 where
                     rangeList = [0..9]
                     e' = contractionIndList i e $ map toEnum rangeList
@@ -355,7 +358,7 @@ module Index (
 
     contractionIndexList_3 :: (KnownNat n7, KnownNat n8) =>
         (Int,Int) -> Index n1 n2 n3 n4 n5 n6 n7 n8 -> [Index n1 n2 n3 n4 n5 n6 (n7+1) (n8+1)]
-    contractionIndexList_3 (i,j) (a,b,c,d,e,f,g,h) = zipWith (\x y -> (a,b,c,d,e,f,x,y)) g' h' 
+    contractionIndexList_3 (i,j) (Index a b c d e f g h) = zipWith (\x y -> (Index a b c d e f x y)) g' h' 
                 where
                     rangeList = [0..3]
                     g' = contractionIndList i g $ map toEnum rangeList

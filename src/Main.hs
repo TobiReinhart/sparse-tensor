@@ -50,10 +50,12 @@ module Main (
     import Data.List
    
     -}
-    import TensorF
+    import Tensor
     import EquivarianceEqns
     import Index
     import qualified Data.Map.Strict as M
+    import Order2Int
+    import BasicTensors
     
      
 
@@ -703,6 +705,7 @@ module Main (
 
         -}
 
+        {-
         let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
         let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
 
@@ -738,5 +741,25 @@ module Main (
 
         print vals 
         
+        -}
 
+        let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
+        let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
 
+        let map1Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Linds_3 2) Uind_9  
+        let map2Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Uinds_3 2) Lind_9 
+
+        let trianI_3 = M.mapKeys mkInd triangleMap3 :: M.Map (Linds_3 3) Uind_19
+        let trianJ_3 = M.mapKeys mkInd triangleMap3 :: M.Map (Uinds_3 3) Lind_19
+
+        let intArea = interArea map1Area map2Area
+
+        let int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric
+
+        let flatInt = flatInter map1Area map2Area  
+
+        let intMetric = interMetric map1Metric map2Metric
+
+        let intCondAIBNew = intAIBNew intArea intMetric flatInt int3
+        
+        print $ evalFullTensor intCondAIBNew

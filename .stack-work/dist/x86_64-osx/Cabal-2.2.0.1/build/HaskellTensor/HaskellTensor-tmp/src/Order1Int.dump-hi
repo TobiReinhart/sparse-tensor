@@ -1,13 +1,13 @@
 
 ==================== FINAL INTERFACE ====================
-2019-01-31 12:58:22.111714 UTC
+2019-02-01 11:42:49.845149 UTC
 
-interface main:Order1Int [hpc] 8043
-  interface hash: a8012d33d7b19c054d0e5867f1d0a82e
-  ABI hash: 88514d6b94abf8ac19c2858f31da8469
+interface main:Order1Int 8043
+  interface hash: e286018c90c3341f93b7bcd55b55058e
+  ABI hash: 5bcc056f889efd6c020e78a0f3d750df
   export-list hash: 3156458f202b8180fa4d12d06df87b30
   orphan hash: e57ac501923ff142aace6542155aec7d
-  flag hash: 034627c3e6816f7545a7b63584c609bb
+  flag hash: 941ef95016433cfd417a6725e52dbf85
   opt_hash: 14e536840aca4e889cad654e6f9b79c1
   hpc_hash: 93b885adfe0da089cdf634904fd59f71
   sig of: Nothing
@@ -56,41 +56,42 @@ import  -/  base-4.11.1.0:GHC.Real b4beb0389ba1ad5d9640aae67848c5d3
 import  -/  base-4.11.1.0:Prelude 0750c25585e2b797cd78291d423d39dd
 import  -/  containers-0.5.11.0:Data.Map 0dbdaec812ef695a364aa6c69e7f7d53
 import  -/  containers-0.5.11.0:Data.Map.Internal 0150e210d0ae8df0f3a0669d5e32d8fa
-import  -/  BasicTensors 37af3f9a8fd59a713f944ac004973e4c
-  exports: a936cd94aa71589de0ffe8aa62c98d1e
-  aSymI_2 eeff560e74087b636ad919718b07ce3c
-  delta_3 8cc1e4b8317d66d7eca659c350329b06
-  flatArea fbe15ed48c6fdb6adf67a8daa949019a
-  interArea c20342d63b6344034b01aaa2ac26950f
-  interEqn1_2 db36d6110c82f1d673fc4c0425276420
-  interEqn1_3 57ab473d41cec6be447a5d9ae4521d74
-  invEta 52347259ce29e9b051664d61ef567a63
-import  -/  EquivarianceEqns 024c09c474101d82ccea2ae493ef0935
+import  -/  BasicTensors d370033bab7dfa9fcc69ea504e0a958d
+  exports: d7714270655295c06db8e25f1d3ae43c
+  aSymI_2 b412cb5818260abbd80b30e15bb34ec6
+  delta_3 20fe95723b0f42bf99216389c232614b
+  flatArea a47cade0010bb221e3d8fdf99e51dae5
+  interArea 3e55a2739fd7cf90177e2703d17359db
+  interEqn1_2 336e6115b7f9e70f11318e244a91bb27
+  interEqn1_3 98aafd70931bd3b29f3e0b9490a7e709
+  invEta 941c71f76301c1d3f9ad39087948b0c1
+import  -/  EquivarianceEqns f59ee1afa8c9f10e79bfa6c25205f4a0
   exports: 753233c47284511068d96a6925317f46
-import  -/  Index 71b3346044a1d0e00e59251850573a46
-  exports: 91057ce0b804927200140466044aa77d
-  Index 1f5ddc4679c562a7168aef180062eec5
-  Lind_20 06537182db1996ed045a0cd1b89858a5
-  Lind_9 7ecf2cdb519ad8d35de36386b0078158
-  Linds_3 e889a76254b9568bcd306a682aa34a7e
-  Uind_20 4bc2e2d710a65926fc1cbc6f81e36f73
-  Uind_9 d3fbf44c59cbc2b93a3471d3308e9718
-  Uinds_3 a3598cb2e3c7e8040d14aca7e8d357c5
-  getValInd 5c90c661410f5cfc2f14176d2316e42c
-import  -/  Ivar 40f81219a01d4a021d2869f9c4ec8065
+import  -/  Index 846d6195a6d682ebc4b5552893fd0d45
+  exports: 57bd4ebf86e1ac997dd2a9c3171f207b
+  Index f1b2e2d342d299287fa67a4a38056bc6
+  Index d1cd1067a874dee8fab194e163b456d3
+  Lind_20 8ff213bd2e4ee9794357cd73b8656e72
+  Lind_9 d899f69b9977ade0529b5015a71fa56c
+  Linds_3 c2218f06873d6e75f70ab22fa89ca846
+  Uind_20 da1c3284cea79be72eb1a0454a6da0ec
+  Uind_9 bdc578619f32ac1d154acb21ac900fa3
+  Uinds_3 8e007ccb52f8036461e378de4876a33c
+  getValInd 2f343080b63386f163ac2db0992f586e
+import  -/  Ivar 59828d84f4f392dde7d157e78b1e20aa
   exports: 847b7f62b7be31da91814bf314ffd8e5
-import  -/  Pde ee46c0f08935aa69c73c37bcf3103bae
-  exports: 5f26c9b1fc31234bc17b520659bce428
-import  -/  Tensor a23a73880b2c27c94d4da0de54dee0ec
-  exports: 652d5857d480c465fdf5ba71dcde1677
-  Tensor 4b013267227da1ee7744d7e5a0036bd0
-  Tensor ba59d8983dc93fba3a30d24b40148bfb
-  tensorAdd ffa73e4d3d0d9f351f17926e90320c54
-  tensorContractWith_20 a25204e5f61a8dd7bfafd0d945b634e9
-  tensorContractWith_3 60512091e70a83c1aec3d9e0e69c4150
-  tensorProductNumeric 3ceb169d18bc856c3b8ab815fcf92212
-  tensorSub fa755c70900c56cb9228bd5f8e3cb8d5
-  tensorTranspose 5419f653b93e8002279716673d331d33
+import  -/  Pde 01727937c27ae17d2b109d09ad686ca8
+  exports: b2cd66be74d90ac4a27aea2ce34825a2
+import  -/  Tensor c5dfa081ae5ad523bef39ca8def0f654
+  exports: af2b4fe26a34e82b11fcad14a4c891cb
+  Tensor 939d8f0d009a7bad571c4642c9cd98df
+  Tensor 6ebce5ff137d1d5d966e303383d35759
+  tensorAdd d99ca0e639c925dc556efc00daeae60d
+  tensorContractWith_20 75e177f0052fa4c7f69a2260778740ed
+  tensorContractWith_3 f04596f955f3e30f9459e535b650bdae
+  tensorProductNumeric 419d42041587ab991a229bb228dec18f
+  tensorSub 4712786dc2f094bb059ae94da1bab1e3
+  tensorTranspose bf772467c4363e927c1ee5deaa31eb8b
 ef87ba339c31a5fc28c22bb4f8d1c1a2
   $sfromList ::
     [((GHC.Types.Int, GHC.Types.Int), a)]
@@ -292,7 +293,7 @@ ac456c5462f1506939983c3e7f4fc065
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a1
   {- Arity: 5, Strictness: <L,U><L,1*U(U)><L,U(U)><L,U><S,1*U>,
      Inline: [0] -}
-454b23411658135d9d3ab68e564a6e66
+3d7578d262fc48db7c22a66be20eeae2
   $wansatzA ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -304,168 +305,153 @@ ac456c5462f1506939983c3e7f4fc065
                            (Index.Linds_3 4) Index.Uind_20)
                    (w1 :: Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20)
                    (w2 :: Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9) ->
-                 case {__scc {main:Order1Int.ansatzA} True True} let {
-                                                                   totalBlock2 :: Tensor.Tensor
-                                                                                    0
-                                                                                    0
-                                                                                    0
-                                                                                    0
-                                                                                    1
-                                                                                    0
-                                                                                    1
-                                                                                    1
-                                                                                    GHC.Real.Rational
-                                                                   = let {
-                                                                       antiSym :: Tensor.Tensor
-                                                                                    0
-                                                                                    0
-                                                                                    0
-                                                                                    0
-                                                                                    1
-                                                                                    0
-                                                                                    0
-                                                                                    2
-                                                                                    GHC.Real.Rational
-                                                                       = {__scc {main:Order1Int.ansatzA.antiSym} True True} BasicTensors.aSymI_2
-                                                                                                                              w2
-                                                                     } in
-                                                                     {__scc {main:Order1Int.ansatzA.totalBlock2} True True} case (Order1Int.ansatzA7
-                                                                                                                                    BasicTensors.invEta
-                                                                                                                                    antiSym)
-                                                                                                                                   `cast`
-                                                                                                                                 (Tensor.Tensor
-                                                                                                                                    (Add0L (<0>_N))
-                                                                                                                                    (Add0L (<0>_N))
-                                                                                                                                    (Add0L (<0>_N))
-                                                                                                                                    (Add0L (<0>_N))
-                                                                                                                                    (Add0L (<1>_N))
-                                                                                                                                    (Add0L (<0>_N))
-                                                                                                                                    (Add0R (<2>_N) ; Sym (AddDef (<1>_N,
-                                                                                                                                                                  <1>_N)))
-                                                                                                                                    (Add0L (<2>_N) ; Sym (AddDef (<1>_N,
-                                                                                                                                                                  <1>_N)))
-                                                                                                                                    <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
-                                                                                                                            case Tensor.$wtensorContractWith_3
-                                                                                                                                   @ 1
-                                                                                                                                   @ 1
-                                                                                                                                   @ GHC.Real.Rational
-                                                                                                                                   @ 0
-                                                                                                                                   @ 0
-                                                                                                                                   @ 0
-                                                                                                                                   @ 0
-                                                                                                                                   @ 1
-                                                                                                                                   @ 0
-                                                                                                                                   Order1Int.$stensorContractWith_1
-                                                                                                                                     `cast`
-                                                                                                                                   (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                             <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                                                                                   Order1Int.$stensorContractWith_1
-                                                                                                                                     `cast`
-                                                                                                                                   (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                             <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                                                                                   Order1Int.ansatzA6
-                                                                                                                                   GHC.Real.$fEnumRatio_$s$c+
-                                                                                                                                   ww1 of ww2 { Unit# ww3 ->
-                                                                                                                            Tensor.Tensor
-                                                                                                                              @ 0
-                                                                                                                              @ 0
-                                                                                                                              @ 0
-                                                                                                                              @ 0
-                                                                                                                              @ 1
-                                                                                                                              @ 0
-                                                                                                                              @ 1
-                                                                                                                              @ 1
-                                                                                                                              @ GHC.Real.Rational
-                                                                                                                              ww3 } }
-                                                                 } in
-                                                                 let {
-                                                                   intArea :: Tensor.Tensor
-                                                                                1
-                                                                                1
-                                                                                0
-                                                                                0
-                                                                                0
-                                                                                0
-                                                                                1
-                                                                                1
-                                                                                GHC.Real.Rational
-                                                                   = {__scc {main:Order1Int.ansatzA.intArea} True True} BasicTensors.interArea
-                                                                                                                          w
-                                                                                                                          w1
-                                                                 } in
-                                                                 ({__scc {main:Order1Int.ansatzA.prod} True True} Order1Int.ansatzA5
-                                                                                                                    intArea
-                                                                                                                    totalBlock2)
-                                                                   `cast`
-                                                                 (Tensor.Tensor
-                                                                    (Add0R (<1>_N))
-                                                                    (Add0R (<1>_N))
-                                                                    (Add0L (<0>_N))
-                                                                    (Add0L (<0>_N))
-                                                                    (Add0L (<1>_N))
-                                                                    (Add0L (<0>_N))
-                                                                    <1 GHC.TypeNats.+ 1>_N
-                                                                    <1 GHC.TypeNats.+ 1>_N
-                                                                    <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
-                 case {__scc {main:Order1Int.ansatzA} False True} Tensor.$wtensorContractWith_3
-                                                                    @ 1
-                                                                    @ 1
-                                                                    @ GHC.Real.Rational
-                                                                    @ 1
-                                                                    @ 1
-                                                                    @ 0
-                                                                    @ 0
-                                                                    @ 1
-                                                                    @ 0
-                                                                    Order1Int.$stensorContractWith_1
-                                                                      `cast`
-                                                                    (Sym (GHC.TypeNats.N:SNat[0]
-                                                                              <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                    Order1Int.$stensorContractWith_1
-                                                                      `cast`
-                                                                    (Sym (GHC.TypeNats.N:SNat[0]
-                                                                              <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                    Order1Int.ansatzA3
-                                                                    GHC.Real.$fEnumRatio_$s$c+
-                                                                    ww1 of ww2 { Unit# ww3 ->
-                 {__scc {main:Order1Int.ansatzA} False True} Tensor.$wtensorContractWith_3
-                                                               @ 0
-                                                               @ 0
-                                                               @ GHC.Real.Rational
-                                                               @ 1
-                                                               @ 1
-                                                               @ 0
-                                                               @ 0
-                                                               @ 1
-                                                               @ 0
-                                                               Order1Int.$stensorContractWith_3
-                                                                 `cast`
-                                                               (Sym (GHC.TypeNats.N:SNat[0]
-                                                                         <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
-                                                               Order1Int.$stensorContractWith_3
-                                                                 `cast`
-                                                               (Sym (GHC.TypeNats.N:SNat[0]
-                                                                         <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
-                                                               Order1Int.ansatzA1
-                                                               GHC.Real.$fEnumRatio_$s$c+
-                                                               ww3
-                                                                 `cast`
-                                                               (Data.Map.Internal.Map
-                                                                  ((,,,,,,,)
-                                                                     <Index.Ind 1 Index.Uind_20>_N
-                                                                     <Index.Ind 1 Index.Lind_20>_N
-                                                                     <Index.Ind 0 Index.Uind_19>_N
-                                                                     <Index.Ind 0 Index.Lind_19>_N
-                                                                     <Index.Ind 1 Index.Uind_9>_N
-                                                                     <Index.Ind 0 Index.Lind_9>_N
-                                                                     (Index.Ind
-                                                                        (Sym (Add0L (<1>_N)))
-                                                                        <Index.Uind_3>_N)_N
-                                                                     (Index.Ind
-                                                                        (Sym (Add0L (<1>_N)))
-                                                                        <Index.Lind_3>_N)_N)_N
-                                                                  <GHC.Real.Rational>_R)_R } }) -}
-89dfa5e23a99509d588bb876574cb7c5
+                 case BasicTensors.$winterArea w w1 of ww { Unit# ww2 ->
+                 case BasicTensors.invEta of ww1 { Tensor.Tensor ww3 ->
+                 case BasicTensors.$waSymI_2 w2 of ww4 { Unit# ww5 ->
+                 case Tensor.$wtensorProductNumeric
+                        @ GHC.Real.Rational
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 2
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 2
+                        GHC.Real.$fFractionalRatio_$s$fNumRatio
+                        GHC.Real.$fOrdRatio_$s$fEqRatio
+                        ww3
+                        ww5 of ww6 { Unit# ww7 ->
+                 case Tensor.$wtensorContractWith_3
+                        @ 1
+                        @ 1
+                        @ GHC.Real.Rational
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.ansatzA5
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww7
+                          `cast`
+                        (Data.Map.Internal.Map
+                           (Index.Index
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<1>_N))
+                              (Add0L (<0>_N))
+                              (Add0R (<2>_N) ; Sym (AddDef (<1>_N, <1>_N)))
+                              (Add0L (<2>_N) ; Sym (AddDef (<1>_N, <1>_N))))_N
+                           <GHC.Real.Rational>_R)_R of ww8 { Unit# ww9 ->
+                 case Tensor.$wtensorProductNumeric
+                        @ GHC.Real.Rational
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 1
+                        @ 1
+                        GHC.Real.$fFractionalRatio_$s$fNumRatio
+                        GHC.Real.$fOrdRatio_$s$fEqRatio
+                        ww2
+                        ww9 of ww10 { Unit# ww11 ->
+                 case Tensor.$wtensorContractWith_3
+                        @ 1
+                        @ 1
+                        @ GHC.Real.Rational
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.ansatzA3
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww11
+                          `cast`
+                        (Data.Map.Internal.Map
+                           (Index.Index
+                              (Add0R (<1>_N))
+                              (Add0R (<1>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<1>_N))
+                              (Add0L (<0>_N))
+                              <1 GHC.TypeNats.+ 1>_N
+                              <1 GHC.TypeNats.+ 1>_N)_N
+                           <GHC.Real.Rational>_R)_R of ww12 { Unit# ww13 ->
+                 Tensor.$wtensorContractWith_3
+                   @ 0
+                   @ 0
+                   @ GHC.Real.Rational
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 0
+                   Order1Int.$stensorContractWith_3
+                     `cast`
+                   (Sym (GHC.TypeNats.N:SNat[0]
+                             <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
+                   Order1Int.$stensorContractWith_3
+                     `cast`
+                   (Sym (GHC.TypeNats.N:SNat[0]
+                             <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
+                   Order1Int.ansatzA1
+                   GHC.Real.$fEnumRatio_$s$c+
+                   ww13
+                     `cast`
+                   (Data.Map.Internal.Map
+                      (Index.Index
+                         <1>_N
+                         <1>_N
+                         <0>_N
+                         <0>_N
+                         <1>_N
+                         <0>_N
+                         (Sym (Add0L (<1>_N)))
+                         (Sym (Add0L (<1>_N))))_N
+                      <GHC.Real.Rational>_R)_R } } } } } } }) -}
+46b052c4db9e0b77ddfb06beaaf9213a
   $wansatzAI3 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -479,170 +465,153 @@ ac456c5462f1506939983c3e7f4fc065
                    (w1 :: Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20)
                    (w2 :: Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9)
                    (w3 :: Data.Map.Internal.Map (Index.Uinds_3 2) Index.Lind_9) ->
-                 case {__scc {main:Order1Int.ansatzAI3} True True} let {
-                                                                     totalBlock2 :: Tensor.Tensor
-                                                                                      0
-                                                                                      0
-                                                                                      0
-                                                                                      0
-                                                                                      1
-                                                                                      0
-                                                                                      1
-                                                                                      1
-                                                                                      GHC.Real.Rational
-                                                                     = let {
-                                                                         antiSym :: Tensor.Tensor
-                                                                                      0
-                                                                                      0
-                                                                                      0
-                                                                                      0
-                                                                                      1
-                                                                                      0
-                                                                                      0
-                                                                                      2
-                                                                                      GHC.Real.Rational
-                                                                         = {__scc {main:Order1Int.ansatzAI3.antiSym} True True} BasicTensors.aSymI_2
-                                                                                                                                  w2
-                                                                       } in
-                                                                       {__scc {main:Order1Int.ansatzAI3.totalBlock2} True True} case (Order1Int.ansatzAI2
-                                                                                                                                        BasicTensors.invEta
-                                                                                                                                        antiSym)
-                                                                                                                                       `cast`
-                                                                                                                                     (Tensor.Tensor
-                                                                                                                                        (Add0L (<0>_N))
-                                                                                                                                        (Add0L (<0>_N))
-                                                                                                                                        (Add0L (<0>_N))
-                                                                                                                                        (Add0L (<0>_N))
-                                                                                                                                        (Add0L (<1>_N))
-                                                                                                                                        (Add0L (<0>_N))
-                                                                                                                                        (Add0R (<2>_N) ; Sym (AddDef (<1>_N,
-                                                                                                                                                                      <1>_N)))
-                                                                                                                                        (Add0L (<2>_N) ; Sym (AddDef (<1>_N,
-                                                                                                                                                                      <1>_N)))
-                                                                                                                                        <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
-                                                                                                                                case Tensor.$wtensorContractWith_3
-                                                                                                                                       @ 1
-                                                                                                                                       @ 1
-                                                                                                                                       @ GHC.Real.Rational
-                                                                                                                                       @ 0
-                                                                                                                                       @ 0
-                                                                                                                                       @ 0
-                                                                                                                                       @ 0
-                                                                                                                                       @ 1
-                                                                                                                                       @ 0
-                                                                                                                                       Order1Int.$stensorContractWith_1
-                                                                                                                                         `cast`
-                                                                                                                                       (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                                 <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                                                                                       Order1Int.$stensorContractWith_1
-                                                                                                                                         `cast`
-                                                                                                                                       (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                                 <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                                                                                       Order1Int.ansatzA6
-                                                                                                                                       GHC.Real.$fEnumRatio_$s$c+
-                                                                                                                                       ww1 of ww2 { Unit# ww3 ->
-                                                                                                                                Tensor.Tensor
-                                                                                                                                  @ 0
-                                                                                                                                  @ 0
-                                                                                                                                  @ 0
-                                                                                                                                  @ 0
-                                                                                                                                  @ 1
-                                                                                                                                  @ 0
-                                                                                                                                  @ 1
-                                                                                                                                  @ 1
-                                                                                                                                  @ GHC.Real.Rational
-                                                                                                                                  ww3 } }
-                                                                   } in
-                                                                   let {
-                                                                     int3 :: Tensor.Tensor
-                                                                               1
-                                                                               1
-                                                                               0
-                                                                               0
-                                                                               1
-                                                                               1
-                                                                               1
-                                                                               1
-                                                                               GHC.Real.Rational
-                                                                     = {__scc {main:Order1Int.ansatzAI3.int3} True True} BasicTensors.interEqn1_3
-                                                                                                                           w
-                                                                                                                           w1
-                                                                                                                           w2
-                                                                                                                           w3
-                                                                   } in
-                                                                   ({__scc {main:Order1Int.ansatzAI3.prod} True True} Order1Int.ansatzAI1
-                                                                                                                        int3
-                                                                                                                        totalBlock2)
-                                                                     `cast`
-                                                                   (Tensor.Tensor
-                                                                      (Add0R (<1>_N))
-                                                                      (Add0R (<1>_N))
-                                                                      (Add0L (<0>_N))
-                                                                      (Add0L (<0>_N))
-                                                                      (AddDef (<1>_N, <1>_N))
-                                                                      (Add0R (<1>_N))
-                                                                      <1 GHC.TypeNats.+ 1>_N
-                                                                      <1 GHC.TypeNats.+ 1>_N
-                                                                      <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
-                 case {__scc {main:Order1Int.ansatzAI3} False True} Tensor.$wtensorContractWith_3
-                                                                      @ 1
-                                                                      @ 1
-                                                                      @ GHC.Real.Rational
-                                                                      @ 1
-                                                                      @ 1
-                                                                      @ 0
-                                                                      @ 0
-                                                                      @ 2
-                                                                      @ 1
-                                                                      Order1Int.$stensorContractWith_1
-                                                                        `cast`
-                                                                      (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                      Order1Int.$stensorContractWith_1
-                                                                        `cast`
-                                                                      (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                      Order1Int.ansatzA3
-                                                                      GHC.Real.$fEnumRatio_$s$c+
-                                                                      ww1 of ww2 { Unit# ww3 ->
-                 {__scc {main:Order1Int.ansatzAI3} False True} Tensor.$wtensorContractWith_3
-                                                                 @ 0
-                                                                 @ 0
-                                                                 @ GHC.Real.Rational
-                                                                 @ 1
-                                                                 @ 1
-                                                                 @ 0
-                                                                 @ 0
-                                                                 @ 2
-                                                                 @ 1
-                                                                 Order1Int.$stensorContractWith_3
-                                                                   `cast`
-                                                                 (Sym (GHC.TypeNats.N:SNat[0]
-                                                                           <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
-                                                                 Order1Int.$stensorContractWith_3
-                                                                   `cast`
-                                                                 (Sym (GHC.TypeNats.N:SNat[0]
-                                                                           <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
-                                                                 Order1Int.ansatzA1
-                                                                 GHC.Real.$fEnumRatio_$s$c+
-                                                                 ww3
-                                                                   `cast`
-                                                                 (Data.Map.Internal.Map
-                                                                    ((,,,,,,,)
-                                                                       <Index.Ind 1 Index.Uind_20>_N
-                                                                       <Index.Ind 1 Index.Lind_20>_N
-                                                                       <Index.Ind 0 Index.Uind_19>_N
-                                                                       <Index.Ind 0 Index.Lind_19>_N
-                                                                       <Index.Ind 2 Index.Uind_9>_N
-                                                                       <Index.Ind 1 Index.Lind_9>_N
-                                                                       (Index.Ind
-                                                                          (Sym (Add0L (<1>_N)))
-                                                                          <Index.Uind_3>_N)_N
-                                                                       (Index.Ind
-                                                                          (Sym (Add0L (<1>_N)))
-                                                                          <Index.Lind_3>_N)_N)_N
-                                                                    <GHC.Real.Rational>_R)_R } }) -}
-0a00de42e6c823734ca0dc94a5f91346
+                 case BasicTensors.$winterEqn1_3 w w1 w2 w3 of ww { Unit# ww2 ->
+                 case BasicTensors.invEta of ww1 { Tensor.Tensor ww3 ->
+                 case BasicTensors.$waSymI_2 w2 of ww4 { Unit# ww5 ->
+                 case Tensor.$wtensorProductNumeric
+                        @ GHC.Real.Rational
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 2
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 2
+                        GHC.Real.$fFractionalRatio_$s$fNumRatio
+                        GHC.Real.$fOrdRatio_$s$fEqRatio
+                        ww3
+                        ww5 of ww6 { Unit# ww7 ->
+                 case Tensor.$wtensorContractWith_3
+                        @ 1
+                        @ 1
+                        @ GHC.Real.Rational
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.ansatzA5
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww7
+                          `cast`
+                        (Data.Map.Internal.Map
+                           (Index.Index
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<1>_N))
+                              (Add0L (<0>_N))
+                              (Add0R (<2>_N) ; Sym (AddDef (<1>_N, <1>_N)))
+                              (Add0L (<2>_N) ; Sym (AddDef (<1>_N, <1>_N))))_N
+                           <GHC.Real.Rational>_R)_R of ww8 { Unit# ww9 ->
+                 case Tensor.$wtensorProductNumeric
+                        @ GHC.Real.Rational
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 1
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 1
+                        @ 1
+                        GHC.Real.$fFractionalRatio_$s$fNumRatio
+                        GHC.Real.$fOrdRatio_$s$fEqRatio
+                        ww2
+                        ww9 of ww10 { Unit# ww11 ->
+                 case Tensor.$wtensorContractWith_3
+                        @ 1
+                        @ 1
+                        @ GHC.Real.Rational
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 2
+                        @ 1
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.ansatzA3
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww11
+                          `cast`
+                        (Data.Map.Internal.Map
+                           (Index.Index
+                              (Add0R (<1>_N))
+                              (Add0R (<1>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (AddDef (<1>_N, <1>_N))
+                              (Add0R (<1>_N))
+                              <1 GHC.TypeNats.+ 1>_N
+                              <1 GHC.TypeNats.+ 1>_N)_N
+                           <GHC.Real.Rational>_R)_R of ww12 { Unit# ww13 ->
+                 Tensor.$wtensorContractWith_3
+                   @ 0
+                   @ 0
+                   @ GHC.Real.Rational
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 2
+                   @ 1
+                   Order1Int.$stensorContractWith_3
+                     `cast`
+                   (Sym (GHC.TypeNats.N:SNat[0]
+                             <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
+                   Order1Int.$stensorContractWith_3
+                     `cast`
+                   (Sym (GHC.TypeNats.N:SNat[0]
+                             <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
+                   Order1Int.ansatzA1
+                   GHC.Real.$fEnumRatio_$s$c+
+                   ww13
+                     `cast`
+                   (Data.Map.Internal.Map
+                      (Index.Index
+                         <1>_N
+                         <1>_N
+                         <0>_N
+                         <0>_N
+                         <2>_N
+                         <1>_N
+                         (Sym (Add0L (<1>_N)))
+                         (Sym (Add0L (<1>_N))))_N
+                      <GHC.Real.Rational>_R)_R } } } } } } }) -}
+b70b566856edb17ec6017b82cc967f0a
   $wansatzAa ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -654,170 +623,153 @@ ac456c5462f1506939983c3e7f4fc065
                            (Index.Linds_3 4) Index.Uind_20)
                    (w1 :: Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20)
                    (w2 :: Data.Map.Internal.Map (Index.Linds_3 2) Index.Uind_9) ->
-                 case {__scc {main:Order1Int.ansatzAa} True True} let {
-                                                                    totalBlock2 :: Tensor.Tensor
-                                                                                     0
-                                                                                     0
-                                                                                     0
-                                                                                     0
-                                                                                     1
-                                                                                     0
-                                                                                     1
-                                                                                     1
-                                                                                     GHC.Real.Rational
-                                                                    = let {
-                                                                        antiSym :: Tensor.Tensor
-                                                                                     0
-                                                                                     0
-                                                                                     0
-                                                                                     0
-                                                                                     1
-                                                                                     0
-                                                                                     0
-                                                                                     2
-                                                                                     GHC.Real.Rational
-                                                                        = {__scc {main:Order1Int.ansatzAa.antiSym} True True} BasicTensors.aSymI_2
-                                                                                                                                w2
-                                                                      } in
-                                                                      {__scc {main:Order1Int.ansatzAa.totalBlock2} True True} case (Order1Int.ansatzAa5
-                                                                                                                                      BasicTensors.invEta
-                                                                                                                                      antiSym)
-                                                                                                                                     `cast`
-                                                                                                                                   (Tensor.Tensor
-                                                                                                                                      (Add0L (<0>_N))
-                                                                                                                                      (Add0L (<0>_N))
-                                                                                                                                      (Add0L (<0>_N))
-                                                                                                                                      (Add0L (<0>_N))
-                                                                                                                                      (Add0L (<1>_N))
-                                                                                                                                      (Add0L (<0>_N))
-                                                                                                                                      (Add0R (<2>_N) ; Sym (AddDef (<1>_N,
-                                                                                                                                                                    <1>_N)))
-                                                                                                                                      (Add0L (<2>_N) ; Sym (AddDef (<1>_N,
-                                                                                                                                                                    <1>_N)))
-                                                                                                                                      <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
-                                                                                                                              case Tensor.$wtensorContractWith_3
-                                                                                                                                     @ 1
-                                                                                                                                     @ 1
-                                                                                                                                     @ GHC.Real.Rational
-                                                                                                                                     @ 0
-                                                                                                                                     @ 0
-                                                                                                                                     @ 0
-                                                                                                                                     @ 0
-                                                                                                                                     @ 1
-                                                                                                                                     @ 0
-                                                                                                                                     Order1Int.$stensorContractWith_1
-                                                                                                                                       `cast`
-                                                                                                                                     (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                               <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                                                                                     Order1Int.$stensorContractWith_1
-                                                                                                                                       `cast`
-                                                                                                                                     (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                               <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                                                                                     Order1Int.ansatzA6
-                                                                                                                                     GHC.Real.$fEnumRatio_$s$c+
-                                                                                                                                     ww1 of ww2 { Unit# ww3 ->
-                                                                                                                              Tensor.Tensor
-                                                                                                                                @ 0
-                                                                                                                                @ 0
-                                                                                                                                @ 0
-                                                                                                                                @ 0
-                                                                                                                                @ 1
-                                                                                                                                @ 0
-                                                                                                                                @ 1
-                                                                                                                                @ 1
-                                                                                                                                @ GHC.Real.Rational
-                                                                                                                                ww3 } }
-                                                                  } in
-                                                                  let {
-                                                                    int2 :: Tensor.Tensor
-                                                                              1
-                                                                              1
-                                                                              0
-                                                                              0
-                                                                              0
-                                                                              0
-                                                                              2
-                                                                              2
-                                                                              GHC.Real.Rational
-                                                                    = {__scc {main:Order1Int.ansatzAa.int2} True True} BasicTensors.interEqn1_2
-                                                                                                                         w
-                                                                                                                         w1
-                                                                  } in
-                                                                  ({__scc {main:Order1Int.ansatzAa.prod} True True} Order1Int.ansatzAa4
-                                                                                                                      int2
-                                                                                                                      totalBlock2)
-                                                                    `cast`
-                                                                  (Tensor.Tensor
-                                                                     (Add0R (<1>_N))
-                                                                     (Add0R (<1>_N))
-                                                                     (Add0L (<0>_N))
-                                                                     (Add0L (<0>_N))
-                                                                     (Add0L (<1>_N))
-                                                                     (Add0L (<0>_N))
-                                                                     <2 GHC.TypeNats.+ 1>_N
-                                                                     <2 GHC.TypeNats.+ 1>_N
-                                                                     <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
-                 case {__scc {main:Order1Int.ansatzAa} False True} Tensor.$wtensorContractWith_3
-                                                                     @ 2
-                                                                     @ 2
-                                                                     @ GHC.Real.Rational
-                                                                     @ 1
-                                                                     @ 1
-                                                                     @ 0
-                                                                     @ 0
-                                                                     @ 1
-                                                                     @ 0
-                                                                     Order1Int.$stensorContractWith_8
-                                                                       `cast`
-                                                                     (Sym (GHC.TypeNats.N:SNat[0]
-                                                                               <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
-                                                                     Order1Int.$stensorContractWith_8
-                                                                       `cast`
-                                                                     (Sym (GHC.TypeNats.N:SNat[0]
-                                                                               <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
-                                                                     Order1Int.ansatzAa2
-                                                                     GHC.Real.$fEnumRatio_$s$c+
-                                                                     ww1 of ww2 { Unit# ww3 ->
-                 {__scc {main:Order1Int.ansatzAa} False True} Tensor.$wtensorContractWith_3
-                                                                @ 1
-                                                                @ 1
-                                                                @ GHC.Real.Rational
-                                                                @ 1
-                                                                @ 1
-                                                                @ 0
-                                                                @ 0
-                                                                @ 1
-                                                                @ 0
-                                                                Order1Int.$stensorContractWith_1
-                                                                  `cast`
-                                                                (Sym (GHC.TypeNats.N:SNat[0]
-                                                                          <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                Order1Int.$stensorContractWith_1
-                                                                  `cast`
-                                                                (Sym (GHC.TypeNats.N:SNat[0]
-                                                                          <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                Order1Int.ansatzAa1
-                                                                GHC.Real.$fEnumRatio_$s$c+
-                                                                ww3
-                                                                  `cast`
-                                                                (Data.Map.Internal.Map
-                                                                   ((,,,,,,,)
-                                                                      <Index.Ind 1 Index.Uind_20>_N
-                                                                      <Index.Ind 1 Index.Lind_20>_N
-                                                                      <Index.Ind 0 Index.Uind_19>_N
-                                                                      <Index.Ind 0 Index.Lind_19>_N
-                                                                      <Index.Ind 1 Index.Uind_9>_N
-                                                                      <Index.Ind 0 Index.Lind_9>_N
-                                                                      (Index.Ind
-                                                                         (Sym (AddDef (<1>_N,
-                                                                                       <1>_N)))
-                                                                         <Index.Uind_3>_N)_N
-                                                                      (Index.Ind
-                                                                         (Sym (AddDef (<1>_N,
-                                                                                       <1>_N)))
-                                                                         <Index.Lind_3>_N)_N)_N
-                                                                   <GHC.Real.Rational>_R)_R } }) -}
-8b902e7ecdee9af97d232a490f822ebf
+                 case BasicTensors.$winterEqn1_2 w w1 of ww { Unit# ww2 ->
+                 case BasicTensors.invEta of ww1 { Tensor.Tensor ww3 ->
+                 case BasicTensors.$waSymI_2 w2 of ww4 { Unit# ww5 ->
+                 case Tensor.$wtensorProductNumeric
+                        @ GHC.Real.Rational
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 2
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 2
+                        GHC.Real.$fFractionalRatio_$s$fNumRatio
+                        GHC.Real.$fOrdRatio_$s$fEqRatio
+                        ww3
+                        ww5 of ww6 { Unit# ww7 ->
+                 case Tensor.$wtensorContractWith_3
+                        @ 1
+                        @ 1
+                        @ GHC.Real.Rational
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.ansatzA5
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww7
+                          `cast`
+                        (Data.Map.Internal.Map
+                           (Index.Index
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<1>_N))
+                              (Add0L (<0>_N))
+                              (Add0R (<2>_N) ; Sym (AddDef (<1>_N, <1>_N)))
+                              (Add0L (<2>_N) ; Sym (AddDef (<1>_N, <1>_N))))_N
+                           <GHC.Real.Rational>_R)_R of ww8 { Unit# ww9 ->
+                 case Tensor.$wtensorProductNumeric
+                        @ GHC.Real.Rational
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 2
+                        @ 2
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 1
+                        @ 1
+                        GHC.Real.$fFractionalRatio_$s$fNumRatio
+                        GHC.Real.$fOrdRatio_$s$fEqRatio
+                        ww2
+                        ww9 of ww10 { Unit# ww11 ->
+                 case Tensor.$wtensorContractWith_3
+                        @ 2
+                        @ 2
+                        @ GHC.Real.Rational
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 0
+                        Order1Int.$stensorContractWith_8
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
+                        Order1Int.$stensorContractWith_8
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <2>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <2>_N)
+                        Order1Int.ansatzAa2
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww11
+                          `cast`
+                        (Data.Map.Internal.Map
+                           (Index.Index
+                              (Add0R (<1>_N))
+                              (Add0R (<1>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<1>_N))
+                              (Add0L (<0>_N))
+                              <2 GHC.TypeNats.+ 1>_N
+                              <2 GHC.TypeNats.+ 1>_N)_N
+                           <GHC.Real.Rational>_R)_R of ww12 { Unit# ww13 ->
+                 Tensor.$wtensorContractWith_3
+                   @ 1
+                   @ 1
+                   @ GHC.Real.Rational
+                   @ 1
+                   @ 1
+                   @ 0
+                   @ 0
+                   @ 1
+                   @ 0
+                   Order1Int.$stensorContractWith_1
+                     `cast`
+                   (Sym (GHC.TypeNats.N:SNat[0]
+                             <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                   Order1Int.$stensorContractWith_1
+                     `cast`
+                   (Sym (GHC.TypeNats.N:SNat[0]
+                             <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                   Order1Int.ansatzAa1
+                   GHC.Real.$fEnumRatio_$s$c+
+                   ww13
+                     `cast`
+                   (Data.Map.Internal.Map
+                      (Index.Index
+                         <1>_N
+                         <1>_N
+                         <0>_N
+                         <0>_N
+                         <1>_N
+                         <0>_N
+                         (Sym (AddDef (<1>_N, <1>_N)))
+                         (Sym (AddDef (<1>_N, <1>_N))))_N
+                      <GHC.Real.Rational>_R)_R } } } } } } }) -}
+1e533ac6be6f6aaeef7fa6abc92217d5
   $wint1A ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -827,253 +779,195 @@ ac456c5462f1506939983c3e7f4fc065
      Unfolding: (\ (w :: Data.Map.Internal.Map
                            (Index.Linds_3 4) Index.Uind_20)
                    (w1 :: Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20) ->
-                 case {__scc {main:Order1Int.int1A} True True} let {
-                                                                 intArea :: Tensor.Tensor
-                                                                              1
-                                                                              1
-                                                                              0
-                                                                              0
-                                                                              0
-                                                                              0
-                                                                              1
-                                                                              1
-                                                                              GHC.Real.Rational
-                                                                 = {__scc {main:Order1Int.int1A.intArea} True True} BasicTensors.interArea
-                                                                                                                      w
-                                                                                                                      w1
-                                                               } in
-                                                               let {
-                                                                 flatInter :: Tensor.Tensor
-                                                                                0
-                                                                                1
-                                                                                0
-                                                                                0
-                                                                                0
-                                                                                0
-                                                                                1
-                                                                                1
-                                                                                GHC.Real.Rational
-                                                                 = let {
-                                                                     flatA :: Tensor.Tensor
-                                                                                0
-                                                                                1
-                                                                                0
-                                                                                0
-                                                                                0
-                                                                                0
-                                                                                0
-                                                                                0
-                                                                                GHC.Real.Rational
-                                                                     = {__scc {main:Order1Int.int1A.flatA} True True} BasicTensors.flatArea
-                                                                                                                        w1
-                                                                   } in
-                                                                   {__scc {main:Order1Int.int1A.flatInter} True True} case (Order1Int.int1A5
-                                                                                                                              intArea
-                                                                                                                              flatA)
-                                                                                                                             `cast`
-                                                                                                                           (Tensor.Tensor
-                                                                                                                              (Add0R (<1>_N) ; Sym (Add0L (<1>_N)))
-                                                                                                                              <1
-                                                                                                                               GHC.TypeNats.+ 1>_N
-                                                                                                                              (Add0L (<0>_N))
-                                                                                                                              (Add0L (<0>_N))
-                                                                                                                              (Add0L (<0>_N))
-                                                                                                                              (Add0L (<0>_N))
-                                                                                                                              (Add0R (<1>_N))
-                                                                                                                              (Add0R (<1>_N))
-                                                                                                                              <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
-                                                                                                                      case Tensor.$wtensorContractWith_20
-                                                                                                                             @ 0
-                                                                                                                             @ 1
-                                                                                                                             @ GHC.Real.Rational
-                                                                                                                             @ 0
-                                                                                                                             @ 0
-                                                                                                                             @ 0
-                                                                                                                             @ 0
-                                                                                                                             @ 1
-                                                                                                                             @ 1
-                                                                                                                             Order1Int.$stensorContractWith_3
-                                                                                                                               `cast`
-                                                                                                                             (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                       <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
-                                                                                                                             Order1Int.$stensorContractWith_1
-                                                                                                                               `cast`
-                                                                                                                             (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                       <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                                                                             Order1Int.ansatzA3
-                                                                                                                             GHC.Real.$fEnumRatio_$s$c+
-                                                                                                                             ww1 of ww2 { Unit# ww3 ->
-                                                                                                                      Tensor.Tensor
-                                                                                                                        @ 0
-                                                                                                                        @ 1
-                                                                                                                        @ 0
-                                                                                                                        @ 0
-                                                                                                                        @ 0
-                                                                                                                        @ 0
-                                                                                                                        @ 1
-                                                                                                                        @ 1
-                                                                                                                        @ GHC.Real.Rational
-                                                                                                                        ww3 } }
-                                                               } in
-                                                               {__scc {main:Order1Int.int1A.tens} True False} case ({__scc {main:Order1Int.int1A.block1} True True} Order1Int.int1A4
-                                                                                                                                                                      BasicTensors.delta_3
-                                                                                                                                                                      flatInter)
-                                                                                                                     `cast`
-                                                                                                                   (Tensor.Tensor
-                                                                                                                      (Add0L (<0>_N))
-                                                                                                                      (Add0L (<1>_N))
-                                                                                                                      (Add0L (<0>_N))
-                                                                                                                      (Add0L (<0>_N))
-                                                                                                                      (Add0L (<0>_N))
-                                                                                                                      (Add0L (<0>_N))
-                                                                                                                      (AddDef (<1>_N,
-                                                                                                                               <1>_N))
-                                                                                                                      (AddDef (<1>_N,
-                                                                                                                               <1>_N))
-                                                                                                                      <GHC.Real.Rational>_R)_R of ww { Tensor.Tensor ww1 ->
-                                                                                                              case ({__scc {main:Order1Int.int1A.block2} True True} Order1Int.int1A3
-                                                                                                                                                                      intArea
-                                                                                                                                                                      flatInter)
-                                                                                                                     `cast`
-                                                                                                                   (Tensor.Tensor
-                                                                                                                      (Add0R (<1>_N) ; Sym (Add0L (<1>_N)))
-                                                                                                                      <1
-                                                                                                                       GHC.TypeNats.+ 1>_N
-                                                                                                                      (Add0L (<0>_N))
-                                                                                                                      (Add0L (<0>_N))
-                                                                                                                      (Add0L (<0>_N))
-                                                                                                                      (Add0L (<0>_N))
-                                                                                                                      (AddDef (<1>_N,
-                                                                                                                               <1>_N))
-                                                                                                                      (AddDef (<1>_N,
-                                                                                                                               <1>_N))
-                                                                                                                      <GHC.Real.Rational>_R)_R of ww2 { Tensor.Tensor ww3 ->
-                                                                                                              case {__scc {main:Order1Int.int1A.block2} False True} Tensor.$wtensorContractWith_20
-                                                                                                                                                                      @ 0
-                                                                                                                                                                      @ 1
-                                                                                                                                                                      @ GHC.Real.Rational
-                                                                                                                                                                      @ 0
-                                                                                                                                                                      @ 0
-                                                                                                                                                                      @ 0
-                                                                                                                                                                      @ 0
-                                                                                                                                                                      @ 2
-                                                                                                                                                                      @ 2
-                                                                                                                                                                      Order1Int.$stensorContractWith_3
-                                                                                                                                                                        `cast`
-                                                                                                                                                                      (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                                                                <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
-                                                                                                                                                                      Order1Int.$stensorContractWith_1
-                                                                                                                                                                        `cast`
-                                                                                                                                                                      (Sym (GHC.TypeNats.N:SNat[0]
-                                                                                                                                                                                <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
-                                                                                                                                                                      Order1Int.ansatzA3
-                                                                                                                                                                      GHC.Real.$fEnumRatio_$s$c+
-                                                                                                                                                                      ww3 of ww4 { Unit# ww5 ->
-                                                                                                              case {__scc {main:Order1Int.int1A.tens} False True} {__scc {main:Tensor.tensorAdd} True False} Tensor.Tensor
-                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                               @ 1
-                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                               @ 2
-                                                                                                                                                                                                               @ 2
-                                                                                                                                                                                                               @ GHC.Real.Rational
-                                                                                                                                                                                                               ({__scc {main:Tensor.tensorAdd} False True} Data.Map.Strict.Internal.unionWith
-                                                                                                                                                                                                                                                             @ (Index.Index
-                                                                                                                                                                                                                                                                  0
-                                                                                                                                                                                                                                                                  1
-                                                                                                                                                                                                                                                                  0
-                                                                                                                                                                                                                                                                  0
-                                                                                                                                                                                                                                                                  0
-                                                                                                                                                                                                                                                                  0
-                                                                                                                                                                                                                                                                  2
-                                                                                                                                                                                                                                                                  2)
-                                                                                                                                                                                                                                                             @ GHC.Real.Rational
-                                                                                                                                                                                                                                                             (Tensor.aSymTensor3
-                                                                                                                                                                                                                                                                @ 0
-                                                                                                                                                                                                                                                                @ 1
-                                                                                                                                                                                                                                                                @ 0
-                                                                                                                                                                                                                                                                @ 0
-                                                                                                                                                                                                                                                                @ 0
-                                                                                                                                                                                                                                                                @ 0
-                                                                                                                                                                                                                                                                @ 2
-                                                                                                                                                                                                                                                                @ 2)
-                                                                                                                                                                                                                                                             Order1Int.int1A_lvl19
-                                                                                                                                                                                                                                                             ww1
-                                                                                                                                                                                                                                                             ww5) of ww6 { Tensor.Tensor ww7 ->
-                                                                                                              case {__scc {main:Order1Int.int1A.tensTrans} True True} Tensor.$wtensorTranspose
-                                                                                                                                                                        @ 0
-                                                                                                                                                                        @ 1
-                                                                                                                                                                        @ 0
-                                                                                                                                                                        @ 0
-                                                                                                                                                                        @ 0
-                                                                                                                                                                        @ 0
-                                                                                                                                                                        @ 2
-                                                                                                                                                                        @ 2
-                                                                                                                                                                        @ GHC.Real.Rational
-                                                                                                                                                                        Order1Int.int1A2
-                                                                                                                                                                        Order1Int.ansatzA3
-                                                                                                                                                                        ww7 of ww8 { Unit# ww9 ->
-                                                                                                              case {__scc {main:Order1Int.int1A.tensTrans} False True} Tensor.$wtensorTranspose
-                                                                                                                                                                         @ 0
-                                                                                                                                                                         @ 1
-                                                                                                                                                                         @ 0
-                                                                                                                                                                         @ 0
-                                                                                                                                                                         @ 0
-                                                                                                                                                                         @ 0
-                                                                                                                                                                         @ 2
-                                                                                                                                                                         @ 2
-                                                                                                                                                                         @ GHC.Real.Rational
-                                                                                                                                                                         Order1Int.int1A1
-                                                                                                                                                                         Order1Int.ansatzA3
-                                                                                                                                                                         ww9 of ww10 { Unit# ww11 ->
-                                                                                                              case {__scc {main:Tensor.tensorSub} True True} {__scc {main:Tensor.tensorSMult} True False} {__scc {main:Tensor.tensorSMult} False True} {__scc {main:Tensor.fmap} True False} Tensor.Tensor
-                                                                                                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                                                                                                               @ 1
-                                                                                                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                                                                                                               @ 0
-                                                                                                                                                                                                                                                                                               @ 2
-                                                                                                                                                                                                                                                                                               @ 2
-                                                                                                                                                                                                                                                                                               @ GHC.Real.Rational
-                                                                                                                                                                                                                                                                                               ({__scc {main:Tensor.fmap} False True} Order1Int.int1A_go8
-                                                                                                                                                                                                                                                                                                                                        ww11) of ww12 { Tensor.Tensor ww13 ->
-                                                                                                              {__scc {main:Tensor.tensorSub} False True} {__scc {main:Tensor.tensorAdd} True False} Tensor.Tensor
-                                                                                                                                                                                                      @ 0
-                                                                                                                                                                                                      @ 1
-                                                                                                                                                                                                      @ 0
-                                                                                                                                                                                                      @ 0
-                                                                                                                                                                                                      @ 0
-                                                                                                                                                                                                      @ 0
-                                                                                                                                                                                                      @ 2
-                                                                                                                                                                                                      @ 2
-                                                                                                                                                                                                      @ GHC.Real.Rational
-                                                                                                                                                                                                      ({__scc {main:Tensor.tensorAdd} False True} Data.Map.Strict.Internal.unionWith
-                                                                                                                                                                                                                                                    @ (Index.Index
-                                                                                                                                                                                                                                                         0
-                                                                                                                                                                                                                                                         1
-                                                                                                                                                                                                                                                         0
-                                                                                                                                                                                                                                                         0
-                                                                                                                                                                                                                                                         0
-                                                                                                                                                                                                                                                         0
-                                                                                                                                                                                                                                                         2
-                                                                                                                                                                                                                                                         2)
-                                                                                                                                                                                                                                                    @ GHC.Real.Rational
-                                                                                                                                                                                                                                                    (Tensor.aSymTensor3
-                                                                                                                                                                                                                                                       @ 0
-                                                                                                                                                                                                                                                       @ 1
-                                                                                                                                                                                                                                                       @ 0
-                                                                                                                                                                                                                                                       @ 0
-                                                                                                                                                                                                                                                       @ 0
-                                                                                                                                                                                                                                                       @ 0
-                                                                                                                                                                                                                                                       @ 2
-                                                                                                                                                                                                                                                       @ 2)
-                                                                                                                                                                                                                                                    Order1Int.int1A_lvl19
-                                                                                                                                                                                                                                                    ww7
-                                                                                                                                                                                                                                                    ww13) } } } } } } } of ww { Tensor.Tensor ww1 ->
-                 (# ww1 #) }) -}
+                 case BasicTensors.delta_3 of ww { Tensor.Tensor ww1 ->
+                 case BasicTensors.$winterArea w w1 of ww2 { Unit# ww3 ->
+                 case BasicTensors.$wflatArea w1 of ww4 { Unit# ww5 ->
+                 case Tensor.$wtensorProductNumeric
+                        @ GHC.Real.Rational
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        GHC.Real.$fFractionalRatio_$s$fNumRatio
+                        GHC.Real.$fOrdRatio_$s$fEqRatio
+                        ww3
+                        ww5 of ww6 { Unit# ww7 ->
+                 case Tensor.$wtensorContractWith_20
+                        @ 0
+                        @ 1
+                        @ GHC.Real.Rational
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 1
+                        Order1Int.$stensorContractWith_3
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.ansatzA3
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww7
+                          `cast`
+                        (Data.Map.Internal.Map
+                           (Index.Index
+                              (Add0R (<1>_N) ; Sym (Add0L (<1>_N)))
+                              <1 GHC.TypeNats.+ 1>_N
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0R (<1>_N))
+                              (Add0R (<1>_N)))_N
+                           <GHC.Real.Rational>_R)_R of ww8 { Unit# ww9 ->
+                 case Tensor.$wtensorProductNumeric
+                        @ GHC.Real.Rational
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 1
+                        GHC.Real.$fFractionalRatio_$s$fNumRatio
+                        GHC.Real.$fOrdRatio_$s$fEqRatio
+                        ww1
+                        ww9 of ww10 { Unit# ww11 ->
+                 case Tensor.$wtensorProductNumeric
+                        @ GHC.Real.Rational
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 1
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 1
+                        @ 1
+                        GHC.Real.$fFractionalRatio_$s$fNumRatio
+                        GHC.Real.$fOrdRatio_$s$fEqRatio
+                        ww3
+                        ww9 of ww12 { Unit# ww13 ->
+                 case Tensor.$wtensorContractWith_20
+                        @ 0
+                        @ 1
+                        @ GHC.Real.Rational
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 2
+                        @ 2
+                        Order1Int.$stensorContractWith_3
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <0>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <0>_N)
+                        Order1Int.$stensorContractWith_1
+                          `cast`
+                        (Sym (GHC.TypeNats.N:SNat[0]
+                                  <1>_P) ; Sym (GHC.TypeNats.N:KnownNat[0]) <1>_N)
+                        Order1Int.ansatzA3
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww13
+                          `cast`
+                        (Data.Map.Internal.Map
+                           (Index.Index
+                              (Add0R (<1>_N) ; Sym (Add0L (<1>_N)))
+                              <1 GHC.TypeNats.+ 1>_N
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (AddDef (<1>_N, <1>_N))
+                              (AddDef (<1>_N, <1>_N)))_N
+                           <GHC.Real.Rational>_R)_R of ww14 { Unit# ww15 ->
+                 case Data.Map.Strict.Internal.unionWith
+                        @ (Index.Index 0 1 0 0 0 0 2 2)
+                        @ GHC.Real.Rational
+                        (Index.$fOrdIndex @ 0 @ 1 @ 0 @ 0 @ 0 @ 0 @ 2 @ 2)
+                        GHC.Real.$fEnumRatio_$s$c+
+                        ww11
+                          `cast`
+                        (Data.Map.Internal.Map
+                           (Index.Index
+                              (Add0L (<0>_N))
+                              (Add0L (<1>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (Add0L (<0>_N))
+                              (AddDef (<1>_N, <1>_N))
+                              (AddDef (<1>_N, <1>_N)))_N
+                           <GHC.Real.Rational>_R)_R
+                        ww15 of dt1 { DEFAULT ->
+                 case Tensor.$wtensorTranspose
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 2
+                        @ 2
+                        @ GHC.Real.Rational
+                        Order1Int.int1A2
+                        Order1Int.ansatzA3
+                        dt1 of ww16 { Unit# ww17 ->
+                 case Tensor.$wtensorTranspose
+                        @ 0
+                        @ 1
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 0
+                        @ 2
+                        @ 2
+                        @ GHC.Real.Rational
+                        Order1Int.int1A1
+                        Order1Int.ansatzA3
+                        ww17 of ww18 { Unit# ww19 ->
+                 case Order1Int.int1A_go8 ww19 of dt2 { DEFAULT ->
+                 case Data.Map.Strict.Internal.unionWith
+                        @ (Index.Index 0 1 0 0 0 0 2 2)
+                        @ GHC.Real.Rational
+                        (Index.$fOrdIndex @ 0 @ 1 @ 0 @ 0 @ 0 @ 0 @ 2 @ 2)
+                        GHC.Real.$fEnumRatio_$s$c+
+                        dt1
+                        dt2 of dt3 { DEFAULT ->
+                 (# dt3 #) } } } } } } } } } } } } }) -}
 896518029b81d690724511426c1cb34a
   $wpoly_go13 ::
     GHC.Prim.Int#
@@ -1081,7 +975,7 @@ ac456c5462f1506939983c3e7f4fc065
     -> [((GHC.Types.Int, GHC.Types.Int), a)]
     -> Data.Map.Internal.Map (GHC.Types.Int, GHC.Types.Int) a
   {- Arity: 3, Strictness: <L,U><S,1*U><S,1*U>, Inline: [0] -}
-6bea971c68982273acca2a912fb5aab2
+2516d3e8bfd9048ed59c48c921e6fbf7
   ansatzA ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -1120,147 +1014,11 @@ ce3708e9981d30d587c2b22c3ef431ae
 b1cf385b8ad70db01ed1df16382e2469
   ansatzA4 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 1#) -}
-071be15d44fdea83597a6b2ce3129fed
-  ansatzA5 ::
-    Tensor.Tensor 1 1 0 0 0 0 1 1 GHC.Real.Rational
-    -> Tensor.Tensor 0 0 0 0 1 0 1 1 GHC.Real.Rational
-    -> Tensor.Tensor
-         (1 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 1)
-         (0 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 1)
-         (1 GHC.TypeNats.+ 1)
-         GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Order1Int.ansatzA} False True} {__scc {main:Order1Int.ansatzA.prod} False True} Tensor.tensorProductNumeric
-                                                                                                                @ GHC.Real.Rational
-                                                                                                                @ 1
-                                                                                                                @ 1
-                                                                                                                @ 0
-                                                                                                                @ 0
-                                                                                                                @ 0
-                                                                                                                @ 0
-                                                                                                                @ 1
-                                                                                                                @ 1
-                                                                                                                @ 0
-                                                                                                                @ 0
-                                                                                                                @ 0
-                                                                                                                @ 0
-                                                                                                                @ 1
-                                                                                                                @ 0
-                                                                                                                @ 1
-                                                                                                                @ 1
-                                                                                                                GHC.Real.$fFractionalRatio_$s$fNumRatio
-                                                                                                                GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-8587cb509f10060ed8dab05fcba639e8
-  ansatzA6 :: (GHC.Types.Int, GHC.Types.Int)
+7fe9d8ba400a6f993fe1c15ad904df59
+  ansatzA5 :: (GHC.Types.Int, GHC.Types.Int)
   {- HasNoCafRefs, Strictness: m,
      Unfolding: ((Order1Int.ansatzA4, Order1Int.ansatzA4)) -}
-47f5d1451c075bc99167362f5ad341fa
-  ansatzA7 ::
-    Tensor.Tensor 0 0 0 0 0 0 2 0 GHC.Real.Rational
-    -> Tensor.Tensor 0 0 0 0 1 0 0 2 GHC.Real.Rational
-    -> Tensor.Tensor
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 1)
-         (0 GHC.TypeNats.+ 0)
-         (2 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 2)
-         GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Order1Int.ansatzA} False True} {__scc {main:Order1Int.ansatzA.totalBlock2} False True} Tensor.tensorProductNumeric
-                                                                                                                       @ GHC.Real.Rational
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 2
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 1
-                                                                                                                       @ 0
-                                                                                                                       @ 0
-                                                                                                                       @ 2
-                                                                                                                       GHC.Real.$fFractionalRatio_$s$fNumRatio
-                                                                                                                       GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-a8eb1842d202afe1a25629375ece3f00
-  ansatzAI1 ::
-    Tensor.Tensor 1 1 0 0 1 1 1 1 GHC.Real.Rational
-    -> Tensor.Tensor 0 0 0 0 1 0 1 1 GHC.Real.Rational
-    -> Tensor.Tensor
-         (1 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 1)
-         (1 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 1)
-         (1 GHC.TypeNats.+ 1)
-         GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Order1Int.ansatzAI3} False True} {__scc {main:Order1Int.ansatzAI3.prod} False True} Tensor.tensorProductNumeric
-                                                                                                                    @ GHC.Real.Rational
-                                                                                                                    @ 1
-                                                                                                                    @ 1
-                                                                                                                    @ 0
-                                                                                                                    @ 0
-                                                                                                                    @ 1
-                                                                                                                    @ 1
-                                                                                                                    @ 1
-                                                                                                                    @ 1
-                                                                                                                    @ 0
-                                                                                                                    @ 0
-                                                                                                                    @ 0
-                                                                                                                    @ 0
-                                                                                                                    @ 1
-                                                                                                                    @ 0
-                                                                                                                    @ 1
-                                                                                                                    @ 1
-                                                                                                                    GHC.Real.$fFractionalRatio_$s$fNumRatio
-                                                                                                                    GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-81de143755a1463da24ad116b3c0ac6b
-  ansatzAI2 ::
-    Tensor.Tensor 0 0 0 0 0 0 2 0 GHC.Real.Rational
-    -> Tensor.Tensor 0 0 0 0 1 0 0 2 GHC.Real.Rational
-    -> Tensor.Tensor
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 1)
-         (0 GHC.TypeNats.+ 0)
-         (2 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 2)
-         GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Order1Int.ansatzAI3} False True} {__scc {main:Order1Int.ansatzAI3.totalBlock2} False True} Tensor.tensorProductNumeric
-                                                                                                                           @ GHC.Real.Rational
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 2
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 1
-                                                                                                                           @ 0
-                                                                                                                           @ 0
-                                                                                                                           @ 2
-                                                                                                                           GHC.Real.$fFractionalRatio_$s$fNumRatio
-                                                                                                                           GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-41fc6d3b9ce0ce389c64be3912f19e10
+b439efd31963f534ba94c589222a62ad
   ansatzAI3 ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -1285,7 +1043,7 @@ a8eb1842d202afe1a25629375ece3f00
                    @ 0
                    @ GHC.Real.Rational
                    ww1 }) -}
-bda95390c47cbd912cdc80b431729905
+3059b0258b910ed237af7d25c11eefd0
   ansatzAa ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -1321,75 +1079,7 @@ bda95390c47cbd912cdc80b431729905
 ceb1924fea66323d62bbd6a8647eae0c
   ansatzAa3 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 2#) -}
-37864360dbf5a667e2cfdd095b67920a
-  ansatzAa4 ::
-    Tensor.Tensor 1 1 0 0 0 0 2 2 GHC.Real.Rational
-    -> Tensor.Tensor 0 0 0 0 1 0 1 1 GHC.Real.Rational
-    -> Tensor.Tensor
-         (1 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 1)
-         (0 GHC.TypeNats.+ 0)
-         (2 GHC.TypeNats.+ 1)
-         (2 GHC.TypeNats.+ 1)
-         GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Order1Int.ansatzAa} False True} {__scc {main:Order1Int.ansatzAa.prod} False True} Tensor.tensorProductNumeric
-                                                                                                                  @ GHC.Real.Rational
-                                                                                                                  @ 1
-                                                                                                                  @ 1
-                                                                                                                  @ 0
-                                                                                                                  @ 0
-                                                                                                                  @ 0
-                                                                                                                  @ 0
-                                                                                                                  @ 2
-                                                                                                                  @ 2
-                                                                                                                  @ 0
-                                                                                                                  @ 0
-                                                                                                                  @ 0
-                                                                                                                  @ 0
-                                                                                                                  @ 1
-                                                                                                                  @ 0
-                                                                                                                  @ 1
-                                                                                                                  @ 1
-                                                                                                                  GHC.Real.$fFractionalRatio_$s$fNumRatio
-                                                                                                                  GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-a9e79da53a13adfb6a9fab78e079524f
-  ansatzAa5 ::
-    Tensor.Tensor 0 0 0 0 0 0 2 0 GHC.Real.Rational
-    -> Tensor.Tensor 0 0 0 0 1 0 0 2 GHC.Real.Rational
-    -> Tensor.Tensor
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 1)
-         (0 GHC.TypeNats.+ 0)
-         (2 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 2)
-         GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Order1Int.ansatzAa} False True} {__scc {main:Order1Int.ansatzAa.totalBlock2} False True} Tensor.tensorProductNumeric
-                                                                                                                         @ GHC.Real.Rational
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 2
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 1
-                                                                                                                         @ 0
-                                                                                                                         @ 0
-                                                                                                                         @ 2
-                                                                                                                         GHC.Real.$fFractionalRatio_$s$fNumRatio
-                                                                                                                         GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-063fe49fcdc03fc935fc319a1e4300bb
+8c5ca65c6354e28812f288ea6e688a07
   int1A ::
     Data.Map.Internal.Map (Index.Linds_3 4) Index.Uind_20
     -> Data.Map.Internal.Map (Index.Uinds_3 4) Index.Lind_20
@@ -1420,213 +1110,95 @@ a9e79da53a13adfb6a9fab78e079524f
 804e8aba5d108aab21c3bfd457be17b1
   int1A2 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 8#) -}
-bc9b83e033dd2b81722f5884fd3095eb
-  int1A3 ::
-    Tensor.Tensor 1 1 0 0 0 0 1 1 GHC.Real.Rational
-    -> Tensor.Tensor 0 1 0 0 0 0 1 1 GHC.Real.Rational
-    -> Tensor.Tensor
-         (1 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 1)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 1)
-         (1 GHC.TypeNats.+ 1)
-         GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Order1Int.int1A} False True} {__scc {main:Order1Int.int1A.block2} False True} Tensor.tensorProductNumeric
-                                                                                                              @ GHC.Real.Rational
-                                                                                                              @ 1
-                                                                                                              @ 1
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 1
-                                                                                                              @ 1
-                                                                                                              @ 0
-                                                                                                              @ 1
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 1
-                                                                                                              @ 1
-                                                                                                              GHC.Real.$fFractionalRatio_$s$fNumRatio
-                                                                                                              GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-750993003af8eea781abf17ca814f0ee
-  int1A4 ::
-    Tensor.Tensor 0 0 0 0 0 0 1 1 GHC.Real.Rational
-    -> Tensor.Tensor 0 1 0 0 0 0 1 1 GHC.Real.Rational
-    -> Tensor.Tensor
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 1)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 1)
-         (1 GHC.TypeNats.+ 1)
-         GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Order1Int.int1A} False True} {__scc {main:Order1Int.int1A.block1} False True} Tensor.tensorProductNumeric
-                                                                                                              @ GHC.Real.Rational
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 1
-                                                                                                              @ 1
-                                                                                                              @ 0
-                                                                                                              @ 1
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 0
-                                                                                                              @ 1
-                                                                                                              @ 1
-                                                                                                              GHC.Real.$fFractionalRatio_$s$fNumRatio
-                                                                                                              GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-9b31a127e8c8cf6318cbf038a04bf539
-  int1A5 ::
-    Tensor.Tensor 1 1 0 0 0 0 1 1 GHC.Real.Rational
-    -> Tensor.Tensor 0 1 0 0 0 0 0 0 GHC.Real.Rational
-    -> Tensor.Tensor
-         (1 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 1)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (0 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 0)
-         (1 GHC.TypeNats.+ 0)
-         GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Order1Int.int1A} False True} {__scc {main:Order1Int.int1A.flatInter} False True} Tensor.tensorProductNumeric
-                                                                                                                 @ GHC.Real.Rational
-                                                                                                                 @ 1
-                                                                                                                 @ 1
-                                                                                                                 @ 0
-                                                                                                                 @ 0
-                                                                                                                 @ 0
-                                                                                                                 @ 0
-                                                                                                                 @ 1
-                                                                                                                 @ 1
-                                                                                                                 @ 0
-                                                                                                                 @ 1
-                                                                                                                 @ 0
-                                                                                                                 @ 0
-                                                                                                                 @ 0
-                                                                                                                 @ 0
-                                                                                                                 @ 0
-                                                                                                                 @ 0
-                                                                                                                 GHC.Real.$fFractionalRatio_$s$fNumRatio
-                                                                                                                 GHC.Real.$fOrdRatio_$s$fEqRatio) -}
-eb5cff8b4c43dafb0492927eb9aadede
+dc74d812a477606cfbb50a704a89cbaf
   int1A_go8 ::
     Data.Map.Internal.Map
       (Index.Index 0 1 0 0 0 0 2 2) GHC.Real.Rational
     -> Data.Map.Internal.Map
          (Index.Index 0 1 0 0 0 0 2 2) GHC.Real.Rational
   {- Arity: 1, Strictness: <S,1*U> -}
-04c35995c5506fb99c09bbc7ff6856d9
-  int1A_lvl19 ::
-    GHC.Real.Rational -> GHC.Real.Rational -> GHC.Real.Rational
-  {- Unfolding: ({__scc {main:Tensor.tensorAdd} False True} GHC.Real.$fEnumRatio_$s$c+) -}
-a855bc095a2fc5964c7809e2011df212
+18f45e5eada2b601eb245230d57c6350
   mkEqnSparseAnsatzA ::
     Tensor.Tensor 1 1 0 0 1 0 0 0 GHC.Real.Rational
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 1 1 0 0 1 0 0 0 GHC.Real.Rational) ->
-                 {__scc {main:Order1Int.mkEqnSparseAnsatzA} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                       Order1Int.$sfromList
-                                                                         @ (GHC.Real.Ratio
-                                                                              GHC.Integer.Type.Integer)
-                                                                         (Order1Int.mkEqnSparseAnsatzA_go13
-                                                                            (GHC.Types.[]
-                                                                               @ ((GHC.Types.Int,
-                                                                                   GHC.Types.Int),
-                                                                                  GHC.Real.Rational))
-                                                                            map1) }) -}
-d55255e464828d3b1cd805a2942cd58c
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order1Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order1Int.mkEqnSparseAnsatzA_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+44811c595abbde547d4e37f8c34dfdf3
   mkEqnSparseAnsatzAI ::
     Tensor.Tensor 1 1 0 0 2 1 0 0 GHC.Real.Rational
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 1 1 0 0 2 1 0 0 GHC.Real.Rational) ->
-                 {__scc {main:Order1Int.mkEqnSparseAnsatzAI} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                        Order1Int.$sfromList
-                                                                          @ (GHC.Real.Ratio
-                                                                               GHC.Integer.Type.Integer)
-                                                                          (Order1Int.mkEqnSparseAnsatzAI_go13
-                                                                             (GHC.Types.[]
-                                                                                @ ((GHC.Types.Int,
-                                                                                    GHC.Types.Int),
-                                                                                   GHC.Real.Rational))
-                                                                             map1) }) -}
-d8411ed0c7a3909ce04157c143c365bb
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order1Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order1Int.mkEqnSparseAnsatzAI_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+99f750b51433af3cc23cc12bbaa4fcd1
   mkEqnSparseAnsatzAI_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 1 1 0 0 2 1 0 0) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-d17b8332fd3fc1c88a9f6e62629bb630
+55bdd0c3c19406b921ffd6f192956953
   mkEqnSparseAnsatzA_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 1 1 0 0 1 0 0 0) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-33d2192dd4e7f1460dd57d2f464ef510
+f0e0a2424e8f0fc45f8de5ecfeeb900c
   mkEqnSparseAnsatzAa ::
     Tensor.Tensor 1 1 0 0 1 0 1 1 GHC.Real.Rational
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 1 1 0 0 1 0 1 1 GHC.Real.Rational) ->
-                 {__scc {main:Order1Int.mkEqnSparseAnsatzAa} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                        Order1Int.$sfromList
-                                                                          @ (GHC.Real.Ratio
-                                                                               GHC.Integer.Type.Integer)
-                                                                          (Order1Int.mkEqnSparseAnsatzAa_go13
-                                                                             (GHC.Types.[]
-                                                                                @ ((GHC.Types.Int,
-                                                                                    GHC.Types.Int),
-                                                                                   GHC.Real.Rational))
-                                                                             map1) }) -}
-71ee20cbe451c185ccfb6c69cf2b0dc6
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order1Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order1Int.mkEqnSparseAnsatzAa_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+4447be09798bbc94c3ced2954962afb5
   mkEqnSparseAnsatzAa_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map
          (Index.Index 1 1 0 0 1 0 1 1) GHC.Real.Rational
     -> [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
   {- Arity: 2, Strictness: <L,1*U><S,1*U> -}
-dd5b37d43ee2fc67b88c16aebacbc54b
+29fdf963dcd73fa483ab417af81fd935
   mkEqnSparseint1A ::
     Tensor.Tensor 0 1 0 0 0 0 2 2 GHC.Real.Rational
     -> Data.Map.Internal.Map
          (GHC.Types.Int, GHC.Types.Int) GHC.Real.Rational
-  {- Arity: 1, Strictness: <S(S),1*U(1*U)>,
+  {- Arity: 1, Strictness: <S(S),1*U(U)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: Tensor.Tensor 0 1 0 0 0 0 2 2 GHC.Real.Rational) ->
-                 {__scc {main:Order1Int.mkEqnSparseint1A} True True} case ds of wild { Tensor.Tensor map1 ->
-                                                                     Order1Int.$sfromList
-                                                                       @ (GHC.Real.Ratio
-                                                                            GHC.Integer.Type.Integer)
-                                                                       (Order1Int.mkEqnSparseint1A_go13
-                                                                          (GHC.Types.[]
-                                                                             @ ((GHC.Types.Int,
-                                                                                 GHC.Types.Int),
-                                                                                GHC.Real.Rational))
-                                                                          map1) }) -}
-e29f1795e6c73099c1fed8456aa60af3
+                 case ds of wild { Tensor.Tensor map1 ->
+                 Order1Int.$sfromList
+                   @ (GHC.Real.Ratio GHC.Integer.Type.Integer)
+                   (Order1Int.mkEqnSparseint1A_go13
+                      (GHC.Types.[]
+                         @ ((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational))
+                      map1) }) -}
+fa3d884c2f74af38431f1444f68a5f85
   mkEqnSparseint1A_go13 ::
     [((GHC.Types.Int, GHC.Types.Int), GHC.Real.Rational)]
     -> Data.Map.Internal.Map

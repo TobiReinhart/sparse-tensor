@@ -180,7 +180,7 @@ module Pde (
     print2MaplePde :: Pde (Ivar Rational) -> String
     print2MaplePde (Pde map1) = "[" ++ tail (foldr (++) " "  $ I.map (\y -> "," ++ y ) map2) ++ "]"
                     where 
-                        l = M.assocs map1 
+                        l = M.assocs map1
                         l2 = map (\((x,y),z) -> (x, "(" ++ showIvarRational z ++ ")" ++ "*" ++ "L" ++  (show (multInd2Number y)) ++ "\n")) l
                         map2 = I.fromListWith (\a b -> a ++ "+" ++ b) l2 
 

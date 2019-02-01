@@ -47,7 +47,7 @@ module AnsatzEqns2 (
 
     
     index2SparseAnsatzAIB :: M.Map [Int] Int -> Index 2 2 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseAnsatzAIB trian (x1, x2, _, _, x5, x6, _, _) = ((e-1)*2100+(f-1)*100+(j-1)*10+k,316 + x)
+    index2SparseAnsatzAIB trian (Index x1  x2  _  _  x5  x6  _  _) = ((e-1)*2100+(f-1)*100+(j-1)*10+k,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -80,7 +80,7 @@ module AnsatzEqns2 (
                         prod = tensorProductWith (*) tens totalBlock2
 
     index2SparseAnsatzAB :: M.Map [Int] Int -> Index 2 2 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseAnsatzAB trian (x1, x2, _, _, x5, _, _, _) = ((e-1)*210+(f-1)*10+j,316 + x)
+    index2SparseAnsatzAB trian (Index x1  x2  _  _  x5  _  _  _) = ((e-1)*210+(f-1)*10+j,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -93,7 +93,7 @@ module AnsatzEqns2 (
     mkEqnSparseAnsatzAB trian (Tensor map1) = M.mapKeysWith (+) (index2SparseAnsatzAB trian) map1
 
     index2SparseAnsatzABSolo :: M.Map [Int] Int -> Index 2 2 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseAnsatzABSolo trian (x1, x2, _, _, x5, _, _, _) = ((e-1)*210+(f-1)*10+j,22 + x)
+    index2SparseAnsatzABSolo trian (Index x1  x2  _  _  x5  _  _  _) = ((e-1)*210+(f-1)*10+j,22 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -125,7 +125,7 @@ module AnsatzEqns2 (
                         prod = tensorProductWith (*) totalBlock1 totalBlock2
 
     index2SparseAnsatzABb :: M.Map [Int] Int -> Index 2 2 0 0 1 0 1 1 -> (Int,Int) 
-    index2SparseAnsatzABb trian (x1, x2, _, _, x5, _, x7, x8) = ((e-1)*210*4+(f-1)*40+(j-1)*4+s,316 + x)
+    index2SparseAnsatzABb trian (Index x1  x2  _  _  x5  _  x7  x8) = ((e-1)*210*4+(f-1)*40+(j-1)*4+s,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -158,7 +158,7 @@ module AnsatzEqns2 (
                         prod = tensorProductWith (*) tens totalBlock2
 
     index2SparseAnsatzAaBb :: M.Map [Int] Int -> Index 2 2 0 0 1 0 2 2 -> (Int,Int) 
-    index2SparseAnsatzAaBb trian (x1, x2, _, _, x5, _, x7, x8) = ((e-1)*210*16+(f-1)*160+(j-1)*4+(r-1)*4+s,316 + x)
+    index2SparseAnsatzAaBb trian (Index x1  x2  _  _  x5  _  x7 x8) = ((e-1)*210*16+(f-1)*160+(j-1)*4+(r-1)*4+s,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -192,7 +192,7 @@ module AnsatzEqns2 (
                         prod = tensorProductWith (*) totalBlock1 totalBlock2
 
     index2SparseAnsatzAaBI :: M.Map [Int] Int -> Index 2 2 0 0 2 1 1 1 -> (Int,Int) 
-    index2SparseAnsatzAaBI trian (x1, x2, _, _, x5, x6, x7, x8) = ((e-1)*21*400+(f-1)*400+(j-1)*40+(i-1)*4+r,316 + x)
+    index2SparseAnsatzAaBI trian (Index x1  x2  _  _  x5  x6  x7  x8) = ((e-1)*21*400+(f-1)*400+(j-1)*40+(i-1)*4+r,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -226,7 +226,7 @@ module AnsatzEqns2 (
                         tens = tensorAdd totalBlock totalBlockTrans
 
     index2SparseAnsatzAIBJ :: M.Map [Int] Int -> Index 2 2 0 0 3 2 0 0 -> (Int,Int) 
-    index2SparseAnsatzAIBJ trian (x1, x2, _, _, x5, x6, _, _) = ((e-1)*21000+(f-1)*1000+(r-1)*100+(s-1)*10+t,316 + x)
+    index2SparseAnsatzAIBJ trian (Index x1  x2  _  _  x5  x6  _  _) = ((e-1)*21000+(f-1)*1000+(r-1)*100+(s-1)*10+t,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -262,7 +262,7 @@ module AnsatzEqns2 (
                 aSym = tensorSub totalTens tensTranspose 
 
     index2SparseintCond2NoSym :: M.Map [Int] Int -> Index 1 2 0 0 1 1 2 2 -> (Int,Int) 
-    index2SparseintCond2NoSym trian (x1, x2, _, _, x5, x6, x7, x8) = ((c-1)*10*4^4+(j-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,x)
+    index2SparseintCond2NoSym trian (Index x1  x2  _  _  x5  x6  x7  x8) = ((c-1)*10*4^4+(j-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,x)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              b = 1 + (fromEnum $ getValInd x2 1) 
@@ -284,7 +284,7 @@ module AnsatzEqns2 (
     removeAIB = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 delta_9
                 
     index2SparseRemoveAIB :: M.Map [Int] Int -> Index 2 2 0 0 1 1 0 0 -> (Int,Int) 
-    index2SparseRemoveAIB trian (x1, x2, _, _, x5, x6, _, _) = ((e-1)*210+(f-1)*10+j,316 + x)
+    index2SparseRemoveAIB trian (Index x1  x2  _  _  x5  x6  _  _) = ((e-1)*210+(f-1)*10+j,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -310,7 +310,7 @@ module AnsatzEqns2 (
                     totalTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) total
 
     index2SparsefirstOrder :: Index 0 1 0 0 0 0 2 2 -> (Int,Int) 
-    index2SparsefirstOrder (_, x2, _, _, _, _, x7, x8) = ((m-1)*16*4+(r-1)*16+(n-1)*4+s,a)
+    index2SparsefirstOrder (Index _  x2  _  _  _  _  x7  x8) = ((m-1)*16*4+(r-1)*16+(n-1)*4+s,a)
                                                   where 
                                                       a = 1 + (fromEnum $ getValInd x2 0)
                                                       m = 1 +  (fromEnum $ getValInd x7 0)

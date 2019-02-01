@@ -43,7 +43,7 @@ module Order1Int (
                         
 
     index2SparseAnsatzA :: Index 1 1 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseAnsatzA  (x1, x2, _, _, x5, _, _, _) = ((e-1)*10+j,a+1)
+    index2SparseAnsatzA  (Index x1  x2  _  _  x5  _  _  _) = ((e-1)*10+j,a+1)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)
@@ -62,7 +62,7 @@ module Order1Int (
                         
 
     index2SparseAnsatzAa :: Index 1 1 0 0 1 0 1 1 -> (Int,Int) 
-    index2SparseAnsatzAa  (x1, x2, _, _, x5, _, x7, x8) = ((e-1)*10*4+(j-1)*4+r,(a-1)*4+s+22)
+    index2SparseAnsatzAa  (Index x1  x2  _  _  x5  _  x7  x8) = ((e-1)*10*4+(j-1)*4+r,(a-1)*4+s+22)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)
@@ -86,7 +86,7 @@ module Order1Int (
                         
 
     index2SparseAnsatzAI :: Index 1 1 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseAnsatzAI  (x1, x2, _, _, x5, x6, _, _) = ((e-1)*100+(j-1)*10+k,(a-1)*10+i+106)
+    index2SparseAnsatzAI  (Index x1  x2  _  _  x5  x6  _  _) = ((e-1)*100+(j-1)*10+k,(a-1)*10+i+106)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)
@@ -113,7 +113,7 @@ module Order1Int (
                                                         tensTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) $ tens
 
     index2Sparseint1A :: Index 0 1 0 0 0 0 2 2 -> (Int,Int) 
-    index2Sparseint1A  (_, x2, _, _, _, _, x7, x8) = ((m-1)*4^3+(n-1)*4^2+(r-1)*4+s,a)
+    index2Sparseint1A  (Index _  x2  _  _  _  _  x7  x8) = ((m-1)*4^3+(n-1)*4^2+(r-1)*4+s,a)
                                                   where 
                                                       a = 1 + (fromEnum $ getValInd x2 0)
                                                       m = 1 +  (fromEnum $ getValInd x7 0)

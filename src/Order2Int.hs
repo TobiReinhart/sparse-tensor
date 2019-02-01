@@ -19,7 +19,7 @@ module Order2Int (
     ansatzAIB2, mkEqnSparseAnsatzAIB2, intAIB, mkEqnSparseIntAIB, intAIBsym, intAIBsymZero, intAIBsymRed, mkEqnSparseIntAIBsym,
     intAI, mkEqnSparseIntAI,
     ansatzAI2, mkEqnSparseAnsatzAI2,
-    mkEqnSparseIntABTrian
+    mkEqnSparseIntABTrian, intAIBNew
     
 ) where
 
@@ -50,7 +50,7 @@ module Order2Int (
                         prod = tensorProductNumeric tens totalBlock2
 
     index2SparseAnsatzAB2 :: Index 2 2 0 0 1 0 0 0 -> (Int,Int) 
-    index2SparseAnsatzAB2  (x1, x2, _, _, x5, _, _, _) = ((e-1)*210+(f-1)*10+j,(b-1)*21+a)
+    index2SparseAnsatzAB2  (Index x1  x2  _  _  x5  _  _  _) = ((e-1)*210+(f-1)*10+j,(b-1)*21+a)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -93,7 +93,7 @@ module Order2Int (
 
 
     index2SparseIntAB :: Index 1 2 0 0 0 0 2 2 -> (Int,Int) 
-    index2SparseIntAB  (x1, x2, _, _, _, _, x7, x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,(b-1)*21+a)
+    index2SparseIntAB  (Index x1  x2  _  _  _  _  x7  x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,(b-1)*21+a)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)
@@ -107,7 +107,7 @@ module Order2Int (
     mkEqnSparseIntAB (Tensor map1) = M.mapKeys index2SparseIntAB map1
 
     index2SparseIntABTrian :: M.Map [Int] Int -> Index 1 2 0 0 0 0 2 2 -> (Int,Int) 
-    index2SparseIntABTrian trian (x1, x2, _, _, _, _, x7, x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,316 + x)
+    index2SparseIntABTrian trian (Index x1  x2  _  _  _  _  x7  x8) = ((e-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       a = 1 + (fromEnum $ getValInd x2 0)
@@ -139,7 +139,7 @@ module Order2Int (
                         prod = tensorProductWith (*) totalBlock1 totalBlock2
 
     index2SparseAnsatzABb2 :: Index 2 2 0 0 1 0 1 1 -> (Int,Int) 
-    index2SparseAnsatzABb2 (x1, x2, _, _, x5, _, x7, x8) = ((e-1)*210*4+(f-1)*40+(j-1)*4+s,(a-1)*21*4+(b-1)*4+r)
+    index2SparseAnsatzABb2 (Index x1  x2  _  _  x5  _  x7  x8) = ((e-1)*210*4+(f-1)*40+(j-1)*4+s,(a-1)*21*4+(b-1)*4+r)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -169,7 +169,7 @@ module Order2Int (
 
     
     index2SparseAnsatzAIB2 :: Index 2 2 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseAnsatzAIB2 (x1, x2, _, _, x5, x6, _, _) = ((e-1)*2100+(f-1)*100+(j-1)*10+k,(a-1)*21*10+(b-1)*10+i)
+    index2SparseAnsatzAIB2 (Index x1  x2  _  _  x5  x6  _  _) = ((e-1)*2100+(f-1)*100+(j-1)*10+k,(a-1)*21*10+(b-1)*10+i)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)
@@ -201,7 +201,7 @@ module Order2Int (
 
 
     index2SparseIntAIB :: Index 1 2 0 0 1 1 2 2 -> (Int,Int) 
-    index2SparseIntAIB (x1, x2, _, _, x5, x6, x7, x8) = ((c-1)*10*4^4+(j-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,(a-1)*21*10+(b-1)*10+i)
+    index2SparseIntAIB (Index x1  x2  _  _  x5  x6  x7  x8) = ((c-1)*10*4^4+(j-1)*4^4+(m-1)*4^3+(n-1)*4^2+(r-1)*4+s,(a-1)*21*10+(b-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              b = 1 + (fromEnum $ getValInd x2 1) 
@@ -274,7 +274,7 @@ module Order2Int (
 
 
     index2SparseIntAIBsym :: Index 1 2 0 0 3 1 0 0 -> (Int,Int) 
-    index2SparseIntAIBsym (x1, x2, _, _, x5, x6, _, _) = ((c-1)*1000+(j-1)*100+(k-1)*10+l,(a-1)*21*10+(b-1)*10+i)
+    index2SparseIntAIBsym (Index x1  x2  _  _  x5  x6  _  _) = ((c-1)*1000+(j-1)*100+(k-1)*10+l,(a-1)*21*10+(b-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              b = 1 + (fromEnum $ getValInd x2 1) 
@@ -302,7 +302,7 @@ module Order2Int (
                 tensTrans = tensorTranspose 5 (0,2) $ tens
 
     index2SparseIntAI :: Index 1 1 0 0 3 1 0 0 -> (Int,Int) 
-    index2SparseIntAI (x1, x2, _, _, x5, x6, _, _) = ((c-1)*1000+(j-1)*100+(k-1)*10+l,(a-1)*10+i)
+    index2SparseIntAI (Index x1  x2  _  _  x5  x6  _  _) = ((c-1)*1000+(j-1)*100+(k-1)*10+l,(a-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              c = 1 + (fromEnum $ getValInd x1 0)
@@ -328,7 +328,7 @@ module Order2Int (
                 tens = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (0,1) (+) $ tensorProductWith (*) (tensorAdd block1 block2) aSym  
 
     index2SparseAnsatzAI :: Index 1 1 0 0 2 1 0 0 -> (Int,Int) 
-    index2SparseAnsatzAI (x1, x2, _, _, x5, x6, _, _) = ((c-1)*100+(j-1)*10+k,(a-1)*10+i)
+    index2SparseAnsatzAI (Index x1  x2  _  _  x5  x6  _  _) = ((c-1)*100+(j-1)*10+k,(a-1)*10+i)
                          where 
                              a = 1 + (fromEnum $ getValInd x2 0) 
                              c = 1 + (fromEnum $ getValInd x1 0)
@@ -347,3 +347,13 @@ module Order2Int (
                 intArea = interArea map1Area map2Area
                 int2 = interI_2 map1Metric 
     -}
+
+    intAIBNew :: Tensor 1 1 0 0 0 0 1 1 Rational -> Tensor 0 0 0 0 1 1 1 1 Rational -> Tensor 0 1 0 0 0 0 1 1 Rational -> Tensor 1 1 0 0 1 1 1 1 Rational -> Tensor 1 2 0 0 1 1 2 2 Rational 
+    intAIBNew intArea intMetric flatInt int3 = tensorSub tens tensTrans  
+            where
+                block1 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_9 delta_3 
+                block2 = tensorProductNumeric intArea $ tensorProductNumeric delta_20 delta_9
+                block3 = tensorProductNumeric delta_20 int3 
+                totalBlock = tensorAdd block1 $ tensorAdd block2 block3 
+                tens = tensorContractWith_20 (0,2) (+) $ tensorProductNumeric totalBlock flatInt 
+                tensTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) tens 

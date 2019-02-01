@@ -19,7 +19,7 @@ module BasicTensors (
     ivar1, ivar2, ivar3, delta_3, delta_9, delta_19, delta_20, triangleMapArea, interI_Area, symI_Area, interJ_Area, interJ_AreanoFactor,
     interF_IArea, canonicalizeArea, isZeroArea, eta, epsilon, flatAreaST, flatArea,
     ivar1FM, ivar2FM, ivar3FM, ivar1M, ivar2M, ivar3M, invEta, etaAbs, invEtaAbs, flatAreaMap,
-    interEqn1_2, interEqn1_3
+    interEqn1_2, interEqn1_3, flatInter
 
 ) where
 
@@ -40,7 +40,7 @@ module BasicTensors (
     --define some basic tensors
 
     delta_3F :: Index 0 0 0 0 0 0 1 1 -> Rational
-    delta_3F (_,_,_,_,_,_,a,b) 
+    delta_3F (Index _ _ _ _ _ _ a b) 
             | fromEnum (getValInd a  0) == fromEnum ( getValInd b 0) = 1
             | otherwise = 0
 
@@ -48,7 +48,7 @@ module BasicTensors (
     delta_3 = mkTensorfromF (0,0,0,0,0,0,1,1) delta_3F
 
     delta_9F :: Index 0 0 0 0 1 1 0 0 -> Rational
-    delta_9F (_,_,_,_,a,b,_,_) 
+    delta_9F (Index _ _ _ _ a b _ _) 
             | fromEnum (getValInd a  0) == fromEnum ( getValInd b 0) = 1
             | otherwise = 0
 
@@ -56,7 +56,7 @@ module BasicTensors (
     delta_9 = mkTensorfromF (0,0,0,0,1,1,0,0) delta_9F
 
     delta_19F :: Index 0 0 1 1 0 0 0 0 -> Rational
-    delta_19F (_,_,a,b,_,_,_,_) 
+    delta_19F (Index _ _ a b _ _ _ _) 
             | fromEnum (getValInd a  0) == fromEnum ( getValInd b 0) = 1
             | otherwise = 0
 
@@ -64,7 +64,7 @@ module BasicTensors (
     delta_19 = mkTensorfromF (0,0,1,1,0,0,0,0) delta_19F
 
     delta_20F :: Index 1 1 0 0 0 0 0 0 -> Rational
-    delta_20F (a,b,_,_,_,_,_,_) 
+    delta_20F (Index a b _ _ _ _ _ _) 
             | fromEnum (getValInd a  0) == fromEnum ( getValInd b 0) = 1
             | otherwise = 0
 
@@ -102,7 +102,7 @@ module BasicTensors (
     --we test the following and if it is too slow change it !!
 
     interF_I2 :: M.Map (Linds_3 2) Uind_9 -> Index 0 0 0 0 1 0 0 2 -> Rational
-    interF_I2 map1 (_,_,_,_,x,_,_,y) 
+    interF_I2 map1 (Index _ _ _ _ x _ _ y) 
                 | indI == xVal = 1
                 | otherwise = 0
                  where 
@@ -120,7 +120,7 @@ module BasicTensors (
                     j = getValInd ind 1
 
     interF_J2 :: M.Map (Uinds_3 2) Lind_9 -> Index 0 0 0 0 0 1 2 0 -> Rational
-    interF_J2 map1 (_,_,_,_,_,x,y,_) 
+    interF_J2 map1 (Index _ _ _ _ _ x y _) 
                 | indI == xVal = mult
                 | otherwise = 0
                  where 
@@ -131,7 +131,7 @@ module BasicTensors (
     --define a factorless J intertwiner
 
     interF_J2noFactor :: M.Map (Uinds_3 2) Lind_9 -> Index 0 0 0 0 0 1 2 0 -> Rational
-    interF_J2noFactor map1 (_,_,_,_,_,x,y,_) 
+    interF_J2noFactor map1 (Index _ _ _ _ _ x y _) 
                 | indI == xVal = 1
                 | otherwise = 0
                  where 
@@ -141,7 +141,7 @@ module BasicTensors (
     --and define the symmetrizer               
             
     symF_I2 :: M.Map (Linds_3 2) Uind_9 -> Index 0 0 0 0 1 0 0 2 -> Rational
-    symF_I2 map1 (_,_,_,_,x,_,_,y) 
+    symF_I2 map1 (Index _ _ _ _ x _ _ y) 
                 | indI == xVal = mult
                 | otherwise = 0
                  where 
@@ -152,7 +152,7 @@ module BasicTensors (
     --and an antisymmetrizer (for equations without fractions)
 
     aSymF_I2 :: M.Map (Linds_3 2) Uind_9 -> Index 0 0 0 0 1 0 0 2 -> Rational
-    aSymF_I2 map1 (_,_,_,_,x,_,_,y) 
+    aSymF_I2 map1 (Index _ _ _ _ x _ _ y) 
                 | indI == xVal = sign 
                 | otherwise = 0
                  where 
@@ -164,7 +164,7 @@ module BasicTensors (
     --now the 3 intertwiners
 
     interF_I3 :: M.Map (Linds_3 3) Uind_19 -> Index 0 0 1 0 0 0 0 3 -> Rational
-    interF_I3 map1 (_,_,x,_,_,_,_,y) 
+    interF_I3 map1 (Index _ _ x _ _ _ _ y) 
                 | indI == xVal = 1
                 | otherwise = 0
                  where 
@@ -184,7 +184,7 @@ module BasicTensors (
                     k = getValInd ind 2
 
     interF_J3 :: M.Map (Uinds_3 3) Lind_19 -> Index 0 0 0 1 0 0 3 0 -> Rational
-    interF_J3 map1 (_,_,_,x,_,_,y,_) 
+    interF_J3 map1 (Index _ _ _ x _ _ y _) 
                 | indI == xVal = mult
                 | otherwise = 0
                  where 
@@ -195,7 +195,7 @@ module BasicTensors (
     --and define the symmetrizer               
             
     symF_I3 :: M.Map (Linds_3 3) Uind_19 -> Index 0 0 1 0 0 0 0 3 -> Rational
-    symF_I3 map1 (_,_,x,_,_,_,_,y) 
+    symF_I3 map1 (Index _ _ x _ _ _ _ y) 
                 | indI == xVal = mult
                 | otherwise = 0
                  where 
@@ -294,7 +294,7 @@ module BasicTensors (
     --now define the intertwiner functions for the area metric 
 
     interF_IArea :: M.Map (Linds_3 4) Uind_20 -> Index 1 0 0 0 0 0 0 4 -> Rational
-    interF_IArea map1 (x,_,_,_,_,_,_,y) 
+    interF_IArea map1 (Index x _ _ _ _ _ _ y) 
                 | isZeroArea y = 0
                 | indI == xVal = snd sortY
                 | otherwise = 0
@@ -305,7 +305,7 @@ module BasicTensors (
 
 
     symF_IArea :: M.Map (Linds_3 4) Uind_20 -> Index 1 0 0 0 0 0 0 4 -> Rational
-    symF_IArea map1 (x,_,_,_,_,_,_,y) 
+    symF_IArea map1 (Index x _ _ _ _ _ _ y) 
                 | isZeroArea y = 0
                 | indI == xVal = snd sortY * (jMultArea (fst sortY))
                 | otherwise = 0
@@ -315,7 +315,7 @@ module BasicTensors (
                     xVal = getValInd x 0
 
     interF_JArea :: M.Map (Uinds_3 4) Lind_20 -> Index 0 1 0 0 0 0 4 0 -> Rational
-    interF_JArea map1 (_,x,_,_,_,_,y,_) 
+    interF_JArea map1 (Index _ x _ _ _ _ y _) 
                 | isZeroArea y = 0
                 | indI == xVal = snd sortY * (jMultArea (fst sortY))
                 | otherwise = 0
@@ -325,7 +325,7 @@ module BasicTensors (
                     xVal = getValInd x 0
 
     interF_JAreanoFactor :: M.Map (Uinds_3 4) Lind_20 -> Index 0 1 0 0 0 0 4 0 -> Rational
-    interF_JAreanoFactor map1 (_,x,_,_,_,_,y,_) 
+    interF_JAreanoFactor map1 (Index _ x _ _ _ _ y _) 
                 | isZeroArea y = 0
                 | indI == xVal = snd sortY 
                 | otherwise = 0
@@ -396,16 +396,23 @@ module BasicTensors (
                                 int2 = tensorProductWith (*) (interMetric map1Metric map2Metric) delta_20
                                 intTotal = tensorAdd int1 int2
 
+    flatInter :: M.Map (Linds_3 4) Uind_20 ->  M.Map (Uinds_3 4) Lind_20 -> Tensor 0 1 0 0 0 0 1 1 Rational
+    flatInter map1Area map2Area = tensorContractWith_20 (0,1) (+) prod
+                where
+                        intArea = interArea map1Area map2Area
+                        flatA = flatArea map2Area
+                        prod = tensorProductNumeric intArea flatA
+
     --we also need the ivar Tensors (careful where we start with Enums!!)
 
     ivar1F :: Index 0 1 0 0 0 0 0 0 -> Ivar Rational 
-    ivar1F (_,a,_,_,_,_,_,_) = number2Ivar $ 1 + (fromEnum $ getValInd a 0)
+    ivar1F (Index _ a _ _ _ _ _ _) = number2Ivar $ 1 + (fromEnum $ getValInd a 0)
 
     ivar2F :: Index 0 1 0 0 0 0 0 1 -> Ivar Rational 
-    ivar2F (_,a,_,_,_,_,_,b) = number2Ivar $ (21+1) + (fromEnum $ getValInd a 0)*4 + (fromEnum $ getValInd b 0)
+    ivar2F (Index _ a _ _ _ _ _ b) = number2Ivar $ (21+1) + (fromEnum $ getValInd a 0)*4 + (fromEnum $ getValInd b 0)
     
     ivar3F :: Index 0 1 0 0 0 1 0 0 -> Ivar Rational 
-    ivar3F (_,a,_,_,_,b,_,_) = number2Ivar $ (21*5+1) + (fromEnum $ getValInd a 0)*10 + (fromEnum $ getValInd b 0)
+    ivar3F (Index _ a _ _ _ b _ _) = number2Ivar $ (21*5+1) + (fromEnum $ getValInd a 0)*10 + (fromEnum $ getValInd b 0)
 
     --define the tensors
 
@@ -420,7 +427,7 @@ module BasicTensors (
 
 
     eta_F :: Index 0 0 0 0 0 0 0 2 -> Rational
-    eta_F (_,_,_,_,_,_,_,a) 
+    eta_F (Index _ _ _ _ _ _ _ a) 
                 | x == y && x == 0 = 1
                 | x == y = -1
                 | otherwise = 0
@@ -429,7 +436,7 @@ module BasicTensors (
                          y = fromEnum $ getValInd a 1
 
     invEta_F :: Index 0 0 0 0 0 0 2 0 -> Rational
-    invEta_F (_,_,_,_,_,_,a,_) 
+    invEta_F (Index _ _ _ _ _ _ a _) 
                 | x == y && x == 0 = 1
                 | x == y = -1
                 | otherwise = 0
@@ -464,7 +471,7 @@ module BasicTensors (
 
     
     epsilon_F :: Index 0 0 0 0 0 0 0 4 -> Rational
-    epsilon_F (_,_,_,_,_,_,_,x)
+    epsilon_F (Index _ _ _ _ _ _ _ x)
                 | a == b || a == c || a == d || b == c || b == d || c == d = 0
                 | otherwise = fromIntegral $ permSign [a,b,c,d]
                  where
@@ -502,17 +509,18 @@ module BasicTensors (
                                 flatAreaT = flatArea map1
                                 inds = map (\x -> indexList [] [x] [] [] [] [] [] []) [0..20]
                                 valList = map truncate $ map (getVal flatAreaT) inds 
+
     
     --there is a problem (solved tesnorTranspose works reverse direction when applied multiple times, from now order to old order)
    
     ivar1FM :: Index 0 0 0 0 0 1 0 0 -> Ivar Rational 
-    ivar1FM (_,_,_,_,_,a,_,_) = number2Ivar $ 1 + (fromEnum $ getValInd a 0)
+    ivar1FM (Index _ _ _ _ _ a _ _) = number2Ivar $ 1 + (fromEnum $ getValInd a 0)
 
     ivar2FM :: Index 0 0 0 0 0 1 0 1 -> Ivar Rational 
-    ivar2FM (_,_,_,_,_,a,_,b) = number2Ivar $ (10+1) + (fromEnum $ getValInd a 0)*4 + (fromEnum $ getValInd b 0)
+    ivar2FM (Index _ _ _ _ _ a _ b) = number2Ivar $ (10+1) + (fromEnum $ getValInd a 0)*4 + (fromEnum $ getValInd b 0)
     
     ivar3FM :: Index 0 0 0 0 0 2 0 0 -> Ivar Rational 
-    ivar3FM (_,_,_,_,_,a,_,_) = number2Ivar $ (10*5+1) + (fromEnum $ getValInd a 0)*10 + (fromEnum $ getValInd a 1)
+    ivar3FM (Index _ _ _ _ _ a _ _) = number2Ivar $ (10*5+1) + (fromEnum $ getValInd a 0)*10 + (fromEnum $ getValInd a 1)
 
     --define the tensors
 

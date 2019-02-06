@@ -14,6 +14,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
+{-# LANGUAGE BangPatterns #-}
 
 module Main (
  main
@@ -50,13 +51,11 @@ module Main (
     import Data.List
    
     -}
-    import Data.List
-    import Tensor2
-    --import EquivarianceEqns
-    --import Index
-    import qualified Data.Map.Strict as M
-    --import Order2Int
-    --import BasicTensors
+    --import TensorTreeNumeric
+
+    import TensorTreeNumeric
+
+    --import Control.DeepSeq
     
      
 
@@ -763,14 +762,59 @@ module Main (
         
         --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/TensorMap.txt"  $ show  intCondAIBNew
 
+        
+
+        let delta20T = delta_20 
+
+        let delta20List = M.assocs delta20T
+
+        let testInt = intTest5 delta20T 
+
+        let l = intTest5List delta20List
+        
+--        let m = foldl (\m (k, v) -> force $ M.insert k v m) M.empty testIntList
+
+        print l
+
+        print l
+        
         -}
+        
 
-        let trian2 = triangleMap2 :: M.Map Ind Int
+        
+        let delta20 = fromList $ deltaList 20 
 
-        let trian3 = triangleMap3 :: M.Map Ind Int
+        let test = fmap ((*) 2) delta20
 
-        let trianArea = triangleMapArea :: M.Map Ind Int
+        let trian2 = triangleMap2
 
-        let intCondAIB = intAIB trianArea trianArea trian2 trian2 
+        let intMetric = interMetric trian2
 
-        print intCondAIB
+        let trianArea = triangleMapArea 
+
+        let intArea = interArea trianArea
+
+        let test2 = interEqn3 trian2 trianArea 
+
+        let test3 = intAIBSub trian2 trianArea
+
+        let test4 = flatInter trianArea
+
+        let test5 = tensorProd delta20 $ tensorProd delta20 $ tensorProd delta20 $ tensorProd delta20 delta20  
+
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Int3Tree.txt"  $ showTensorFrac mkMatrixIndAIB test3
+
+        --print $ map snd $ toListT intArea
+
+        --print $ toListT $ interJArea trianArea
+
+        let trianMap = triangleMap 315 
+
+        let intCondAIBJC = intAIBJC trian2 trianArea 
+
+        writeFile "/cip/austausch/cgg/intAIBJC.txt" $ showTensorFrac (mkMatrixIndAIBJC  trianMap) intCondAIBJC
+
+
+
+
+        

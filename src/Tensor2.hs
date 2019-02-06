@@ -1,28 +1,72 @@
 
 
 
-module Tensor2 (
-    Ind, Index, Tensor,
-    triangleMap2, triangleMap3, triangleMapArea,
-    intAIB, mkEqnSparseIntAIB, 
-    interI_2, interJ_2, interI_Area, interJ_Area
 
+module Tensor2 (
+    --Ind, Index, Tensor,
+    --triangleMap2, triangleMap3, triangleMapArea,
+    --intAIB, mkEqnSparseIntAIB, 
+    --interI_2, interJ_2, interI_Area, interJ_Area, intTest5, tensorProductNumeric, delta_20, intTest5List
+    Ind(..), Index(..), Tensor, tensorProductNumeric, delta_20, intTest5, intTest5List
 
 ) where
+
+    --use hash map ?
 
     import qualified Data.Map.Strict as M
     import Data.Maybe
     import Data.Foldable
     import Data.List
     import Data.List.Split
+    --import GHC.Generics
+    --import Data.Hashable
+    
 
-    type Ind = [Int]
+    type Ind = [Int] 
 
-    type Index = (Ind, Ind, Ind, Ind, Ind, Ind, Ind, Ind)
+    type Index = (Ind, Ind) 
 
     type Tensor a = M.Map Index a
 
+    delta_20 :: Tensor Rational
+    delta_20 = M.fromList l
+                    where
+                        l = [(([a],[a]),1) | a <- [0..20]]
 
+    combineInd :: Ind -> Ind -> Ind 
+    combineInd (i) (j) = (i ++ j)
+
+    combineIndex :: Index -> Index -> Index
+    combineIndex ((a1,b1)) ((a2,b2)) = (combineInd a1 a2, combineInd b1 b2)
+
+
+    tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
+    tensorProductNumeric map1 map2 = newMap
+                where 
+                    pairs1 = M.assocs $ M.filter (/=0) map1 
+                    pairs2 = M.assocs $ M.filter (/=0) map2
+                    combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
+                    newMap = M.fromDistinctAscList $ combineF <$> pairs1 <*> pairs2
+
+    intTest5 :: Tensor Rational -> Tensor Rational 
+    intTest5 tens = tensorProductNumeric tens $ tensorProductNumeric tens $ tensorProductNumeric tens $ tensorProductNumeric tens tens
+
+    tensorProductList :: (Num a, Eq a) => [(Index, a)] -> [(Index, a)] -> [(Index,a)]
+    tensorProductList l1 l2 =  l3
+            where
+                combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
+                l3 = combineF <$> l1 <*> l2
+
+    intTest5List :: [(Index,Rational)] -> [(Index,Rational)]
+    intTest5List l = tensorProductList l $ tensorProductList l $ tensorProductList l $ tensorProductList l l
+                where
+                    l = [(([a],[a]),1) | a <- [0..20]]
+
+
+
+
+
+    {-
     getValInd :: Ind -> Int -> Int
     getValInd seq i = seq !! i
 
@@ -119,8 +163,8 @@ module Tensor2 (
 
 
     combineIndex :: Index -> Index -> Index
-    combineIndex (a1,b1,c1,d1,e1,f1,g1,h1) (a2,b2,c2,d2,e2,f2,g2,h2) = 
-        (combineInd a1 a2, combineInd b1 b2, combineInd c1 c2, combineInd d1 d2, combineInd e1 e2, combineInd f1 f2, combineInd g1 g2, combineInd h1 h2)
+    combineIndex (a1,b1,c1,d1,e1,f1,g1,h1) (a2,b2,c2,d2,e2,f2,g2,h2) = (a1++a2, b1++b2, c1++c2, d1++d2, e1++e2, f1++f2, g1++g2, h1++h2)
+        --(combineInd a1 a2, combineInd b1 b2, combineInd c1 c2, combineInd d1 d2, combineInd e1 e2, combineInd f1 f2, combineInd g1 g2, combineInd h1 h2)
 
 
     isContractionInd :: (Int,Int) -> Ind -> Ind  -> Bool
@@ -199,6 +243,7 @@ module Tensor2 (
                     combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
                     newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
 
+    
     tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
     tensorProductNumeric map1 map2 = newMap
                 where 
@@ -207,6 +252,29 @@ module Tensor2 (
                     combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
                     newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
 
+    tensorProductList :: (Num a, Eq a) => [(Index, a)] -> [(Index, a)] -> [(Index,a)]
+    tensorProductList l1 l2 =  l3
+            where
+                combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
+                l3 = combineF <$> l1 <*> l2
+
+    
+    {-
+    tensorProductNumericF :: (Num a, Eq a) => Tensor a -> (Index ,a) -> Tensor a 
+    tensorProductNumericF map1 (ind, r) = newMap
+                where 
+                    combineF = combineIndex ind
+                    newMap = M.map ((*) r) $ M.mapKeysMonotonic combineF map1
+
+
+    tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
+    tensorProductNumeric map1 map2 = newMap
+                where 
+                    e = M.empty
+                    f = tensorProductNumericF map1  
+                    newMap = M.foldrWithKey (\k v b -> M.union (f (k,v)) b) e map2 
+    -}
+    
     tensorContractWith_20 :: (Int,Int) -> (a -> a -> a) -> Tensor a -> Tensor a
     tensorContractWith_20 pair f map1 = map2 
                     where 
@@ -576,11 +644,11 @@ module Tensor2 (
                 flatA = flatArea map2Area
                 flatIntA = tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea flatA 
                 int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric 
-                block1 = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_9 delta_3 
-                block2 = tensorProductWith (*) intArea $ tensorProductWith (*) delta_20 delta_9
+                block1 = tensorProductWith (*) delta_20 $! tensorProductWith (*) delta_20 $! tensorProductWith (*) delta_9 delta_3 
+                block2 = tensorProductWith (*) intArea $! tensorProductWith (*) delta_20 delta_9
                 block3 = tensorProductWith (*) delta_20 int3 
-                totalBlock = tensorAdd block1 $ tensorAdd block2 block3 
-                tens = tensorContractWith_20 (0,2) (+) $ tensorProductWith (*) totalBlock flatIntA 
+                totalBlock = tensorAdd block1 $! tensorAdd block2 block3 
+                tens = tensorContractWith_20 (0,2) (+) $! tensorProductWith (*) totalBlock flatIntA 
                 tensTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) tens 
 
     index2SparseIntAIB :: Index -> (Int,Int) 
@@ -598,3 +666,11 @@ module Tensor2 (
 
     mkEqnSparseIntAIB :: Tensor Rational -> M.Map (Int,Int) Rational
     mkEqnSparseIntAIB  map1 = M.mapKeys index2SparseIntAIB map1
+
+    intTest5 :: Tensor Rational -> Tensor Rational 
+    intTest5 tens = tensorProductNumeric tens $ tensorProductNumeric tens $ tensorProductNumeric tens $ tensorProductNumeric tens tens
+
+    intTest5List :: [(Index,Rational)] -> [(Index,Rational)]
+    intTest5List l = tensorProductList l $ tensorProductList l $ tensorProductList l $ tensorProductList l l
+
+    -}

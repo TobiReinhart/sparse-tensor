@@ -1,8 +1,11 @@
+{-# LANGUAGE BangPatterns #-}
+
 module Tensor2 (
     Ind, Index, Tensor,
     triangleMap2, triangleMap3, triangleMapArea,
     intAIB, mkEqnSparseIntAIB, 
-    interI_2, interJ_2, interI_Area, interJ_Area
+    interI_2, interJ_2, interI_Area, interJ_Area,
+    intAIBJC
 
 
 ) where
@@ -124,8 +127,17 @@ module Tensor2 (
 
     combineIndex :: Index -> Index -> Index
     combineIndex (a1,b1,c1,d1,e1,f1,g1,h1) (a2,b2,c2,d2,e2,f2,g2,h2) = 
-        (combineInd a1 a2, combineInd b1 b2, combineInd c1 c2, combineInd d1 d2, combineInd e1 e2, combineInd f1 f2, combineInd g1 g2, combineInd h1 h2)
-
+        let
+            !a3 = combineInd a1 a2
+            !b3 = combineInd b1 b2
+            !c3 = combineInd c1 c2
+            !d3 = combineInd d1 d2
+            !e3 = combineInd e1 e2
+            !f3 = combineInd f1 f2
+            !g3 = combineInd g1 g2
+            !h3 = combineInd h1 h2
+            !res = (a3, b3, c3, d3, e3, f3, g3, h3)
+        in res
 
     isContractionInd :: (Int,Int) -> Ind -> Ind  -> Bool
     isContractionInd (i,k) s1 s2 = val1 == val2
@@ -202,8 +214,8 @@ module Tensor2 (
                     let pairs2 = M.assocs map2
                     let combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
                     let combined = combineF <$> pairs1 <*> pairs2
-                    let newMap = foldl (\m (k, v) -> let m' = M.insert k v m
-                                                     in m' `deepseq` m') M.empty combined
+                    let newMap = foldl' (\m (k, v) -> let m' = M.insert k v m
+                                                       in m') M.empty combined
                     return newMap
 
     tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
@@ -605,3 +617,23 @@ module Tensor2 (
 
     mkEqnSparseIntAIB :: Tensor Rational -> M.Map (Int,Int) Rational
     mkEqnSparseIntAIB  map1 = M.mapKeys index2SparseIntAIB map1
+
+    intAIBJC :: M.Map Ind Int ->  M.Map Ind Int -> M.Map Ind Int -> M.Map Ind Int -> Tensor Rational 
+    intAIBJC map1Area map2Area map1Metric map2Metric = tensorSub tens tensTrans 
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric
+                        flatA = flatArea map2Area
+                        flatInt = tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea flatA 
+                        block0 = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_9 $ tensorProductWith (*) delta_9 delta_3
+                        block0prod = tensorProductWith (*) block0 $! flatInt
+                        block1 = tensorProductWith (*) int3 $ tensorProductWith (*) delta_20 delta_9 
+                        block1prod = tensorProductWith (*) block1 $! flatInt
+                        block2prod = tensorTranspose 5 (0,1) $ tensorTranspose 1 (0,1) block1prod
+                        block3 = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_9 delta_9 
+                        block3prod = tensorProductWith (*) block3 $! tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea $! flatInt
+                        totalBlock1prod = tensorAdd block0prod $ tensorAdd block1prod $ tensorAdd block2prod block3prod 
+                        totalBlockTransprod = tensorTranspose 6 (0,1) $ tensorTranspose 2 (0,1) totalBlock1prod
+                        tens = tensorAdd totalBlock1prod totalBlockTransprod
+                        tensTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) tens

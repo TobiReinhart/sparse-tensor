@@ -1,6 +1,3 @@
-
-
-
 module Tensor2 (
     Ind, Index, Tensor,
     triangleMap2, triangleMap3, triangleMapArea,
@@ -15,6 +12,10 @@ module Tensor2 (
     import Data.Foldable
     import Data.List
     import Data.List.Split
+
+    import Control.Parallel.Strategies
+
+    import Control.DeepSeq
 
     type Ind = [Int]
 
@@ -78,7 +79,10 @@ module Tensor2 (
     repInd i x l = (head l) : (repInd (i-1) x $ tail l)
 
     combineInd :: Ind -> Ind -> Ind 
-    combineInd = (++)
+    combineInd [] [] = []
+    combineInd [] a = a
+    combineInd a [] = a
+    combineInd a b = head a : combineInd (tail a) b
 
 
     contractionInd :: (Int,Int) -> (Ind, Ind) -> (Ind, Ind)
@@ -191,13 +195,16 @@ module Tensor2 (
     tensorBlockTranspose :: Int -> ([Int],[Int]) -> Tensor a -> Tensor a
     tensorBlockTranspose i pair map1 =  M.mapKeys (swapBlockPosIndex i pair) map1 
 
-    tensorProductWith :: (a -> b -> c) -> Tensor a -> Tensor b -> Tensor c
-    tensorProductWith f map1 map2 = newMap
-                where
-                    pairs1 = M.assocs map1 
-                    pairs2 = M.assocs map2
-                    combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
-                    newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
+    tensorProductWith :: (NFData a, NFData b, NFData c) => (a -> b -> c) -> Tensor a -> Tensor b -> Tensor c
+    tensorProductWith f map1 map2 = runEval $
+                  do
+                    let pairs1 = M.assocs map1 
+                    let pairs2 = M.assocs map2
+                    let combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
+                    let combined = combineF <$> pairs1 <*> pairs2
+                    let newMap = foldl (\m (k, v) -> let m' = M.insert k v m
+                                                     in m' `deepseq` m') M.empty combined
+                    return newMap
 
     tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
     tensorProductNumeric map1 map2 = newMap

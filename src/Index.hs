@@ -138,6 +138,9 @@ module Index (
     repInd i x (UnsafemkInd s) = UnsafemkInd $ S.update i x s 
 
     combineInd :: Ind n a -> Ind m a -> Ind (n+m) a
+    combineInd (UnsafemkInd S.Empty) (UnsafemkInd S.Empty) = UnsafemkInd S.Empty
+    combineInd (UnsafemkInd S.Empty) (UnsafemkInd s2) = UnsafemkInd s2
+    combineInd (UnsafemkInd s1) (UnsafemkInd S.Empty) = UnsafemkInd s1
     combineInd (UnsafemkInd s1) (UnsafemkInd s2) = UnsafemkInd $ (S.><) s1 s2
 
     --now the contraction Index (Index after contraction)

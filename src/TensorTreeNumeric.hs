@@ -440,19 +440,19 @@ module TensorTreeNumeric (
                 delta3 = fromList $ deltaList 3 
                 intArea = interArea trianArea
                 flatInt = flatInter trianArea
-                int3 = tensorTransposeSub (3,5) $ tensorTransposeSub (2,4) $ tensorTransposeSub (1,2) $ interEqn3 trian2 trianArea
+                int3 = tensorTranspose (3,5) $ tensorTranspose (2,4) $ tensorTranspose (1,2) $ interEqn3 trian2 trianArea
                 block1 = tensorProd delta20 $ tensorProd delta20 $ tensorProd delta9 $ tensorProd delta9 delta3 
                 block2 = tensorProd delta20 $ tensorProd delta9 int3 
-                block3 = tensorTransposeSub (7,9) $ tensorTransposeSub (6,8) $ tensorTransposeSub (5,7) $ tensorTransposeSub (4,6) $ tensorTransposeSub (3,7) $
-                         tensorTransposeSub (2,6) $ tensorProd int3 $ tensorProd delta20 delta9 
+                block3 = tensorTranspose (7,9) $ tensorTranspose (6,8) $ tensorTranspose (5,7) $ tensorTranspose (4,6) $ tensorTranspose (3,7) $
+                         tensorTranspose (2,6) $ tensorProd int3 $ tensorProd delta20 delta9 
                 sumBlock = tensorAdd block1 $ tensorAdd block2 block3 
                 prod = tensorProd sumBlock flatInt
-                block0 = tensorProd delta20 $ tensorProd delta9 $ tensorProd delta20 $ tensorProd delta9 $ tensorTransposeSub (2,3) $ tensorTransposeSub (1,2) $ tensorContractSub (0,1) $ tensorProd intArea flatInt
+                block0 = tensorProd delta20 $ tensorProd delta9 $ tensorProd delta20 $ tensorProd delta9 $ tensorTranspose (2,3) $ tensorTranspose (1,2) $ tensorContract (0,1) $ tensorProd intArea flatInt
                 tens = tensorAdd block0 prod 
-                tensTrans = tensorTransposeSub (9,12) $ tensorTransposeSub (8,10) $ tens 
+                tensTrans = tensorTranspose (9,12) $ tensorTranspose (8,10) $ tens 
 
     mkMatrixIndAIBJC :: M.Map [Int] Int -> [Int] -> (Int,Int)
-    mkMatrixIndAIBJC trianMap [e,a,k,i,f,b,l,j,m,n,r,c,s] = ((e-1)*21*10^2*4^4+(f-1)*10^2*4^4+(k-1)*10*4^4+(l-1)*4^4+(m-1)*4^3+(r-1)*4^2+(n-1)*4+s,316+ div (315*316) 2 + x)
+    mkMatrixIndAIBJC trianMap [e,a,k,i,f,b,l,j,m,n,r,c,s] = (e*21*10^2*4^4+f*10^2*4^4+k*10*4^4+l*4^4+m*4^3+r*4^2+n*4+s+1,316+ div (315*316) 2 + x)
                 where
                     x = (M.!) trianMap [c,105+a',105+b']
                     [a',b'] = [min ((a-1)*10+i) ((b-1)*10+j) , max ((a-1)*10+i) ((b-1)*10+j)]

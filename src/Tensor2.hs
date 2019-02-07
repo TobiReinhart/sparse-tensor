@@ -1,32 +1,73 @@
 {-# LANGUAGE BangPatterns #-}
 
+
 module Tensor2 (
     Ind, Index, Tensor,
     triangleMap2, triangleMap3, triangleMapArea,
-    intAIB, mkEqnSparseIntAIB, 
-    interI_2, interJ_2, interI_Area, interJ_Area,
-    intAIBJC
-
+    intAIB, mkEqnSparseIntAIB, interArea, interMetric, flatArea, flatAreaST, epsilon, eta, interEqn1_2, interEqn1_3,
+    interI_2, interJ_2, interI_Area, interJ_Area, intTest5, tensorProductNumeric, delta_20, intTest5List, tensorProductWith, tensorTranspose
+    
 
 ) where
+
+    --use hash map ?
 
     import qualified Data.Map.Strict as M
     import Data.Maybe
     import Data.Foldable
     import Data.List
     import Data.List.Split
+    --import GHC.Generics
+    --import Data.Hashable
+    
 
-    import Control.Parallel.Strategies
+    type Ind = [Int] 
 
-    import Control.DeepSeq
-
-    type Ind = [Int]
-
-    type Index = (Ind, Ind, Ind, Ind, Ind, Ind, Ind, Ind)
+    type Index = (Ind, Ind, Ind, Ind ,Ind ,Ind ,Ind ,Ind) 
 
     type Tensor a = M.Map Index a
 
+    {-
+    delta_20 :: Tensor Rational
+    delta_20 = M.fromList l
+                    where
+                        l = [(([a],[a]),1) | a <- [0..20]]
 
+    combineInd :: Ind -> Ind -> Ind 
+    combineInd (i) (j) = (i ++ j)
+
+    combineIndex :: Index -> Index -> Index
+    combineIndex ((a1,b1)) ((a2,b2)) = (combineInd a1 a2, combineInd b1 b2)
+
+
+    tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
+    tensorProductNumeric map1 map2 = newMap
+                where 
+                    pairs1 = M.assocs $ M.filter (/=0) map1 
+                    pairs2 = M.assocs $ M.filter (/=0) map2
+                    combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
+                    newMap = M.fromDistinctAscList $ combineF <$> pairs1 <*> pairs2
+
+    intTest5 :: Tensor Rational -> Tensor Rational 
+    intTest5 tens = tensorProductNumeric tens $ tensorProductNumeric tens $ tensorProductNumeric tens $ tensorProductNumeric tens tens
+
+    tensorProductList :: (Num a, Eq a) => [(Index, a)] -> [(Index, a)] -> [(Index,a)]
+    tensorProductList l1 l2 =  l3
+            where
+                combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
+                l3 = combineF <$> l1 <*> l2
+
+    intTest5List :: [(Index,Rational)] -> [(Index,Rational)]
+    intTest5List l = tensorProductList l $ tensorProductList l $ tensorProductList l $ tensorProductList l l
+                where
+                    l = [(([a],[a]),1) | a <- [0..20]]
+
+    -}
+
+
+
+
+    
     getValInd :: Ind -> Int -> Int
     getValInd seq i = seq !! i
 
@@ -49,16 +90,20 @@ module Tensor2 (
         | i == 1 = [[a]| a <- [0..r]]
         | otherwise = [ a : b | a <- [0.. r], b <- getRangeList (i-1) r]  
 
+    --there is the problem
 
     swapPosInd :: (Int,Int) -> (Ind) -> (Ind)
-    swapPosInd (i,j) s = map f s
-        where 
-            x1 = s !! i
-            x2 = s !! j
-            f x
-                | x == x1 = x2
-                | x == x2 = x1 
-                | otherwise = x 
+    swapPosInd (0,i) l = swapHead i l
+    swapPosInd (i,j) l = part1 ++ (swapHead (j-i) part2)
+            where
+                (part1,part2) = splitAt i l  
+
+    swapHead :: Int -> Ind -> Ind
+    swapHead 1 (x:xs) = (head xs) : x : (tail xs)
+    swapHead i (x:xs) = (head rest) : y ++ x : (tail rest)
+            where 
+                (y,rest) = splitAt (i-1) xs
+    
 
     swapBlockPosInd :: ([Int],[Int]) -> (Ind) -> (Ind)
     swapBlockPosInd (i,j) s 
@@ -126,18 +171,9 @@ module Tensor2 (
 
 
     combineIndex :: Index -> Index -> Index
-    combineIndex (a1,b1,c1,d1,e1,f1,g1,h1) (a2,b2,c2,d2,e2,f2,g2,h2) = 
-        let
-            !a3 = combineInd a1 a2
-            !b3 = combineInd b1 b2
-            !c3 = combineInd c1 c2
-            !d3 = combineInd d1 d2
-            !e3 = combineInd e1 e2
-            !f3 = combineInd f1 f2
-            !g3 = combineInd g1 g2
-            !h3 = combineInd h1 h2
-            !res = (a3, b3, c3, d3, e3, f3, g3, h3)
-        in res
+    combineIndex (a1,b1,c1,d1,e1,f1,g1,h1) (a2,b2,c2,d2,e2,f2,g2,h2) = (a1++a2, b1++b2, c1++c2, d1++d2, e1++e2, f1++f2, g1++g2, h1++h2)
+        --(combineInd a1 a2, combineInd b1 b2, combineInd c1 c2, combineInd d1 d2, combineInd e1 e2, combineInd f1 f2, combineInd g1 g2, combineInd h1 h2)
+
 
     isContractionInd :: (Int,Int) -> Ind -> Ind  -> Bool
     isContractionInd (i,k) s1 s2 = val1 == val2
@@ -207,25 +243,46 @@ module Tensor2 (
     tensorBlockTranspose :: Int -> ([Int],[Int]) -> Tensor a -> Tensor a
     tensorBlockTranspose i pair map1 =  M.mapKeys (swapBlockPosIndex i pair) map1 
 
-    tensorProductWith :: (NFData a, NFData b, NFData c) => (a -> b -> c) -> Tensor a -> Tensor b -> Tensor c
-    tensorProductWith f map1 map2 = runEval $
-                  do
-                    let pairs1 = M.assocs map1 
-                    let pairs2 = M.assocs map2
-                    let combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
-                    let combined = combineF <$> pairs1 <*> pairs2
-                    let newMap = foldl' (\m (k, v) -> let m' = M.insert k v m
-                                                       in m') M.empty combined
-                    return newMap
+    tensorProductWith :: (a -> b -> c) -> Tensor a -> Tensor b -> Tensor c
+    tensorProductWith f map1 map2 = newMap
+                where
+                    pairs1 = M.assocs map1 
+                    pairs2 = M.assocs map2
+                    combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
+                    newMap = M.fromDistinctAscList $ combineF <$> pairs1 <*> pairs2
 
+    
     tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
     tensorProductNumeric map1 map2 = newMap
                 where 
                     pairs1 = M.assocs $ M.filter (/=0) map1 
                     pairs2 = M.assocs $ M.filter (/=0) map2
                     combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
-                    newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
+                    newMap = M.fromDistinctAscList $ combineF <$> pairs1 <*> pairs2
 
+    tensorProductList :: (Num a, Eq a) => [(Index, a)] -> [(Index, a)] -> [(Index,a)]
+    tensorProductList l1 l2 =  l3
+            where
+                combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
+                l3 = combineF <$> l1 <*> l2
+
+    
+    {-
+    tensorProductNumericF :: (Num a, Eq a) => Tensor a -> (Index ,a) -> Tensor a 
+    tensorProductNumericF map1 (ind, r) = newMap
+                where 
+                    combineF = combineIndex ind
+                    newMap = M.map ((*) r) $ M.mapKeysMonotonic combineF map1
+
+
+    tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
+    tensorProductNumeric map1 map2 = newMap
+                where 
+                    e = M.empty
+                    f = tensorProductNumericF map1  
+                    newMap = M.foldrWithKey (\k v b -> M.union (f (k,v)) b) e map2 
+    -}
+    
     tensorContractWith_20 :: (Int,Int) -> (a -> a -> a) -> Tensor a -> Tensor a
     tensorContractWith_20 pair f map1 = map2 
                     where 
@@ -595,11 +652,11 @@ module Tensor2 (
                 flatA = flatArea map2Area
                 flatIntA = tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea flatA 
                 int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric 
-                block1 = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_9 delta_3 
-                block2 = tensorProductWith (*) intArea $ tensorProductWith (*) delta_20 delta_9
+                block1 = tensorProductWith (*) delta_20 $! tensorProductWith (*) delta_20 $! tensorProductWith (*) delta_9 delta_3 
+                block2 = tensorProductWith (*) intArea $! tensorProductWith (*) delta_20 delta_9
                 block3 = tensorProductWith (*) delta_20 int3 
-                totalBlock = tensorAdd block1 $ tensorAdd block2 block3 
-                tens = tensorContractWith_20 (0,2) (+) $ tensorProductWith (*) totalBlock flatIntA 
+                totalBlock = tensorAdd block1 $! tensorAdd block2 block3 
+                tens = tensorContractWith_20 (0,2) (+) $! tensorProductWith (*) totalBlock flatIntA 
                 tensTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) tens 
 
     index2SparseIntAIB :: Index -> (Int,Int) 
@@ -618,21 +675,27 @@ module Tensor2 (
     mkEqnSparseIntAIB :: Tensor Rational -> M.Map (Int,Int) Rational
     mkEqnSparseIntAIB  map1 = M.mapKeys index2SparseIntAIB map1
 
-    intAIBJC :: M.Map Ind Int ->  M.Map Ind Int -> M.Map Ind Int -> M.Map Ind Int -> Tensor Rational 
+    intTest5 :: Tensor Rational -> Tensor Rational 
+    intTest5 tens = tensorProductNumeric tens $ tensorProductNumeric tens $ tensorProductNumeric tens $ tensorProductNumeric tens tens
+
+    intTest5List :: [(Index,Rational)] -> [(Index,Rational)]
+    intTest5List l = tensorProductList l $ tensorProductList l $ tensorProductList l $ tensorProductList l l
+
+    intAIBJC :: M.Map Ind Int ->  M.Map Ind Int -> M.Map Ind Int->  M.Map Ind Int -> Tensor Rational 
     intAIBJC map1Area map2Area map1Metric map2Metric = tensorSub tens tensTrans 
                     where
                         intArea = interArea map1Area map2Area
                         intMetric = interMetric map1Metric map2Metric
                         int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric
                         flatA = flatArea map2Area
-                        flatInt = tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea flatA 
-                        block0 = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_9 $ tensorProductWith (*) delta_9 delta_3
-                        block0prod = tensorProductWith (*) block0 $! flatInt
-                        block1 = tensorProductWith (*) int3 $ tensorProductWith (*) delta_20 delta_9 
-                        block1prod = tensorProductWith (*) block1 $! flatInt
+                        flatInt = tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea flatA 
+                        block0 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_9 $ tensorProductNumeric delta_9 delta_3
+                        block0prod = tensorProductNumeric block0 $! flatInt
+                        block1 = tensorProductNumeric int3 $ tensorProductNumeric delta_20 delta_9 
+                        block1prod = tensorProductNumeric block1 $! flatInt
                         block2prod = tensorTranspose 5 (0,1) $ tensorTranspose 1 (0,1) block1prod
-                        block3 = tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_20 $ tensorProductWith (*) delta_9 delta_9 
-                        block3prod = tensorProductWith (*) block3 $! tensorContractWith_20 (0,1) (+) $ tensorProductWith (*) intArea $! flatInt
+                        block3 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_9 delta_9 
+                        block3prod = tensorProductNumeric block3 $! tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea $! flatInt
                         totalBlock1prod = tensorAdd block0prod $ tensorAdd block1prod $ tensorAdd block2prod block3prod 
                         totalBlockTransprod = tensorTranspose 6 (0,1) $ tensorTranspose 2 (0,1) totalBlock1prod
                         tens = tensorAdd totalBlock1prod totalBlockTransprod

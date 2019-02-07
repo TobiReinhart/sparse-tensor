@@ -22,7 +22,7 @@ module Index (
      indexList, swapPosIndex, swapBlockPosIndex, cyclicSwapIndex, combineIndex, isContractionIndex,
      delContractionIndex_20, delContractionIndex_19, delContractionIndex_9, delContractionIndex_3, checkInd, delInd,
      splitIndex, contractionIndexList_20, contractionIndexList_19, contractionIndexList_9, contractionIndexList_3,
-     ind2List, getSeq
+     ind2List, getSeq, index2List
 
 ) where
 
@@ -138,6 +138,9 @@ module Index (
     repInd i x (UnsafemkInd s) = UnsafemkInd $ S.update i x s 
 
     combineInd :: Ind n a -> Ind m a -> Ind (n+m) a
+    combineInd (UnsafemkInd S.Empty) (UnsafemkInd S.Empty) = UnsafemkInd S.Empty
+    combineInd (UnsafemkInd S.Empty) (UnsafemkInd s2) = UnsafemkInd s2
+    combineInd (UnsafemkInd s1) (UnsafemkInd S.Empty) = UnsafemkInd s1
     combineInd (UnsafemkInd s1) (UnsafemkInd s2) = UnsafemkInd $ (S.><) s1 s2
 
     --now the contraction Index (Index after contraction)
@@ -222,6 +225,19 @@ module Index (
                 f2 = mkInd $ S.fromList $ map toEnum f1
                 g2 = mkInd $ S.fromList $ map toEnum g1
                 h2 = mkInd $ S.fromList $ map toEnum h1
+
+    index2List :: Index n1 n2 n3 n4 n5 n6 n7 n8 -> ([Int],[Int],[Int],[Int],[Int],[Int],[Int],[Int])
+    index2List (Index a b c d e f g h) = (a2,b2,c2,d2,e2,f2,g2,h2)
+            where 
+                a2 = toList $ fmap fromEnum $ getSeq a
+                b2 = toList $ fmap fromEnum $ getSeq b
+                c2 = toList $ fmap fromEnum $ getSeq c
+                d2 = toList $ fmap fromEnum $ getSeq d
+                e2 = toList $ fmap fromEnum $ getSeq e
+                f2 = toList $ fmap fromEnum $ getSeq f
+                g2 = toList $ fmap fromEnum $ getSeq g
+                h2 = toList $ fmap fromEnum $ getSeq h
+
 
     --we need to push all functions for Ind to the IndexLevel (must do all cases individually)
 

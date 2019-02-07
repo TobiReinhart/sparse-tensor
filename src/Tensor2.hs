@@ -3,11 +3,11 @@
 
 
 module Tensor2 (
-    --Ind, Index, Tensor,
-    --triangleMap2, triangleMap3, triangleMapArea,
-    --intAIB, mkEqnSparseIntAIB, 
-    --interI_2, interJ_2, interI_Area, interJ_Area, intTest5, tensorProductNumeric, delta_20, intTest5List
-    Ind(..), Index(..), Tensor, tensorProductNumeric, delta_20, intTest5, intTest5List
+    Ind, Index, Tensor,
+    triangleMap2, triangleMap3, triangleMapArea,
+    intAIB, mkEqnSparseIntAIB, interArea, interMetric, flatArea, flatAreaST, epsilon, eta, interEqn1_2, interEqn1_3,
+    interI_2, interJ_2, interI_Area, interJ_Area, intTest5, tensorProductNumeric, delta_20, intTest5List, tensorProductWith, tensorTranspose
+    
 
 ) where
 
@@ -24,10 +24,11 @@ module Tensor2 (
 
     type Ind = [Int] 
 
-    type Index = (Ind, Ind) 
+    type Index = (Ind, Ind, Ind, Ind ,Ind ,Ind ,Ind ,Ind) 
 
     type Tensor a = M.Map Index a
 
+    {-
     delta_20 :: Tensor Rational
     delta_20 = M.fromList l
                     where
@@ -62,11 +63,12 @@ module Tensor2 (
                 where
                     l = [(([a],[a]),1) | a <- [0..20]]
 
+    -}
 
 
 
 
-    {-
+    
     getValInd :: Ind -> Int -> Int
     getValInd seq i = seq !! i
 
@@ -89,16 +91,20 @@ module Tensor2 (
         | i == 1 = [[a]| a <- [0..r]]
         | otherwise = [ a : b | a <- [0.. r], b <- getRangeList (i-1) r]  
 
+    --there is the problem
 
     swapPosInd :: (Int,Int) -> (Ind) -> (Ind)
-    swapPosInd (i,j) s = map f s
-        where 
-            x1 = s !! i
-            x2 = s !! j
-            f x
-                | x == x1 = x2
-                | x == x2 = x1 
-                | otherwise = x 
+    swapPosInd (0,i) l = swapHead i l
+    swapPosInd (i,j) l = part1 ++ (swapHead (j-i) part2)
+            where
+                (part1,part2) = splitAt i l  
+
+    swapHead :: Int -> Ind -> Ind
+    swapHead 1 (x:xs) = (head xs) : x : (tail xs)
+    swapHead i (x:xs) = (head rest) : y ++ x : (tail rest)
+            where 
+                (y,rest) = splitAt (i-1) xs
+    
 
     swapBlockPosInd :: ([Int],[Int]) -> (Ind) -> (Ind)
     swapBlockPosInd (i,j) s 
@@ -241,7 +247,7 @@ module Tensor2 (
                     pairs1 = M.assocs map1 
                     pairs2 = M.assocs map2
                     combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
-                    newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
+                    newMap = M.fromDistinctAscList $ combineF <$> pairs1 <*> pairs2
 
     
     tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
@@ -250,7 +256,7 @@ module Tensor2 (
                     pairs1 = M.assocs $ M.filter (/=0) map1 
                     pairs2 = M.assocs $ M.filter (/=0) map2
                     combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
-                    newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
+                    newMap = M.fromDistinctAscList $ combineF <$> pairs1 <*> pairs2
 
     tensorProductList :: (Num a, Eq a) => [(Index, a)] -> [(Index, a)] -> [(Index,a)]
     tensorProductList l1 l2 =  l3
@@ -673,4 +679,22 @@ module Tensor2 (
     intTest5List :: [(Index,Rational)] -> [(Index,Rational)]
     intTest5List l = tensorProductList l $ tensorProductList l $ tensorProductList l $ tensorProductList l l
 
-    -}
+    intAIBJC :: M.Map Ind Int ->  M.Map Ind Int -> M.Map Ind Int->  M.Map Ind Int -> Tensor Rational 
+    intAIBJC map1Area map2Area map1Metric map2Metric = tensorSub tens tensTrans 
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        int3 = interEqn1_3 map1Area map2Area map1Metric map2Metric
+                        flatA = flatArea map2Area
+                        flatInt = tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea flatA 
+                        block0 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_9 $ tensorProductNumeric delta_9 delta_3
+                        block0prod = tensorProductNumeric block0 $! flatInt
+                        block1 = tensorProductNumeric int3 $ tensorProductNumeric delta_20 delta_9 
+                        block1prod = tensorProductNumeric block1 $! flatInt
+                        block2prod = tensorTranspose 5 (0,1) $ tensorTranspose 1 (0,1) block1prod
+                        block3 = tensorProductNumeric delta_20 $ tensorProductNumeric delta_20 $ tensorProductNumeric delta_9 delta_9 
+                        block3prod = tensorProductNumeric block3 $! tensorContractWith_20 (0,1) (+) $ tensorProductNumeric intArea $! flatInt
+                        totalBlock1prod = tensorAdd block0prod $ tensorAdd block1prod $ tensorAdd block2prod block3prod 
+                        totalBlockTransprod = tensorTranspose 6 (0,1) $ tensorTranspose 2 (0,1) totalBlock1prod
+                        tens = tensorAdd totalBlock1prod totalBlockTransprod
+                        tensTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) tens

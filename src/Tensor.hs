@@ -16,7 +16,8 @@
 module Tensor (
     Tensor(..), mkTensorfromList, mkTensorfromF, getVal, tensorProductWith, tensorProductNumeric, tensorContractWith_3, tensorContractWith_9, tensorContractWith_19,
     tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor, tensorTranspose,
-    tensorIndList, mkTensorfromFZeros, evalFullTensor, evalTensorVals, unsafeGetVal, tensorProductWith2, tensorProductNumeric2, tensorProductNew
+    tensorIndList, mkTensorfromFZeros, evalFullTensor, evalTensorVals, unsafeGetVal, tensorProductWith2, tensorProductNumeric2, tensorProductNew,
+    getMap
 ) where
 
     import Index
@@ -35,6 +36,9 @@ module Tensor (
 
     instance Functor (Tensor n1 n2 n3 n4 n5 n6 n7 n8) where
         fmap f (Tensor tMap) = Tensor (M.map f tMap)
+
+    getMap :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> M.Map (Index n1 n2 n3 n4 n5 n6 n7 n8) a
+    getMap (Tensor m) = m 
 
     --later on the primitive tensors, i.e ivarsTensors and various kinds of deltas are most easily constructed from functions
 

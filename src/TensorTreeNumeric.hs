@@ -4,7 +4,7 @@ module TensorTreeNumeric (
     deltaList, mkTens, tensorProd, Tensor(..), toListT, fromList, tensorAdd, tensorContract, filterT,
     interI2, interJ2, interI3, interJ3, interIArea, interJArea, interMetric, interArea, triangleMap2, triangleMap3, triangleMapArea, interEqn2, interEqn3,
     intAIB, flatInter, intAIBSeq, intAIBIMap, intAIBSub, toListSubT, tensorProdList, swapHead, removeContractionInd, mkMatrixIndAIB, showTensorFrac,
-    mkMatrixIndInter3, mkMatrixIndInterArea, mkMatrixIndInterMetric, canonicalizeArea, areaSign, triangleMap, intAIBJC, mkMatrixIndAIBJC
+    mkMatrixIndInter3, mkMatrixIndInterArea, mkMatrixIndInterMetric, canonicalizeArea, areaSign, triangleMap, intAIBJC, mkMatrixIndAIBJC, showTensorFracMaple, isValid
     
 ) where
 
@@ -46,6 +46,14 @@ module TensorTreeNumeric (
 
     toIMapT :: Tensor a -> [(I.IntMap Int, a)]
     toIMapT = (map (\(k,v) -> (I.fromList $ zip [0..] k, v))) . toListT 
+
+    isValid :: Tensor a -> Bool
+    isValid (Scalar x) = True 
+    isValid (Tensor l) = isSorted && (and $ map isValid tens)
+            where
+                (inds,tens) = unzip l
+                sortInds = sort inds
+                isSorted = sortInds == inds 
 
     filterT :: (a -> Bool) -> Tensor a -> Tensor a
     filterT f (Scalar x) = Scalar x
@@ -412,7 +420,7 @@ module TensorTreeNumeric (
                 tensorTrans = tensorTransposeIMap (0,7) $ tensorTransposeIMap (2,8) $ prod
 
     mkMatrixIndAIB :: [Int] -> (Int,Int)
-    mkMatrixIndAIB [n,a,m,j,i,c,b,s,r] = ((c)*10*4^4+(j)*4^4+(m)*4^3+(n)*4^2+(r)*4+s,(a)*21*10+(b)*10+i+1) 
+    mkMatrixIndAIB [n,a,m,j,i,c,b,s,r] = ((c)*10*4^4+(j)*4^4+(m)*4^3+(n)*4^2+(r)*4+s+1,(a)*21*10+(b)*10+i+1) 
 
     mkMatrixIndInter3 :: [Int] -> (Int,Int)
     mkMatrixIndInter3 [a,n,b,m,j,i] = (1,a*400*21^2+b*400*21+j*400+i*40+m*4+n+1)
@@ -429,6 +437,12 @@ module TensorTreeNumeric (
                             l1 = toListT $ filterT (/= 0) t 
                             l2 = map (\(x,y) -> let (i, j) = f x
                                                 in show i ++ " " ++ show j ++ " " ++ show y) l1
+
+    showTensorFracMaple :: (Show a, Num a, Eq a) => ([Int] -> (Int,Int)) -> Tensor a -> String
+    showTensorFracMaple f t = unlines l2
+                        where
+                            l1 = toListT $ filterT (/= 0) t 
+                            l2 = map (\(x,y) -> show (f x) ++ "=" ++ show y ++ "," ) l1 
 
             
 

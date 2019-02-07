@@ -19,8 +19,9 @@
 module Main (
  main
 ) where
-
-    {-
+    
+    
+    
     import Index
     import Tensor
     import Ivar
@@ -50,10 +51,11 @@ module Main (
     import Data.Functor
     import Data.List
    
-    -}
-    --import TensorTreeNumeric
+    import qualified Tensor2 as Tens 
+    
+    
 
-    import TensorTreeNumeric
+    --import TensorTreeNumeric
 
     --import Control.DeepSeq
     
@@ -61,7 +63,7 @@ module Main (
 
     main = do
 
-        {-
+        
         
         let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
         let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
@@ -69,7 +71,7 @@ module Main (
         let map1Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Linds_3 2) Uind_9  
         let map2Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Uinds_3 2) Lind_9 
 
-        
+        {-
 
         let mapInter3 = M.mapKeys mkInd triangleMap3 :: M.Map (Linds_3 3) Uind_19
 
@@ -778,7 +780,7 @@ module Main (
 
         print l
         
-        -}
+        
         
 
         
@@ -796,25 +798,59 @@ module Main (
 
         let test2 = interEqn3 trian2 trianArea 
 
-        let test3 = intAIBSub trian2 trianArea
+        let test3 = intAIB trian2 trianArea
 
         let test4 = flatInter trianArea
 
         let test5 = tensorProd delta20 $ tensorProd delta20 $ tensorProd delta20 $ tensorProd delta20 delta20  
 
-        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Int3Tree.txt"  $ showTensorFrac mkMatrixIndAIB test3
+        --writeFile "/Users/TobiasReinhart/Desktop/HaskellTensor/HaskellTensor2Data/Int3Tree.txt"  $ showTensorFracMaple mkMatrixIndAIB test3
 
         --print $ map snd $ toListT intArea
 
         --print $ toListT $ interJArea trianArea
 
-        let trianMap = triangleMap 315 
+        --let trianMap = triangleMap 315 
 
-        let intCondAIBJC = intAIBJC trian2 trianArea 
+        --let intCondAIBJC = intAIBJC trian2 trianArea 
 
-        writeFile "/cip/austausch/cgg/intAIBJC.txt" $ showTensorFrac (mkMatrixIndAIBJC  trianMap) intCondAIBJC
+        --writeFile "/cip/austausch/cgg/intAIBJC.txt" $ showTensorFrac (mkMatrixIndAIBJC  trianMap) intCondAIBJC
 
-
-
-
+        let test6 = Tensor [(2,Scalar 3), (1, Scalar 5)]
         
+        print $ isValid test6
+
+        -}
+
+        let trian2 = Tens.triangleMap2
+
+        let trianA = Tens.triangleMapArea
+
+        let intAIBTens = M.mapKeysMonotonic index2List $ getMap $ intAIB map1Area map2Area map1Metric map2Metric 
+
+        let intAIBTens2 = Tens.intAIB trianA trianA trian2 trian2
+
+        let diff1 = M.difference intAIBTens intAIBTens2
+        
+        let diff2 = M.difference intAIBTens2 intAIBTens
+
+        let symDiff = M.union diff1 diff2 
+
+        --print $ nub $ M.assocs symDiff
+
+        let intArea = M.mapKeysMonotonic index2List $ getMap $ interArea map1Area map2Area 
+
+        let intArea2 = Tens.interArea trianA trianA 
+
+        let intMetric = M.mapKeysMonotonic index2List $ getMap $ interMetric map1Metric map2Metric 
+
+        let intMetric2 = Tens.interMetric trian2 trian2 
+
+        let areaFlat = M.filter (/= 0) $  M.mapKeysMonotonic index2List $ getMap $ intAIB map1Area map2Area  map1Metric map2Metric
+
+        let areaFlat2 = Tens.intAIB trianA trianA trian2 trian2
+        
+
+        print $ areaFlat == areaFlat2
+
+

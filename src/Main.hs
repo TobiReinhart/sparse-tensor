@@ -20,7 +20,7 @@ module Main (
  main
 ) where
     
-    
+    {-
     
     import Index
     import Tensor
@@ -55,15 +55,22 @@ module Main (
     
     
 
-    --import TensorTreeNumeric
+    import qualified TensorTreeNumeric as Tree
 
     --import Control.DeepSeq
+    -}
+
+    import TensorTreeNumeric2 
+    import qualified Tensor2 as T
+    import qualified Data.Map as M
+    import Data.List
+    
     
      
 
     main = do
 
-        
+        {-
         
         let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
         let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
@@ -71,7 +78,7 @@ module Main (
         let map1Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Linds_3 2) Uind_9  
         let map2Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Uinds_3 2) Lind_9 
 
-        {-
+        
 
         let mapInter3 = M.mapKeys mkInd triangleMap3 :: M.Map (Linds_3 3) Uind_19
 
@@ -820,7 +827,7 @@ module Main (
         
         print $ isValid test6
 
-        -}
+        
 
         let trian2 = Tens.triangleMap2
 
@@ -846,11 +853,97 @@ module Main (
 
         let intMetric2 = Tens.interMetric trian2 trian2 
 
+        let intI2 = Tens.interJ_2 trian2  
+
+        let interEqn1_2Tens = Tens.interEqn1_2 trianA trianA
+
         let areaFlat = M.filter (/= 0) $  M.mapKeysMonotonic index2List $ getMap $ intAIB map1Area map2Area  map1Metric map2Metric
 
         let areaFlat2 = Tens.intAIB trianA trianA trian2 trian2
+
+        let trian2Tree = Tree.triangleMap2
+
+        let trianATree = Tree.triangleMapArea
+
+        let intMetricTree = Tree.interMetric trian2Tree
+
+        let intAreaTree = Tree.interArea trianATree
+
+        let intEqn1_2Tree = Tree.interEqn2 trianATree
+
+        let i1 = sort $ Tree.toListT intEqn1_2Tree
+
+        let i2 = sort $ map (\(a,b) -> (Tens.swapPosInd (2,3)  $ Tens.swapPosInd (1,3) $ Tens.index2List a,b)) $ M.assocs interEqn1_2Tens
         
+        putStr $ unlines $ map show $ zip i1 i2 
 
-        print $ areaFlat == areaFlat2
+        print $ i1 == i2
+
+        -}
+
+        let map1Area = trianMapAreaI 
+        let map2Area = trianMapAreaJ
+        let map1Metric = trianMapI2
+        let map2Metric = trianMapJ2
+
+        let mapAreaT = T.triangleMapArea :: M.Map [Int] Int
+        let mapMetricT = T.triangleMap2 :: M.Map [Int] Int
+
+        let intM = interMetric map1Metric map2Metric 
+
+        --print $ map snd $ toListShow intM 
+
+        let intMT = T.interMetric mapMetricT mapMetricT 
+
+        --print $ M.elems intMT 
+
+        --print $ (M.elems intMT) == (map snd $ toListShow intM) 
+
+        let intA = interArea map1Area map2Area
+
+        let intAT = T.interArea mapAreaT mapAreaT 
+
+        --print $ (M.elems intAT) == (map snd $ toListShow intA) 
+
+        let int2 = interEqn2 map1Area map2Area
+
+        let int2T = T.interEqn1_2 mapAreaT mapAreaT 
+
+        let int2_1 = tensorProd intA delta3
+        
+        let int2_2 = tensorProd (tensorTransL3 (0,1) $ tensorProd delta3 delta3 ) delta20
+
+        let int2_1T =  T.tensorProductNumeric intAT T.delta_3 
+
+        let int2_2T = T.tensorProductNumeric  (T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3 ) T.delta_20
+
+        let test10 =  tensorTransL3 (0,1) $ tensorProd delta3 delta3
+
+        let test11 = T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3
+
+        let test12 = tensorProd  (tensorProd test10 delta3) delta3
+
+        let test13 = T.tensorProductNumeric ( T.tensorProductNumeric test11 T.delta_3) T.delta_3
+
+        let test14 = tensorTransL3 (0,1) $ tensorProd delta3 $ tensorProd delta3 delta3
 
 
+
+        --print $ zip ( map (truncate) (M.elems int2T) ) (map (truncate) $ (map snd $ toListShow int2) )
+
+        --print $ toListShow $ tensorProd delta3 delta3  
+
+        --print $ map snd $ toListShow $ tensorTransL3 (0,1) $ tensorProd delta3 delta3 
+        
+        --print $ M.elems $ T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3
+
+        --print $ (map snd $ toListShow $ tensorProd (tensorTransL3 (0,1) $ tensorProd delta3 delta3) delta20) == (M.elems $ T.tensorProductNumeric (T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3) T.delta_20)
+
+        let l1 = sort ( map (\(x,y) -> (x,truncate y)) $ toListShowIndex $ int2)
+        let l2 = sort $ map (\(x,y) -> (x,truncate y)) $ M.toAscList $ int2T
+        
+        print $ l1 == l2
+        
+       
+
+        

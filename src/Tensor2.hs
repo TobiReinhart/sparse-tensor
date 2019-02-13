@@ -6,7 +6,8 @@ module Tensor2 (
     Ind, Index, Tensor,
     triangleMap2, triangleMap3, triangleMapArea,
     intAIB, mkEqnSparseIntAIB, interArea, interMetric, flatArea, flatAreaST, epsilon, eta, interEqn1_2, interEqn1_3,
-    interI_2, interJ_2, interI_Area, interJ_Area, intTest5, tensorProductNumeric, delta_20, intTest5List, tensorProductWith, tensorTranspose
+    interI_2, interJ_2, interI_Area, interJ_Area, intTest5, tensorProductNumeric, delta_20, intTest5List, tensorProductWith, tensorTranspose,
+    index2List, swapPosInd, delta_3, delta_9
     
 
 ) where
@@ -247,7 +248,7 @@ module Tensor2 (
                     pairs1 = M.assocs map1 
                     pairs2 = M.assocs map2
                     combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
-                    newMap = M.fromDistinctAscList $ combineF <$> pairs1 <*> pairs2
+                    newMap = M.fromList $ combineF <$> pairs1 <*> pairs2
 
     
     tensorProductNumeric :: (Num a, Eq a) => Tensor a -> Tensor a -> Tensor a
@@ -256,7 +257,7 @@ module Tensor2 (
                     pairs1 = M.assocs $ M.filter (/=0) map1 
                     pairs2 = M.assocs $ M.filter (/=0) map2
                     combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
-                    newMap = M.fromDistinctAscList $ combineF <$> pairs1 <*> pairs2
+                    newMap = M.fromList $ combineF <$> pairs1 <*> pairs2
 
     tensorProductList :: (Num a, Eq a) => [(Index, a)] -> [(Index, a)] -> [(Index,a)]
     tensorProductList l1 l2 =  l3
@@ -698,3 +699,6 @@ module Tensor2 (
                         totalBlockTransprod = tensorTranspose 6 (0,1) $ tensorTranspose 2 (0,1) totalBlock1prod
                         tens = tensorAdd totalBlock1prod totalBlockTransprod
                         tensTrans = tensorTranspose 7 (0,1) $ tensorTranspose 8 (0,1) tens
+
+    index2List :: Index -> [Int]
+    index2List (a,b,c,d,e,f,g,h) = a++b++c++d++e++f++g++h

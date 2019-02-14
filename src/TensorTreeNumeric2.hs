@@ -26,12 +26,12 @@
 
 
 module TensorTreeNumeric2 (
-    trianMapI2, trianMapJ2, trianMapAreaI, trianMapAreaJ, intAIB, Tensor(..), IndList(..), 
+    trianMapI2, trianMapJ2, trianMapAreaI, trianMapAreaJ, Tensor(..), IndList(..), 
     Uind_20, Lind_20, Uind_19, Lind_19, Uind_9, Lind_9, Uind_3, Lind_3, toListT, toListShow, toListShowIndex, fromListT, interEqn3, tensorProd, delta20, delta9, delta3, delta19, tensorAdd,
-    tensorSub, tensorContr20, tensorContr19, tensorContr9, tensorContr3,
+    tensorSub, tensorContr20, tensorContr19, tensorContr9, tensorContr3, aSymI2,
     tensorTransU20, tensorTransL20, tensorTransL3, interArea, flatInter, tensorTransU3, tensorTransL9,
     interI2, interJ2, interI3, interJ3, interIArea, interJArea, interMetric, interEqn2 , isValid,
-    swapHead, toListInd, removeZeros, printTensorTree
+    swapHead, toListInd, removeZeros, printTensorTree, invEta
     
 ) where
 
@@ -1306,6 +1306,16 @@ module TensorTreeNumeric2 (
                     | ind1 == ((M.!) trian2 $ sortInd ind2 ) = 1 
                     | otherwise = 0 
 
+    aSymI2 :: M.Map (IndList 2 Lind_3) (IndList 1 Uind_9)  -> Tensor 0 0 0 0 1 0 0 2 Rational
+    aSymI2 trian2 = fromListT $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                inds = [ (Empty, Empty, Empty, Empty, (singletonInd a), Empty, Empty, (Append b $ singletonInd c)) | a <- [toEnum 0..toEnum 9], b <- [toEnum 0..toEnum 3], c <- [toEnum 0..toEnum 3]]
+                f (_, _, _, _, ind1, _, _, ind2)
+                    | ind1 == (M.!) trian2 sortI = sign
+                    | otherwise = 0
+                  where sortI = sortInd ind2
+                        sign = if sortI == ind2 then 1 else -1
+
     interJ2 :: M.Map (IndList 2 Uind_3) (IndList 1 Lind_9)  -> Tensor 0 0 0 0 0 1 2 0 Rational
     interJ2 trian2 = fromListT $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
             where
@@ -1381,27 +1391,22 @@ module TensorTreeNumeric2 (
     flatArea :: Tensor 0 1 0 0 0 0 0 0 Rational 
     flatArea = fromListT $ map (\(i,v) -> ( (Empty, (singletonInd $ toEnum i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(5,-1),(6,-1),(9,1),(11,-1),(12,-1),(15,1),(18,1),(20,1)]
 
+    eta :: Tensor 0 0 0 0 0 0 0 2 Rational 
+    eta = fromListT l 
+                where
+                    l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Empty,Empty,Empty,Append (toEnum x) $ Append (toEnum y) Empty),z)) [(0,0,1),(1,1,-1),(2,2,-1),(3,3,-1)]
+
+    invEta :: Tensor 0 0 0 0 0 0 2 0 Rational 
+    invEta = fromListT l 
+                where
+                    l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Empty,Empty,Append (toEnum x) $ Append (toEnum y) Empty,Empty),z)) [(0,0,1),(1,1,-1),(2,2,-1),(3,3,-1)]
+
     flatInter :: M.Map (IndList 4 Lind_3) (IndList 1 Uind_20) -> M.Map (IndList 4 Uind_3) (IndList 1 Lind_20) -> Tensor 0 1 0 0 0 0 1 1 Rational
     flatInter trianAreaI trianAreaJ = tensorContr20 (0,1) prod
             where
                 intArea = interArea trianAreaI trianAreaJ 
                 prod = tensorProd intArea flatArea 
 
-    
-    intAIB :: M.Map (IndList 2 Lind_3) (IndList 1 Uind_9) -> M.Map (IndList 2 Uind_3) (IndList 1 Lind_9) -> M.Map (IndList 4 Lind_3) (IndList 1 Uind_20) -> M.Map (IndList 4 Uind_3) (IndList 1 Lind_20) -> Tensor 1 2 0 0 1 1 2 2 Rational
-    intAIB map1Metric map2Metric map1Area map2Area = tensorSub tens tensTrans  
-            where
-                intArea = interArea map1Area map2Area
-                intMetric = interMetric map1Metric map2Metric
-                flatIntA = flatInter map1Area map2Area 
-                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
-                block1 = tensorProd delta20 $ tensorProd delta20 $ tensorProd delta9 delta3 
-                block2 = tensorProd intArea $ tensorProd delta20 delta9
-                block3 = tensorProd delta20 int3 
-                totalBlock = tensorAdd block1 $ tensorAdd block2 block3 
-                tens = tensorContr20 (0,2) $ tensorProd totalBlock flatIntA 
-                tensTrans = tensorTransU3 (0,1) $ tensorTransL3 (0,1) tens 
-    
 
 
 

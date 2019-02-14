@@ -61,6 +61,7 @@ module Main (
     -}
 
     import TensorTreeNumeric2 
+    import TensorTreeIntCond
     import qualified Tensor2 as T
     import qualified Data.Map as M
     import Data.List
@@ -956,8 +957,14 @@ module Main (
 
         let l4 = filter (\(a,b) -> b /= 0) $ toListT intCond
 
-        putStr $ printTensorTree intCond
+        let ansAB = ansatzAB map1Metric map2Metric map1Area map2Area 
+
+        let trianM = triangleMap 315 
+
+        let ansABString = map (showMatLab.(index2SparseAnsatzAB trianM)) $ toListShow ansAB 
         
+        putStr $ unlines ansABString
+
       
        
 

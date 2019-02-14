@@ -927,6 +927,14 @@ module Main (
 
         let test14 = tensorTransL3 (0,1) $ tensorProd delta3 $ tensorProd delta3 delta3
 
+        let intCond = intAIB map1Metric map2Metric map1Area map2Area 
+
+        let intCondT = T.intAIB mapAreaT mapAreaT mapMetricT mapMetricT
+
+        let int3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+
+        let int3T = T.interEqn1_3 mapAreaT mapAreaT mapMetricT mapMetricT 
+
 
 
         --print $ zip ( map (truncate) (M.elems int2T) ) (map (truncate) $ (map snd $ toListShow int2) )
@@ -939,11 +947,18 @@ module Main (
 
         --print $ (map snd $ toListShow $ tensorProd (tensorTransL3 (0,1) $ tensorProd delta3 delta3) delta20) == (M.elems $ T.tensorProductNumeric (T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3) T.delta_20)
 
-        let l1 = sort ( map (\(x,y) -> (x,truncate y)) $ toListShowIndex $ int2)
-        let l2 = sort $ map (\(x,y) -> (x,truncate y)) $ M.toAscList $ int2T
+        let l1 = filter (\(a,b) -> b /= 0) $ sort ( map (\(x,y) -> (x,truncate y)) $ toListShowIndex $ intCond)
+        let l2 = filter (\(a,b) -> b /= 0) $ sort $ map (\(x,y) -> (x,truncate y)) $ M.toAscList $ intCondT
+        --print $ length l1
+        --print $ length l2
         
-        print $ l1 == l2
+        let l3 = toListT intCond
+
+        let l4 = filter (\(a,b) -> b /= 0) $ toListT intCond
+
+        putStr $ printTensorTree intCond
         
+      
        
 
         

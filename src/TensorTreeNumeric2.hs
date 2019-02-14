@@ -31,7 +31,7 @@ module TensorTreeNumeric2 (
     tensorSub, tensorContr20, tensorContr19, tensorContr9, tensorContr3,
     tensorTransU20, tensorTransL20, tensorTransL3, interArea, flatInter, tensorTransU3, tensorTransL9,
     interI2, interJ2, interI3, interJ3, interIArea, interJArea, interMetric, interEqn2 , isValid,
-    swapHead, toListInd
+    swapHead, toListInd, removeZeros, printTensorTree
     
 ) where
 
@@ -233,6 +233,100 @@ module TensorTreeNumeric2 (
     getTensorListL3 :: Tensor 0 0 0 0 0 0 0 n8 a -> [(Lind_3, Tensor 0 0 0 0 0 0 0 (n8-1) a)]
     getTensorListL3 (TensorL3 x) = x
 
+    isNotZeroTensorU20 :: (Num a, Eq a) => (b, Tensor n1 n2 n3 n4 n5 n6 n7 n8 a) -> Bool
+    isNotZeroTensorU20 (_, Scalar x) 
+                | x == 0 = False
+                | otherwise = True
+    isNotZeroTensorU20 (_, TensorU20 []) = False
+    isNotZeroTensorU20 (_, TensorL20 []) = False
+    isNotZeroTensorU20 (_, TensorU19 []) = False
+    isNotZeroTensorU20 (_, TensorL19 []) = False
+    isNotZeroTensorU20 (_, TensorU9 []) = False
+    isNotZeroTensorU20 (_, TensorL9 []) = False
+    isNotZeroTensorU20 (_, TensorU3 []) = False
+    isNotZeroTensorU20 (_, TensorL3 []) = False
+    isNotZeroTensorU20 (_, t) = True
+
+    isNotZeroTensorL20 :: (Num a, Eq a) => (b, Tensor 0 n2 n3 n4 n5 n6 n7 n8 a) -> Bool
+    isNotZeroTensorL20 (_, Scalar x) 
+                | x == 0 = False
+                | otherwise = True
+    isNotZeroTensorL20 (_, TensorL20 []) = False
+    isNotZeroTensorL20 (_, TensorU19 []) = False
+    isNotZeroTensorL20 (_, TensorL19 []) = False
+    isNotZeroTensorL20 (_, TensorU9 []) = False
+    isNotZeroTensorL20 (_, TensorL9 []) = False
+    isNotZeroTensorL20 (_, TensorU3 []) = False
+    isNotZeroTensorL20 (_, TensorL3 []) = False
+    isNotZeroTensorL20 (_, t) = True
+
+    isNotZeroTensorU19 :: (Num a, Eq a) => (b, Tensor 0 0 n3 n4 n5 n6 n7 n8 a) -> Bool
+    isNotZeroTensorU19 (_, Scalar x) 
+                | x == 0 = False
+                | otherwise = True
+    isNotZeroTensorU19 (_, TensorU19 []) = False
+    isNotZeroTensorU19 (_, TensorL19 []) = False
+    isNotZeroTensorU19 (_, TensorU9 []) = False
+    isNotZeroTensorU19 (_, TensorL9 []) = False
+    isNotZeroTensorU19 (_, TensorU3 []) = False
+    isNotZeroTensorU19 (_, TensorL3 []) = False
+    isNotZeroTensorU19 (_, t) = True
+
+    isNotZeroTensorL19 :: (Num a, Eq a) => (b, Tensor 0 0 0 n4 n5 n6 n7 n8 a) -> Bool
+    isNotZeroTensorL19 (_, Scalar x) 
+                | x == 0 = False
+                | otherwise = True
+    isNotZeroTensorL19 (_, TensorL19 []) = False
+    isNotZeroTensorL19 (_, TensorU9 []) = False
+    isNotZeroTensorL19 (_, TensorL9 []) = False
+    isNotZeroTensorL19 (_, TensorU3 []) = False
+    isNotZeroTensorL19 (_, TensorL3 []) = False
+    isNotZeroTensorL19 (_, t) = True
+
+    isNotZeroTensorU9 :: (Num a, Eq a) => (b, Tensor 0 0 0 0 n5 n6 n7 n8 a) -> Bool
+    isNotZeroTensorU9 (_, Scalar x) 
+                | x == 0 = False
+                | otherwise = True
+    isNotZeroTensorU9 (_, TensorU9 []) = False
+    isNotZeroTensorU9 (_, TensorL9 []) = False
+    isNotZeroTensorU9 (_, TensorU3 []) = False
+    isNotZeroTensorU9 (_, TensorL3 []) = False
+    isNotZeroTensorU9 (_, t) = True
+
+    isNotZeroTensorL9 :: (Num a, Eq a) => (b, Tensor 0 0 0 0 0 n6 n7 n8 a) -> Bool
+    isNotZeroTensorL9 (_, Scalar x) 
+                | x == 0 = False
+                | otherwise = True
+    isNotZeroTensorL9 (_, TensorL9 []) = False
+    isNotZeroTensorL9 (_, TensorU3 []) = False
+    isNotZeroTensorL9 (_, TensorL3 []) = False
+    isNotZeroTensorL9 (_, t) = True
+
+    isNotZeroTensorU3 :: (Num a, Eq a) => (b, Tensor 0 0 0 0 0 0 n7 n8 a) -> Bool
+    isNotZeroTensorU3 (_, Scalar x) 
+                | x == 0 = False
+                | otherwise = True
+    isNotZeroTensorU3 (_, TensorU3 []) = False
+    isNotZeroTensorU3 (_, TensorL3 []) = False
+    isNotZeroTensorU3 (_, t) = True
+
+    isNotZeroTensorL3 :: (Num a, Eq a) => (b, Tensor 0 0 0 0 0 0 0 n8 a) -> Bool
+    isNotZeroTensorL3 (_, Scalar x) 
+                | x == 0 = False
+                | otherwise = True
+    isNotZeroTensorL3 (_, TensorL3 []) = False
+    isNotZeroTensorL3 (_, t) = True
+
+    removeZeros :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a 
+    removeZeros (Scalar x) = Scalar x
+    removeZeros (TensorU20 t) = TensorU20 $ filter isNotZeroTensorU20 $ map (\(i,v) -> (i,removeZeros v)) t 
+    removeZeros (TensorL20 t) = TensorL20 $ filter isNotZeroTensorL20 $ map (\(i,v) -> (i,removeZeros v)) t
+    removeZeros (TensorU19 t) = TensorU19 $ filter isNotZeroTensorU19 $ map (\(i,v) -> (i,removeZeros v)) t
+    removeZeros (TensorL19 t) = TensorL19 $ filter isNotZeroTensorL19 $ map (\(i,v) -> (i,removeZeros v)) t
+    removeZeros (TensorU9 t) = TensorU9 $ filter isNotZeroTensorU9 $ map (\(i,v) -> (i,removeZeros v)) t
+    removeZeros (TensorL9 t) = TensorL9 $ filter isNotZeroTensorL9 $ map (\(i,v) -> (i,removeZeros v)) t
+    removeZeros (TensorU3 t) = TensorU3 $ filter isNotZeroTensorU3 $ map (\(i,v) -> (i,removeZeros v)) t
+    removeZeros (TensorL3 t) = TensorL3 $ filter isNotZeroTensorL3 $ map (\(i,v) -> (i,removeZeros v)) t
     
     toListU20 :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> [(IndList n1 Uind_20, Tensor 0 n2 n3 n4 n5 n6 n7 n8 a)]
     toListU20 (TensorU20 l) = concat $ map (\(i,t) -> appendF i $ toListU20 t) l
@@ -337,21 +431,23 @@ module TensorTreeNumeric2 (
                 showInd (i1,i2,i3,i4,i5,i6,i7,i8) = ((map fromEnum $ toList i1), (map fromEnum $ toList i2), (map fromEnum $ toList i3), (map fromEnum $ toList i4), (map fromEnum $ toList i5), (map fromEnum $ toList i6), (map fromEnum $ toList i7), (map fromEnum $ toList i8)) 
 
 
-    fromListT :: (Num a) => [(Index n1 n2 n3 n4 n5 n6 n7 n8, a)] -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    fromListT :: (Num a, Eq a) => [(Index n1 n2 n3 n4 n5 n6 n7 n8, a)] -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     fromListT (x:[]) = mkTens x 
     fromListT (x:xs) = foldr insertOrAdd (mkTens x) xs
 
     
-    tensorAddU20 :: (Num a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorAddU20 :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorAddU20 (TensorU20 []) t = t
     tensorAddU20 t (TensorU20 []) = t 
     tensorAddU20 (TensorU20 (x:xs)) (TensorU20 (y:ys)) 
                     | i1 < i2 = TensorU20 (x : (getTensorListU20 $ tensorAddU20 (TensorU20 xs) (TensorU20 (y:ys))))
-                    | i1 == i2 = TensorU20 $ (i1, tensorAddU20 t1 t2) : (getTensorListU20 $ tensorAddU20 (TensorU20 xs) (TensorU20 ys))
+                    | i1 == i2 = if isNotZeroTensorU20 newT then TensorU20 $ newT : (getTensorListU20 $ tensorAddU20 (TensorU20 xs) (TensorU20 ys))
+                                 else TensorU20 $ (getTensorListU20 $ tensorAddU20 (TensorU20 xs) (TensorU20 ys))
                     | i1 > i2 =  TensorU20 (y : (getTensorListU20 $ tensorAddU20 (TensorU20 (x:xs)) (TensorU20 ys)))
                      where
                         (i1,t1) = x
                         (i2,t2) = y
+                        newT = (i1, tensorAddU20 t1 t2) 
     tensorAddU20 (TensorL20 t1) (TensorL20 t2) = tensorAddL20 (TensorL20 t1) (TensorL20 t2)
     tensorAddU20 (TensorU19 t1) (TensorU19 t2) = tensorAddU19 (TensorU19 t1) (TensorU19 t2)
     tensorAddU20 (TensorL19 t1) (TensorL19 t2) = tensorAddL19 (TensorL19 t1) (TensorL19 t2)
@@ -361,16 +457,18 @@ module TensorTreeNumeric2 (
     tensorAddU20 (TensorL3 t1) (TensorL3 t2) = tensorAddL3 (TensorL3 t1) (TensorL3 t2)
     tensorAddU20 (Scalar s1) (Scalar s2) = Scalar (s1+s2)
 
-    tensorAddL20 :: (Num a) => Tensor 0 n2 n3 n4 n5 n6 n7 n8 a -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a
+    tensorAddL20 :: (Num a, Eq a) => Tensor 0 n2 n3 n4 n5 n6 n7 n8 a -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a
     tensorAddL20 (TensorL20 []) t = t
     tensorAddL20 t (TensorL20 []) = t 
     tensorAddL20 (TensorL20 (x:xs)) (TensorL20 (y:ys)) 
                     | i1 < i2 = TensorL20 (x : (getTensorListL20 $ tensorAddL20 (TensorL20 xs) (TensorL20 (y:ys))))
-                    | i1 == i2 = TensorL20 $ (i1, tensorAddL20 t1 t2) : (getTensorListL20 $ tensorAddL20 (TensorL20 xs) (TensorL20 ys))
+                    | i1 == i2 = if isNotZeroTensorL20 newT then TensorL20 $ newT : (getTensorListL20 $ tensorAddL20 (TensorL20 xs) (TensorL20 ys))
+                                else TensorL20 (getTensorListL20 $ tensorAddL20 (TensorL20 xs) (TensorL20 ys)) 
                     | i1 > i2 =  TensorL20 (y : (getTensorListL20 $ tensorAddL20 (TensorL20 (x:xs)) (TensorL20 ys)))
                      where
                         (i1,t1) = x
                         (i2,t2) = y
+                        newT = (i1, tensorAddL20 t1 t2) 
     tensorAddL20 (TensorU19 t1) (TensorU19 t2) = tensorAddU19 (TensorU19 t1) (TensorU19 t2)
     tensorAddL20 (TensorL19 t1) (TensorL19 t2) = tensorAddL19 (TensorL19 t1) (TensorL19 t2)
     tensorAddL20 (TensorU9 t1) (TensorU9 t2) = tensorAddU9 (TensorU9 t1) (TensorU9 t2)
@@ -379,16 +477,18 @@ module TensorTreeNumeric2 (
     tensorAddL20 (TensorL3 t1) (TensorL3 t2) = tensorAddL3 (TensorL3 t1) (TensorL3 t2)
     tensorAddL20 (Scalar s1) (Scalar s2) = Scalar (s1+s2)
 
-    tensorAddU19 :: (Num a) => Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a
+    tensorAddU19 :: (Num a, Eq a) => Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a
     tensorAddU19 (TensorU19 []) t = t
     tensorAddU19 t (TensorU19 []) = t 
     tensorAddU19 (TensorU19 (x:xs)) (TensorU19 (y:ys)) 
                     | i1 < i2 = TensorU19 (x : (getTensorListU19 $ tensorAddU19 (TensorU19 xs) (TensorU19 (y:ys))))
-                    | i1 == i2 = TensorU19 $ (i1, tensorAddU19 t1 t2) : (getTensorListU19 $ tensorAddU19 (TensorU19 xs) (TensorU19 ys))
+                    | i1 == i2 = if isNotZeroTensorU19 newT then TensorU19 $ newT : (getTensorListU19 $ tensorAddU19 (TensorU19 xs) (TensorU19 ys))
+                                 else TensorU19 (getTensorListU19 $ tensorAddU19 (TensorU19 xs) (TensorU19 ys))
                     | i1 > i2 =  TensorU19 (y : (getTensorListU19 $ tensorAddU19 (TensorU19 (x:xs)) (TensorU19 ys)))
                      where
                         (i1,t1) = x
                         (i2,t2) = y
+                        newT = (i1, tensorAddU19 t1 t2) 
     tensorAddU19 (TensorL19 t1) (TensorL19 t2) = tensorAddL19 (TensorL19 t1) (TensorL19 t2)
     tensorAddU19 (TensorU9 t1) (TensorU9 t2) = tensorAddU9 (TensorU9 t1) (TensorU9 t2)
     tensorAddU19 (TensorL9 t1) (TensorL9 t2) = tensorAddL9 (TensorL9 t1) (TensorL9 t2)
@@ -396,85 +496,95 @@ module TensorTreeNumeric2 (
     tensorAddU19 (TensorL3 t1) (TensorL3 t2) = tensorAddL3 (TensorL3 t1) (TensorL3 t2)
     tensorAddU19 (Scalar s1) (Scalar s2) = Scalar (s1+s2)
 
-    tensorAddL19 :: (Num a) => Tensor 0 0 0 n4 n5 n6 n7 n8 a -> Tensor 0 0 0 n4 n5 n6 n7 n8 a -> Tensor 0 0 0 n4 n5 n6 n7 n8 a
+    tensorAddL19 :: (Num a, Eq a) => Tensor 0 0 0 n4 n5 n6 n7 n8 a -> Tensor 0 0 0 n4 n5 n6 n7 n8 a -> Tensor 0 0 0 n4 n5 n6 n7 n8 a
     tensorAddL19 (TensorL19 []) t = t
     tensorAddL19 t (TensorL19 []) = t 
     tensorAddL19 (TensorL19 (x:xs)) (TensorL19 (y:ys)) 
                     | i1 < i2 = TensorL19 (x : (getTensorListL19 $ tensorAddL19 (TensorL19 xs) (TensorL19 (y:ys))))
-                    | i1 == i2 = TensorL19 $ (i1, tensorAddL19 t1 t2) : (getTensorListL19 $ tensorAddL19 (TensorL19 xs) (TensorL19 ys))
+                    | i1 == i2 = if isNotZeroTensorL19 newT then  TensorL19 $ newT : (getTensorListL19 $ tensorAddL19 (TensorL19 xs) (TensorL19 ys))
+                                 else TensorL19 (getTensorListL19 $ tensorAddL19 (TensorL19 xs) (TensorL19 ys))
                     | i1 > i2 =  TensorL19 (y : (getTensorListL19 $ tensorAddL19 (TensorL19 (x:xs)) (TensorL19 ys)))
                      where
                         (i1,t1) = x
                         (i2,t2) = y
+                        newT = (i1, tensorAddL19 t1 t2) 
     tensorAddL19 (TensorU9 t1) (TensorU9 t2) = tensorAddU9 (TensorU9 t1) (TensorU9 t2)
     tensorAddL19 (TensorL9 t1) (TensorL9 t2) = tensorAddL9 (TensorL9 t1) (TensorL9 t2)
     tensorAddL19 (TensorU3 t1) (TensorU3 t2) = tensorAddU3 (TensorU3 t1) (TensorU3 t2)
     tensorAddL19 (TensorL3 t1) (TensorL3 t2) = tensorAddL3 (TensorL3 t1) (TensorL3 t2)
     tensorAddL19 (Scalar s1) (Scalar s2) = Scalar (s1+s2)
 
-    tensorAddU9 :: (Num a) => Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 n5 n6 n7 n8 a
+    tensorAddU9 :: (Num a, Eq a) => Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 n5 n6 n7 n8 a
     tensorAddU9 (TensorU9 []) t = t
     tensorAddU9 t (TensorU9 []) = t 
     tensorAddU9 (TensorU9 (x:xs)) (TensorU9 (y:ys)) 
                     | i1 < i2 = TensorU9 (x : (getTensorListU9 $ tensorAddU9 (TensorU9 xs) (TensorU9 (y:ys))))
-                    | i1 == i2 = TensorU9 $ (i1, tensorAddU9 t1 t2) : (getTensorListU9 $ tensorAddU9 (TensorU9 xs) (TensorU9 ys))
+                    | i1 == i2 = if isNotZeroTensorU9 newT then TensorU9 $ newT : (getTensorListU9 $ tensorAddU9 (TensorU9 xs) (TensorU9 ys))
+                                 else TensorU9 (getTensorListU9 $ tensorAddU9 (TensorU9 xs) (TensorU9 ys))
                     | i1 > i2 =  TensorU9 (y : (getTensorListU9 $ tensorAddU9 (TensorU9 (x:xs)) (TensorU9 ys)))
                      where
                         (i1,t1) = x
                         (i2,t2) = y
+                        newT = (i1, tensorAddU9 t1 t2) 
     tensorAddU9 (TensorL9 t1) (TensorL9 t2) = tensorAddL9 (TensorL9 t1) (TensorL9 t2)
     tensorAddU9 (TensorU3 t1) (TensorU3 t2) = tensorAddU3 (TensorU3 t1) (TensorU3 t2)
     tensorAddU9 (TensorL3 t1) (TensorL3 t2) = tensorAddL3 (TensorL3 t1) (TensorL3 t2)
     tensorAddU9 (Scalar s1) (Scalar s2) = Scalar (s1+s2)
 
-    tensorAddL9 :: (Num a) => Tensor 0 0 0 0 0 n6 n7 n8 a -> Tensor 0 0 0 0 0 n6 n7 n8 a -> Tensor 0 0 0 0 0 n6 n7 n8 a
+    tensorAddL9 :: (Num a, Eq a) => Tensor 0 0 0 0 0 n6 n7 n8 a -> Tensor 0 0 0 0 0 n6 n7 n8 a -> Tensor 0 0 0 0 0 n6 n7 n8 a
     tensorAddL9 (TensorL9 []) t = t
     tensorAddL9 t (TensorL9 []) = t 
     tensorAddL9 (TensorL9 (x:xs)) (TensorL9 (y:ys)) 
                     | i1 < i2 = TensorL9 (x : (getTensorListL9 $ tensorAddL9 (TensorL9 xs) (TensorL9 (y:ys))))
-                    | i1 == i2 = TensorL9 $ (i1, tensorAddL9 t1 t2) : (getTensorListL9 $ tensorAddL9 (TensorL9 xs) (TensorL9 ys))
+                    | i1 == i2 = if isNotZeroTensorL9 newT then TensorL9 $ newT : (getTensorListL9 $ tensorAddL9 (TensorL9 xs) (TensorL9 ys))
+                                 else TensorL9 (getTensorListL9 $ tensorAddL9 (TensorL9 xs) (TensorL9 ys))
                     | i1 > i2 =  TensorL9 (y : (getTensorListL9 $ tensorAddL9 (TensorL9 (x:xs)) (TensorL9 ys)))
                      where
                         (i1,t1) = x
                         (i2,t2) = y
+                        newT = (i1, tensorAddL9 t1 t2) 
     tensorAddL9 (TensorU3 t1) (TensorU3 t2) = tensorAddU3 (TensorU3 t1) (TensorU3 t2)
     tensorAddL9 (TensorL3 t1) (TensorL3 t2) = tensorAddL3 (TensorL3 t1) (TensorL3 t2)
     tensorAddL9 (Scalar s1) (Scalar s2) = Scalar (s1+s2)
 
-    tensorAddU3 :: (Num a) => Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 n7 n8 a
+    tensorAddU3 :: (Num a, Eq a) => Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 n7 n8 a
     tensorAddU3 (TensorU3 []) t = t
     tensorAddU3 t (TensorU3 []) = t 
     tensorAddU3 (TensorU3 (x:xs)) (TensorU3 (y:ys)) 
                     | i1 < i2 = TensorU3 (x : (getTensorListU3 $ tensorAddU3 (TensorU3 xs) (TensorU3 (y:ys))))
-                    | i1 == i2 = TensorU3 $ (i1, tensorAddU3 t1 t2) : (getTensorListU3 $ tensorAddU3 (TensorU3 xs) (TensorU3 ys))
+                    | i1 == i2 = if isNotZeroTensorU3 newT then TensorU3 $ newT : (getTensorListU3 $ tensorAddU3 (TensorU3 xs) (TensorU3 ys))
+                                 else TensorU3 (getTensorListU3 $ tensorAddU3 (TensorU3 xs) (TensorU3 ys))
                     | i1 > i2 =  TensorU3 (y : (getTensorListU3 $ tensorAddU3 (TensorU3 (x:xs)) (TensorU3 ys)))
                      where
                         (i1,t1) = x
                         (i2,t2) = y
+                        newT = (i1, tensorAddU3 t1 t2) 
     tensorAddU3 (TensorL3 t1) (TensorL3 t2) = tensorAddL3 (TensorL3 t1) (TensorL3 t2)
     tensorAddU3 (Scalar s1) (Scalar s2) = Scalar (s1+s2)
 
-    tensorAddL3 :: (Num a) => Tensor 0 0 0 0 0 0 0 n8 a -> Tensor 0 0 0 0 0 0 0 n8 a -> Tensor 0 0 0 0 0 0 0 n8 a
+    tensorAddL3 :: (Num a, Eq a) => Tensor 0 0 0 0 0 0 0 n8 a -> Tensor 0 0 0 0 0 0 0 n8 a -> Tensor 0 0 0 0 0 0 0 n8 a
     tensorAddL3 (TensorL3 []) t = t
     tensorAddL3 t (TensorL3 []) = t 
     tensorAddL3 (TensorL3 (x:xs)) (TensorL3 (y:ys)) 
                     | i1 < i2 = TensorL3 (x : (getTensorListL3 $ tensorAddL3 (TensorL3 xs) (TensorL3 (y:ys))))
-                    | i1 == i2 = TensorL3 $ (i1, tensorAddL3 t1 t2) : (getTensorListL3 $ tensorAddL3 (TensorL3 xs) (TensorL3 ys))
+                    | i1 == i2 = if isNotZeroTensorL3 newT then TensorL3 $ newT : (getTensorListL3 $ tensorAddL3 (TensorL3 xs) (TensorL3 ys))
+                                 else TensorL3 (getTensorListL3 $ tensorAddL3 (TensorL3 xs) (TensorL3 ys))
                     | i1 > i2 =  TensorL3 (y : (getTensorListL3 $ tensorAddL3 (TensorL3 (x:xs)) (TensorL3 ys)))
                      where
                         (i1,t1) = x
                         (i2,t2) = y
+                        newT = (i1, tensorAddL3 t1 t2) 
     tensorAddL3 (Scalar s1) (Scalar s2) = Scalar (s1+s2)
 
-    tensorAdd :: Num a => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
-    tensorAdd (TensorU20 t1) (TensorU20 t2) = tensorAddU20 (TensorU20 t1) (TensorU20 t2)
-    tensorAdd (TensorL20 t1) (TensorL20 t2) = tensorAddL20 (TensorL20 t1) (TensorL20 t2)
-    tensorAdd (TensorU19 t1) (TensorU19 t2) = tensorAddU19 (TensorU19 t1) (TensorU19 t2)
-    tensorAdd (TensorL19 t1) (TensorL19 t2) = tensorAddL19 (TensorL19 t1) (TensorL19 t2)
-    tensorAdd (TensorU9 t1) (TensorU9 t2) = tensorAddU9 (TensorU9 t1) (TensorU9 t2)
-    tensorAdd (TensorL9 t1) (TensorL9 t2) = tensorAddL9 (TensorL9 t1) (TensorL9 t2)
-    tensorAdd (TensorU3 t1) (TensorU3 t2) = tensorAddU3 (TensorU3 t1) (TensorU3 t2)
-    tensorAdd (TensorL3 t1) (TensorL3 t2) = tensorAddL3 (TensorL3 t1) (TensorL3 t2)
+    tensorAdd :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorAdd (TensorU20 t1) (TensorU20 t2) =  tensorAddU20 (TensorU20 t1) (TensorU20 t2)
+    tensorAdd (TensorL20 t1) (TensorL20 t2) =  tensorAddL20 (TensorL20 t1) (TensorL20 t2)
+    tensorAdd (TensorU19 t1) (TensorU19 t2) =  tensorAddU19 (TensorU19 t1) (TensorU19 t2)
+    tensorAdd (TensorL19 t1) (TensorL19 t2) =  tensorAddL19 (TensorL19 t1) (TensorL19 t2)
+    tensorAdd (TensorU9 t1) (TensorU9 t2) =  tensorAddU9 (TensorU9 t1) (TensorU9 t2)
+    tensorAdd (TensorL9 t1) (TensorL9 t2) =  tensorAddL9 (TensorL9 t1) (TensorL9 t2)
+    tensorAdd (TensorU3 t1) (TensorU3 t2) =  tensorAddU3 (TensorU3 t1) (TensorU3 t2)
+    tensorAdd (TensorL3 t1) (TensorL3 t2) =  tensorAddL3 (TensorL3 t1) (TensorL3 t2)
     tensorAdd (Scalar s1) (Scalar s2) = Scalar (s1+s2)
 
     tensorSmultU20 :: (Num a) => a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
@@ -548,7 +658,7 @@ module TensorTreeNumeric2 (
     tensorSMult s (TensorL3 t) = tensorSmultL3 s (TensorL3 t)
     tensorSMult s (Scalar t) = Scalar (s*t)
 
-    tensorSub :: (Num a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorSub :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorSub t1 t2 = tensorAdd t1 $ tensorSMult (-1) t2 
 
 
@@ -556,7 +666,7 @@ module TensorTreeNumeric2 (
     mkTensU20 (Empty, t) = t
     mkTensU20 (Append x xs, t) = TensorU20 [(x, mkTensU20 (xs, t) )]
 
-    insertOrAddU20 :: (Num a) => (IndList n1 Uind_20, Tensor 0 n2 n3 n4 n5 n6 n7 n8 a) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a  -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    insertOrAddU20 :: (Num a, Eq a) => (IndList n1 Uind_20, Tensor 0 n2 n3 n4 n5 n6 n7 n8 a) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a  -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     insertOrAddU20 t (TensorU20 []) = mkTensU20 t 
     insertOrAddU20 (Append l ls, t) (TensorU20 (x:xs))  
                     | l < ind = TensorU20 $ (l, mkTensU20 (ls, t)) : x : xs
@@ -572,7 +682,7 @@ module TensorTreeNumeric2 (
     mkTensL20 (Empty, t) = t
     mkTensL20 (Append x xs, t) = TensorL20 [(x, mkTensL20 (xs, t) )]
 
-    insertOrAddL20 :: (Num a) => (IndList n2 Lind_20, Tensor 0 0 n3 n4 n5 n6 n7 n8 a) -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a  -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a
+    insertOrAddL20 :: (Num a, Eq a) => (IndList n2 Lind_20, Tensor 0 0 n3 n4 n5 n6 n7 n8 a) -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a  -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a
     insertOrAddL20 t (TensorL20 []) = mkTensL20 t 
     insertOrAddL20 (Append l ls, t) (TensorL20 (x:xs))  
                     | l < ind = TensorL20 $ (l, mkTensL20 (ls, t)) : x : xs
@@ -588,7 +698,7 @@ module TensorTreeNumeric2 (
     mkTensU19 (Empty, t) = t
     mkTensU19 (Append x xs, t) = TensorU19 [(x, mkTensU19 (xs, t) )]
 
-    insertOrAddU19 :: (Num a) => (IndList n3 Uind_19, Tensor 0 0 0 n4 n5 n6 n7 n8 a) -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a  -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a
+    insertOrAddU19 :: (Num a, Eq a) => (IndList n3 Uind_19, Tensor 0 0 0 n4 n5 n6 n7 n8 a) -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a  -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a
     insertOrAddU19 t (TensorU19 []) = mkTensU19 t 
     insertOrAddU19 (Append l ls, t) (TensorU19 (x:xs))  
                     | l < ind = TensorU19 $ (l, mkTensU19 (ls, t)) : x : xs
@@ -604,7 +714,7 @@ module TensorTreeNumeric2 (
     mkTensL19 (Empty, t) = t
     mkTensL19 (Append x xs, t) = TensorL19 [(x, mkTensL19 (xs, t) )]
 
-    insertOrAddL19 :: (Num a) => (IndList n4 Lind_19, Tensor 0 0 0 0 n5 n6 n7 n8 a) -> Tensor 0 0 0 n4 n5 n6 n7 n8 a  -> Tensor 0 0 0 n4 n5 n6 n7 n8 a
+    insertOrAddL19 :: (Num a, Eq a) => (IndList n4 Lind_19, Tensor 0 0 0 0 n5 n6 n7 n8 a) -> Tensor 0 0 0 n4 n5 n6 n7 n8 a  -> Tensor 0 0 0 n4 n5 n6 n7 n8 a
     insertOrAddL19 t (TensorL19 []) = mkTensL19 t 
     insertOrAddL19 (Append l ls, t) (TensorL19 (x:xs))  
                     | l < ind = TensorL19 $ (l, mkTensL19 (ls, t)) : x : xs
@@ -621,7 +731,7 @@ module TensorTreeNumeric2 (
     mkTensU9 (Empty, t) = t
     mkTensU9 (Append x xs, t) = TensorU9 [(x, mkTensU9 (xs, t) )]
 
-    insertOrAddU9 :: (Num a) => (IndList n5 Uind_9, Tensor 0 0 0 0 0 n6 n7 n8 a) -> Tensor 0 0 0 0 n5 n6 n7 n8 a  -> Tensor 0 0 0 0 n5 n6 n7 n8 a
+    insertOrAddU9 :: (Num a, Eq a) => (IndList n5 Uind_9, Tensor 0 0 0 0 0 n6 n7 n8 a) -> Tensor 0 0 0 0 n5 n6 n7 n8 a  -> Tensor 0 0 0 0 n5 n6 n7 n8 a
     insertOrAddU9 t (TensorU9 []) = mkTensU9 t 
     insertOrAddU9 (Append l ls, t) (TensorU9 (x:xs))  
                     | l < ind = TensorU9 $ (l, mkTensU9 (ls, t)) : x : xs
@@ -637,7 +747,7 @@ module TensorTreeNumeric2 (
     mkTensL9 (Empty, t) = t
     mkTensL9 (Append x xs, t) = TensorL9 [(x, mkTensL9 (xs, t) )]
 
-    insertOrAddL9 :: (Num a) => (IndList n6 Lind_9, Tensor 0 0 0 0 0 0 n7 n8 a) -> Tensor 0 0 0 0 0 n6 n7 n8 a  -> Tensor 0 0 0 0 0 n6 n7 n8 a
+    insertOrAddL9 :: (Num a, Eq a) => (IndList n6 Lind_9, Tensor 0 0 0 0 0 0 n7 n8 a) -> Tensor 0 0 0 0 0 n6 n7 n8 a  -> Tensor 0 0 0 0 0 n6 n7 n8 a
     insertOrAddL9 t (TensorL9 []) = mkTensL9 t 
     insertOrAddL9 (Append l ls, t) (TensorL9 (x:xs))  
                     | l < ind = TensorL9 $ (l, mkTensL9 (ls, t)) : x : xs
@@ -651,7 +761,7 @@ module TensorTreeNumeric2 (
     mkTensU3 (Empty, t) = t
     mkTensU3 (Append x xs, t) = TensorU3 [(x, mkTensU3 (xs, t) )]
 
-    insertOrAddU3 :: (Num a) => (IndList n7 Uind_3, Tensor 0 0 0 0 0 0 0 n8 a) -> Tensor 0 0 0 0 0 0 n7 n8 a  -> Tensor 0 0 0 0 0 0 n7 n8 a
+    insertOrAddU3 :: (Num a, Eq a) => (IndList n7 Uind_3, Tensor 0 0 0 0 0 0 0 n8 a) -> Tensor 0 0 0 0 0 0 n7 n8 a  -> Tensor 0 0 0 0 0 0 n7 n8 a
     insertOrAddU3 t (TensorU3 []) = mkTensU3 t 
     insertOrAddU3 (Append l ls, t) (TensorU3 (x:xs))  
                     | l < ind = TensorU3 $ (l, mkTensU3 (ls, t)) : x : xs
@@ -666,7 +776,7 @@ module TensorTreeNumeric2 (
     mkTensL3 (Empty, t) = t
     mkTensL3 (Append x xs, t) = TensorL3 [(x, mkTensL3 (xs, t) )]
 
-    insertOrAddL3 :: (Num a) => (IndList n8 Lind_3, Tensor 0 0 0 0 0 0 0 0 a) -> Tensor 0 0 0 0 0 0 0 n8 a  -> Tensor 0 0 0 0 0 0 0 n8 a
+    insertOrAddL3 :: (Num a, Eq a) => (IndList n8 Lind_3, Tensor 0 0 0 0 0 0 0 0 a) -> Tensor 0 0 0 0 0 0 0 n8 a  -> Tensor 0 0 0 0 0 0 0 n8 a
     insertOrAddL3 t (TensorL3 []) = mkTensL3 t 
     insertOrAddL3 (Append l ls, t) (TensorL3 (x:xs))  
                     | l < ind = TensorL3 $ (l, mkTensL3 (ls, t)) : x : xs
@@ -680,7 +790,7 @@ module TensorTreeNumeric2 (
     mkTens :: (Index n1 n2 n3 n4 n5 n6 n7 n8, a) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     mkTens ((i1,i2,i3,i4,i5,i6,i7,i8),s) = mkTensU20 (i1, mkTensL20 (i2, mkTensU19 (i3, mkTensL19 (i4, mkTensU9 (i5, mkTensL9 (i6, mkTensU3 (i7, mkTensL3 (i8, (Scalar s)))))))))
 
-    insertOrAdd :: (Num a) => (Index n1 n2 n3 n4 n5 n6 n7 n8, a) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a 
+    insertOrAdd :: (Num a, Eq a) => (Index n1 n2 n3 n4 n5 n6 n7 n8, a) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a 
     insertOrAdd ((i1,i2,i3,i4,i5,i6,i7,i8),s) (TensorU20 t) = insertOrAddU20 (i1, mkTens ((Empty,i2,i3,i4,i5,i6,i7,i8), s) ) (TensorU20 t)
     insertOrAdd ((Empty,i2,i3,i4,i5,i6,i7,i8),s) (TensorL20 t) = insertOrAddL20 (i2, mkTens ((Empty,Empty,i3,i4,i5,i6,i7,i8), s) ) (TensorL20 t)
     insertOrAdd ((Empty,Empty,i3,i4,i5,i6,i7,i8),s) (TensorU19 t) = insertOrAddU19 (i3, mkTens ((Empty,Empty,Empty,i4,i5,i6,i7,i8), s) ) (TensorU19 t)
@@ -768,64 +878,64 @@ module TensorTreeNumeric2 (
     mapToL3 f (TensorL3 t) = f $ TensorL3 t
     mapToL3 f (Scalar t) = f $ Scalar t
 
-    tensorTransposeU20 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransposeU20 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransposeU20 (0,j) (TensorU20 t) = foldr insertOrAddU20 (TensorU20 []) $ map (\(x,y) -> (swapHead j x, y)) $ toListU20 $ TensorU20 t
     tensorTransposeU20 (i,j) (TensorU20 t) = TensorU20 $ map (\(x,y) -> (x, tensorTransposeU20 (i-1,j-1) y)) t
 
-    tensorTransposeL20 :: Num a => (Int,Int) -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransposeL20 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a -> Tensor 0 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransposeL20 (0,j) (TensorL20 t) = foldr insertOrAddL20 (TensorL20 []) $ map (\(x,y) -> (swapHead j x, y)) $ toListL20 $ TensorL20 t
     tensorTransposeL20 (i,j) (TensorL20 t) = TensorL20 $ map (\(x,y) -> (x, tensorTransposeL20 (i-1,j-1) y)) t
 
-    tensorTransposeU19 :: Num a => (Int,Int) -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a
+    tensorTransposeU19 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a
     tensorTransposeU19 (0,j) (TensorU19 t) = foldr insertOrAddU19 (TensorU19 []) $ map (\(x,y) -> (swapHead j x, y)) $ toListU19 $ TensorU19 t
     tensorTransposeU19 (i,j) (TensorU19 t) = TensorU19 $ map (\(x,y) -> (x, tensorTransposeU19 (i-1,j-1) y)) t
 
-    tensorTransposeL19 :: Num a => (Int,Int) -> Tensor 0 0 0 n4 n5 n6 n7 n8 a -> Tensor 0 0 0 n4 n5 n6 n7 n8 a
+    tensorTransposeL19 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 0 0 n4 n5 n6 n7 n8 a -> Tensor 0 0 0 n4 n5 n6 n7 n8 a
     tensorTransposeL19 (0,j) (TensorL19 t) = foldr insertOrAddL19 (TensorL19 []) $ map (\(x,y) -> (swapHead j x, y)) $ toListL19 $ TensorL19 t
     tensorTransposeL19 (i,j) (TensorL19 t) = TensorL19 $ map (\(x,y) -> (x, tensorTransposeL19 (i-1,j-1) y)) t
 
-    tensorTransposeU9 :: Num a => (Int,Int) -> Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 n5 n6 n7 n8 a
+    tensorTransposeU9 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 n5 n6 n7 n8 a
     tensorTransposeU9 (0,j) (TensorU9 t) = foldr insertOrAddU9 (TensorU9 []) $ map (\(x,y) -> (swapHead j x, y)) $ toListU9 $ TensorU9 t
     tensorTransposeU9 (i,j) (TensorU9 t) = TensorU9 $ map (\(x,y) -> (x, tensorTransposeU9 (i-1,j-1) y)) t
 
-    tensorTransposeL9 :: Num a => (Int,Int) -> Tensor 0 0 0 0 0 n6 n7 n8 a -> Tensor 0 0 0 0 0 n6 n7 n8 a
+    tensorTransposeL9 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 0 0 0 0 n6 n7 n8 a -> Tensor 0 0 0 0 0 n6 n7 n8 a
     tensorTransposeL9 (0,j) (TensorL9 t) = foldr insertOrAddL9 (TensorL9 []) $ map (\(x,y) -> (swapHead j x, y)) $ toListL9 $ TensorL9 t
     tensorTransposeL9 (i,j) (TensorL9 t) = TensorL9 $ map (\(x,y) -> (x, tensorTransposeL9 (i-1,j-1) y)) t
 
-    tensorTransposeU3 :: Num a => (Int,Int) -> Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 n7 n8 a
+    tensorTransposeU3 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 n7 n8 a
     tensorTransposeU3 (0,j) (TensorU3 t) = foldr insertOrAddU3 (TensorU3 []) $ map (\(x,y) -> (swapHead j x, y)) $ toListU3 $ TensorU3 t
     tensorTransposeU3 (i,j) (TensorU3 t) = TensorU3 $ map (\(x,y) -> (x, tensorTransposeU3 (i-1,j-1) y)) t
 
-    tensorTransposeL3 :: Num a => (Int,Int) -> Tensor 0 0 0 0 0 0 0 n8 a -> Tensor 0 0 0 0 0 0 0 n8 a
+    tensorTransposeL3 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 0 0 0 0 0 0 n8 a -> Tensor 0 0 0 0 0 0 0 n8 a
     tensorTransposeL3 (0,j) (TensorL3 t) = foldr insertOrAddL3 (TensorL3 []) $ map (\(x,y) -> (swapHead j x, y)) $ toListL3 $ TensorL3 t
     tensorTransposeL3 (i,j) (TensorL3 t) = TensorL3 $ map (\(x,y) -> (x, tensorTransposeL3 (i-1,j-1) y)) t
 
-    tensorTransU20 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransU20 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransU20 = tensorTransposeU20
 
-    tensorTransL20 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransL20 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransL20 inds = mapToL20 (tensorTransposeL20 inds)
 
-    tensorTransU19 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransU19 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransU19 inds = mapToU19 (tensorTransposeU19 inds)
 
-    tensorTransL19 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransL19 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransL19 inds = mapToL19 (tensorTransposeL19 inds)
 
-    tensorTransU9 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransU9 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransU9 inds = mapToU9 (tensorTransposeU9 inds)
 
-    tensorTransL9 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransL9 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransL9 inds = mapToL9 (tensorTransposeL9 inds)
 
-    tensorTransU3 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransU3 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransU3 inds = mapToU3 (tensorTransposeU3 inds)
 
-    tensorTransL3 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
+    tensorTransL3 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a
     tensorTransL3 inds = mapToL3 (tensorTransposeL3 inds)
 
 
-    tensorContract20 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor (n1-1) (n2-1) n3 n4 n5 n6 n7 n8 a
+    tensorContract20 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor (n1-1) (n2-1) n3 n4 n5 n6 n7 n8 a
     tensorContract20 (0,j) t = foldr insertOrAddU20 (TensorU20 []) tensList 
                     where
                         l = map (\(x,y) -> (x, toListL20 y)) $ toListU20 t
@@ -834,7 +944,7 @@ module TensorTreeNumeric2 (
                         tensList = map (\(x,y) -> (x, foldr insertOrAddL20 (TensorL20 []) y)) l3
     tensorContract20 (i,j) (TensorU20 t) = TensorU20 $ map (\(x,y) -> (x, tensorContract20 (i-1,j) y)) t
 
-    tensorContract19 :: Num a => (Int,Int) -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 (n3-1) (n4-1) n5 n6 n7 n8 a
+    tensorContract19 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 (n3-1) (n4-1) n5 n6 n7 n8 a
     tensorContract19 (0,j) t = foldr insertOrAddU19 (TensorU19 []) tensList 
                     where
                         l = map (\(x,y) -> (x, toListL19 y)) $ toListU19 t
@@ -843,7 +953,7 @@ module TensorTreeNumeric2 (
                         tensList = map (\(x,y) -> (x, foldr insertOrAddL19 (TensorL19 []) y)) l3
     tensorContract19 (i,j) (TensorU19 t) = TensorU19 $ map (\(x,y) -> (x, tensorContract19 (i-1,j) y)) t
 
-    tensorContract9 :: Num a => (Int,Int) -> Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 (n5-1) (n6-1) n7 n8 a
+    tensorContract9 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 (n5-1) (n6-1) n7 n8 a
     tensorContract9 (0,j) t = foldr insertOrAddU9 (TensorU9 []) tensList 
                     where
                         l = map (\(x,y) -> (x, toListL9 y)) $ toListU9 t
@@ -852,7 +962,7 @@ module TensorTreeNumeric2 (
                         tensList = map (\(x,y) -> (x, foldr insertOrAddL9 (TensorL9 []) y)) l3
     tensorContract9 (i,j) (TensorU9 t) = TensorU9 $ map (\(x,y) -> (x, tensorContract9 (i-1,j) y)) t
 
-    tensorContract3 :: Num a => (Int,Int) -> Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 (n7-1) (n8-1) a
+    tensorContract3 :: (Num a, Eq a) => (Int,Int) -> Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 (n7-1) (n8-1) a
     tensorContract3 (0,j) t = foldr insertOrAddU3 (TensorU3 []) tensList 
                     where
                         l = map (\(x,y) -> (x, toListL3 y)) $ toListU3 t
@@ -861,20 +971,20 @@ module TensorTreeNumeric2 (
                         tensList = map (\(x,y) -> (x, foldr insertOrAddL3 (TensorL3 []) y)) l3
     tensorContract3 (i,j) (TensorU3 t) = TensorU3 $ map (\(x,y) -> (x, tensorContract3 (i-1,j) y)) t
 
-    tensorContr20 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor (n1-1) (n2-1) n3 n4 n5 n6 n7 n8 a
+    tensorContr20 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor (n1-1) (n2-1) n3 n4 n5 n6 n7 n8 a
     tensorContr20 inds = tensorContract20 inds 
 
-    tensorContr19 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 (n3-1) (n4-1) n5 n6 n7 n8 a
+    tensorContr19 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 (n3-1) (n4-1) n5 n6 n7 n8 a
     tensorContr19 inds = mapToU19 (tensorContract19 inds) 
  
-    tensorContr9 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 (n5-1) (n6-1) n7 n8 a
+    tensorContr9 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 (n5-1) (n6-1) n7 n8 a
     tensorContr9 inds = mapToU9 (tensorContract9 inds) 
 
-    tensorContr3 :: Num a => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 (n7-1) (n8-1) a
+    tensorContr3 :: (Num a, Eq a) => (Int,Int) -> Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor n1 n2 n3 n4 n5 n6 (n7-1) (n8-1) a
     tensorContr3 inds = mapToU3 (tensorContract3 inds) 
 
 
-    tensorProdU20 :: Num a => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 a -> Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
+    tensorProdU20 :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 a -> Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
     tensorProdU20 t1 (Scalar s) = tensorSMult s t1
     tensorProdU20 (Scalar s) t2 = tensorSMult s t2
     tensorProdU20 (TensorU20 t1) t2 = TensorU20 $ map (\(i,v) -> (i, tensorProdU20 v t2)) t1
@@ -930,7 +1040,7 @@ module TensorTreeNumeric2 (
     tensorProdU20 (TensorL3 t1) (TensorL3 t2) = tensorProdL3 (TensorL3 t1) (TensorL3 t2) 
 
 
-    tensorProdL20 :: Num a => Tensor 0 n2 n3 n4 n5 n6 n7 n8 a -> Tensor 0 m2 m3 m4 m5 m6 m7 m8 a -> Tensor 0 (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
+    tensorProdL20 :: (Num a, Eq a) => Tensor 0 n2 n3 n4 n5 n6 n7 n8 a -> Tensor 0 m2 m3 m4 m5 m6 m7 m8 a -> Tensor 0 (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
     tensorProdL20 t1 (Scalar s) = tensorSMult s t1
     tensorProdL20 (Scalar s) t2 = tensorSMult s t2
     tensorProdL20 (TensorL20 t1) t2 = TensorL20 $ map (\(i,v) -> (i, tensorProdL20 v t2)) t1
@@ -973,7 +1083,7 @@ module TensorTreeNumeric2 (
     tensorProdL20 (TensorL3 t1) (TensorL3 t2) = tensorProdL3 (TensorL3 t1) (TensorL3 t2) 
 
 
-    tensorProdU19 :: Num a => Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 m3 m4 m5 m6 m7 m8 a -> Tensor 0 0 (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
+    tensorProdU19 :: (Num a, Eq a) => Tensor 0 0 n3 n4 n5 n6 n7 n8 a -> Tensor 0 0 m3 m4 m5 m6 m7 m8 a -> Tensor 0 0 (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
     tensorProdU19 t1 (Scalar s) = tensorSMult s t1
     tensorProdU19 (Scalar s) t2 = tensorSMult s t2
     tensorProdU19 (TensorU19 t1) t2 = TensorU19 $ map (\(i,v) -> (i, tensorProdU19 v t2)) t1
@@ -1005,7 +1115,7 @@ module TensorTreeNumeric2 (
     tensorProdU19 (TensorL3 t1) (TensorL3 t2) = tensorProdL3 (TensorL3 t1) (TensorL3 t2)
  
     
-    tensorProdL19 :: Num a => Tensor 0 0 0 n4 n5 n6 n7 n8 a -> Tensor 0 0 0 m4 m5 m6 m7 m8 a -> Tensor 0 0 0 (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
+    tensorProdL19 :: (Num a, Eq a) => Tensor 0 0 0 n4 n5 n6 n7 n8 a -> Tensor 0 0 0 m4 m5 m6 m7 m8 a -> Tensor 0 0 0 (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
     tensorProdL19 t1 (Scalar s) = tensorSMult s t1
     tensorProdL19 (Scalar s) t2 = tensorSMult s t2
     tensorProdL19 (TensorL19 t1) t2 = TensorL19 $ map (\(i,v) -> (i, tensorProdL19 v t2)) t1
@@ -1028,7 +1138,7 @@ module TensorTreeNumeric2 (
     tensorProdL19 (TensorL3 t1) (TensorL3 t2) = tensorProdL3 (TensorL3 t1) (TensorL3 t2) 
 
 
-    tensorProdU9 :: Num a => Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 m5 m6 m7 m8 a -> Tensor 0 0 0 0 (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
+    tensorProdU9 :: (Num a, Eq a) => Tensor 0 0 0 0 n5 n6 n7 n8 a -> Tensor 0 0 0 0 m5 m6 m7 m8 a -> Tensor 0 0 0 0 (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
     tensorProdU9 t1 (Scalar s) = tensorSMult s t1
     tensorProdU9 (Scalar s) t2 = tensorSMult s t2
     tensorProdU9 (TensorU9 t1) t2 = TensorU9 $ map (\(i,v) -> (i, tensorProdU9 v t2)) t1
@@ -1044,7 +1154,7 @@ module TensorTreeNumeric2 (
     tensorProdU9 (TensorL3 t1) (TensorL3 t2) = tensorProdL3 (TensorL3 t1) (TensorL3 t2) 
 
 
-    tensorProdL9 :: Num a => Tensor 0 0 0 0 0 n6 n7 n8 a -> Tensor 0 0 0 0 0 m6 m7 m8 a -> Tensor 0 0 0 0 0 (n6+m6) (n7+m7) (n8+m8) a
+    tensorProdL9 :: (Num a, Eq a) => Tensor 0 0 0 0 0 n6 n7 n8 a -> Tensor 0 0 0 0 0 m6 m7 m8 a -> Tensor 0 0 0 0 0 (n6+m6) (n7+m7) (n8+m8) a
     tensorProdL9 t1 (Scalar s) = tensorSMult s t1
     tensorProdL9 (Scalar s) t2 = tensorSMult s t2
     tensorProdL9 (TensorL9 t1) t2 = TensorL9 $ map (\(i,v) -> (i, tensorProdL9 v t2)) t1
@@ -1055,7 +1165,7 @@ module TensorTreeNumeric2 (
     tensorProdL9 (TensorL3 t1) (TensorL3 t2) = tensorProdL3 (TensorL3 t1) (TensorL3 t2) 
 
 
-    tensorProdU3 :: Num a => Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 m7 m8 a -> Tensor 0 0 0 0 0 0 (n7+m7) (n8+m8) a
+    tensorProdU3 :: (Num a, Eq a) => Tensor 0 0 0 0 0 0 n7 n8 a -> Tensor 0 0 0 0 0 0 m7 m8 a -> Tensor 0 0 0 0 0 0 (n7+m7) (n8+m8) a
     tensorProdU3 t1 (Scalar s) = tensorSMult s t1
     tensorProdU3 (Scalar s) t2 = tensorSMult s t2
     tensorProdU3 (TensorU3 t1) t2 = TensorU3 $ map (\(i,v) -> (i, tensorProdU3 v t2)) t1
@@ -1063,14 +1173,56 @@ module TensorTreeNumeric2 (
     tensorProdU3 (TensorL3 t1) (TensorL3 t2) = tensorProdL3 (TensorL3 t1) (TensorL3 t2) 
 
 
-    tensorProdL3 :: Num a => Tensor 0 0 0 0 0 0 0 n8 a -> Tensor 0 0 0 0 0 0 0 m8 a -> Tensor 0 0 0 0 0 0 0 (n8+m8) a
+    tensorProdL3 :: (Num a, Eq a) => Tensor 0 0 0 0 0 0 0 n8 a -> Tensor 0 0 0 0 0 0 0 m8 a -> Tensor 0 0 0 0 0 0 0 (n8+m8) a
     tensorProdL3 (TensorL3 t1) (TensorL3 t2) = TensorL3 $ map (\(i,v) -> (i, tensorProdL3 v (TensorL3 t2))) t1
     tensorProdL3 t1 (Scalar s) = tensorSMult s t1
     tensorProdL3 (Scalar s) t2 = tensorSMult s t2
 
 
-    tensorProd :: Num a => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 a -> Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
+    tensorProd :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 a -> Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
     tensorProd = tensorProdU20
+
+    data Forest = Forest [(String, Forest)]| Leaf String   deriving (Show, Eq)
+
+    forestMap :: Forest -> [(String, Forest)]
+    forestMap (Forest m) = m
+
+    mapForest :: (String -> String) -> Forest -> Forest 
+    mapForest f (Leaf x) = Leaf $ f x
+    mapForest f (Forest m) = Forest $ map (\(x,y) -> (f x, mapForest f y)) m  
+
+    tensorToForest :: (Show a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Forest 
+    tensorToForest (Scalar x) = Leaf $ show x 
+    tensorToForest (TensorU20 t) = Forest $ map (\(i,v) -> (show $ fromEnum i, tensorToForest v)) t
+    tensorToForest (TensorL20 t) = Forest $ map (\(i,v) -> (show $ fromEnum i, tensorToForest v)) t
+    tensorToForest (TensorU19 t) = Forest $ map (\(i,v) -> (show $ fromEnum i, tensorToForest v)) t
+    tensorToForest (TensorL19 t) = Forest $ map (\(i,v) -> (show $ fromEnum i, tensorToForest v)) t
+    tensorToForest (TensorU9 t) = Forest $ map (\(i,v) -> (show $ fromEnum i, tensorToForest v)) t
+    tensorToForest (TensorL9 t) = Forest $ map (\(i,v) -> (show $ fromEnum i, tensorToForest v)) t
+    tensorToForest (TensorU3 t) = Forest $ map (\(i,v) -> (show $ fromEnum i, tensorToForest v)) t
+    tensorToForest (TensorL3 t) = Forest $ map (\(i,v) -> (show $ fromEnum i, tensorToForest v)) t
+
+    shiftForest :: Forest -> Forest
+    shiftForest (Leaf var) = Leaf var 
+    shiftForest (Forest m) = Forest $ map (\(x,y) -> (x,shiftForest y))  shiftedForestMap
+            where
+                mapElems f (Forest m) =  Forest $ map (\(x,y) -> (f x,y)) m
+                mapElems f (Leaf var) = Leaf (f var)
+                shiftedForestMap = map (\(f1,f2) ->(f1, mapElems (\x -> "   " ++ x) f2)) m
+
+    printForest :: Forest -> [String]
+    printForest (Leaf var) = [var] 
+    printForest (Forest m) = map (init.unlines) subForests
+            where
+                shiftedForest = shiftForest (Forest m)
+                pairs = forestMap shiftedForest
+                subForests = map (\(k,v) -> k : (printForest v)) pairs
+
+    printTensorTree :: (Show a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> String 
+    printTensorTree t = unlines $ printForest forest 
+            where
+                forest = mapForest (\x -> "+----" ++ x) $ shiftForest $ tensorToForest t 
+
 
     --now the basic tensors
 

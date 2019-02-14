@@ -266,6 +266,10 @@ module Tensor2 (
                 l3 = combineF <$> l1 <*> l2
 
     
+
+
+
+    
     {-
     tensorProductNumericF :: (Num a, Eq a) => Tensor a -> (Index ,a) -> Tensor a 
     tensorProductNumericF map1 (ind, r) = newMap

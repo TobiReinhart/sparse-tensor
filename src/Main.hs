@@ -1064,7 +1064,7 @@ module Main (
 
         let ansAIBCTree3 = Tree3.ansatzAIBC map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
 
-        print $ toListShow ansAIBC
+        print $ Tree3.toListShow ansAIBCTree3
 
 
 

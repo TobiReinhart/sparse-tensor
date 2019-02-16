@@ -20,5 +20,5 @@ executable HaskellTensor
   build-depends:       base >= 4.7 && < 5, containers, tf-random, split, hashable, unordered-containers,  sorted-list, deepseq, ghc-typelits-natnormalise, singletons
   other-modules:       BasicTensors, EquivarianceEqns, EquivarianceMetric, Index, Ivar, Pde, Tensor, Integrabillity, Ansatz, Symmetrize,
                        Perturbation, AnsatzEqns2, Order2Int, Order3Int, IndexMap, TensorMap, BasicTensorsMap, Order1Int, PerturbationTree,
-                       PerturbationTree2, Tensor2, TensorF, TensorInt, TensorTreeNumeric, TensorTreeNumeric2, TensorTreeIntCond
+                       PerturbationTree2, Tensor2, TensorF, TensorInt, TensorTreeNumeric, TensorTreeNumeric2, TensorTreeIntCond, BinaryTree, TensorTreeNumeric3
   ghc-options:         -O -threaded -rtsopts -with-rtsopts=-N

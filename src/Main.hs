@@ -65,6 +65,10 @@ module Main (
     import qualified Tensor2 as T
     import qualified Data.Map as M
     import Data.List
+    import Data.Maybe
+    import qualified BinaryTree as Bin 
+    import qualified TensorTreeNumeric3 as Tree3 
+
     
     
      
@@ -887,6 +891,11 @@ module Main (
         let map1Metric = trianMapI2
         let map2Metric = trianMapJ2
 
+        let map1AreaTree3 = Tree3.trianMapAreaI 
+        let map2AreaTree3 = Tree3.trianMapAreaJ
+        let map1MetricTree3 = Tree3.trianMapI2
+        let map2MetricTree3 = Tree3.trianMapJ2
+
         let mapAreaT = T.triangleMapArea :: M.Map [Int] Int
         let mapMetricT = T.triangleMap2 :: M.Map [Int] Int
 
@@ -896,11 +905,19 @@ module Main (
 
         let intMT = T.interMetric mapMetricT mapMetricT 
 
+        let intMTree3 = Tree3.interMetric map1MetricTree3 map2MetricTree3 
+
+        let intI2 = interI2 map1Metric 
+
+        let intI2Tree3 = Tree3.interI2 map1MetricTree3
+
         --print $ M.elems intMT 
 
         --print $ (M.elems intMT) == (map snd $ toListShow intM) 
 
         let intA = interArea map1Area map2Area
+
+        let intATree3 = Tree3.interArea map1AreaTree3 map2AreaTree3
 
         let intAT = T.interArea mapAreaT mapAreaT 
 
@@ -911,8 +928,14 @@ module Main (
         let int2T = T.interEqn1_2 mapAreaT mapAreaT 
 
         let int2_1 = tensorProd intA delta3
+
+        let int2_1Tree3 = Tree3.tensorProd intATree3 Tree3.delta3
+
+        let int2Tree3 = Tree3.interEqn2 map1AreaTree3 map2AreaTree3
         
         let int2_2 = tensorProd (tensorTransL3 (0,1) $ tensorProd delta3 delta3 ) delta20
+
+        let int2_2Tree3 = Tree3.tensorProd (Tree3.tensorTransL3 (0,1) $ Tree3.tensorProd Tree3.delta3 Tree3.delta3 ) Tree3.delta20
 
         let int2_1T =  T.tensorProductNumeric intAT T.delta_3 
 
@@ -948,8 +971,7 @@ module Main (
 
         --print $ (map snd $ toListShow $ tensorProd (tensorTransL3 (0,1) $ tensorProd delta3 delta3) delta20) == (M.elems $ T.tensorProductNumeric (T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3) T.delta_20)
 
-        let l1 = filter (\(a,b) -> b /= 0) $ sort ( map (\(x,y) -> (x,truncate y)) $ toListShowIndex $ intCond)
-        let l2 = filter (\(a,b) -> b /= 0) $ sort $ map (\(x,y) -> (x,truncate y)) $ M.toAscList $ intCondT
+        
         --print $ length l1
         --print $ length l2
         
@@ -961,11 +983,95 @@ module Main (
 
         let trianM = triangleMap 315 
 
-        let ansABString = map (showMatLab.(index2SparseAnsatzAB trianM)) $ toListShow ansAB 
+        let ansABString = M.assocs $ M.fromListWith (+) $ map ((index2SparseAnsatzAB trianM)) $ toListShow ansAB 
+
+        let ansatzABT = T.ansatzAB mapAreaT mapAreaT mapMetricT mapMetricT 
+
+        let l1 = filter (\(a,b) -> b /= 0) $ sort ( map (\(x,y) -> (x,truncate y)) $ toListShowIndex $ int2)
+        let l2 = filter (\(a,b) -> b /= 0) $ sort $ map (\(x,y) -> (x,truncate y)) $ M.toAscList $ int2T
         
-        putStr $ unlines ansABString
+        --putStr $ unlines ansABString
 
-      
+        let ansABSym = ansatzABSym map1Metric map2Metric map1Area map2Area 
+
+        let ansABStringSym = sort $ mapMaybe ((index2SparseAnsatzABSym trianM)) $ toListShow ansABSym 
+
+  --      print $ ansABStringSym == ansABString
+
+    --    putStr $ unlines $ map show $ zip ansABStringSym ansABString
+        --print $ length $ ansABStringSym
+
+        let t = zip  [ [a,b,c] | a <- [1..30], b <- [a..30], c <- [b..30] ] [1..]
+
+        let t2 = zip [1..] [1..10000000]
+
+        let map2 = Bin.fromAscList t2 
+
+        let map3 = M.fromAscList t2 
+
+
+        --putStr $ unlines $ map show $ zip l1 l2
+
+        let ansAaBb = ansatzAaBb map1Metric map2Metric map1Area map2Area 
+
+
+        let l3 = filter (\(a,b) -> b /= 0) $ sort ( map (\(x,y) -> (x,truncate y)) $ toListShowIndex $ ansAaBb)
+
+        --print $ Bin.lookupTree 90 map2
+
+        let prod =  Tree3.tensorContr3 (0,0) Tree3.delta3
+        let prod2 = tensorContr3 (0,0) delta3
+
+        --print $ ( map (\(x,y) -> (x,Tree3.toListL3 y)) $ Tree3.toListU3 Tree3.delta3)
+
+        --print $ map (\(x,y) -> (x,toListL3 y)) $ toListU3 delta3
+
+        let list1 =  ( map (\(a,Tree3.TensorL3 b) -> Bin.treeSize b) $  (\(Tree3.TensorU9 m) -> Bin.toAscList m) intI2Tree3)
+        
+        let list2 =  ( map (\(a,TensorL3 b) -> length b) $  (\(TensorU9 m) -> m) intI2)
+
+        --print $ M.assocs map1Metric
+
+        --print $ M.assocs map1MetricTree3
+
+        let list3 = [((Tree3.Empty, Tree3.Empty, Tree3.Empty, Tree3.Empty, (Tree3.Append a Tree3.Empty), Tree3.Empty, Tree3.Empty, (Tree3.Append b $ Tree3.Append c Tree3.Empty)),1) | a <- [toEnum 0..toEnum 2], b <- [toEnum 0..toEnum 2], c <- [toEnum 0..toEnum 2]]
+
+        let tens1 = Tree3.fromListT list3 
+
+        let tens2 = map Tree3.mkTens list3
+
+        let intAIBTree3 = Tree3.intAIB map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
+
+        let int3Tree3 = Tree3.interEqn3 map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
+
+        let flatIntTree3 = Tree3.flatInter map1AreaTree3 map2AreaTree3
+
+        let flatIntTree2 = flatInter map1Area map2Area
+
+        let intAIBTree2 = intAIB map1Metric map2Metric map1Area map2Area
+
+        --print $ ( Tree3.toListShow intAIBTree3) == ( toListShow intAIBTree2)
+
+        --print $ Tree3.toListShow intAIBTree3
+
+        --print $ toListShow intAIBTree2
+
+        let ansAaBb = ansatzAaBb map1Metric map2Metric map1Area map2Area 
+
+        let ansAIBC = ansatzAIBC map1Metric map2Metric map1Area map2Area 
+
+        let ansAaBbTree3 = Tree3.ansatzAaBb map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
+
+        let ansAIBCTree3 = Tree3.ansatzAIBC map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
+
+        print $ toListShow ansAIBC
+
+
+
+
+
+
+        
+
        
-
         

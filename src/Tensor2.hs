@@ -7,7 +7,7 @@ module Tensor2 (
     triangleMap2, triangleMap3, triangleMapArea,
     intAIB, mkEqnSparseIntAIB, interArea, interMetric, flatArea, flatAreaST, epsilon, eta, interEqn1_2, interEqn1_3,
     interI_2, interJ_2, interI_Area, interJ_Area, intTest5, tensorProductNumeric, delta_20, intTest5List, tensorProductWith, tensorTranspose,
-    index2List, swapPosInd, delta_3, delta_9
+    index2List, swapPosInd, delta_3, delta_9, ansatzAB
     
 
 ) where
@@ -706,3 +706,17 @@ module Tensor2 (
 
     index2List :: Index -> [Int]
     index2List (a,b,c,d,e,f,g,h) = a++b++c++d++e++f++g++h
+
+    ansatzAB :: M.Map Ind Int ->  M.Map Ind Int -> M.Map Ind Int->  M.Map Ind Int -> Tensor Rational 
+    ansatzAB map1Area map2Area map1Metric map2Metric = tensorContractWith_3 (0,0) (+) $ tensorContractWith_3 (0,1) (+) prod
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        antiSym = aSymI_2 map1Metric
+                        block1 = tensorProductWith (*) intArea delta_20 
+                        block2 = tensorTranspose 1 (0,1) block1
+                        totalBlock1 = tensorAdd block1 block2
+                        totalBlockTrans = tensorTranspose 2 (0,1) totalBlock1
+                        tens = tensorAdd totalBlock1 totalBlockTrans
+                        totalBlock2 = tensorContractWith_3 (1,1) (+) $ tensorProductWith (*) invEta antiSym
+                        prod = tensorProductWith (*) tens totalBlock2

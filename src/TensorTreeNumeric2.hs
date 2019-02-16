@@ -31,7 +31,8 @@ module TensorTreeNumeric2 (
     tensorSub, tensorContr20, tensorContr19, tensorContr9, tensorContr3, aSymI2,
     tensorTransU20, tensorTransL20, tensorTransL3, interArea, flatInter, tensorTransU3, tensorTransL9,
     interI2, interJ2, interI3, interJ3, interIArea, interJArea, interMetric, interEqn2 , isValid,
-    swapHead, toListInd, removeZeros, printTensorTree, invEta
+    swapHead, toListInd, removeZeros, printTensorTree, invEta, toListU20, toListL20, toListU19, toListL19, toListU9, toListL9, toListU3, toListL3,
+    insertOrAddU20, insertOrAddL20, insertOrAddU19, insertOrAddL19, insertOrAddU9, insertOrAddL9, insertOrAddU3, insertOrAddL3
     
 ) where
 
@@ -100,7 +101,7 @@ module TensorTreeNumeric2 (
     
     sortInd :: (Ord a, Eq a) => IndList n a -> IndList n a
     sortInd Empty = Empty 
-    sortInd (Append x xs) = insertSorted x $ sortInd xs 
+    sortInd (Append x xs) = insertSorted x $ sortInd xs
 
     toListInd :: IndList n a -> [a]
     toListInd = toList
@@ -1310,9 +1311,10 @@ module TensorTreeNumeric2 (
     aSymI2 trian2 = fromListT $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
             where
                 inds = [ (Empty, Empty, Empty, Empty, (singletonInd a), Empty, Empty, (Append b $ singletonInd c)) | a <- [toEnum 0..toEnum 9], b <- [toEnum 0..toEnum 3], c <- [toEnum 0..toEnum 3]]
-                f (_, _, _, _, ind1, _, _, ind2)
+                f (_, _, _, _, ind1, _, _, ind2@(Append x (Append y Empty)))
+                    | x == y = 0
                     | ind1 == (M.!) trian2 sortI = sign
-                    | otherwise = 0
+                    | otherwise = 0 
                   where sortI = sortInd ind2
                         sign = if sortI == ind2 then 1 else -1
 

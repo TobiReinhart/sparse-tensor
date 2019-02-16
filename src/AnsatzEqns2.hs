@@ -158,7 +158,7 @@ module AnsatzEqns2 (
                         prod = tensorProductWith (*) tens totalBlock2
 
     index2SparseAnsatzAaBb :: M.Map [Int] Int -> Index 2 2 0 0 1 0 2 2 -> (Int,Int) 
-    index2SparseAnsatzAaBb trian (Index x1  x2  _  _  x5  _  x7 x8) = ((e-1)*210*16+(f-1)*160+(j-1)*4+(r-1)*4+s,316 + x)
+    index2SparseAnsatzAaBb trian (Index x1  x2  _  _  x5  _  x7 x8) = ((e-1)*210*16+(f-1)*160+(j-1)*16+(r-1)*4+s,316 + x)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)

@@ -1097,9 +1097,9 @@ module Main (
 
         let eta18 = getEtaForest [1..18] filter18Eta sym18
 
-        writeFile "/cip/austausch/cgg/epsTree18.txt" $ relabelAnsatzForest eps18
+        writeFile "/cip/austausch/cgg/epsTree18.txt" $ show $ relabelAnsatzForest eps18
 
-        writeFile "/cip/austausch/cgg/etaTree18.txt" $ relabelAnsatzForest eta18
+        writeFile "/cip/austausch/cgg/etaTree18.txt" $ show $ relabelAnsatzForest eta18
 
 
 

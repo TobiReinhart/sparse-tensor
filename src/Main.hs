@@ -1095,7 +1095,7 @@ module Main (
 
         let eps18 = getEpsForest [1..18] filter18Eps 1 sym18
 
-        let eta18 = getEtaForest [1..18] filter18Eta sym18
+        let eta18 = getEtaForest [1..18] filter18Eta 1 sym18
 
         writeFile "/cip/austausch/cgg/epsTree18.txt" $ show $ relabelAnsatzForest eps18
 

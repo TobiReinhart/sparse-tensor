@@ -16,6 +16,17 @@
 
 {-# LANGUAGE BangPatterns #-}
 
+
+{-# LANGUAGE StandaloneDeriving #-}
+
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
+
+{-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
+
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver #-}
+
 module Main (
  main
 ) where
@@ -69,6 +80,9 @@ module Main (
     import qualified BinaryTree as Bin 
     import qualified TensorTreeNumeric3 as Tree3 
     import PerturbationTree2
+    import GHC.TypeLits 
+    import qualified Eigen.Matrix as Mat
+    import qualified Data.IntMap.Strict as I
 
 
     
@@ -1077,13 +1091,13 @@ module Main (
 
         let epsAnsatz14 = getEpsForest [1..14] filter14 1 sym14
 
-        let filter10 = [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10)] 
+        let filter10 = [(1,2),(2,3),(3,4),(5,6),(7,8),(5,7)] 
 
-        let sym10 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10)], [([1,2],[3,4]),([5,6],[7,8]),([1,2,3,4],[5,6,7,8])], [], [])
+        let sym10 = ([], [(1,2),(3,4),(5,6),(7,8)], [([1,2],[3,4]),([5,6],[7,8]),([1,2,3,4,9],[5,6,7,8,10])], [], [])
 
         let testSym = ([], [], [([1,2],[3,4])], [], [])
 
-        let epsAnsatz10 = getEpsForest [1..10] filter10 1 sym10
+        let epsAnsatz10 = relabelAnsatzForest $ getEpsForest [1..10] filter10 1 sym10
 
         let epsList = mkEpsilonList (Var 1 1) [1,2,3,4,5,6,7,8,9,10]
 
@@ -1097,9 +1111,34 @@ module Main (
 
         let eta18 = getEtaForest [1..18] filter18Eta 1 sym18
 
-        writeFile "/cip/austausch/cgg/epsTree18.txt" $ show $ relabelAnsatzForest eps18
+        --writeFile "/cip/austausch/cgg/epsTree18.txt" $ show $ relabelAnsatzForest eps18
 
-        writeFile "/cip/austausch/cgg/etaTree18.txt" $ show $ relabelAnsatzForest eta18
+        --writeFile "/cip/austausch/cgg/etaTree18.txt" $ show $ relabelAnsatzForest eta18
+
+        let epsilonMap = epsMap 
+
+        let epsilonEvalList = zip areaEvalMap14 [1..]
+
+        let n = length epsilonEvalList
+
+        let m = length $  getForestLabels epsAnsatz10
+
+        let testList = I.fromList $ zip [1..] [0,1,2,3,1,1,1,1,2,2]
+
+        let testTree = mkForestFromAscList $ mkEpsilonList (Var 1 1) [1,2,3,4,5,6,7,8,9,10]
+
+        let mat = evalAnsatzForestMatrix epsilonMap epsilonEvalList epsAnsatz10 :: Mat.Matrix 4410 12 Double
+
+        let matList = map (\x -> evalAnsatzForestList epsilonMap (fst x) epsAnsatz10) epsilonEvalList
+
+        let matTest = evalAnsatzForestList epsilonMap testList testTree
+
+        let evalfull = evalAllAnsatzForest epsilonMap epsilonEvalList epsAnsatz14
+
+        print $ length epsilonEvalList
+
+        print evalfull
+
 
 
 

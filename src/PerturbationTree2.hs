@@ -2,11 +2,42 @@
 
 --seems to be the best soultion !!!
 
+--pushes type stuff to kind stuff (prefixed with ')
+{-# LANGUAGE DataKinds #-}
+--matching on type constructors
+{-# LANGUAGE GADTs #-}
+--kind signature
+{-# LANGUAGE KindSignatures #-}
+--type family definitions
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeFamilyDependencies #-}
+{-# LANGUAGE UndecidableInstances #-}
+--infix type plus and mult
+{-# LANGUAGE TypeOperators #-}
+
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
+
+{-# LANGUAGE StandaloneDeriving #-}
+
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
+
+{-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
+
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver #-}
+
+
+
+
 
 
 
 module PerturbationTree2 (
-    AnsatzForest(..), AnsatzNode(..), mkEtaList, mkEpsilonList, Symmetry, reduceAnsatzEta, reduceAnsatzEps, getEtaInds, getEpsilonInds, mkAllVars, symAnsatzForestEta, symAnsatzForestEps, mkForestFromAscList, getEtaForest, getEpsForest, flattenForest, relabelAnsatzForest, getForestLabels, printAnsatz, showAnsatzNode, mapNodes, addForests, isZeroVar, addVars
+    AnsatzForest(..), AnsatzNode(..), mkEtaList, mkEpsilonList, Symmetry, reduceAnsatzEta, reduceAnsatzEps, getEtaInds, getEpsilonInds, mkAllVars, symAnsatzForestEta, symAnsatzForestEps, mkForestFromAscList, getEtaForest, getEpsForest, flattenForest, relabelAnsatzForest, getForestLabels, printAnsatz, showAnsatzNode, mapNodes, addForests, isZeroVar, addVars,
+    areaEvalMap10, epsMap, showMatrix, ansatzBasisMat, evalAnsatzForestMatrix, evalAnsatzForest, evalAllAnsatzForest,
+    evalAnsatzForestList, getLeafVals, areaEvalMap14
 
 ) where
 
@@ -16,6 +47,11 @@ module PerturbationTree2 (
     import Data.List 
     import Data.Maybe
     import Data.List
+    import GHC.TypeLits
+    import Data.Proxy
+    import qualified Eigen.Matrix as Mat
+    import qualified Eigen.SparseMatrix as Sparse
+    import qualified Eigen.Solver.LA as Sol
 
     --getAllInds might be better with S.Seq
 
@@ -108,6 +144,12 @@ module PerturbationTree2 (
     mapNodes f EmptyForest = EmptyForest
     mapNodes f (Leaf var) = Leaf (f var)
     mapNodes f (Forest m) = Forest $ (M.mapKeys f).(M.map (mapNodes f)) $ m
+
+    multForest :: (a -> a) -> AnsatzForest a -> AnsatzForest a
+    multForest f EmptyForest = EmptyForest
+    multForest f (Leaf var) = Leaf (f var)
+    multForest f (Forest m) = Forest $ (M.map (multForest f)) $ m
+
 
     --add 2 sorted forests (are all zeros removed ?)
 
@@ -394,4 +436,103 @@ module PerturbationTree2 (
                 shiftedForest = shiftAnsatzForest (Forest m)
                 pairs = M.assocs $ forestMap shiftedForest
                 subForests = map (\(k,v) -> k : (printAnsatz v)) pairs
-                
+
+    --the next step is evaluating the tree 
+
+    evalNode :: M.Map [Int] Int -> I.IntMap Int -> AnsatzNode Int -> Int
+    evalNode epsM iMap (Eta x y) 
+                | a == b && a == 0 = (-1) 
+                | a == b = 1
+                | otherwise = 0
+                 where 
+                    [a,b] = [(I.!) iMap x, (I.!) iMap y]
+    evalNode epsM iMap (Epsilon w x y z) = M.findWithDefault 0 l epsM
+                 where
+                    l = [(I.!) iMap w, (I.!) iMap x, (I.!) iMap y, (I.!) iMap z]               
+
+    epsMap :: M.Map [Int] Int 
+    epsMap = M.fromList $ map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
+                where
+                   epsSign [i,j,k,l] = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+
+    --row (1st number) is labeled by eqNr coloum (2nd number) is labeled by varNr
+
+
+    evalAnsatzForestList :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForest (AnsatzNode Int) -> [(Int,Rational)]
+    evalAnsatzForestList epsM evalM (Leaf (Var x y)) = [(y,x)]
+    evalAnsatzForestList epsM evalM (Forest m) = M.foldrWithKey foldF [] m 
+                where
+                    foldF k a b = let nodeVal = evalNode epsM evalM k 
+                                  in if nodeVal == 0 then b 
+                                     else  (evalAnsatzForestList epsM evalM $ multForest (multVar (fromIntegral nodeVal)) a)  ++  b
+
+    evalAnsatzForest :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForest (AnsatzNode Int) -> I.IntMap Rational
+    evalAnsatzForest epsM evalM (Leaf (Var x y)) = I.singleton y x
+    evalAnsatzForest epsM evalM (Forest m) = M.foldrWithKey foldF I.empty m 
+                where
+                    foldF k a b = let nodeVal = evalNode epsM evalM k 
+                                  in if nodeVal == 0 then b 
+                                     else I.unionWith (+) (evalAnsatzForest epsM evalM $ multForest (multVar (fromIntegral nodeVal)) a) b
+
+    evalAllAnsatzForest :: M.Map [Int] Int -> [(I.IntMap Int, Int)] -> AnsatzForest (AnsatzNode Int) -> [[(Int,Int, Rational)]]
+    evalAllAnsatzForest epsM evalMs f = nub l 
+                where
+                    l = map (\(x,y) -> normalizeEqn $ map (\(a,b) -> (y,a,b)) $ filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForest epsM x f) evalMs
+                    
+    normalizeEqn :: [(a,b,Rational)] -> [(a,b, Rational)]
+    normalizeEqn [] = []
+    normalizeEqn ((x,y,z):xs) = map (\(a,b,c) -> (a,b, c / z)) $ (x,y,z) : xs
+
+    evalAnsatzForestMatrix :: (KnownNat n, KnownNat m) => M.Map [Int] Int -> [(I.IntMap Int, Int)] -> AnsatzForest (AnsatzNode Int) -> Mat.Matrix n m Double
+    evalAnsatzForestMatrix epsM evalMs f = mat 
+                    where 
+                        mat = Sparse.toMatrix $ Sparse.fromList $ map (\(a,b,c) -> (a,b, fromRational c :: Double)) $ concat $ evalAllAnsatzForest epsM evalMs f 
+
+    ansatzBasisMat :: (KnownNat n, KnownNat m) =>  M.Map [Int] Int -> [(I.IntMap Int, Int)] -> AnsatzForest (AnsatzNode Int) -> Mat.Matrix n m Double
+    ansatzBasisMat epsM evalMs f = sol 
+                 where
+                    mat = Sparse.toMatrix $ Sparse.fromList $ map (\(a,b,c) -> (a,b, fromRational c :: Double)) $ concat $ evalAllAnsatzForest epsM evalMs f 
+                    sol = Sol.image Sol.HouseholderQR mat
+
+    showMatrix :: (KnownNat n, KnownNat m) => Mat.Matrix n m Double -> String 
+    showMatrix mat = unlines lShow
+            where
+                spMat = Sparse.fromMatrix mat 
+                l = Sparse.toList spMat
+                lShow = map (\(a,b,c) -> show a ++ " " ++ show b ++ " " ++ show c) l
+
+   
+
+    --finally the eval maps 
+
+    areaList14 :: [[Int]]
+    areaList14 = list
+        where 
+            list = [[a,b,c,d,e,f,g,h,i,j,k,l,p,q] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+                                                              e <- [0..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
+                                                              i <- [0..2], j <- [i+1..3], k <- [i..2], l <- [k+1..3],
+                                                              p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l) && (p<=q) ]
+    
+    areaList10 :: [[Int]]
+    areaList10 = list
+        where 
+            list = [[a,b,c,d,e,f,g,h,p,q] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+                                                              e <- [0..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
+                                                              p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (p<=q) ]
+    
+    isAreaSorted :: Int -> Int -> Int -> Int -> Bool
+    isAreaSorted a b c d 
+            | a < c || (a == c && b <= d) = True
+            | otherwise = False 
+
+    areaEvalMap14 :: [I.IntMap Int]
+    areaEvalMap14 = map I.fromList l 
+        where 
+            area14 = areaList14 
+            l = map (\x -> zip [1,2,3,4,5,6,7,8,9,10,11,12,13,14] x) area14
+
+    areaEvalMap10 :: [I.IntMap Int]
+    areaEvalMap10 = map I.fromList l 
+        where 
+            area10 = areaList10
+            l = map (\x -> zip [1,2,3,4,5,6,7,8,9,10] x) area10

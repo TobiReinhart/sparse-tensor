@@ -1,7 +1,8 @@
 module BinaryTree (
-    BiTree(..), foldrTreeWithKey, toAscList, fromAscList, fromListTree, balanceTree, isBalancedTree, maxDepth, minDepth, 
+    BiTree(..), foldrTreeWithKey, toAscList, fromAscList, fromAscListWithLength, fromListTree, balanceTree, isBalancedTree, maxDepth, minDepth, 
     insertTree, insertTreeWith, insertTreeWithKey, insertTreeWithKeyMaybe, insertTreeWithMaybe, filterTree, isValidTree, lookupTree,
-    unionTreeWithKey, unionTreeWith, unionTree, unionTreeWithKeyMaybe, unionTreeWithMaybe, treeSize, balanceFactor
+    unionTreeWithKey, unionTreeWith, unionTree, unionTreeWithKeyMaybe, unionTreeWithMaybe, treeSize, balanceFactor, mapKeysTree, mapElemsTree, insertTreeWithSwapped,
+    mapElemsWithKeyTree
 
 ) where
 
@@ -123,6 +124,17 @@ module BinaryTree (
                  where
                     val = f a b y 
 
+    insertTreeWithSwapped :: Ord a => (c -> b) -> (c -> b -> b) -> a -> c -> BiTree a b -> BiTree a b 
+    insertTreeWithSwapped f g a c EmptyTree = Leaf a (f c)
+    insertTreeWithSwapped f g a c (Leaf x y)
+                | a < x = BiTree x y (Leaf a (f c)) EmptyTree 
+                | a == x = Leaf a (g c y)
+                | otherwise = BiTree x y EmptyTree (Leaf a (f c)) 
+    insertTreeWithSwapped f g a c (BiTree x y left right) 
+                | a < x = BiTree x y (insertTreeWithSwapped f g a c left) right 
+                | a == x = BiTree x (g c y) left right  
+                | otherwise = BiTree x y left (insertTreeWithSwapped f g a c right)
+
     removeTopNode :: BiTree a b -> BiTree a b 
     removeTopNode (Leaf _ _) = EmptyTree 
     removeTopNode (BiTree _ _ EmptyTree t) = t
@@ -151,12 +163,18 @@ module BinaryTree (
     mapElemsTree :: (b -> b) -> BiTree a b -> BiTree a b
     mapElemsTree = fmap  
 
+    mapElemsWithKeyTree :: (a -> b -> b) -> BiTree a b -> BiTree a b
+    mapElemsWithKeyTree f EmptyTree = EmptyTree
+    mapElemsWithKeyTree f (Leaf x y)  = Leaf x (f x y) 
+    mapElemsWithKeyTree f (BiTree x y left right) = BiTree x (f x y) (mapElemsWithKeyTree f left) (mapElemsWithKeyTree f right)
+
+
     --does not rebalance or resort tree -> only makes sense for monotonic maps
 
     mapKeysTree :: (a -> a) -> BiTree a b -> BiTree a b 
     mapKeysTree f EmptyTree = EmptyTree 
-    mapKeys f (Leaf a b) = Leaf (f a) b 
-    mapKeys f (BiTree a b left right) = BiTree (f a) b (mapKeysTree f left) (mapKeysTree f right)
+    mapKeysTree f (Leaf a b) = Leaf (f a) b 
+    mapKeysTree f (BiTree a b left right) = BiTree (f a) b (mapKeysTree f left) (mapKeysTree f right)
 
     mapAllTree :: (a -> a) -> (b -> b) -> BiTree a b -> BiTree a b 
     mapAllTree f g EmptyTree = EmptyTree
@@ -165,6 +183,7 @@ module BinaryTree (
 
     filterTree :: (b -> Bool) -> BiTree a b -> BiTree a b 
     filterTree f t = fromAscList $ filter (f.snd) $ toAscList t
+                        
 
     isValidTree :: Ord a => BiTree a b -> Bool 
     isValidTree EmptyTree = True 

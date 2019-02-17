@@ -68,6 +68,8 @@ module Main (
     import Data.Maybe
     import qualified BinaryTree as Bin 
     import qualified TensorTreeNumeric3 as Tree3 
+    import PerturbationTree2
+
 
     
     
@@ -884,7 +886,7 @@ module Main (
 
         print $ i1 == i2
 
-        -}
+        
 
         let map1Area = trianMapAreaI 
         let map2Area = trianMapAreaJ
@@ -1064,7 +1066,41 @@ module Main (
 
         let ansAIBCTree3 = Tree3.ansatzAIBC map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
 
-        print $ Tree3.toListShow ansAIBCTree3
+        print $ (Tree3.toListShow ansAaBbTree3) == (toListShow ansAaBb)
+
+        -}
+
+
+        let filter14 = [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11)] 
+
+        let sym14 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4,13],[5,6,7,8,14])], [], [])
+
+        let epsAnsatz14 = getEpsForest [1..14] filter14 1 sym14
+
+        let filter10 = [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10)] 
+
+        let sym10 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10)], [([1,2],[3,4]),([5,6],[7,8]),([1,2,3,4],[5,6,7,8])], [], [])
+
+        let testSym = ([], [], [([1,2],[3,4])], [], [])
+
+        let epsAnsatz10 = getEpsForest [1..10] filter10 1 sym10
+
+        let epsList = mkEpsilonList (Var 1 1) [1,2,3,4,5,6,7,8,9,10]
+
+        let filter18Eps = [(1,2),(2,3),(3,4),(5,6),(7,8),(5,7),(7,9),(9,10),(11,12),(9,11),(13,14),(11,13),(15,16),(13,15),(15,17,)(17,18)] 
+
+        let filter18Eta = [(1,2),(1,3),(3,4),(3,5),(5,6),(7,8),(5,7),(7,9),(9,10),(11,12),(9,11),(13,14),(11,13),(15,16),(13,15),(15,17,)(17,18)] 
+        
+        let sym18 = ([(13,14),(15,16),(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], [[[1,2,3,4,13,14],[5,6,7,8,15,16],[9,10,11,12,17,18]]])
+
+        let eps18 = getEpsForest [1..18] filter18Eps 1 sym18
+
+        let eta18 = getEtaForest [1..18] filter18Eta sym18
+
+        writeFile "/cip/austausch/cgg/epsTree18.txt" $ relabelAnsatzForest eps18
+
+        writeFile "/cip/austausch/cgg/etaTree18.txt" $ relabelAnsatzForest eta18
+
 
 
 

@@ -1,11 +1,9 @@
 --improved version of perturbationTree
 
---seems to be the best soultion !!!
 
 
 
-
-module PerturbationTree2 (
+module PerturbationTree5 (
     AnsatzForest(..), AnsatzNode(..), mkEtaList, mkEpsilonList, Symmetry, reduceAnsatzEta, reduceAnsatzEps, getEtaInds, getEpsilonInds, mkAllVars, symAnsatzForestEta, symAnsatzForestEps, mkForestFromAscList, getEtaForest, getEpsForest, flattenForest, relabelAnsatzForest, getForestLabels, printAnsatz, showAnsatzNode, mapNodes, addForests, isZeroVar, addVars
 
 ) where
@@ -16,6 +14,7 @@ module PerturbationTree2 (
     import Data.List 
     import Data.Maybe
     import Data.List
+    import BinaryTree
 
     --getAllInds might be better with S.Seq
 
@@ -55,19 +54,19 @@ module PerturbationTree2 (
     getEpsilonInds :: [Int] -> [(Int,Int)] -> [[Int]]
     getEpsilonInds l sym = filter (\x -> filterSym x sym) $ getAllIndsEpsilon l
 
-    data AnsatzNode a = Epsilon a a a a | Eta a a | Var Rational Int  deriving (Show, Read,  Eq, Ord)
+    data AnsatzNode a = Epsilon a a a a | Eta a a | Var Rational Int  deriving (Show, Eq, Ord)
 
     mkAllVars :: Int -> [AnsatzNode a] 
     mkAllVars i = map (Var 1) [i..]
+
+    --or use standard Data.List sort ?
 
     sortList :: Ord a => [a] -> [a]
     sortList [] = [] 
     sortList (x:xs) = insert x $ sortList xs 
 
     sortAnsatzNode :: Ord a => AnsatzNode a ->  AnsatzNode a 
-    sortAnsatzNode (Eta x y) = (Eta x' y')
-            where
-                [x',y'] = sortList [x,y] 
+    sortAnsatzNode (Eta x y) = (Eta (min x y) (max x y))
     sortAnsatzNode (Epsilon i j k l) = ( Epsilon i' j' k' l')
             where
                 [i',j',k',l'] = sortList [i,j,k,l]
@@ -82,11 +81,13 @@ module PerturbationTree2 (
     getEpsSign x = error "should only be called for Epsilon"
 
     
-    addVars :: Show a => AnsatzNode a -> AnsatzNode a -> AnsatzNode a 
+    addVars :: AnsatzNode a -> AnsatzNode a -> Maybe (AnsatzNode a) 
     addVars (Var x y) (Var x' y') 
-            | y == y' = Var (x + x') y
-            | otherwise = error $ "should only be necessary to add vars with the same label: tried to add:" ++ "  " ++ (show y) ++ "  and   " ++ (show y')
-    addVars x y = error "can only add Vars"
+            | rightVars && val == 0 = Nothing
+            | rightVars = Just $ Var val y
+                where
+                    rightVars = (y == y')
+                    val = x + x'
 
     multVar :: Rational -> AnsatzNode a -> AnsatzNode a
     multVar x (Var x' y) = Var (x * x') y
@@ -96,53 +97,56 @@ module PerturbationTree2 (
     isZeroVar (Var 0 x) = True
     isZeroVar x = False 
    
-    data AnsatzForest a = Forest (M.Map a (AnsatzForest a))| Leaf a | EmptyForest  deriving (Show, Read, Eq)
+    data AnsatzForest a = Forest (BiTree a (AnsatzForest a))| FLeaf a | EmptyForest  deriving (Show, Eq)
 
-    forestMap :: AnsatzForest a -> M.Map a (AnsatzForest a)
+    forestMap :: AnsatzForest a -> BiTree a (AnsatzForest a)
     forestMap (Forest m) = m
     forestMap x = error "Forest is Leaf or Empty"
 
-    --mapNodes requires resorting
+    --does not resorting
 
-    mapNodes :: (Ord a, Ord b) => (a -> b) -> AnsatzForest a -> AnsatzForest b
+    mapNodes :: (a -> a) -> AnsatzForest a -> AnsatzForest a
     mapNodes f EmptyForest = EmptyForest
-    mapNodes f (Leaf var) = Leaf (f var)
-    mapNodes f (Forest m) = Forest $ (M.mapKeys f).(M.map (mapNodes f)) $ m
+    mapNodes f (FLeaf var) = FLeaf (f var)
+    mapNodes f (Forest m) = Forest $ (mapKeysTree f).(fmap (mapNodes f)) $ m
+
 
     --add 2 sorted forests (are all zeros removed ?)
 
-    addForests :: Ord a => (a -> Bool) -> (a -> a -> a) -> AnsatzForest a -> AnsatzForest a -> AnsatzForest a
-    addForests isZero f ans EmptyForest = ans
-    addForests isZero f EmptyForest ans = ans 
-    addForests isZero f (Leaf var1) (Leaf var2)
-            | isZero newLeafVal = EmptyForest
-            | otherwise = Leaf newLeafVal
+    addForestsM :: Ord a => (a -> a -> Maybe a) -> AnsatzForest a -> AnsatzForest a -> Maybe (AnsatzForest a)
+    addForestsM f ans EmptyForest = Just ans
+    addForestsM f EmptyForest ans = Just ans 
+    addForestsM f (FLeaf var1) (FLeaf var2) 
+            | isJust newLeafVal = Just $ FLeaf $ fromJust newLeafVal
+            | otherwise = Nothing
             where
                 newLeafVal = (f var1 var2)
-    addForests isZero f (Forest m1) (Forest m2) 
-            | M.null newMap = EmptyForest
-            | otherwise = Forest newMap
+    addForestsM f (Forest m1) (Forest m2) 
+            | EmptyTree == newMap = Nothing
+            | otherwise = Just $ Forest newMap
              where
-                sum = \ a b -> addForests isZero f a b 
-                newMap = M.filter (/= EmptyForest) $ M.unionWith sum m1 m2
+                newMap = filterTree (/= EmptyForest) $ unionTreeWithMaybe (addForestsM f) m1 m2
+
+    addForests :: Ord a => (a -> a -> Maybe a) -> AnsatzForest a -> AnsatzForest a -> AnsatzForest a
+    addForests f m1 m2 = fromMaybe EmptyForest $ addForestsM f m1 m2
 
     --flatten Forest to AscList Branches
     
     flattenForest :: Ord a => AnsatzForest a -> [[a]]
     flattenForest EmptyForest = [[]]
-    flattenForest (Leaf var) = [[var]]
+    flattenForest (FLeaf var) = [[var]]
     flattenForest (Forest m) = concat l 
             where
-                mPairs = M.assocs m 
+                mPairs = toAscList m 
                 l = fmap (\(k,v) ->  fmap (insert k) $ flattenForest v) mPairs  
                 
     mkForestFromAscList :: Ord a => [a] -> AnsatzForest a 
     mkForestFromAscList [] = EmptyForest
-    mkForestFromAscList [x] = Leaf x
-    mkForestFromAscList (x:xs) = Forest $ M.singleton x $ mkForestFromAscList xs
+    mkForestFromAscList [x] = FLeaf x
+    mkForestFromAscList (x:xs) = Forest $ fromAscListWithLength 1 [(x, mkForestFromAscList xs)]
     
-    sortForest :: Ord a => (a -> Bool) -> AnsatzForest a -> AnsatzForest a
-    sortForest isZero f = foldr (addForests isZero const) EmptyForest fList 
+    sortForest :: Ord a => (a -> a -> Maybe a) -> AnsatzForest a -> AnsatzForest a
+    sortForest addFs f = foldr (addForests addFs) EmptyForest fList 
                 where
                     fList = map mkForestFromAscList $ flattenForest f
 
@@ -183,81 +187,81 @@ module PerturbationTree2 (
 
     canonicalizeAnsatzEpsilon :: Ord a => AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
     canonicalizeAnsatzEpsilon EmptyForest = EmptyForest
-    canonicalizeAnsatzEpsilon (Leaf var) = Leaf var
+    canonicalizeAnsatzEpsilon (FLeaf var) = FLeaf var
     canonicalizeAnsatzEpsilon (Forest m) = Forest newMap
                 where
-                    newMap = M.mapKeys sortAnsatzNode  $ M.mapWithKey (\ k v -> mapNodes ((multVar $ getEpsSign k).sortAnsatzNode) v ) m
+                    newMap = mapKeysTree sortAnsatzNode $ mapElemsWithKeyTree (\ k v -> mapNodes ((multVar $ getEpsSign k).sortAnsatzNode) v ) m
             
 
     swapLabelEta :: Ord a => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    swapLabelEta inds ans = (sortForest isZeroVar).canonicalizeAnsatzEta $ swapAnsatz
+    swapLabelEta inds ans = (sortForest addVars).canonicalizeAnsatzEta $ swapAnsatz
             where
                 f = swapLabelNode inds 
                 swapAnsatz = mapNodes f ans
 
     swapLabelEps :: Ord a => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    swapLabelEps inds ans = (sortForest isZeroVar).canonicalizeAnsatzEpsilon $ swapAnsatz
+    swapLabelEps inds ans = (sortForest addVars).canonicalizeAnsatzEpsilon $ swapAnsatz
             where
                 f = swapLabelNode inds 
                 swapAnsatz = mapNodes f ans           
 
     swapBlockLabelEta :: Ord a => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    swapBlockLabelEta swapF ans = (sortForest isZeroVar).canonicalizeAnsatzEta $ swapAnsatz
+    swapBlockLabelEta swapF ans = (sortForest addVars).canonicalizeAnsatzEta $ swapAnsatz
             where
                 f = swapBlockLabelNode swapF 
                 swapAnsatz = mapNodes f ans
 
     swapBlockLabelEps :: Ord a => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    swapBlockLabelEps swapF ans = (sortForest isZeroVar).canonicalizeAnsatzEpsilon $ swapAnsatz
+    swapBlockLabelEps swapF ans = (sortForest addVars).canonicalizeAnsatzEpsilon $ swapAnsatz
             where
                 f = swapBlockLabelNode swapF 
                 swapAnsatz = mapNodes f ans
             
 
     pairSymForestEta :: (Ord a, Show a) => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairSymForestEta inds ans = (addForests isZeroVar addVars) ans $ swapLabelEta inds ans 
+    pairSymForestEta inds ans = (addForests addVars) ans $ swapLabelEta inds ans 
 
     pairSymForestEps :: (Ord a, Show a) => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairSymForestEps inds ans = (addForests isZeroVar addVars) ans $ swapLabelEps inds ans 
+    pairSymForestEps inds ans = (addForests addVars) ans $ swapLabelEps inds ans 
 
     pairASymForestEta :: (Ord a, Show a) => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairASymForestEta inds ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapLabelEta inds ans 
+    pairASymForestEta inds ans = (addForests addVars) ans $ mapNodes (multVar (-1)) $ swapLabelEta inds ans 
 
     pairASymForestEps :: (Ord a, Show a) => (a,a) -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairASymForestEps inds ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapLabelEps inds ans 
+    pairASymForestEps inds ans = (addForests addVars) ans $ mapNodes (multVar (-1)) $ swapLabelEps inds ans 
 
     pairBlockSymForestEta :: (Ord a, Show a) => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairBlockSymForestEta swapF ans = (addForests isZeroVar addVars) ans $ swapBlockLabelEta swapF ans 
+    pairBlockSymForestEta swapF ans = (addForests addVars) ans $ swapBlockLabelEta swapF ans 
 
     pairBlockSymForestEps :: (Ord a, Show a) => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairBlockSymForestEps swapF ans = (addForests isZeroVar addVars) ans $ swapBlockLabelEps swapF ans 
+    pairBlockSymForestEps swapF ans = (addForests addVars) ans $ swapBlockLabelEps swapF ans 
 
     pairBlockASymForestEta :: (Ord a, Show a) => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairBlockASymForestEta swapF ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapBlockLabelEta swapF ans
+    pairBlockASymForestEta swapF ans = (addForests addVars) ans $ mapNodes (multVar (-1)) $ swapBlockLabelEta swapF ans
 
     pairBlockASymForestEps :: (Ord a, Show a) => M.Map a a -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    pairBlockASymForestEps swapF ans = (addForests isZeroVar addVars) ans $ mapNodes (multVar (-1)) $ swapBlockLabelEps swapF ans
+    pairBlockASymForestEps swapF ans = (addForests addVars) ans $ mapNodes (multVar (-1)) $ swapBlockLabelEps swapF ans
 
     --cyclic symmetrization does not work !!! -> There is a problem 
     
     cyclicSymForestEta :: (Ord a, Show a) => [a] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    cyclicSymForestEta inds ans = foldr (\y x -> (addForests isZeroVar addVars) x $ swapBlockLabelEta y ans ) ans perms
+    cyclicSymForestEta inds ans = foldr (\y x -> (addForests addVars) x $ swapBlockLabelEta y ans ) ans perms
             where
                 perms = map (\a -> M.fromList (zip inds a)) $ tail $ permutations inds 
 
     cyclicSymForestEps :: (Ord a, Show a) => [a] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    cyclicSymForestEps inds ans = foldr (\y x -> (addForests isZeroVar addVars) x $ swapBlockLabelEps y ans ) ans perms
+    cyclicSymForestEps inds ans = foldr (\y x -> (addForests addVars) x $ swapBlockLabelEps y ans ) ans perms
             where
                 perms = map (\a -> M.fromList (zip inds a)) $ tail $ permutations inds 
 
 
     cyclicBlockSymForestEta :: (Ord a, Show a) => [[a]] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    cyclicBlockSymForestEta inds ans = foldr (\y x -> (addForests isZeroVar addVars) x $ swapBlockLabelEta y ans ) ans perms
+    cyclicBlockSymForestEta inds ans = foldr (\y x -> (addForests addVars) x $ swapBlockLabelEta y ans ) ans perms
             where
                 perms = map (\a -> M.fromList $ zip (concat inds) (concat a)) $ tail $ permutations inds 
 
     cyclicBlockSymForestEps :: (Ord a, Show a) => [[a]] -> AnsatzForest (AnsatzNode a) -> AnsatzForest (AnsatzNode a)
-    cyclicBlockSymForestEps inds ans = foldr (\y x -> (addForests isZeroVar addVars) x $ swapBlockLabelEps y ans ) ans perms
+    cyclicBlockSymForestEps inds ans = foldr (\y x -> (addForests addVars) x $ swapBlockLabelEps y ans ) ans perms
             where
                 perms = map (\a -> M.fromList $ zip (concat inds) (concat a)) $ tail $ permutations inds 
 
@@ -313,25 +317,25 @@ module PerturbationTree2 (
 
     isElem :: Ord a => [AnsatzNode a] -> AnsatzForest (AnsatzNode a) -> Bool
     isElem [] x = True
-    isElem x (Leaf y) = True
+    isElem x (FLeaf y) = True
     isElem x EmptyForest = False 
     isElem  (x:xs) (Forest m) 
                 | isJust mForest = isElem xs $ fromJust mForest
                 | otherwise = False
                 where
-                    mForest = M.lookup x m
+                    mForest = lookupTree x m
 
     reduceAnsatzEta :: (Ord a, Show a) => Symmetry a -> [[AnsatzNode a]] -> AnsatzForest (AnsatzNode a)
     reduceAnsatzEta sym [] = EmptyForest
     reduceAnsatzEta sym l = foldr addOrRem EmptyForest l
             where
-                addOrRem = \ans f -> if (isElem ans f) then f else (addForests isZeroVar addVars) f (symAnsatzForestEta sym $ mkForestFromAscList ans)
+                addOrRem = \ans f -> if (isElem ans f) then f else (addForests addVars) f (symAnsatzForestEta sym $ mkForestFromAscList ans)
 
     reduceAnsatzEps :: (Ord a, Show a) => Symmetry a -> [[AnsatzNode a]] -> AnsatzForest (AnsatzNode a)
     reduceAnsatzEps sym [] = EmptyForest
     reduceAnsatzEps sym l = foldr addOrRem EmptyForest l
             where
-                addOrRem = \ans f -> if (isElem ans f) then f else (addForests isZeroVar addVars) f (symAnsatzForestEps sym $ mkForestFromAscList ans)
+                addOrRem = \ans f -> if (isElem ans f) then f else (addForests addVars) f (symAnsatzForestEps sym $ mkForestFromAscList ans)
 
 
     getEtaForest :: [Int] -> [(Int,Int)] -> Int -> Symmetry Int -> AnsatzForest (AnsatzNode Int)
@@ -349,10 +353,10 @@ module PerturbationTree2 (
                     allForests = zipWith mkEpsilonList allVars allInds
 
     getLeafVals :: AnsatzForest a -> [a]
-    getLeafVals (Leaf var) = [var]
+    getLeafVals (FLeaf var) = [var]
     getLeafVals (Forest m) = rest
             where
-                rest = concatMap getLeafVals $ M.elems m
+                rest = concatMap getLeafVals $ map snd $ toAscList m
 
     getVarLabels :: AnsatzNode a -> Int
     getVarLabels (Var i j) = j
@@ -380,18 +384,18 @@ module PerturbationTree2 (
 
     shiftAnsatzForest :: AnsatzForest String -> AnsatzForest String
     shiftAnsatzForest EmptyForest = EmptyForest
-    shiftAnsatzForest (Leaf var) = Leaf var 
-    shiftAnsatzForest (Forest m) = Forest $ M.map shiftAnsatzForest shiftedForestMap
+    shiftAnsatzForest (FLeaf var) = FLeaf var 
+    shiftAnsatzForest (Forest m) = Forest $ fmap shiftAnsatzForest shiftedForestMap
             where
-                mapElems f (Forest m) =  Forest $ M.mapKeys f m
-                mapElems f (Leaf var) = Leaf (f var)
-                shiftedForestMap = M.map (\f -> mapElems (\x -> "     " ++ x) f) m
+                mapElems f (Forest m) =  Forest $ mapKeysTree f m
+                mapElems f (FLeaf var) = FLeaf (f var)
+                shiftedForestMap = fmap (\f -> mapElems (\x -> "     " ++ x) f) m
 
     printAnsatz ::  AnsatzForest String -> [String]
-    printAnsatz (Leaf var) = [var] 
+    printAnsatz (FLeaf var) = [var] 
     printAnsatz (Forest m) = map (init.unlines) subForests
             where
                 shiftedForest = shiftAnsatzForest (Forest m)
-                pairs = M.assocs $ forestMap shiftedForest
+                pairs = toAscList $ forestMap shiftedForest
                 subForests = map (\(k,v) -> k : (printAnsatz v)) pairs
                 

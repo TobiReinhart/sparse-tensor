@@ -2,42 +2,14 @@
 
 --seems to be the best soultion !!!
 
---pushes type stuff to kind stuff (prefixed with ')
-{-# LANGUAGE DataKinds #-}
---matching on type constructors
-{-# LANGUAGE GADTs #-}
---kind signature
-{-# LANGUAGE KindSignatures #-}
---type family definitions
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeFamilyDependencies #-}
-{-# LANGUAGE UndecidableInstances #-}
---infix type plus and mult
-{-# LANGUAGE TypeOperators #-}
-
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
-
-{-# LANGUAGE StandaloneDeriving #-}
-
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
-{-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
-
-{-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
-
-{-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver #-}
-
-
-
-
-
-
 
 module PerturbationTree2 (
     AnsatzForest(..), AnsatzNode(..), mkEtaList, mkEpsilonList, Symmetry, reduceAnsatzEta, reduceAnsatzEps, getEtaInds, getEpsilonInds, mkAllVars, symAnsatzForestEta, symAnsatzForestEps, mkForestFromAscList, getEtaForest, getEpsForest, flattenForest, relabelAnsatzForest, getForestLabels, printAnsatz, showAnsatzNode, mapNodes, addForests, isZeroVar, addVars,
-    areaEvalMap10, epsMap, showMatrix, ansatzBasisMat, evalAnsatzForestMatrix, evalAnsatzForest, evalAllAnsatzForest,
-    evalAnsatzForestList, getLeafVals, areaEvalMap14
+    epsMap, evalAnsatzForest, evalAllAnsatzForest, evalAllMatrixSp,
+    evalAnsatzForestList, getLeafVals, ansatzRank, ansatzKernel, evalAllMatrix, ansatzImage, ansatzHasMatrix, ansatzHasRR,
+    --ansatzHasLU, testBasisLabels, ansatzLinMatrix, ansatzLinLU,
+    filterList10_1, symList10_1, areaEvalMap10_1,
+    getPivots, actOnRightRest, rowReduce, ansatzBasisLabels
 
 ) where
 
@@ -47,13 +19,15 @@ module PerturbationTree2 (
     import Data.List 
     import Data.Maybe
     import Data.List
-    import GHC.TypeLits
-    import Data.Proxy
-    import qualified Eigen.Matrix as Mat
-    import qualified Eigen.SparseMatrix as Sparse
-    import qualified Eigen.Solver.LA as Sol
+    import qualified Data.Eigen.Matrix as Mat 
+    import qualified Data.Eigen.SparseMatrix as Sparse
+    import qualified Data.Eigen.LA as Sol 
+    import qualified Data.Matrix as HasMat 
+    import qualified Data.Vector as Vec
+    import qualified Numeric.LinearAlgebra as Lin 
+    import qualified Numeric.LinearAlgebra.Data as LinDat
 
-    --getAllInds might be better with S.Seq
+    
 
     getAllIndsEta :: [Int] -> [[Int]]
     getAllIndsEta [a,b] = [[a,b]]
@@ -72,6 +46,8 @@ module PerturbationTree2 (
                 s = length l
                 l2 = getIndsEpsilon s
                 l3 = concat $ map (\x -> (++) x <$> (getAllIndsEta (foldr delete l x))) l2
+
+    --filter the are metric symmetries
 
     filter1Sym :: [Int] -> (Int,Int) -> Bool 
     filter1Sym l (i,j)   
@@ -466,73 +442,438 @@ module PerturbationTree2 (
                                   in if nodeVal == 0 then b 
                                      else  (evalAnsatzForestList epsM evalM $ multForest (multVar (fromIntegral nodeVal)) a)  ++  b
 
+    --basic tree eval function
+
     evalAnsatzForest :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForest (AnsatzNode Int) -> I.IntMap Rational
     evalAnsatzForest epsM evalM (Leaf (Var x y)) = I.singleton y x
     evalAnsatzForest epsM evalM (Forest m) = M.foldrWithKey foldF I.empty m 
                 where
                     foldF k a b = let nodeVal = evalNode epsM evalM k 
                                   in if nodeVal == 0 then b 
-                                     else I.unionWith (+) (evalAnsatzForest epsM evalM $ multForest (multVar (fromIntegral nodeVal)) a) b
+                                     else I.unionWith (+) (I.map ((*) (fromIntegral nodeVal)) (evalAnsatzForest epsM evalM a)) b
 
-    evalAllAnsatzForest :: M.Map [Int] Int -> [(I.IntMap Int, Int)] -> AnsatzForest (AnsatzNode Int) -> [[(Int,Int, Rational)]]
-    evalAllAnsatzForest epsM evalMs f = nub l 
+    --eval All Inds (list of lists with (VarNr, Factor, multiplicity))
+
+    evalAllAnsatzForest :: M.Map [Int] Int -> M.Map (I.IntMap Int) Int -> AnsatzForest (AnsatzNode Int) -> [([(Int,Rational)],Int)]
+    evalAllAnsatzForest epsM evalMs f = nL 
                 where
-                    l = map (\(x,y) -> normalizeEqn $ map (\(a,b) -> (y,a,b)) $ filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForest epsM x f) evalMs
+                    l = M.mapKeys (\x -> normalizeEqn $ filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForest epsM x f) evalMs
+                    nL = M.assocs $ M.delete [] l
                     
-    normalizeEqn :: [(a,b,Rational)] -> [(a,b, Rational)]
+    normalizeEqn :: [(a, Rational)] -> [(a, Rational)]
     normalizeEqn [] = []
-    normalizeEqn ((x,y,z):xs) = map (\(a,b,c) -> (a,b, c / z)) $ (x,y,z) : xs
+    normalizeEqn ((x,y):xs) =  map (\(a,b) -> (a, b/y)) $ (x,y) : xs
 
-    evalAnsatzForestMatrix :: (KnownNat n, KnownNat m) => M.Map [Int] Int -> [(I.IntMap Int, Int)] -> AnsatzForest (AnsatzNode Int) -> Mat.Matrix n m Double
-    evalAnsatzForestMatrix epsM evalMs f = mat 
-                    where 
-                        mat = Sparse.toMatrix $ Sparse.fromList $ map (\(a,b,c) -> (a,b, fromRational c :: Double)) $ concat $ evalAllAnsatzForest epsM evalMs f 
-
-    ansatzBasisMat :: (KnownNat n, KnownNat m) =>  M.Map [Int] Int -> [(I.IntMap Int, Int)] -> AnsatzForest (AnsatzNode Int) -> Mat.Matrix n m Double
-    ansatzBasisMat epsM evalMs f = sol 
-                 where
-                    mat = Sparse.toMatrix $ Sparse.fromList $ map (\(a,b,c) -> (a,b, fromRational c :: Double)) $ concat $ evalAllAnsatzForest epsM evalMs f 
-                    sol = Sol.image Sol.HouseholderQR mat
-
-    showMatrix :: (KnownNat n, KnownNat m) => Mat.Matrix n m Double -> String 
-    showMatrix mat = unlines lShow
+    showMatrixMatLab ::  [[((Int,Rational),Int)]] -> String
+    showMatrixMatLab l = unlines $ map (\(x,y,z) -> show x ++ " " ++ show y ++ " " ++ show z ) l'
             where
-                spMat = Sparse.fromMatrix mat 
-                l = Sparse.toList spMat
-                lShow = map (\(a,b,c) -> show a ++ " " ++ show b ++ " " ++ show c) l
+                l' = concat $ zipWith (\l z -> map (\((x,y),_) -> (z, x, y)) l) l [1..]
 
-   
+    
+
+    --using Data.Matrix (Rational)  
+
+
+    ansatzHasMatrix :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> HasMat.Matrix Rational 
+    ansatzHasMatrix l f = HasMat.matrix n m (\x -> M.findWithDefault 0 x lMap ) 
+                where
+                    l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) $ fst r) l [1..]
+                    n = length l
+                    lMap = M.fromList $ map (\(a,b,c) -> ((a, b), c)) l'
+                    m = length $ getForestLabels f
+
+    rowReduce :: HasMat.Matrix Rational -> HasMat.Matrix Rational 
+    rowReduce m 
+            | HasMat.nrows m == 1 = m
+            | HasMat.ncols m == 1 = if Vec.null pivots then m else HasMat.fromLists $ [1] : ( replicate ((HasMat.nrows m)-1) [0] )
+            | Vec.null pivots = actOnRightRest rowReduce m
+            | otherwise = actOnRightSub rowReduce redMat
+            where
+                pivots = getPivots m 
+                pivot1 = Vec.head pivots
+                restpivots = Vec.drop 1 pivots
+                sortMat = HasMat.switchRows pivot1 1 m 
+                normMat = HasMat.scaleRow (1/(HasMat.getElem 1 1 sortMat)) 1 sortMat 
+                redMat = foldr (\a b -> HasMat.combineRows a (-(HasMat.getElem a 1 b)) 1 b) normMat restpivots 
+
+    actOnRightSub :: (HasMat.Matrix Rational -> HasMat.Matrix Rational) -> HasMat.Matrix Rational -> HasMat.Matrix Rational 
+    actOnRightSub f m = (HasMat.<|>) c1Mat restMat 
+                where
+                    (newMat1, newMat2, newMat3, newMat4) = HasMat.splitBlocks 1 1 m 
+                    c1Mat = (HasMat.<->) newMat1 newMat3 
+                    restMat = (HasMat.<->) newMat2 $ f newMat4
+
+    actOnRightRest :: (HasMat.Matrix Rational -> HasMat.Matrix Rational) -> HasMat.Matrix Rational -> HasMat.Matrix Rational 
+    actOnRightRest f m = (HasMat.<|>) c1Mat $ f restMat 
+                where
+                    (newMat1, newMat2, newMat3, newMat4) = HasMat.splitBlocks 1 1 m 
+                    c1Mat = (HasMat.<->) newMat1 $ newMat3 
+                    restMat = (HasMat.<->) newMat2 $ newMat4
+
+    getPivots :: HasMat.Matrix Rational -> Vec.Vector Int
+    getPivots m = fmap ((+) 1) $ Vec.findIndices (/= 0) c1 
+            where
+                c1 = HasMat.getCol 1 m 
+
+    get1stPivots :: HasMat.Matrix Rational -> [Int] 
+    get1stPivots m = mapMaybe (\x -> getPiv $ HasMat.getRow x m) [1..(HasMat.nrows m)]
+                where
+                    getPiv v = fmap ((+) 1) $ Vec.findIndex (/= 0) v
+
+    ansatzHasRR :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> HasMat.Matrix Rational 
+    ansatzHasRR l f = rowReduce $ ansatzHasMatrix l f
+
+    ansatzBasisLabels :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> (HasMat.Matrix Rational, [Int]) 
+    ansatzBasisLabels l f = (mat, p)
+                    where
+                        mat = rowReduce $ ansatzHasMatrix l f
+                        p = get1stPivots mat
+
+    --is somehow too slow maybe use doubles ??
+    ansatzHasLUFullPivoting :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> (HasMat.Matrix Rational, [Int])
+    ansatzHasLUFullPivoting l f = (tri , map ((I.!) varMap) pivots)
+            where
+                mat = ansatzHasMatrix l f 
+                (tri,_,_,perm,_,_) = fromJust $ HasMat.luDecomp' mat 
+                perm' = HasMat.transpose perm 
+                xVec = HasMat.fromLists $  [[fromIntegral i] | i <- [1..HasMat.nrows perm] ] 
+                newXVec = perm' * xVec 
+                i = map truncate $ HasMat.toList newXVec
+                varMap = I.fromList $ zip [1..HasMat.nrows perm] i 
+                pivots = get1stPivots tri 
+
+    ansatzHasLU :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> (HasMat.Matrix Rational, [Int])
+    ansatzHasLU l f = (tri, pivots)
+            where
+                mat = ansatzHasMatrix l f 
+                (tri,_,_,_) = fromJust $ HasMat.luDecomp mat         
+                pivots = get1stPivots tri 
+
+    
+    --testing alternative packages for the matrix computations (all other packages only work numerical)
+
+
+    --using eigen (numeric)
+
+    --ordering: Vars to the right, Eqns down 
+    evalAllMatrixSp :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> Sparse.SparseMatrixXd 
+    evalAllMatrixSp l f = Sparse.fromList n m l''
+                where
+                    l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) $ fst r) l [1..]
+                    n = length l 
+                    l'' = map (\(a,b,c) -> (a-1, b-1, fromRational c)) l'
+                    m = length $ getForestLabels f 
+
+    evalAllMatrix :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> Mat.MatrixXd 
+    evalAllMatrix l f = Sparse.toMatrix $ Sparse.fromList n m l''
+                    where
+                        l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) $ fst r) l [1..]
+                        n = length l 
+                        l'' = map (\(a,b,c) -> (a-1, b-1, fromRational c)) l'
+                        m = length $ getForestLabels f 
+
+    ansatzRank :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> Int 
+    ansatzRank l f = Sol.rank Sol.FullPivLU $ evalAllMatrix l f 
+    
+    --coloumns form basis of Image 
+    ansatzImage :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> Mat.MatrixXd 
+    ansatzImage l f = Sol.image Sol.FullPivLU $ Mat.transpose $ evalAllMatrix l f
+
+    --coloumns (down) form basis of nullspace
+    ansatzKernel :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int)-> Mat.MatrixXd 
+    ansatzKernel l f = Sol.kernel Sol.FullPivLU $ evalAllMatrix l f
+
+    --using hmatrix 
+
+    ansatzLinMatrix :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> LinDat.Matrix Double 
+    ansatzLinMatrix l f = LinDat.assoc (n,m) 0 l''
+                where
+                    n = length l 
+                    l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) $ fst r) l [1..]
+                    l'' = map (\(a,b,c) -> ((a-1, b-1), fromRational c)) l'
+                    m = length $ getForestLabels f
+
+    ansatzLinLU :: [([(Int, Rational)], Int)] -> AnsatzForest (AnsatzNode Int) -> (LinDat.Matrix Double, [Int])
+    ansatzLinLU l f = (b, getPivotNrs b 1.0e-10)
+                where
+                    mat = ansatzLinMatrix l f
+                    (_,b,_,_) = Lin.lu mat 
+                    matRows = LinDat.toRows b      
+
+    getPivotNrs :: LinDat.Matrix Double -> Double -> [Int]
+    getPivotNrs m bound = mapMaybe (getPiv bound) matRows
+            where
+                matRows = LinDat.toRows m 
+                
+
+    getPiv :: Double -> LinDat.Vector Double -> Maybe Int 
+    getPiv bound v = let vMaybe = fmap ((+) 1) $ LinDat.find (\x -> abs(x) <= bound) v in 
+                if (length vMaybe) == 0 then Nothing else Just $ head vMaybe
 
     --finally the eval maps 
 
-    areaList14 :: [[Int]]
-    areaList14 = list
+    --A
+    areaList4 :: M.Map [Int] Int
+    areaList4 = M.fromList list
         where 
-            list = [[a,b,c,d,e,f,g,h,i,j,k,l,p,q] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+            list = [ ([a,b,c,d], areaMult a b c d) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+                                                              (isAreaSorted a b c d)]
+    --AI
+    areaList6 :: M.Map [Int] Int
+    areaList6 = M.fromList list
+        where 
+            list = [ ([a,b,c,d,p,q], (areaMult a b c d) * (iMult2 p q)) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+                                                                        p <- [0..3], q <- [p..3], (isAreaSorted a b c d)]
+
+    --A:B
+    areaList8 :: M.Map [Int] Int
+    areaList8 = M.fromList list
+        where 
+            list = [ ([a,b,c,d,e,f,g,h], (areaMult a b c d) * (areaMult e f g h)) | a <- [0..2], b <- [a+1..3], c <- [a..2], 
+                                                                                    d <- [c+1..3],  e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) ]
+
+    --Ap:Bq
+    areaList10_1 :: M.Map [Int] Int
+    areaList10_1 = M.fromList list
+        where 
+            list = [ ([a,b,c,d,p,e,f,g,h,q], (areaMult a b c d) * (areaMult e f g h)) | a <- [0..2], b <- [a+1..3], c <- [a..2],
+                                                                                         d <- [c+1..3], e <- [a..2], f <- [e+1..3],g <- [e..2], h <- [g+1..3], p <- [0..3], q <- [0..3], (isAreaSorted a b c d) && (isAreaSorted e f g h)  ]
+
+    --A:BI                                     
+    areaList10_2 :: M.Map [Int] Int
+    areaList10_2 = M.fromList list
+        where 
+            list = [ ([a,b,c,d,e,f,g,h,p,q], (areaMult a b c d) * (areaMult e f g h) * (iMult2 p q)) | a <- [0..2], b <- [a+1..3],                                                  c <- [a..2], d <- [c+1..3], 
+                                                              e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
+                                                              p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h)  ]
+
+    --A:B:C
+    areaList12 :: M.Map [Int] Int
+    areaList12 = M.fromList list
+        where 
+            list = [ ([a,b,c,d,e,f,g,h,i,j,k,l], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l)) | a <- [0..2], 
+                                                              b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+                                                              e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
+                                                              i <- [e..2], j <- [i+1..3], k <- [i..2], l <- [k+1..3],
+                                                              (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
+
+    --A:Bp:Cq
+    areaList14_1 :: M.Map [Int] Int
+    areaList14_1 = M.fromList list
+        where 
+            list = [ ([a,b,c,d,e,f,g,h,p,i,j,k,l,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l)) | a <- [0..2],                                                    b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
                                                               e <- [0..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
+                                                              i <- [e..2], j <- [i+1..3], k <- [i..2], l <- [k+1..3],
+                                                              p <- [0..3], q <- [0..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
+
+
+    --A:B:CI
+    areaList14_2 :: M.Map [Int] Int
+    areaList14_2 = M.fromList list
+        where 
+            list = [ ([a,b,c,d,e,f,g,h,i,j,k,l,p,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l) * (iMult2 p q)) |                                                 a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+                                                              e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
                                                               i <- [0..2], j <- [i+1..3], k <- [i..2], l <- [k+1..3],
-                                                              p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l) && (p<=q) ]
-    
-    areaList10 :: [[Int]]
-    areaList10 = list
+                                                              p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
+
+    --Am:Bn:CI
+    areaList16_1 :: M.Map [Int] Int
+    areaList16_1 = M.fromList list
         where 
-            list = [[a,b,c,d,e,f,g,h,p,q] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
-                                                              e <- [0..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
-                                                              p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (p<=q) ]
+            list = [ ([a,b,c,d,m,e,f,g,h,n,i,j,k,l,p,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l) * (iMult2 p q)) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], m <- [0..3],
+                  e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3], n <- [0..3],
+                  i <- [0..2], j <- [i+1..3], k <- [i..2], l <- [k+1..3],
+                 p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
+
+    --A:BI:CJ
+    areaList16_2 :: M.Map [Int] Int
+    areaList16_2 = M.fromList list
+        where 
+            list = [ ([a,b,c,d,e,f,g,h,m,n,i,j,k,l,p,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l) * (iMult2 p q) * (iMult2 m n) ) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3],
+                                 e <- [0..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3], m <- [0..3], n <- [m..3],
+                                 i <- [e..2], j <- [i+1..3], k <- [i..2], l <- [k+1..3],
+                                p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
+
+    --AI:BJ:CK
+    areaList18 :: M.Map [Int] Int
+    areaList18 = M.fromList list
+        where 
+            list = [ ([a,b,c,d,r,s,e,f,g,h,m,n,i,j,k,l,p,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l) * (iMult2 p q) * (iMult2 r s)) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], r <- [0..3], s <- [r..3],
+                                          e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3], m <- [0..3], n <- [m..3],
+                                          i <- [e..2], j <- [i+1..3], k <- [i..2], l <- [k+1..3],
+                                          p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
+   
     
     isAreaSorted :: Int -> Int -> Int -> Int -> Bool
     isAreaSorted a b c d 
             | a < c || (a == c && b <= d) = True
             | otherwise = False 
+   
+    areaMult :: Int -> Int -> Int -> Int -> Int
+    areaMult a b c d 
+            | a == c && b == d = 4 
+            | otherwise = 8
 
-    areaEvalMap14 :: [I.IntMap Int]
-    areaEvalMap14 = map I.fromList l 
-        where 
-            area14 = areaList14 
-            l = map (\x -> zip [1,2,3,4,5,6,7,8,9,10,11,12,13,14] x) area14
+    iMult2 :: Int -> Int -> Int 
+    iMult2 a b = if a == b then 1 else 2 
 
-    areaEvalMap10 :: [I.IntMap Int]
-    areaEvalMap10 = map I.fromList l 
+    areaEvalMap4 :: M.Map (I.IntMap Int) Int
+    areaEvalMap4 = l
         where 
-            area10 = areaList10
-            l = map (\x -> zip [1,2,3,4,5,6,7,8,9,10] x) area10
+            area4 = areaList4
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..4] x) area4
+
+    areaEvalMap6 :: M.Map (I.IntMap Int) Int
+    areaEvalMap6 = l
+        where 
+            area6 = areaList6
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..6] x) area6
+
+    areaEvalMap8 :: M.Map (I.IntMap Int) Int
+    areaEvalMap8 = l
+        where 
+            area8 = areaList8
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..8] x) area8
+
+    areaEvalMap10_1 :: M.Map (I.IntMap Int) Int
+    areaEvalMap10_1 = l
+        where 
+            area10_1 = areaList10_1
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..10] x) area10_1
+
+    areaEvalMap10_2 :: M.Map (I.IntMap Int) Int
+    areaEvalMap10_2 = l
+        where 
+            area10_2 = areaList10_2
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..10] x) area10_2
+
+    areaEvalMap12 :: M.Map (I.IntMap Int) Int
+    areaEvalMap12 = l
+        where 
+            area12 = areaList12
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..12] x) area12
+
+    areaEvalMap14_1 :: M.Map (I.IntMap Int) Int
+    areaEvalMap14_1 = l
+        where 
+            area14_1 = areaList14_1
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..14] x) area14_1
+
+    areaEvalMap14_2 :: M.Map (I.IntMap Int) Int
+    areaEvalMap14_2 = l
+        where 
+            area14_2 = areaList14_2
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..14] x) area14_2
+
+    areaEvalMap16_1 :: M.Map (I.IntMap Int) Int
+    areaEvalMap16_1 = l
+        where 
+            area16_1 = areaList16_1
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..16] x) area16_1
+
+    areaEvalMap16_2 :: M.Map (I.IntMap Int) Int
+    areaEvalMap16_2 = l
+        where 
+            area16_2 = areaList16_2
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..16] x) area16_2
+
+    areaEvalMap18 :: M.Map (I.IntMap Int) Int
+    areaEvalMap18 = l
+        where 
+            area18 = areaList18
+            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..18] x) area18
+
+
+    filterList4 :: [(Int,Int)]
+    filterList4 = [(1,2),(1,3),(3,4)]
+
+    symList4 :: Symmetry Int 
+    symList4 = ([], [(1,2),(3,4)], [([1,2],[3,4])], [], [])
+
+    filterList6 :: [(Int,Int)]
+    filterList6 = [(1,2),(1,3),(3,4),(5,6)]
+
+    symList6 :: Symmetry Int 
+    symList6 = ([(5,6)], [(1,2),(3,4)], [([1,2],[3,4])], [], [])
+
+    filterList8 :: [(Int,Int)]
+    filterList8 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8)]
+
+    symList8 :: Symmetry Int 
+    symList8 = ([], [(1,2),(3,4),(5,6),(7,8)], [([1,2],[3,4]),([5,6],[7,8]),([1,2,3,4],[5,6,7,8])], [], [])
+
+    filterList10_1 :: [(Int,Int)]
+    filterList10_1 = [(1,2),(1,3),(3,4),(1,6),(6,7),(6,8),(8,9)]
+
+    symList10_1 :: Symmetry Int 
+    symList10_1 = ([], [(1,2),(3,4),(6,7),(8,9)], [([1,2],[3,4]),([6,7],[8,9]),([1,2,3,4,5],[6,7,8,9,10])], [], [])
+
+    filterList10_2 :: [(Int,Int)]
+    filterList10_2 = [(1,2),(1,3),(3,4),(5,6),(5,7),(7,8),(9,10)]
+
+    symList10_2 :: Symmetry Int 
+    symList10_2 = ([(9,10)], [(1,2),(3,4),(5,6),(7,8)], [([1,2],[3,4]),([5,6],[7,8])], [], [])
+
+    filterList12 :: [(Int,Int)]
+    filterList12 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(5,9),(9,10),(9,11),(11,12)]
+
+    symList12 :: Symmetry Int 
+    symList12 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], 
+                [[[1,2,3,4],[5,6,7,8],[9,10,11,12]]])
+
+    filterList14_1 :: [(Int,Int)]
+    filterList14_1 = [(1,2),(1,3),(3,4),(5,6),(5,7),(7,8),(5,10),(10,11),(10,12),(12,13)]
+    
+    symList14_1 :: Symmetry Int 
+    symList14_1 = ([], [(1,2),(3,4),(5,6),(7,8),(10,11),(12,13)], [([1,2],[3,4]),([5,6],[7,8]),([10,11],[12,13]),
+                ([5,6,7,8,9],[10,11,12,13,14])], [], [])
+
+    filterList14_2 :: [(Int,Int)]
+    filterList14_2 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(9,10),(9,11),(11,12),(13,14)]
+
+    symList14_2 :: Symmetry Int 
+    symList14_2 = ([(13,14)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4],[5,6,7,8])], [], [])
+
+    filterList16_1 :: [(Int,Int)]
+    filterList16_1 = [(1,2),(1,3),(3,4),(1,6),(6,7),(6,8),(8,9),(11,12),(11,13),(13,14),(15,16)]
+
+    symList16_1 :: Symmetry Int 
+    symList16_1 = ([(15,16)], [(1,2),(3,4),(6,7),(8,9),(11,12),(13,14)], [([1,2],[3,4]),([6,7],[8,9]),([11,12],[13,14]),
+                ([1,2,3,4,5],[6,7,8,9,10])], [], [])
+
+    filterList16_2 :: [(Int,Int)]
+    filterList16_2 = [(1,2),(1,3),(3,4),(5,6),(5,7),(7,8),(9,10),(5,11),(11,12),(11,13),(13,14),(15,16)]
+
+    symList16_2 :: Symmetry Int 
+    symList16_2 = ([(9,10),(15,16)], [(1,2),(3,4),(5,6),(7,8),(11,12),(13,14)], [([1,2],[3,4]),([5,6],[7,8]),([11,12],[13,14]),
+                ([5,6,7,8,9,10],[11,12,13,14,15,16])], [], [])
+
+    filterList18 :: [(Int,Int)]
+    filterList18 = [(1,2),(1,3),(3,4),(1,7),(5,6),(7,8),(7,9),(9,10),(7,13),(11,12),(13,14),(13,15),(15,16),(17,18)]
+
+    symList18 :: Symmetry Int 
+    symList18 = ([(5,6),(11,12),(17,18)], [(1,2),(3,4),(7,8),(9,10),(13,14),(15,16)], [([1,2],[3,4]),([7,8],[9,10]),
+                ([13,14],[15,16])], [], [[[1,2,3,4,5,6],[7,8,9,10,11,12],[13,14,15,16,17,18]]])
+
+
+    
+    {-
+
+    testBasisLabelMat :: [Int] -> [([(Int, Rational)], Int)] -> Mat.MatrixXd 
+    testBasisLabelMat vars l = mat 
+            where
+                varMap = I.fromList $ zip vars [1..]
+                n = length l 
+                l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) $ fst r) l [1..]
+                l'' = mapMaybe (\(x,y,z) -> let val = I.lookup y varMap in if isJust val then Just (x-1, (fromJust val) - 1, fromRational z) else Nothing ) l'
+                m = length vars
+                mat = Sparse.toMatrix $ Sparse.fromList n m l''
+
+    testBasisLabels :: [Int] -> [([(Int, Rational)], Int)] -> (Int,Int)
+    testBasisLabels vars l = (Sol.rank Sol.FullPivLU $ testBasisLabelMat vars l, min n $ length vars)
+                where
+                    n = length l 
+    
+    -}
+
+    

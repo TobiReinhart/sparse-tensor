@@ -48,7 +48,6 @@ module TensorTreeNumeric2 (
     import Data.Proxy
     import GHC.TypeLits.Normalise
     import Data.Foldable
-    --import Data.Singletons
 
     data Uind_3 = U0_3 | U1_3 | U2_3 | U3_3 deriving (Enum, Eq, Ord, Show, Read)
 

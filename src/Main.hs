@@ -80,9 +80,9 @@ module Main (
     import qualified BinaryTree as Bin 
     import qualified TensorTreeNumeric3 as Tree3 
     import PerturbationTree2
-    import GHC.TypeLits 
-    import qualified Eigen.Matrix as Mat
     import qualified Data.IntMap.Strict as I
+    import qualified Data.Matrix as HasMat
+    import qualified Data.Vector as Vec
 
 
     
@@ -1084,20 +1084,29 @@ module Main (
 
         -}
 
+        --filter area metric symmetries
 
         let filter14 = [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11)] 
+
+        let filter14Eta = [(1,2),(1,3),(3,4),(1,5),(5,6),(7,8),(5,7),(5,9),(9,10),(11,12),(9,11)] 
 
         let sym14 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4,13],[5,6,7,8,14])], [], [])
 
         let epsAnsatz14 = getEpsForest [1..14] filter14 1 sym14
 
-        let filter10 = [(1,2),(2,3),(3,4),(5,6),(7,8),(5,7)] 
+        let etaAnsatz14 = relabelAnsatzForest $ getEtaForest [1..14] filter14Eta 1 sym14
+
+        let filter10 = [(1,2),(2,3),(3,4),(5,6),(7,8),(5,7),(9,10),(7,9)] 
+
+        let filter10Eta = [(1,2),(1,3),(3,4),(3,5),(5,6),(7,8),(5,7),(9,10),(7,9)] 
 
         let sym10 = ([], [(1,2),(3,4),(5,6),(7,8)], [([1,2],[3,4]),([5,6],[7,8]),([1,2,3,4,9],[5,6,7,8,10])], [], [])
 
         let testSym = ([], [], [([1,2],[3,4])], [], [])
 
         let epsAnsatz10 = relabelAnsatzForest $ getEpsForest [1..10] filter10 1 sym10
+
+        let etaAnsatz10 = relabelAnsatzForest $ getEtaForest [1..10] filter10Eta 1 sym10
 
         let epsList = mkEpsilonList (Var 1 1) [1,2,3,4,5,6,7,8,9,10]
 
@@ -1115,29 +1124,56 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/etaTree18.txt" $ show $ relabelAnsatzForest eta18
 
-        let epsilonMap = epsMap 
+        let ansatz10_1 = relabelAnsatzForest $ getEpsForest [1..10] filterList10_1 1 symList10_1  
 
-        let epsilonEvalList = zip areaEvalMap14 [1..]
+        let epsM = epsMap 
 
-        let n = length epsilonEvalList
+        let evalList10_1 = areaEvalMap10_1 
 
-        let m = length $  getForestLabels epsAnsatz10
+        let eval10_1 = evalAllAnsatzForest epsM evalList10_1 ansatz10_1 
 
-        let testList = I.fromList $ zip [1..] [0,1,2,3,1,1,1,1,2,2]
+        let hasMat = ansatzHasMatrix eval10_1 ansatz10_1 
 
-        let testTree = mkForestFromAscList $ mkEpsilonList (Var 1 1) [1,2,3,4,5,6,7,8,9,10]
+        let hasRR = ansatzHasRR eval10_1 ansatz10_1
+        
+        --print $ length eval10_1
 
-        let mat = evalAnsatzForestMatrix epsilonMap epsilonEvalList epsAnsatz10 :: Mat.Matrix 4410 12 Double
+        --print $ length $ getForestLabels ansatz10_1
 
-        let matList = map (\x -> evalAnsatzForestList epsilonMap (fst x) epsAnsatz10) epsilonEvalList
+        --print luTest
 
-        let matTest = evalAnsatzForestList epsilonMap testList testTree
+        --print $ HasMat.splitBlocks 1 1 hasMat 
 
-        let evalfull = evalAllAnsatzForest epsilonMap epsilonEvalList epsAnsatz14
+        let testMat2 = HasMat.fromLists [[1,2,3,4],[2,0,1,2],[0,2,1,0],[4,1,0,0], [3,0,0,2]]
 
-        print $ length epsilonEvalList
+        let testMat3 = actOnRightRest (\m -> HasMat.scaleRow 2 1 m) testMat2
 
-        print evalfull
+        let pivots = getPivots testMat2
+
+        let pivot1 = Vec.head pivots
+
+        let restpivots = Vec.drop 1 pivots
+
+        let sortMat = HasMat.switchRows pivot1 1 testMat2 
+
+        let normMat = HasMat.scaleRow (1/(HasMat.getElem 1 1 sortMat)) 1 sortMat 
+
+        let redMat = foldr (\a b -> HasMat.combineRows a (-(HasMat.getElem a 1 b)) 1 b) normMat restpivots 
+
+        let test20 = HasMat.toLists hasMat
+
+        print $ ansatzBasisLabels eval10_1 ansatz10_1 
+
+
+
+
+
+
+
+
+
+
+
 
 
 

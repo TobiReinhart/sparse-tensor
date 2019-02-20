@@ -1166,7 +1166,7 @@ module Main (
 
         let ansatz14_2 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_2 1 symList14_2  
 
-        print $ length $ getForestLabels ansatz14_1 
+        print $ length $ getForestLabels ansatz14_2 
 
         let evalList14_2 = areaEvalMap14_2
         

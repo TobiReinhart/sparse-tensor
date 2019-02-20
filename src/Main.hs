@@ -71,7 +71,7 @@ module Main (
     --import Control.DeepSeq
     -}
 
-    import TensorTreeNumeric2 
+    import TensorTreeNumeric2
     import TensorTreeIntCond
     import qualified Tensor2 as T
     import qualified Data.Map as M
@@ -79,7 +79,7 @@ module Main (
     import Data.Maybe
     import qualified BinaryTree as Bin 
     import qualified TensorTreeNumeric3 as Tree3 
-    import PerturbationTree2
+    import PerturbationTree2_2
     import qualified Data.IntMap.Strict as I
     import qualified Data.Matrix as HasMat
     import qualified Data.Vector as Vec
@@ -1086,43 +1086,15 @@ module Main (
 
         --filter area metric symmetries
 
-        let filter14 = [(1,2),(3,4),(1,3),(1,5),(5,6),(7,8),(5,7),(9,10),(11,12),(9,11)] 
+        {-
 
-        let filter14Eta = [(1,2),(1,3),(3,4),(1,5),(5,6),(7,8),(5,7),(5,9),(9,10),(11,12),(9,11)] 
+        let trianA = trianMapArea 
 
-        let sym14 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4,13],[5,6,7,8,14])], [], [])
+        let trian2 = trianMapDerivative
 
-        let epsAnsatz14 = getEpsForest [1..14] filter14 1 sym14
+        let triangle2 = triangleMap2P 
 
-        let etaAnsatz14 = relabelAnsatzForest $ getEtaForest [1..14] filter14Eta 1 sym14
-
-        let filter10 = [(1,2),(2,3),(3,4),(5,6),(7,8),(5,7),(9,10),(7,9)] 
-
-        let filter10Eta = [(1,2),(1,3),(3,4),(3,5),(5,6),(7,8),(5,7),(9,10),(7,9)] 
-
-        let sym10 = ([], [(1,2),(3,4),(5,6),(7,8)], [([1,2],[3,4]),([5,6],[7,8]),([1,2,3,4,9],[5,6,7,8,10])], [], [])
-
-        let testSym = ([], [], [([1,2],[3,4])], [], [])
-
-        let epsAnsatz10 = relabelAnsatzForest $ getEpsForest [1..10] filter10 1 sym10
-
-        let etaAnsatz10 = relabelAnsatzForest $ getEtaForest [1..10] filter10Eta 1 sym10
-
-        let epsList = mkEpsilonList (Var 1 1) [1,2,3,4,5,6,7,8,9,10]
-
-        let filter18Eps = [(1,2),(2,3),(3,4),(5,6),(7,8),(5,7),(7,9),(9,10),(11,12),(9,11),(13,14),(11,13),(15,16),(13,15),(15,17),(17,18)] 
-
-        let filter18Eta = [(1,2),(1,3),(3,4),(3,5),(5,6),(7,8),(5,7),(7,9),(9,10),(11,12),(9,11),(13,14),(11,13),(15,16),(13,15),(15,17),(17,18)] 
-        
-        let sym18 = ([(13,14),(15,16),(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], [[[1,2,3,4,13,14],[5,6,7,8,15,16],[9,10,11,12,17,18]]])
-
-        let eps18 = getEpsForest [1..18] filter18Eps 1 sym18
-
-        let eta18 = getEtaForest [1..18] filter18Eta 1 sym18
-
-        --writeFile "/cip/austausch/cgg/epsTree18.txt" $ show $ relabelAnsatzForest eps18
-
-        --writeFile "/cip/austausch/cgg/etaTree18.txt" $ show $ relabelAnsatzForest eta18
+        let triangle3 = triangleMap3P 
 
         let epsM = epsMap 
 
@@ -1130,7 +1102,7 @@ module Main (
 
         let ansatz4Eta = relabelAnsatzForest $ getEtaForest [1..4] filterList4 1 symList4 
 
-        let evalList4 = areaEvalMap4 
+        let evalList4 = areaEvalMap4 trianA trian2 triangle2
 
         let ans4 = evalAllList epsM evalList4 ansatz4
 
@@ -1140,7 +1112,7 @@ module Main (
 
         let ansatz6Eta = relabelAnsatzForest $ getEtaForest [1..6] filterList6 1 symList6 
 
-        let evalList6 = areaEvalMap6 
+        let evalList6 = areaEvalMap6 trianA trian2 triangle2
 
         let ans6 = evalAllList epsM evalList6 ansatz6
 
@@ -1150,7 +1122,7 @@ module Main (
 
         let ansatz8Eta = relabelAnsatzForest $ getEtaForest [1..8] filterList8 1 symList8
 
-        let evalList8 = areaEvalMap8 
+        let evalList8 = areaEvalMap8 trianA trian2 triangle2
 
         let ans8 = evalAllList epsM evalList8 ansatz8
 
@@ -1160,7 +1132,7 @@ module Main (
 
         let ansatz10_1Eta = relabelAnsatzForest $ getEtaForest [1..10] filterList10_1 1 symList10_1  
 
-        let evalList10_1 = areaEvalMap10_1 
+        let evalList10_1 = areaEvalMap10_1 trianA trian2 triangle2
 
         let ans10_1 = evalAllList epsM evalList10_1 ansatz10_1
 
@@ -1170,7 +1142,7 @@ module Main (
 
         let ansatz10_2Eta = relabelAnsatzForest $ getEtaForest [1..10] filterList10_2 2 symList10_2 
         
-        let evalList10_2 = areaEvalMap10_2 
+        let evalList10_2 = areaEvalMap10_2 trianA trian2 triangle2
 
         let ans10_2 = evalAllList epsM evalList10_2 ansatz10_2
 
@@ -1180,7 +1152,7 @@ module Main (
 
         let ansatz12Eta = relabelAnsatzForest $ getEtaForest [1..12] filterList12 1 symList12
 
-        let evalList12 = areaEvalMap12 
+        let evalList12 = areaEvalMap12 trianA trian2 triangle3
 
         let ans12 = evalAllList epsM evalList12 ansatz12
 
@@ -1190,7 +1162,7 @@ module Main (
 
         let ansatz12_1Eta = relabelAnsatzForest $ getEtaForest [1..12] filterList12_1 1 symList12_1
 
-        let evalList12_1 = areaEvalMap12_1
+        let evalList12_1 = areaEvalMap12_1 trianA trian2 triangle2
 
         let ans12_1 = evalAllList epsM evalList12_1 ansatz12_1
 
@@ -1200,7 +1172,7 @@ module Main (
 
         let ansatz14_1Eta = relabelAnsatzForest $ getEtaForest [1..14] filterList14_1 1 symList14_1  
 
-        let evalList14_1 = areaEvalMap14_1 
+        let evalList14_1 = areaEvalMap14_1 trianA trian2 triangle3
 
         let ans14_1 = evalAllList epsM evalList14_1 ansatz14_1
 
@@ -1210,7 +1182,7 @@ module Main (
 
         let ansatz14_2Eta = relabelAnsatzForest $ getEtaForest [1..14] filterList14_2 2 symList14_2 
         
-        let evalList14_2 = areaEvalMap14_2 
+        let evalList14_2 = areaEvalMap14_2 trianA trian2 triangle3
 
         let ans14_2 = evalAllList epsM evalList14_2 ansatz14_2
 
@@ -1220,7 +1192,7 @@ module Main (
 
         let ansatz16_1Eta = relabelAnsatzForest $ getEtaForest [1..16] filterList16_1 1 symList16_1  
 
-        let evalList16_1 = areaEvalMap16_1 
+        let evalList16_1 = areaEvalMap16_1 trianA trian2 triangle3
 
         let ans16_1 = evalAllList epsM evalList16_1 ansatz16_1
 
@@ -1230,7 +1202,7 @@ module Main (
 
         let ansatz16_2Eta = relabelAnsatzForest $ getEtaForest [1..16] filterList16_2 2 symList16_2 
         
-        let evalList16_2 = areaEvalMap16_2 
+        let evalList16_2 = areaEvalMap16_2 trianA trian2 triangle3
 
         let ans16_2 = evalAllList epsM evalList16_2 ansatz16_2
 
@@ -1240,11 +1212,73 @@ module Main (
 
         let ansatz18Eta = relabelAnsatzForest $ getEtaForest [1..18] filterList18 1 symList18
 
-        let evalList18 = areaEvalMap18 
+        let evalList18 = areaEvalMap18 trianA trian2 triangle3
 
-        let ans18 = evalAllList epsM evalList18 ansatz18 :: [([(Int,Rational)],Int)]
+        let ans18 = evalAllList epsM evalList18 ansatz18 
 
-        let ans18Eta = evalAllList epsM evalList18 ansatz18Eta :: [([(Int,Rational)],Int)]
+        let ans18Eta = evalAllList epsM evalList18 ansatz18Eta 
+
+        --writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
+
+        --print "eta done!"
+
+        --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
+
+        --print ans12_1
+
+        -}
+
+        
+
+        let trianA = trianMapArea 
+
+        let trian2 = trianMapDerivative
+
+        let triangle2 = triangleMap2P 
+
+        let triangle3 = triangleMap3P 
+
+        let epsM = epsMap 
+
+        let ansatz10_1 = getEpsForest [1..10] filterList10_1 symList10_1  
+
+        let ansatz10_1Eta = getEtaForest [1..10] filterList10_1 symList10_1  
+
+        let evalList10_1 = areaEvalMap10_1 trianA trian2 triangle2
+
+        let ans10_1 = evalAllListEpsilon epsM evalList10_1 ansatz10_1
+
+        let ans10_1Eta = evalAllListEta epsM evalList10_1 ansatz10_1Eta
+
+        let ansatz14_1 = getEpsForest [1..14] filterList14_1 symList14_1  
+
+        let ansatz14_1Eta = getEtaForest [1..14] filterList14_1 symList14_1  
+
+        let evalList14_1 = areaEvalMap14_1 trianA trian2 triangle3
+
+        let ans14_1 = evalAllListEpsilon epsM evalList14_1 ansatz14_1
+
+        let ans14_1Eta = evalAllListEta epsM evalList14_1 ansatz14_1Eta
+
+        let ansatz14_2 =  getEpsForest [1..14] filterList14_2 symList14_2 
+
+        let ansatz14_2Eta =  getEtaForest [1..14] filterList14_2 symList14_2 
+        
+        let evalList14_2 = areaEvalMap14_2 trianA trian2 triangle3
+
+        let ans14_2 = evalAllListEpsilon epsM evalList14_2 ansatz14_2
+
+        let ans14_2Eta = evalAllListEta epsM evalList14_2 ansatz14_2Eta
+
+        let ansatz18 = relabelAnsatzForest $ getEpsForest [1..18] filterList18 1 symList18
+
+        let ansatz18Eta = relabelAnsatzForest $ getEtaForest [1..18] filterList18 1 symList18
+
+        let evalList18 = areaEvalMap18 trianA trian2 triangle3
+
+        let ans18 = evalAllList epsM evalList18 ansatz18 
+
+        let ans18Eta = evalAllList epsM evalList18 ansatz18Eta 
 
         writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
 
@@ -1252,9 +1286,9 @@ module Main (
 
         writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
 
-
-       
-
+        
+        
+        
 
         
 

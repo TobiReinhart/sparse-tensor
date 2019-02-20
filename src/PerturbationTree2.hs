@@ -9,7 +9,9 @@ module PerturbationTree2 (
     evalAnsatzForestList, getLeafVals, ansatzRank, ansatzKernel, evalAllMatrix, ansatzImage, ansatzHasMatrix, ansatzHasRR,
     --ansatzHasLU, testBasisLabels, ansatzLinMatrix, ansatzLinLU,
     filterList10_1, symList10_1, areaEvalMap10_1,
-    getPivots, actOnRightRest, rowReduce, ansatzBasisLabels
+    getPivots, actOnRightRest, rowReduce, ansatzBasisLabels,
+    filterList14_2, symList14_2, areaEvalMap14_2
+
 
 ) where
 

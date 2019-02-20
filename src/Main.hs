@@ -1246,11 +1246,11 @@ module Main (
 
         let ans18Eta = evalAllList epsM evalList18 ansatz18Eta 
 
-        writeFile "/cip/austausch/cgg/eta18List.txt" show $ ans18Eta 
+        writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
 
         print "eta done!"
 
-        writeFile "/cip/austausch/cgg/epsilon18List.txt" show $ ans18
+        writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
 
 
        

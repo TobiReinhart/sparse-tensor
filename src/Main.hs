@@ -1242,9 +1242,9 @@ module Main (
 
         let evalList18 = areaEvalMap18 
 
-        let ans18 = evalAllList epsM evalList18 ansatz18
+        let ans18 = evalAllList epsM evalList18 ansatz18 :: [([(Int,Rational)],Int)]
 
-        let ans18Eta = evalAllList epsM evalList18 ansatz18Eta 
+        let ans18Eta = evalAllList epsM evalList18 ansatz18Eta :: [([(Int,Rational)],Int)]
 
         writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
 

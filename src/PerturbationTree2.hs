@@ -6,7 +6,7 @@
 module PerturbationTree2 (
     AnsatzForest(..), AnsatzNode(..), mkEtaList, mkEpsilonList, Symmetry, reduceAnsatzEta, reduceAnsatzEps, getEtaInds, getEpsilonInds, mkAllVars, symAnsatzForestEta, symAnsatzForestEps, mkForestFromAscList, getEtaForest, getEpsForest, flattenForest, relabelAnsatzForest, getForestLabels, printAnsatz, showAnsatzNode, mapNodes, addForests, isZeroVar, addVars,
     epsMap, evalAnsatzForest, evalAllAnsatzForest, evalAllMatrixSp,
-    evalAnsatzForestList, getLeafVals, ansatzRank, ansatzKernel, evalAllMatrix, ansatzImage, ansatzHasMatrix, ansatzHasRR,
+    evalAnsatzForestList, getLeafVals, ansatzRank, ansatzKernel, evalAllMatrix, ansatzImage, ansatzHasMatrix, ansatzHasRR, evalAllList, 
     --ansatzHasLU, testBasisLabels, ansatzLinMatrix, ansatzLinLU,
     getPivots, actOnRightRest, rowReduce, ansatzBasisLabels,
     filterList4, symList4, areaEvalMap4,

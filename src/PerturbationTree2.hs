@@ -15,6 +15,7 @@ module PerturbationTree2 (
     filterList10_1, symList10_1, areaEvalMap10_1,
     filterList10_2, symList10_2, areaEvalMap10_2,
     filterList12, symList12, areaEvalMap12,
+    filterList12_1, symList12_1, areaEvalMap12_1,
     filterList14_1, symList14_1, areaEvalMap14_1,
     filterList14_2, symList14_2, areaEvalMap14_2,
     filterList16_1, symList16_1, areaEvalMap16_1,
@@ -677,6 +678,17 @@ module PerturbationTree2 (
                                                               i <- [e..2], j <- [i+1..3], k <- [i..2], l <- [k+1..3],
                                                               (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
 
+    --AI:BJ
+    areaList12_1 :: [([Int], Int)]
+    areaList12_1 = list
+        where 
+            list = [ ([a,b,c,d,m,n,e,f,g,h,p,q], (areaMult a b c d) * (areaMult e f g h) * (iMult2 m n) * (iMult2 p q)) | a <- [0..2], 
+                                                              b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
+                                                              e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
+                                                              m <- [0..2], n <- [m..3], p <- [0..2], q <- [p..3],
+                                                              (isAreaSorted a b c d) && (isAreaSorted e f g h) ]
+
+
     --A:Bp:Cq
     areaList14_1 :: [([Int], Int)]
     areaList14_1 = list
@@ -773,6 +785,12 @@ module PerturbationTree2 (
             area12 = areaList12
             l = map (\(x,y) -> (I.fromList $ zip [1..12] x, y)) area12
 
+    areaEvalMap12_1 :: [(I.IntMap Int, Int)]
+    areaEvalMap12_1 = l
+        where 
+            area12_1 = areaList12_1
+            l = map (\(x,y) -> (I.fromList $ zip [1..12] x, y)) area12_1
+
     areaEvalMap14_1 :: [(I.IntMap Int, Int)]
     areaEvalMap14_1 = l
         where 
@@ -840,6 +858,13 @@ module PerturbationTree2 (
     symList12 :: Symmetry Int 
     symList12 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], 
                 [[[1,2,3,4],[5,6,7,8],[9,10,11,12]]])
+
+    filterList12_1 :: [(Int,Int)]
+    filterList12_1 = [(1,2),(1,3),(3,4),(5,6),(1,7),(7,8),(7,9),(9,10),(11,12)]
+
+    symList12_1 :: Symmetry Int 
+    symList12_1 = ([(5,6),(11,12)], [(1,2),(3,4),(7,8),(9,10)], [([1,2],[3,4]),([7,8],[9,10]),([1,2,3,4,5,6],[7,8,9,10,11,12])], [], 
+                [])
 
     filterList14_1 :: [(Int,Int)]
     filterList14_1 = [(1,2),(1,3),(3,4),(5,6),(5,7),(7,8),(5,10),(10,11),(10,12),(12,13)]

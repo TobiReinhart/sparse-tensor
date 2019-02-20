@@ -1184,7 +1184,17 @@ module Main (
 
         let ans12 = evalAllAnsatzForest epsM evalList12 ansatz12
 
-        let ans12Eta = evalAllAnsatzForest epsM evalList12 ansatz12Eta
+        let ans12Eta = evalAllAnsatzForest epsM evalList12 ansatz12Eta 
+
+        let ansatz12_1 = relabelAnsatzForest $ getEpsForest [1..12] filterList12_1 1 symList12_1
+
+        let ansatz12_1Eta = relabelAnsatzForest $ getEtaForest [1..12] filterList12_1 1 symList12_1
+
+        let evalList12_1 = areaEvalMap12_1
+
+        let ans12_1 = evalAllAnsatzForest epsM evalList12_1 ansatz12_1
+
+        let ans12_1Eta = evalAllAnsatzForest epsM evalList12_1 ansatz12_1Eta
 
         let ansatz14_1 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_1 1 symList14_1  
 
@@ -1229,6 +1239,10 @@ module Main (
         print $ ansatzRank ans12 ansatz12 
 
         print $ ansatzRank ans12Eta ansatz12Eta 
+
+        print $ ansatzRank ans12_1 ansatz12_1
+
+        print $ ansatzRank ans12_1Eta ansatz12_1Eta 
 
         print $ ansatzRank ans14_1 ansatz14_1 
 

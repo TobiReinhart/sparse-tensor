@@ -1124,68 +1124,127 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/etaTree18.txt" $ show $ relabelAnsatzForest eta18
 
+        let epsM = epsMap 
+
+        let ansatz4 = relabelAnsatzForest $ getEpsForest [1..4] filterList4 1 symList4 
+
+        let ansatz4Eta = relabelAnsatzForest $ getEtaForest [1..4] filterList4 1 symList4 
+
+        let evalList4 = areaEvalMap4 
+
+        let ans4 = evalAllAnsatzForest epsM evalList4 ansatz4
+
+        let ans4Eta = evalAllAnsatzForest epsM evalList4 ansatz4Eta
+
+        let ansatz6 = relabelAnsatzForest $ getEpsForest [1..6] filterList6 1 symList6 
+
+        let ansatz6Eta = relabelAnsatzForest $ getEtaForest [1..6] filterList6 1 symList6 
+
+        let evalList6 = areaEvalMap6 
+
+        let ans6 = evalAllAnsatzForest epsM evalList6 ansatz6
+
+        let ans6Eta = evalAllAnsatzForest epsM evalList6 ansatz6Eta
+
+        let ansatz8 = relabelAnsatzForest $ getEpsForest [1..8] filterList8 1 symList8
+
+        let ansatz8Eta = relabelAnsatzForest $ getEtaForest [1..8] filterList8 1 symList8
+
+        let evalList8 = areaEvalMap8 
+
+        let ans8 = evalAllAnsatzForest epsM evalList8 ansatz8
+
+        let ans8Eta = evalAllAnsatzForest epsM evalList8 ansatz8Eta
+
         let ansatz10_1 = relabelAnsatzForest $ getEpsForest [1..10] filterList10_1 1 symList10_1  
 
-        let epsM = epsMap 
+        let ansatz10_1Eta = relabelAnsatzForest $ getEtaForest [1..10] filterList10_1 1 symList10_1  
 
         let evalList10_1 = areaEvalMap10_1 
 
-        let eval10_1 = evalAllAnsatzForest epsM evalList10_1 ansatz10_1 
+        let ans10_1 = evalAllAnsatzForest epsM evalList10_1 ansatz10_1
 
-        let hasMat = ansatzHasMatrix eval10_1 ansatz10_1 
+        let ans10_1Eta = evalAllAnsatzForest epsM evalList10_1 ansatz10_1Eta
 
-        let hasRR = ansatzHasRR eval10_1 ansatz10_1
+        let ansatz10_2 = relabelAnsatzForest $ getEpsForest [1..10] filterList10_2 2 symList10_2 
+
+        let ansatz10_2Eta = relabelAnsatzForest $ getEtaForest [1..10] filterList10_2 2 symList10_2 
         
-        --print $ length eval10_1
+        let evalList10_2 = areaEvalMap10_2 
 
-        --print $ length $ getForestLabels ansatz10_1
+        let ans10_2 = evalAllAnsatzForest epsM evalList10_2 ansatz10_2
 
-        --print luTest
+        let ans10_2Eta = evalAllAnsatzForest epsM evalList10_2 ansatz10_2Eta
 
-        --print $ HasMat.splitBlocks 1 1 hasMat 
+        let ansatz12 = relabelAnsatzForest $ getEpsForest [1..12] filterList12 1 symList12
 
-        let testMat2 = HasMat.fromLists [[1,2,3,4],[2,0,1,2],[0,2,1,0],[4,1,0,0], [3,0,0,2]]
+        let ansatz12Eta = relabelAnsatzForest $ getEtaForest [1..12] filterList12 1 symList12
 
-        let testMat3 = actOnRightRest (\m -> HasMat.scaleRow 2 1 m) testMat2
+        let evalList12 = areaEvalMap12 
 
-        let pivots = getPivots testMat2
+        let ans12 = evalAllAnsatzForest epsM evalList12 ansatz12
 
-        let pivot1 = Vec.head pivots
+        let ans12Eta = evalAllAnsatzForest epsM evalList12 ansatz12Eta
 
-        let restpivots = Vec.drop 1 pivots
+        let ansatz14_1 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_1 1 symList14_1  
 
-        let sortMat = HasMat.switchRows pivot1 1 testMat2 
+        let ansatz14_1Eta = relabelAnsatzForest $ getEtaForest [1..14] filterList14_1 1 symList14_1  
 
-        let normMat = HasMat.scaleRow (1/(HasMat.getElem 1 1 sortMat)) 1 sortMat 
+        let evalList14_1 = areaEvalMap14_1 
 
-        let redMat = foldr (\a b -> HasMat.combineRows a (-(HasMat.getElem a 1 b)) 1 b) normMat restpivots 
+        let ans14_1 = evalAllAnsatzForest epsM evalList14_1 ansatz14_1
 
-        let test20 = HasMat.toLists hasMat
+        let ans14_1Eta = evalAllAnsatzForest epsM evalList14_1 ansatz14_1Eta
 
-        --print $ ansatzBasisLabels eval10_1 ansatz10_1 
+        let ansatz14_2 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_2 2 symList14_2 
 
-        let ansatz14_2 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_2 1 symList14_2  
-
-        print $ length $ getForestLabels ansatz14_2 
-
-        let evalList14_2 = areaEvalMap14_2
+        let ansatz14_2Eta = relabelAnsatzForest $ getEtaForest [1..14] filterList14_2 2 symList14_2 
         
-        let eval14_2 = evalAllAnsatzForest epsM evalList14_2 ansatz14_2 
+        let evalList14_2 = areaEvalMap14_2 
 
-        print eval14_2 
+        let ans14_2 = evalAllAnsatzForest epsM evalList14_2 ansatz14_2
 
+        let ans14_2Eta = evalAllAnsatzForest epsM evalList14_2 ansatz14_2Eta
 
+        print $ ansatzRank ans4 ansatz4 
 
+        print $ ansatzRank ans4Eta ansatz4Eta 
 
+        print $ ansatzRank ans6 ansatz6 
 
+        print $ ansatzRank ans6Eta ansatz6Eta 
 
+        print $ ansatzRank ans8 ansatz8 
 
+        print $ ansatzRank ans8Eta ansatz8Eta 
 
+        print $ ansatzRank ans10_1 ansatz10_1 
 
+        print $ ansatzRank ans10_1Eta ansatz10_1Eta 
 
+        print $ ansatzRank ans10_2 ansatz10_2 
 
+        print $ ansatzRank ans10_2Eta ansatz10_2Eta 
 
+        print $ ansatzRank ans12 ansatz12 
 
+        print $ ansatzRank ans12Eta ansatz12Eta 
+
+        print $ ansatzRank ans14_1 ansatz14_1 
+
+        print $ ansatzRank ans14_1Eta ansatz14_1Eta 
+
+        print $ ansatzRank ans14_2 ansatz14_2 
+
+        print $ ansatzRank ans14_2Eta ansatz14_2Eta 
+
+        print $ ansatzRank ans16_1 ansatz16_1 
+
+        print $ ansatzRank ans16_1Eta ansatz16_1Eta 
+
+        print $ ansatzRank ans16_2 ansatz16_2 
+
+        print $ ansatzRank ans16_2Eta ansatz16_2Eta 
 
 
 

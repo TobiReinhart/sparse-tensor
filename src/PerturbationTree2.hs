@@ -49,6 +49,7 @@ module PerturbationTree2 (
             where
                 l = map (\y -> ([x,y],delete y xs)) xs 
                 res = concat $ map (\(a,b) -> (++) a <$> (getAllIndsEta b)) l
+    getAllIndsEta [] = [[]]
     getAllInds x = error "wrong list length"
 
     getIndsEpsilon :: Int -> [[Int]]

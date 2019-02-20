@@ -1164,13 +1164,15 @@ module Main (
 
         --print $ ansatzBasisLabels eval10_1 ansatz10_1 
 
-        let ansatz14_1 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_1 1 symList14_1  
+        let ansatz14_2 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_2 1 symList14_2  
 
-        let evalList14_1 = areaEvalMap14_1
+        print $ length $ getForestLabels ansatz14_1 
+
+        let evalList14_2 = areaEvalMap14_2
         
-        let eval14_1 = evalAllAnsatzForest epsM evalList14_1 ansatz14_1 
+        let eval14_2 = evalAllAnsatzForest epsM evalList14_2 ansatz14_2 
 
-        print eval14_1 
+        print eval14_2 
 
 
 

@@ -1270,15 +1270,15 @@ module Main (
 
         let ans14_2Eta = evalAllListEta epsM evalList14_2 ansatz14_2Eta
 
-        let ansatz18 = relabelAnsatzForest $ getEpsForest [1..18] filterList18 1 symList18
+        let ansatz18 = getEpsForest [1..18] filterList18 symList18
 
-        let ansatz18Eta = relabelAnsatzForest $ getEtaForest [1..18] filterList18 1 symList18
+        let ansatz18Eta = getEtaForest [1..18] filterList18 symList18
 
         let evalList18 = areaEvalMap18 trianA trian2 triangle3
 
-        let ans18 = evalAllList epsM evalList18 ansatz18 
+        let ans18 = evalAllListEpsilon epsM evalList18 ansatz18 
 
-        let ans18Eta = evalAllList epsM evalList18 ansatz18Eta 
+        let ans18Eta = evalAllListEta epsM evalList18 ansatz18Eta 
 
         writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
 

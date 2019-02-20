@@ -1238,19 +1238,7 @@ module Main (
 
         print $ ansatzRank ans14_2Eta ansatz14_2Eta 
 
-        print $ ansatzRank ans16_1 ansatz16_1 
-
-        print $ ansatzRank ans16_1Eta ansatz16_1Eta 
-
-        print $ ansatzRank ans16_2 ansatz16_2 
-
-        print $ ansatzRank ans16_2Eta ansatz16_2Eta 
-
-
-
-
-
-
+        
 
 
 

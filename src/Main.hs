@@ -1132,9 +1132,9 @@ module Main (
 
         let evalList4 = areaEvalMap4 
 
-        let ans4 = evalAllAnsatzForest epsM evalList4 ansatz4
+        let ans4 = evalAllList epsM evalList4 ansatz4
 
-        let ans4Eta = evalAllAnsatzForest epsM evalList4 ansatz4Eta
+        let ans4Eta = evalAllList epsM evalList4 ansatz4Eta
 
         let ansatz6 = relabelAnsatzForest $ getEpsForest [1..6] filterList6 1 symList6 
 
@@ -1142,9 +1142,9 @@ module Main (
 
         let evalList6 = areaEvalMap6 
 
-        let ans6 = evalAllAnsatzForest epsM evalList6 ansatz6
+        let ans6 = evalAllList epsM evalList6 ansatz6
 
-        let ans6Eta = evalAllAnsatzForest epsM evalList6 ansatz6Eta
+        let ans6Eta = evalAllList epsM evalList6 ansatz6Eta
 
         let ansatz8 = relabelAnsatzForest $ getEpsForest [1..8] filterList8 1 symList8
 
@@ -1152,9 +1152,9 @@ module Main (
 
         let evalList8 = areaEvalMap8 
 
-        let ans8 = evalAllAnsatzForest epsM evalList8 ansatz8
+        let ans8 = evalAllList epsM evalList8 ansatz8
 
-        let ans8Eta = evalAllAnsatzForest epsM evalList8 ansatz8Eta
+        let ans8Eta = evalAllList epsM evalList8 ansatz8Eta
 
         let ansatz10_1 = relabelAnsatzForest $ getEpsForest [1..10] filterList10_1 1 symList10_1  
 
@@ -1162,9 +1162,9 @@ module Main (
 
         let evalList10_1 = areaEvalMap10_1 
 
-        let ans10_1 = evalAllAnsatzForest epsM evalList10_1 ansatz10_1
+        let ans10_1 = evalAllList epsM evalList10_1 ansatz10_1
 
-        let ans10_1Eta = evalAllAnsatzForest epsM evalList10_1 ansatz10_1Eta
+        let ans10_1Eta = evalAllList epsM evalList10_1 ansatz10_1Eta
 
         let ansatz10_2 = relabelAnsatzForest $ getEpsForest [1..10] filterList10_2 2 symList10_2 
 
@@ -1172,9 +1172,9 @@ module Main (
         
         let evalList10_2 = areaEvalMap10_2 
 
-        let ans10_2 = evalAllAnsatzForest epsM evalList10_2 ansatz10_2
+        let ans10_2 = evalAllList epsM evalList10_2 ansatz10_2
 
-        let ans10_2Eta = evalAllAnsatzForest epsM evalList10_2 ansatz10_2Eta
+        let ans10_2Eta = evalAllList epsM evalList10_2 ansatz10_2Eta
 
         let ansatz12 = relabelAnsatzForest $ getEpsForest [1..12] filterList12 1 symList12
 
@@ -1182,9 +1182,9 @@ module Main (
 
         let evalList12 = areaEvalMap12 
 
-        let ans12 = evalAllAnsatzForest epsM evalList12 ansatz12
+        let ans12 = evalAllList epsM evalList12 ansatz12
 
-        let ans12Eta = evalAllAnsatzForest epsM evalList12 ansatz12Eta 
+        let ans12Eta = evalAllList epsM evalList12 ansatz12Eta 
 
         let ansatz12_1 = relabelAnsatzForest $ getEpsForest [1..12] filterList12_1 1 symList12_1
 
@@ -1192,9 +1192,9 @@ module Main (
 
         let evalList12_1 = areaEvalMap12_1
 
-        let ans12_1 = evalAllAnsatzForest epsM evalList12_1 ansatz12_1
+        let ans12_1 = evalAllList epsM evalList12_1 ansatz12_1
 
-        let ans12_1Eta = evalAllAnsatzForest epsM evalList12_1 ansatz12_1Eta
+        let ans12_1Eta = evalAllList epsM evalList12_1 ansatz12_1Eta
 
         let ansatz14_1 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_1 1 symList14_1  
 
@@ -1202,9 +1202,9 @@ module Main (
 
         let evalList14_1 = areaEvalMap14_1 
 
-        let ans14_1 = evalAllAnsatzForest epsM evalList14_1 ansatz14_1
+        let ans14_1 = evalAllList epsM evalList14_1 ansatz14_1
 
-        let ans14_1Eta = evalAllAnsatzForest epsM evalList14_1 ansatz14_1Eta
+        let ans14_1Eta = evalAllList epsM evalList14_1 ansatz14_1Eta
 
         let ansatz14_2 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_2 2 symList14_2 
 
@@ -1212,49 +1212,48 @@ module Main (
         
         let evalList14_2 = areaEvalMap14_2 
 
-        let ans14_2 = evalAllAnsatzForest epsM evalList14_2 ansatz14_2
+        let ans14_2 = evalAllList epsM evalList14_2 ansatz14_2
 
-        let ans14_2Eta = evalAllAnsatzForest epsM evalList14_2 ansatz14_2Eta
+        let ans14_2Eta = evalAllList epsM evalList14_2 ansatz14_2Eta
 
-        print $ ansatzRank ans4 ansatz4 
+        let ansatz16_1 = relabelAnsatzForest $ getEpsForest [1..16] filterList16_1 1 symList16_1  
 
-        print $ ansatzRank ans4Eta ansatz4Eta 
+        let ansatz16_1Eta = relabelAnsatzForest $ getEtaForest [1..16] filterList16_1 1 symList16_1  
 
-        print $ ansatzRank ans6 ansatz6 
+        let evalList16_1 = areaEvalMap16_1 
 
-        print $ ansatzRank ans6Eta ansatz6Eta 
+        let ans16_1 = evalAllList epsM evalList16_1 ansatz16_1
 
-        print $ ansatzRank ans8 ansatz8 
+        let ans16_1Eta = evalAllList epsM evalList16_1 ansatz16_1Eta
 
-        print $ ansatzRank ans8Eta ansatz8Eta 
+        let ansatz16_2 = relabelAnsatzForest $ getEpsForest [1..16] filterList16_2 2 symList16_2 
 
-        print $ ansatzRank ans10_1 ansatz10_1 
-
-        print $ ansatzRank ans10_1Eta ansatz10_1Eta 
-
-        print $ ansatzRank ans10_2 ansatz10_2 
-
-        print $ ansatzRank ans10_2Eta ansatz10_2Eta 
-
-        print $ ansatzRank ans12 ansatz12 
-
-        print $ ansatzRank ans12Eta ansatz12Eta 
-
-        print $ ansatzRank ans12_1 ansatz12_1
-
-        print $ ansatzRank ans12_1Eta ansatz12_1Eta 
-
-        print $ ansatzRank ans14_1 ansatz14_1 
-
-        print $ ansatzRank ans14_1Eta ansatz14_1Eta 
-
-        print $ ansatzRank ans14_2 ansatz14_2 
-
-        print $ ansatzRank ans14_2Eta ansatz14_2Eta 
-
+        let ansatz16_2Eta = relabelAnsatzForest $ getEtaForest [1..16] filterList16_2 2 symList16_2 
         
+        let evalList16_2 = areaEvalMap16_2 
+
+        let ans16_2 = evalAllList epsM evalList16_2 ansatz16_2
+
+        let ans16_2Eta = evalAllList epsM evalList16_2 ansatz16_2Eta
+
+        let ansatz18 = relabelAnsatzForest $ getEpsForest [1..18] filterList18 1 symList18
+
+        let ansatz18Eta = relabelAnsatzForest $ getEtaForest [1..18] filterList18 1 symList18
+
+        let evalList18 = areaEvalMap18 
+
+        let ans18 = evalAllList epsM evalList18 ansatz18
+
+        let ans18Eta = evalAllList epsM evalList18 ansatz18Eta 
+
+        writeFile "/cip/austausch/cgg/eta18List.txt" show $ ans18Eta 
+
+        print "eta done!"
+
+        writeFile "/cip/austausch/cgg/epsilon18List.txt" show $ ans18
 
 
+       
 
 
         

@@ -1170,7 +1170,7 @@ module Main (
 
         let evalList14_2 = areaEvalMap14_2
         
-        let eval14_2 = evalAllAnsatzForest epsM evalList14_2 ansatz14_2 
+        let eval14_2 = evalAllList epsM evalList14_2 ansatz14_2 
 
         print eval14_2 
 

@@ -10,7 +10,7 @@ module PerturbationTree2 (
     --ansatzHasLU, testBasisLabels, ansatzLinMatrix, ansatzLinLU,
     filterList10_1, symList10_1, areaEvalMap10_1,
     getPivots, actOnRightRest, rowReduce, ansatzBasisLabels,
-    filterList14_2, symList14_2, areaEvalMap14_2
+    filterList14_2, symList14_2, areaEvalMap14_2, evalAllList
 
 
 ) where
@@ -456,15 +456,20 @@ module PerturbationTree2 (
 
     --eval All Inds (list of lists with (VarNr, Factor, multiplicity))
 
-    evalAllAnsatzForest :: M.Map [Int] Int -> M.Map (I.IntMap Int) Int -> AnsatzForest (AnsatzNode Int) -> [([(Int,Rational)],Int)]
-    evalAllAnsatzForest epsM evalMs f = nL 
+    evalAllList :: M.Map [Int] Int -> [(I.IntMap Int, Int)] -> AnsatzForest (AnsatzNode Int) -> [([(Int,Rational)],Int)]
+    evalAllList epsM evalMs f = l
                 where
-                    l = M.mapKeys (\x -> normalizeEqn $ filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForest epsM x f) evalMs
-                    nL = M.assocs $ M.delete [] l
+                    l = map (\(x,y) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForest epsM x f, y)) evalMs
+
+    reduceAnsList :: [([(Int,Rational)],Int)] -> [([(Int,Rational)],Int)]
+    reduceAnsList l = nubBy (\x y -> (fst x) == (fst y)) $ mapMaybe normalizeEqn l 
+
+    evalAllAnsatzForest :: M.Map [Int] Int -> [(I.IntMap Int, Int)] -> AnsatzForest (AnsatzNode Int) -> [([(Int,Rational)],Int)]
+    evalAllAnsatzForest epsM evalMs f = reduceAnsList $ evalAllList epsM evalMs f
                     
-    normalizeEqn :: [(a, Rational)] -> [(a, Rational)]
-    normalizeEqn [] = []
-    normalizeEqn ((x,y):xs) =  map (\(a,b) -> (a, b/y)) $ (x,y) : xs
+    normalizeEqn :: ([(a, Rational)], b) -> Maybe ([(a, Rational)], b)
+    normalizeEqn ([],_) = Nothing
+    normalizeEqn ((x,y):xs, z) = Just $ (map (\(a,b) -> (a, b/y)) $ (x,y) : xs, z)
 
     showMatrixMatLab ::  [[((Int,Rational),Int)]] -> String
     showMatrixMatLab l = unlines $ map (\(x,y,z) -> show x ++ " " ++ show y ++ " " ++ show z ) l'
@@ -615,43 +620,43 @@ module PerturbationTree2 (
     --finally the eval maps 
 
     --A
-    areaList4 :: M.Map [Int] Int
-    areaList4 = M.fromList list
+    areaList4 :: [([Int], Int)]
+    areaList4 = list
         where 
             list = [ ([a,b,c,d], areaMult a b c d) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
                                                               (isAreaSorted a b c d)]
     --AI
-    areaList6 :: M.Map [Int] Int
-    areaList6 = M.fromList list
+    areaList6 :: [([Int], Int)]
+    areaList6 = list
         where 
             list = [ ([a,b,c,d,p,q], (areaMult a b c d) * (iMult2 p q)) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
                                                                         p <- [0..3], q <- [p..3], (isAreaSorted a b c d)]
 
     --A:B
-    areaList8 :: M.Map [Int] Int
-    areaList8 = M.fromList list
+    areaList8 :: [([Int], Int)]
+    areaList8 = list
         where 
             list = [ ([a,b,c,d,e,f,g,h], (areaMult a b c d) * (areaMult e f g h)) | a <- [0..2], b <- [a+1..3], c <- [a..2], 
                                                                                     d <- [c+1..3],  e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) ]
 
     --Ap:Bq
-    areaList10_1 :: M.Map [Int] Int
-    areaList10_1 = M.fromList list
+    areaList10_1 :: [([Int], Int)]
+    areaList10_1 = list
         where 
             list = [ ([a,b,c,d,p,e,f,g,h,q], (areaMult a b c d) * (areaMult e f g h)) | a <- [0..2], b <- [a+1..3], c <- [a..2],
                                                                                          d <- [c+1..3], e <- [a..2], f <- [e+1..3],g <- [e..2], h <- [g+1..3], p <- [0..3], q <- [0..3], (isAreaSorted a b c d) && (isAreaSorted e f g h)  ]
 
     --A:BI                                     
-    areaList10_2 :: M.Map [Int] Int
-    areaList10_2 = M.fromList list
+    areaList10_2 :: [([Int], Int)]
+    areaList10_2 = list
         where 
             list = [ ([a,b,c,d,e,f,g,h,p,q], (areaMult a b c d) * (areaMult e f g h) * (iMult2 p q)) | a <- [0..2], b <- [a+1..3],                                                  c <- [a..2], d <- [c+1..3], 
                                                               e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
                                                               p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h)  ]
 
     --A:B:C
-    areaList12 :: M.Map [Int] Int
-    areaList12 = M.fromList list
+    areaList12 :: [([Int], Int)]
+    areaList12 = list
         where 
             list = [ ([a,b,c,d,e,f,g,h,i,j,k,l], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l)) | a <- [0..2], 
                                                               b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
@@ -660,8 +665,8 @@ module PerturbationTree2 (
                                                               (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
 
     --A:Bp:Cq
-    areaList14_1 :: M.Map [Int] Int
-    areaList14_1 = M.fromList list
+    areaList14_1 :: [([Int], Int)]
+    areaList14_1 = list
         where 
             list = [ ([a,b,c,d,e,f,g,h,p,i,j,k,l,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l)) | a <- [0..2],                                                    b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
                                                               e <- [0..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
@@ -670,8 +675,8 @@ module PerturbationTree2 (
 
 
     --A:B:CI
-    areaList14_2 :: M.Map [Int] Int
-    areaList14_2 = M.fromList list
+    areaList14_2 :: [([Int], Int)]
+    areaList14_2 = list
         where 
             list = [ ([a,b,c,d,e,f,g,h,i,j,k,l,p,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l) * (iMult2 p q)) |                                                 a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], 
                                                               e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3],
@@ -679,8 +684,8 @@ module PerturbationTree2 (
                                                               p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
 
     --Am:Bn:CI
-    areaList16_1 :: M.Map [Int] Int
-    areaList16_1 = M.fromList list
+    areaList16_1 :: [([Int], Int)]
+    areaList16_1 = list
         where 
             list = [ ([a,b,c,d,m,e,f,g,h,n,i,j,k,l,p,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l) * (iMult2 p q)) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], m <- [0..3],
                   e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3], n <- [0..3],
@@ -688,8 +693,8 @@ module PerturbationTree2 (
                  p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
 
     --A:BI:CJ
-    areaList16_2 :: M.Map [Int] Int
-    areaList16_2 = M.fromList list
+    areaList16_2 :: [([Int], Int)]
+    areaList16_2 = list
         where 
             list = [ ([a,b,c,d,e,f,g,h,m,n,i,j,k,l,p,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l) * (iMult2 p q) * (iMult2 m n) ) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3],
                                  e <- [0..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3], m <- [0..3], n <- [m..3],
@@ -697,8 +702,8 @@ module PerturbationTree2 (
                                 p <- [0..3], q <- [p..3], (isAreaSorted a b c d) && (isAreaSorted e f g h) && (isAreaSorted i j k l)]
 
     --AI:BJ:CK
-    areaList18 :: M.Map [Int] Int
-    areaList18 = M.fromList list
+    areaList18 :: [([Int], Int)]
+    areaList18 = list
         where 
             list = [ ([a,b,c,d,r,s,e,f,g,h,m,n,i,j,k,l,p,q], (areaMult a b c d) * (areaMult e f g h) * (areaMult i j k l) * (iMult2 p q) * (iMult2 r s)) | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], r <- [0..3], s <- [r..3],
                                           e <- [a..2], f <- [e+1..3], g <- [e..2], h <- [g+1..3], m <- [0..3], n <- [m..3],
@@ -719,71 +724,71 @@ module PerturbationTree2 (
     iMult2 :: Int -> Int -> Int 
     iMult2 a b = if a == b then 1 else 2 
 
-    areaEvalMap4 :: M.Map (I.IntMap Int) Int
+    areaEvalMap4 :: [(I.IntMap Int, Int)]
     areaEvalMap4 = l
         where 
             area4 = areaList4
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..4] x) area4
+            l = map (\(x,y) -> (I.fromList $ zip [1..4] x, y)) area4
 
-    areaEvalMap6 :: M.Map (I.IntMap Int) Int
+    areaEvalMap6 :: [(I.IntMap Int, Int)]
     areaEvalMap6 = l
         where 
             area6 = areaList6
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..6] x) area6
+            l = map (\(x,y) -> (I.fromList $ zip [1..6] x, y)) area6
 
-    areaEvalMap8 :: M.Map (I.IntMap Int) Int
+    areaEvalMap8 :: [(I.IntMap Int, Int)]
     areaEvalMap8 = l
         where 
             area8 = areaList8
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..8] x) area8
+            l = map (\(x,y) -> (I.fromList $ zip [1..8] x, y)) area8
 
-    areaEvalMap10_1 :: M.Map (I.IntMap Int) Int
+    areaEvalMap10_1 :: [(I.IntMap Int, Int)]
     areaEvalMap10_1 = l
         where 
             area10_1 = areaList10_1
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..10] x) area10_1
+            l = map (\(x,y) -> (I.fromList $ zip [1..10] x, y)) area10_1
 
-    areaEvalMap10_2 :: M.Map (I.IntMap Int) Int
+    areaEvalMap10_2 :: [(I.IntMap Int, Int)]
     areaEvalMap10_2 = l
         where 
             area10_2 = areaList10_2
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..10] x) area10_2
+            l = map (\(x,y) -> (I.fromList $ zip [1..10] x, y)) area10_2
 
-    areaEvalMap12 :: M.Map (I.IntMap Int) Int
+    areaEvalMap12 :: [(I.IntMap Int, Int)]
     areaEvalMap12 = l
         where 
             area12 = areaList12
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..12] x) area12
+            l = map (\(x,y) -> (I.fromList $ zip [1..12] x, y)) area12
 
-    areaEvalMap14_1 :: M.Map (I.IntMap Int) Int
+    areaEvalMap14_1 :: [(I.IntMap Int, Int)]
     areaEvalMap14_1 = l
         where 
             area14_1 = areaList14_1
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..14] x) area14_1
+            l = map (\(x,y) -> (I.fromList $ zip [1..14] x, y)) area14_1
 
-    areaEvalMap14_2 :: M.Map (I.IntMap Int) Int
+    areaEvalMap14_2 ::  [(I.IntMap Int, Int)]
     areaEvalMap14_2 = l
         where 
             area14_2 = areaList14_2
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..14] x) area14_2
+            l = map (\(x,y) -> (I.fromList $ zip [1..14] x, y)) area14_2
 
-    areaEvalMap16_1 :: M.Map (I.IntMap Int) Int
+    areaEvalMap16_1 ::  [(I.IntMap Int, Int)]
     areaEvalMap16_1 = l
         where 
             area16_1 = areaList16_1
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..16] x) area16_1
+            l = map (\(x,y) -> (I.fromList $ zip [1..16] x, y)) area16_1
 
-    areaEvalMap16_2 :: M.Map (I.IntMap Int) Int
+    areaEvalMap16_2 ::  [(I.IntMap Int, Int)]
     areaEvalMap16_2 = l
         where 
             area16_2 = areaList16_2
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..16] x) area16_2
+            l = map (\(x,y) -> (I.fromList $ zip [1..16] x, y)) area16_2
 
-    areaEvalMap18 :: M.Map (I.IntMap Int) Int
+    areaEvalMap18 ::  [(I.IntMap Int, Int)]
     areaEvalMap18 = l
         where 
             area18 = areaList18
-            l = M.mapKeysMonotonic (\x -> I.fromList $ zip [1..18] x) area18
+            l = map (\(x,y) -> (I.fromList $ zip [1..18] x,y)) area18
 
 
     filterList4 :: [(Int,Int)]

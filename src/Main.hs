@@ -1162,7 +1162,7 @@ module Main (
 
         let test20 = HasMat.toLists hasMat
 
-        print $ ansatzBasisLabels eval10_1 ansatz10_1 
+        --print $ ansatzBasisLabels eval10_1 ansatz10_1 
 
         let ansatz14_1 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_1 1 symList14_1  
 

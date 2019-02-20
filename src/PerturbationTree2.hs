@@ -8,9 +8,21 @@ module PerturbationTree2 (
     epsMap, evalAnsatzForest, evalAllAnsatzForest, evalAllMatrixSp,
     evalAnsatzForestList, getLeafVals, ansatzRank, ansatzKernel, evalAllMatrix, ansatzImage, ansatzHasMatrix, ansatzHasRR,
     --ansatzHasLU, testBasisLabels, ansatzLinMatrix, ansatzLinLU,
-    filterList10_1, symList10_1, areaEvalMap10_1,
     getPivots, actOnRightRest, rowReduce, ansatzBasisLabels,
-    filterList14_2, symList14_2, areaEvalMap14_2, evalAllList
+    filterList4, symList4, areaEvalMap4,
+    filterList6, symList6, areaEvalMap6,
+    filterList8, symList8, areaEvalMap8,
+    filterList10_1, symList10_1, areaEvalMap10_1,
+    filterList10_2, symList10_2, areaEvalMap10_2,
+    filterList12, symList12, areaEvalMap12,
+    filterList14_1, symList14_1, areaEvalMap14_1,
+    filterList14_2, symList14_2, areaEvalMap14_2,
+    filterList16_1, symList16_1, areaEvalMap16_1,
+    filterList16_2, symList16_2, areaEvalMap16_2,
+    filterList18, symList18, areaEvalMap18
+
+
+    
 
 
 ) where

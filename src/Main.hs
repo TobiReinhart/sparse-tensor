@@ -1310,9 +1310,13 @@ module Main (
 
         let etaList' = map read $ lines etaList :: [([(Int,Int)],Int,Int)]
 
-        print $ length $ getRows $ map (\(a,b,c) -> a) etaList'
+        let varList = getRows $ map (\(a,b,c) -> a) etaList'
 
-        print $ getRank 
+        print varList
+
+        print $ length varList
+
+        print $ getRank $ map (\(a,b,c) -> a) etaList'
 
        
 

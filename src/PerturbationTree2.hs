@@ -5,7 +5,7 @@
 
 module PerturbationTree2 (
     AnsatzForest(..), AnsatzNode(..), mkEtaList, mkEpsilonList, Symmetry, reduceAnsatzEta, reduceAnsatzEps, getEtaInds, getEpsilonInds, mkAllVars, symAnsatzForestEta, symAnsatzForestEps, mkForestFromAscList, getEtaForest, getEpsForest, flattenForest, relabelAnsatzForest, getForestLabels, printAnsatz, showAnsatzNode, mapNodes, addForests, isZeroVar, addVars,
-    epsMap, evalAnsatzForest, evalAllAnsatzForest, evalAllMatrixSp,
+    epsMap, evalAnsatzForest, evalAllAnsatzForest, evalAllMatrixSp, getRows, ansatzLinLU,
     evalAnsatzForestList, getLeafVals, ansatzRank, ansatzKernel, evalAllMatrix, ansatzImage, ansatzHasMatrix, ansatzHasRR, evalAllList, 
     --ansatzHasLU, testBasisLabels, ansatzLinMatrix, ansatzLinLU,
     getPivots, actOnRightRest, rowReduce, ansatzBasisLabels,
@@ -22,7 +22,7 @@ module PerturbationTree2 (
     filterList16_2, symList16_2, areaEvalMap16_2,
     filterList18, symList18, areaEvalMap18,
     trianMapArea, trianMapDerivative,
-    triangleMap2P, triangleMap3P
+    triangleMap2P, triangleMap3P, treeLength
 
 
     
@@ -127,6 +127,10 @@ module PerturbationTree2 (
     isZeroVar x = False 
    
     data AnsatzForest a = Forest (M.Map a (AnsatzForest a))| Leaf a | EmptyForest  deriving (Show, Read, Eq)
+
+    treeLength :: AnsatzForest a -> Int 
+    treeLength (Leaf _) = 1 
+    treeLength (Forest m) = M.foldr (\a b -> 1 + b + (treeLength a)) 0 m 
 
     forestMap :: AnsatzForest a -> M.Map a (AnsatzForest a)
     forestMap (Forest m) = m
@@ -497,13 +501,13 @@ module PerturbationTree2 (
     --using Data.Matrix (Rational)  
 
 
-    ansatzHasMatrix :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> HasMat.Matrix Rational 
-    ansatzHasMatrix l f = HasMat.matrix n m (\x -> M.findWithDefault 0 x lMap ) 
+    ansatzHasMatrix :: [[(Int, Rational)]] -> HasMat.Matrix Rational 
+    ansatzHasMatrix l = HasMat.matrix n m (\x -> M.findWithDefault 0 x lMap ) 
                 where
                     l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
                     n = length l
                     lMap = M.fromList $ map (\(a,b,c) -> ((a, b), c)) l'
-                    m = length $ getForestLabels f
+                    m = maximum $ map fst $ concat l 
 
     rowReduce :: HasMat.Matrix Rational -> HasMat.Matrix Rational 
     rowReduce m 
@@ -543,20 +547,20 @@ module PerturbationTree2 (
                 where
                     getPiv v = fmap ((+) 1) $ Vec.findIndex (/= 0) v
 
-    ansatzHasRR :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> HasMat.Matrix Rational 
-    ansatzHasRR l f = rowReduce $ ansatzHasMatrix l f
+    ansatzHasRR :: [[(Int, Rational)]] -> HasMat.Matrix Rational 
+    ansatzHasRR l = rowReduce $ ansatzHasMatrix l
 
-    ansatzBasisLabels :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> (HasMat.Matrix Rational, [Int]) 
-    ansatzBasisLabels l f = (mat, p)
+    ansatzBasisLabels :: [[(Int, Rational)]] -> (HasMat.Matrix Rational, [Int]) 
+    ansatzBasisLabels l = (mat, p)
                     where
-                        mat = rowReduce $ ansatzHasMatrix l f
+                        mat = rowReduce $ ansatzHasMatrix l
                         p = get1stPivots mat
 
     --is somehow too slow maybe use doubles ??
-    ansatzHasLUFullPivoting :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> (HasMat.Matrix Rational, [Int])
-    ansatzHasLUFullPivoting l f = (tri , map ((I.!) varMap) pivots)
+    ansatzHasLUFullPivoting :: [[(Int, Rational)]] -> (HasMat.Matrix Rational, [Int])
+    ansatzHasLUFullPivoting l = (tri , map ((I.!) varMap) pivots)
             where
-                mat = ansatzHasMatrix l f 
+                mat = ansatzHasMatrix l
                 (tri,_,_,perm,_,_) = fromJust $ HasMat.luDecomp' mat 
                 perm' = HasMat.transpose perm 
                 xVec = HasMat.fromLists $  [[fromIntegral i] | i <- [1..HasMat.nrows perm] ] 
@@ -565,10 +569,10 @@ module PerturbationTree2 (
                 varMap = I.fromList $ zip [1..HasMat.nrows perm] i 
                 pivots = get1stPivots tri 
 
-    ansatzHasLU :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> (HasMat.Matrix Rational, [Int])
-    ansatzHasLU l f = (tri, pivots)
+    ansatzHasLU :: [[(Int, Rational)]] -> (HasMat.Matrix Rational, [Int])
+    ansatzHasLU l = (tri, pivots)
             where
-                mat = ansatzHasMatrix l f 
+                mat = ansatzHasMatrix l
                 (tri,_,_,_) = fromJust $ HasMat.luDecomp mat         
                 pivots = get1stPivots tri 
 
@@ -579,49 +583,63 @@ module PerturbationTree2 (
     --using eigen (numeric)
 
     --ordering: Vars to the right, Eqns down 
-    evalAllMatrixSp :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> Sparse.SparseMatrixXd 
-    evalAllMatrixSp l f = Sparse.fromList n m l''
+    evalAllMatrixSp :: [[(Int, Rational)]] -> Sparse.SparseMatrixXd 
+    evalAllMatrixSp l = Sparse.fromList n m l''
                 where
                     l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
                     n = length l 
                     l'' = map (\(a,b,c) -> (a-1, b-1, fromRational c)) l'
-                    m = length $ getForestLabels f 
+                    m = maximum $ map fst $ concat l 
 
-    evalAllMatrix :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> Mat.MatrixXd 
-    evalAllMatrix l f = Sparse.toMatrix $ Sparse.fromList n m l''
+    evalAllMatrix :: [[(Int, Rational)]] -> Mat.MatrixXd 
+    evalAllMatrix l = Sparse.toMatrix $ Sparse.fromList n m l''
                     where
                         l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
                         n = length l 
                         l'' = map (\(a,b,c) -> (a-1, b-1, fromRational c)) l'
-                        m = length $ getForestLabels f 
+                        m = maximum $ map fst $ concat l 
 
-    ansatzRank :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> Int 
-    ansatzRank l f = Sol.rank Sol.FullPivLU $ evalAllMatrix l f 
+    ansatzRank :: [[(Int, Rational)]] -> Int 
+    ansatzRank l = Sol.rank Sol.FullPivLU $ evalAllMatrix l 
     
     --coloumns form basis of Image 
-    ansatzImage :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> Mat.MatrixXd 
-    ansatzImage l f = Sol.image Sol.FullPivLU $ Mat.transpose $ evalAllMatrix l f
+    ansatzImage :: [[(Int, Rational)]] -> Mat.MatrixXd 
+    ansatzImage l = Sol.image Sol.FullPivLU $ evalAllMatrix l
+
+    --find the correspondinding varLables -> (maybe directly reduce the full matrix)
+
+    getRows :: [[(Int, Rational)]] -> [Int]
+    getRows l = map (1+) $ mapMaybe (\x -> elemIndex x l1) l2 
+            where
+                mat = evalAllMatrix l 
+                solMat = Sol.image Sol.FullPivLU mat
+                matT = Mat.transpose mat 
+                solT = Mat.transpose solMat
+                f x 
+                    | x == 0 = 0
+                    | otherwise = 1
+                l1 = map (map f) $ Mat.toList matT
+                l2 = map (map f) $ Mat.toList solT
 
     --coloumns (down) form basis of nullspace
-    ansatzKernel :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int)-> Mat.MatrixXd 
-    ansatzKernel l f = Sol.kernel Sol.FullPivLU $ evalAllMatrix l f
+    ansatzKernel :: [[(Int, Rational)]] -> Mat.MatrixXd 
+    ansatzKernel l = Sol.kernel Sol.FullPivLU $ evalAllMatrix l
 
     --using hmatrix 
 
-    ansatzLinMatrix :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> LinDat.Matrix Double 
-    ansatzLinMatrix l f = LinDat.assoc (n,m) 0 l''
+    ansatzLinMatrix :: [[(Int, Rational)]] -> LinDat.Matrix Double 
+    ansatzLinMatrix l = LinDat.assoc (n,m) 0 l''
                 where
                     n = length l 
                     l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
                     l'' = map (\(a,b,c) -> ((a-1, b-1), fromRational c)) l'
-                    m = length $ getForestLabels f
+                    m = maximum $ map fst $ concat l 
 
-    ansatzLinLU :: [[(Int, Rational)]] -> AnsatzForest (AnsatzNode Int) -> (LinDat.Matrix Double, [Int])
-    ansatzLinLU l f = (b, getPivotNrs b 1.0e-10)
+    ansatzLinLU :: [[(Int, Rational)]] -> (LinDat.Matrix Double, [Int])
+    ansatzLinLU l = (b, getPivotNrs b 1.0e-10)
                 where
-                    mat = ansatzLinMatrix l f
+                    mat = ansatzLinMatrix l
                     (_,b,_,_) = Lin.lu mat 
-                    matRows = LinDat.toRows b      
 
     getPivotNrs :: LinDat.Matrix Double -> Double -> [Int]
     getPivotNrs m bound = mapMaybe (getPiv bound) matRows
@@ -630,7 +648,7 @@ module PerturbationTree2 (
                 
 
     getPiv :: Double -> LinDat.Vector Double -> Maybe Int 
-    getPiv bound v = let vMaybe = fmap ((+) 1) $ LinDat.find (\x -> abs(x) <= bound) v in 
+    getPiv bound v = let vMaybe = fmap ((+) 1) $ LinDat.find (\x -> abs(x) >= bound) v in 
                 if (length vMaybe) == 0 then Nothing else Just $ head vMaybe
 
     --finally the eval maps 

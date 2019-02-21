@@ -1086,7 +1086,7 @@ module Main (
 
         --filter area metric symmetries
 
-        {-
+        {-        
 
         let trianA = trianMapArea 
 
@@ -1218,6 +1218,11 @@ module Main (
 
         let ans18Eta = evalAllList epsM evalList18 ansatz18Eta 
 
+        let ans10_1Red = evalAllAnsatzForest epsM evalList10_1 ansatz10_1
+
+        let ans14_1EtaRed = evalAllAnsatzForest epsM evalList14_1 ansatz14_1Eta
+
+
         --writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
 
         --print "eta done!"
@@ -1226,7 +1231,22 @@ module Main (
 
         --print ans12_1
 
-        -}
+        --print $ evalAllMatrix ans10_1Red
+
+        --print $ ansatzImage ans10_1Red
+
+        --print $ length $ getRows ans14_1EtaRed
+
+        print $ treeLength ansatz14_2
+
+
+       -}
+
+       
+
+
+
+        
 
         
 
@@ -1280,11 +1300,21 @@ module Main (
 
         let ans18Eta = evalAllListEta epsM evalList18 ansatz18Eta 
 
-        writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
+        --writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
 
-        print "eta done!"
+        --print "eta done!"
 
-        writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
+        --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
+
+        epsList <- readFile "/cip/austausch/cgg/epsilon18ListLines.txt"
+
+        let epsList' = map read $ lines epsList :: [([(Int,Int)],Int,Int)]
+
+        let redList = reduceAnsList epsList' 
+
+        writeFile "/cip/austausch/cgg/epsilon18ListRed.txt" $ unlines $ map show redList 
+
+        
 
         
         

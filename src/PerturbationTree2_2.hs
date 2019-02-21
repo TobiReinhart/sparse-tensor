@@ -3,6 +3,8 @@
 --seems to be the best soultion !!!
 
 
+
+
 module PerturbationTree2_2 (
     getEtaForest, getEpsForest, getForestLabels, getForestLabelsEpsilon, epsMap, evalAnsatzForestEta, evalAnsatzForestEpsilon,
     filterList4, symList4, areaEvalMap4,
@@ -19,7 +21,7 @@ module PerturbationTree2_2 (
     filterList18, symList18, areaEvalMap18,
     trianMapArea, trianMapDerivative,
     triangleMap2P, triangleMap3P,
-     evalAllListEta, evalAllListEpsilon
+     evalAllListEta, evalAllListEpsilon, reduceAnsList
 
 
     
@@ -30,7 +32,7 @@ module PerturbationTree2_2 (
     import qualified Data.IntMap.Strict as I
     import qualified Data.Map.Strict as M
     import Data.Foldable
-    import Data.List 
+    import Data.List
     import Data.Maybe
     import Data.List
     --import qualified Data.Eigen.Matrix as Mat 
@@ -97,25 +99,28 @@ module PerturbationTree2_2 (
 
     sortEta :: Eta -> Eta 
     sortEta (Eta x y) = Eta (min x y) (max x y)
+    {-# INLINEABLE sortEta #-}
 
     sortEpsilon :: Epsilon -> Epsilon 
     sortEpsilon (Epsilon i j k l) = Epsilon i' j' k' l'
              where
                 [i',j',k',l'] = sortList [i,j,k,l]
-
     
     getEpsSign :: Epsilon -> Int 
     getEpsSign (Epsilon i j k l) = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+    {-# INLINEABLE getEpsSign #-}
 
     addVars :: Var -> Var -> Var 
-    addVars (Var x y) (Var x' y') 
-            | y == y' = Var (x + x') y
+    addVars (Var x y) (Var x' y') = Var (x + x') y
+    {-# INLINEABLE addVars #-}
 
     multVar :: Int -> Var -> Var
     multVar x (Var x' y) = Var (x * x') y
+    {-# INLINEABLE multVar #-}
 
     isZeroVar :: Var -> Bool
-    isZeroVar (Var x y) = if x==0 then True else False
+    isZeroVar (Var x y) = x==0
+    {-# INLINEABLE isZeroVar #-}
    
     data AnsatzForestEta = ForestEta (M.Map Eta AnsatzForestEta)| Leaf !Var | EmptyForest  deriving (Show, Read, Eq)
 
@@ -123,7 +128,7 @@ module PerturbationTree2_2 (
 
     forestMap :: AnsatzForestEta -> M.Map Eta AnsatzForestEta
     forestMap (ForestEta m) = m
-    forestMap x = error "ForestEta is Leaf or Empty"
+    {-# INLINEABLE forestMap #-}
 
     --mapNodes requires resorting
 
@@ -160,6 +165,22 @@ module PerturbationTree2_2 (
              where
                 newMap = M.filter (/= EmptyForest) $ M.unionWith addForests m1 m2
 
+    addList2Forest :: AnsatzForestEta -> ([Eta],Var) -> AnsatzForestEta 
+    addList2Forest EmptyForest x = mkForestFromAscList x 
+    addList2Forest (Leaf var1) ([], var2) 
+            | isZeroVar newLeafVal = EmptyForest
+            | otherwise = Leaf newLeafVal
+            where
+                newLeafVal = (addVars var1 var2)
+    addList2Forest (ForestEta m1) (x:xs, var) = ForestEta $ M.insertWith (\a1 a2 -> addList2Forest a2 (xs, var)) x newVal m1
+             where
+                newVal = mkForestFromAscList (xs,var)
+
+    addList2ForestEpsilon :: AnsatzForestEpsilon -> (Epsilon,[Eta],Var) -> AnsatzForestEpsilon 
+    addList2ForestEpsilon m (eps,eta,var) = M.insertWith (\a1 a2 -> addList2Forest a2 (eta, var)) eps newVal m
+         where
+            newVal = mkForestFromAscList (eta,var)
+
     addForestsEpsilon :: AnsatzForestEpsilon -> AnsatzForestEpsilon -> AnsatzForestEpsilon
     addForestsEpsilon m1 m2 = M.filter (/= EmptyForest) $ M.unionWith addForests m1 m2
 
@@ -187,14 +208,14 @@ module PerturbationTree2_2 (
     mkForestFromAscListEpsilon (x,y,z) = M.singleton x $ mkForestFromAscList (y,z)
     
     sortForest :: AnsatzForestEta -> AnsatzForestEta
-    sortForest f = foldr (addForests) EmptyForest fList 
+    sortForest f = foldr (flip addList2Forest) EmptyForest fList 
                 where
-                    fList = map mkForestFromAscList $ flattenForest f
+                    fList = flattenForest f
 
     sortForestEpsilon :: AnsatzForestEpsilon -> AnsatzForestEpsilon 
-    sortForestEpsilon f = foldr (addForestsEpsilon) M.empty fList 
+    sortForestEpsilon f = foldr (flip addList2ForestEpsilon) M.empty fList 
                  where
-                    fList = map mkForestFromAscListEpsilon $ flattenForestEpsilon f
+                    fList = flattenForestEpsilon f
 
     swapLabelF :: (Int,Int) -> Int -> Int 
     swapLabelF (x,y) z
@@ -493,6 +514,16 @@ module PerturbationTree2_2 (
     evalAllListEpsilon epsM evalMs f = l
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
+
+    reduceAnsList :: [([(Int,Int)],Int,Int)] -> [([(Int,Int)],Int,Int)]
+    reduceAnsList l = map scaleEqn $ M.assocs $ M.fromList $ mapMaybe normalizeEqn l 
+
+    normalizeEqn :: ([(Int, Int)], Int, Int) -> Maybe ([(Int, Rational)], (Int, Int, Int))
+    normalizeEqn ([],_, _) = Nothing
+    normalizeEqn ((x,y):xs, z, z') = Just $ (map (\(a,b) -> (a, (fromIntegral b)/(fromIntegral y)) ) $ (x,y) : xs, (z, z', y))
+
+    scaleEqn :: ([(Int, Rational)], (Int, Int, Int)) -> ([(Int, Int)], Int, Int)
+    scaleEqn (l,(a,b,c)) = (map (\(x,y) -> (x, truncate (y * (fromIntegral c)))) l, a, b)
 
     --finally the eval maps 
 

@@ -1308,9 +1308,9 @@ module Main (
 
         epsList <- readFile "/cip/austausch/cgg/epsilon18ListLines.txt"
 
-        let etaList' = map read $ lines etaList :: [([(Int,Int)],Int,Int)]
+        let epsList' = map read $ lines epsList :: [([(Int,Int)],Int,Int)]
 
-        let epsRed = reduceAnsList $ etaList' 
+        let epsRed = reduceAnsList $ epsList' 
 
         writeFile "/cip/austausch/cgg/epsilon18Red.txt" $ unlines $ map show epsRed 
        

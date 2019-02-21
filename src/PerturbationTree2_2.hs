@@ -561,9 +561,6 @@ module PerturbationTree2_2 (
                 solMat = Sol.image Sol.FullPivLU mat
                 matT = Mat.transpose mat 
                 solT = Mat.transpose solMat
-                f x 
-                    | x == 0 = 0
-                    | otherwise = 1
                 l1 = map (map f) $ Mat.toList matT
                 l2 = map (map f) $ Mat.toList solT
 

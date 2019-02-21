@@ -1318,7 +1318,7 @@ module Main (
 
         print $ length varList
 
-        print $ getRank $ map (\(a,b,c) -> a) etaList'
+        print $ ansatzRank $ map (\(a,b,c) -> a) etaList'
 
        
 

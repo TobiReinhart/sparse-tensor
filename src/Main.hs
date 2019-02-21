@@ -1306,15 +1306,13 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
 
-        etaList <- readFile "/cip/austausch/cgg/eta18List.txt"
+        etaList <- readFile "/cip/austausch/cgg/eta18ListRed.txt"
 
         let etaList' = read etaList :: [([(Int,Int)],Int,Int)]
 
-        let redList = reduceAnsList etaList'
+        print $ ansatzRank $ map (\(a,b,c) -> a) etaList'
 
-        writeFile "/cip/austausch/cgg/eta18ListRed.txt" $ unlines $ map show redList 
-
-        
+       
 
         
         

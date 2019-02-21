@@ -21,7 +21,7 @@ module PerturbationTree2_2 (
     filterList18, symList18, areaEvalMap18,
     trianMapArea, trianMapDerivative,
     triangleMap2P, triangleMap3P,
-     evalAllListEta, evalAllListEpsilon, reduceAnsList
+     evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank
 
 
     
@@ -35,9 +35,10 @@ module PerturbationTree2_2 (
     import Data.List
     import Data.Maybe
     import Data.List
-    --import qualified Data.Eigen.Matrix as Mat 
-    --import qualified Data.Eigen.SparseMatrix as Sparse
-    --import qualified Data.Eigen.LA as Sol 
+    import qualified Data.Eigen.Matrix as Mat 
+    import qualified Data.Eigen.SparseMatrix as Sparse
+    import qualified Data.Eigen.LA as Sol 
+    import qualified Data.Eigen.SparseLA as SpSol
     --import qualified Data.Matrix as HasMat 
     --import qualified Data.Vector as Vec
     --import qualified Numeric.LinearAlgebra as Lin 
@@ -524,6 +525,51 @@ module PerturbationTree2_2 (
 
     scaleEqn :: ([(Int, Rational)], (Int, Int, Int)) -> ([(Int, Int)], Int, Int)
     scaleEqn (l,(a,b,c)) = (map (\(x,y) -> (x, truncate (y * (fromIntegral c)))) l, a, b)
+
+
+    --using eigen 
+
+    evalAllMatrixSp :: [[(Int, Int)]] -> Sparse.SparseMatrixXd 
+    evalAllMatrixSp l = Sparse.fromList n m l''
+                where
+                    l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
+                    n = length l 
+                    l'' = map (\(a,b,c) -> (a-1, b-1, fromIntegral c)) l'
+                    m = maximum $ map fst $ concat l 
+
+    evalAllMatrix :: [[(Int, Int)]] -> Mat.MatrixXd 
+    evalAllMatrix l = Sparse.toMatrix $ Sparse.fromList n m l''
+                    where
+                        l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
+                        n = length l 
+                        l'' = map (\(a,b,c) -> (a-1, b-1, fromIntegral c)) l'
+                        m = maximum $ map fst $ concat l 
+
+    ansatzRank :: [[(Int, Int)]] -> Int 
+    ansatzRank l = Sol.rank Sol.FullPivLU $ evalAllMatrix l 
+    
+    --coloumns form basis of Image 
+    ansatzImage :: [[(Int, Int)]] -> Mat.MatrixXd 
+    ansatzImage l = Sol.image Sol.FullPivLU $ evalAllMatrix l
+
+    --find the correspondinding varLables -> (maybe directly reduce the full matrix)
+
+    getRows :: [[(Int, Int)]] -> [Int]
+    getRows l = map (1+) $ mapMaybe (\x -> elemIndex x l1) l2 
+            where
+                mat = evalAllMatrix l 
+                solMat = Sol.image Sol.FullPivLU mat
+                matT = Mat.transpose mat 
+                solT = Mat.transpose solMat
+                f x 
+                    | x == 0 = 0
+                    | otherwise = 1
+                l1 = map (map f) $ Mat.toList matT
+                l2 = map (map f) $ Mat.toList solT
+
+    --coloumns (down) form basis of nullspace
+    ansatzKernel :: [[(Int, Int)]] -> Mat.MatrixXd 
+    ansatzKernel l = Sol.kernel Sol.FullPivLU $ evalAllMatrix l
 
     --finally the eval maps 
 

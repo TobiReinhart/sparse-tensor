@@ -516,15 +516,15 @@ module PerturbationTree2_2 (
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
 
-    reduceAnsList :: [([(Int,Int)],Int,Int)] -> [([(Int,Int)],Int,Int)]
-    reduceAnsList l = map scaleEqn $ M.assocs $ M.fromList $ mapMaybe normalizeEqn l 
+    reduceAnsList :: [([(Int,Int)],Int,Int)] -> [[(Int,Int)]]
+    reduceAnsList l = map scaleEqn $ nubBy (\x y -> (fst x) == (fst y) ) $ mapMaybe normalizeEqn l 
 
-    normalizeEqn :: ([(Int, Int)], Int, Int) -> Maybe ([(Int, Rational)], (Int, Int, Int))
+    normalizeEqn :: ([(Int, Int)], Int, Int) -> Maybe ([(Int, Rational)], Int)
     normalizeEqn ([],_, _) = Nothing
-    normalizeEqn ((x,y):xs, z, z') = Just $ (map (\(a,b) -> (a, (fromIntegral b)/(fromIntegral y)) ) $ (x,y) : xs, (z, z', y))
+    normalizeEqn ((x,y):xs, _, _) = Just $ (map (\(a,b) -> (a, (fromIntegral b)/(fromIntegral y)) ) $ (x,y) : xs, y)
 
-    scaleEqn :: ([(Int, Rational)], (Int, Int, Int)) -> ([(Int, Int)], Int, Int)
-    scaleEqn (l,(a,b,c)) = (map (\(x,y) -> (x, truncate (y * (fromIntegral c)))) l, a, b)
+    scaleEqn :: ([(Int, Rational)], Int) -> [(Int, Int)]
+    scaleEqn (l,c) = (map (\(x,y) -> (x, truncate (y * (fromIntegral c)))) l)
 
 
     --using eigen 

@@ -21,7 +21,7 @@ module PerturbationTree2_2 (
     filterList18, symList18, areaEvalMap18,
     trianMapArea, trianMapDerivative,
     triangleMap2P, triangleMap3P,
-     evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank
+     evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows
 
 
     

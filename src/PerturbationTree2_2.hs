@@ -561,8 +561,8 @@ module PerturbationTree2_2 (
                 solMat = Sol.image Sol.FullPivLU mat
                 matT = Mat.transpose mat 
                 solT = Mat.transpose solMat
-                l1 = map (map f) $ Mat.toList matT
-                l2 = map (map f) $ Mat.toList solT
+                l1 = Mat.toList matT
+                l2 = Mat.toList solT
 
     --coloumns (down) form basis of nullspace
     ansatzKernel :: [[(Int, Int)]] -> Mat.MatrixXd 

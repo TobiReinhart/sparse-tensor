@@ -1308,7 +1308,7 @@ module Main (
 
         etaList <- readFile "/cip/austausch/cgg/eta18ListRed.txt"
 
-        let etaList' = read etaList :: [([(Int,Int)],Int,Int)]
+        let etaList' = map read $ lines etaList :: [([(Int,Int)],Int,Int)]
 
         print $ ansatzRank $ map (\(a,b,c) -> a) etaList'
 

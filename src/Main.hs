@@ -1312,7 +1312,7 @@ module Main (
 
         let redList = reduceAnsList epsList' 
 
-        writeFile "/cip/austausch/cgg/epsilon18ListRed.txt" $ unlines $ map show redList 
+        writeFile "/cip/austausch/cgg/epsilon18ListRed2.txt" $ unlines $ map show redList 
 
         
 

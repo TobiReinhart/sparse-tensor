@@ -1310,7 +1310,7 @@ module Main (
 
         let etaRed = map read $ lines etaRed' :: [([(Int,Int)],Int,Int)]
 
-        let etaVars = getRows etaRed
+        let etaVars = getRows $ map fst etaRed
 
         writeFile "/cip/austausch/cgg/eta18Vars.txt" $ show etaVars 
 
@@ -1318,7 +1318,7 @@ module Main (
 
         let epsRed = map read $ lines epsRed' :: [([(Int,Int)],Int,Int)]
 
-        let epsVars = getRows epsRed 
+        let epsVars = getRows $ map fst epsRed 
 
         writeFile "/cip/austausch/cgg/epsilon18Vars.txt" $ show epsVars 
 

@@ -1312,7 +1312,9 @@ module Main (
 
         let etaVars = getRows $ map (\(x,_,_) -> x) etaRed
 
-        writeFile "/cip/austausch/cgg/eta18Vars.txt" $ show etaVars 
+        writeFile "/cip/austausch/cgg/eta18Vars.txt" $ unlines $ map show etaVars
+
+        print $ length etaVars 
 
         epsRed' <- readFile "/cip/austausch/cgg/epsilon18Red.txt"
 
@@ -1320,7 +1322,9 @@ module Main (
 
         let epsVars = getRows $ map (\(x,_,_) -> x) epsRed 
 
-        writeFile "/cip/austausch/cgg/epsilon18Vars.txt" $ show epsVars 
+        writeFile "/cip/austausch/cgg/epsilon18Vars.txt" $ unlines $ map show epsVars 
+
+        print $ length epsVars
 
 
 

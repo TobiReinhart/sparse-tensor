@@ -1306,25 +1306,31 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
 
-        etaRed' <- readFile "/cip/austausch/cgg/eta18ListRed.txt"
+        etaL' <- readFile "/cip/austausch/cgg/eta18List.txt"
 
-        let etaRed = map read $ lines etaRed' :: [([(Int,Int)],Int,Int)]
+        let etaL = read etaL' :: [([(Int,Int)],Int,Int)]
 
-        let etaVars = getRows $ map (\(x,_,_) -> x) etaRed
+        etaVars' <- readFile "/cip/austausch/cgg/eta18Vars.txt"
 
-        writeFile "/cip/austausch/cgg/eta18Vars.txt" $ unlines $ map show etaVars
+        let etaVars = map read $ lines etaVars' :: [Int]
 
-        print $ length etaVars 
+        let eta18BasisList = rmDepVarsAnsList etaVars etaL
 
-        epsRed' <- readFile "/cip/austausch/cgg/epsilon18Red.txt"
+        writeFile "/cip/austausch/cgg/eta18BasisList.txt" $ unlines $ map show eta18BasisList
 
-        let epsRed = map read $ lines epsRed' :: [[(Int,Int)]]
+        epsL' <- readFile "/cip/austausch/cgg/epsilon18ListLines.txt"
 
-        let epsVars = getRows epsRed 
+        let epsL = map read $ lines epsL' :: [([(Int,Int)],Int,Int)]
 
-        writeFile "/cip/austausch/cgg/epsilon18Vars.txt" $ unlines $ map show epsVars 
+        epsVars' <- readFile "/cip/austausch/cgg/epsilon18Vars.txt"
 
-        print $ length epsVars
+        let epsVars = map read $ lines epsVars' :: [Int]
+
+        let eps18BasisList = rmDepVarsAnsList epsVars epsL
+
+        writeFile "/cip/austausch/cgg/epsilon18BasisList.txt" $ unlines $ map show eps18BasisList
+
+        
 
 
 

@@ -21,7 +21,7 @@ module PerturbationTree2_2 (
     filterList18, symList18, areaEvalMap18,
     trianMapArea, trianMapDerivative,
     triangleMap2P, triangleMap3P,
-     evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows
+     evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, rmDepVarsAnsList
 
 
     
@@ -30,6 +30,7 @@ module PerturbationTree2_2 (
 ) where
 
     import qualified Data.IntMap.Strict as I
+    import qualified Data.IntSet as ISet 
     import qualified Data.Map.Strict as M
     import Data.Foldable
     import Data.List
@@ -525,6 +526,18 @@ module PerturbationTree2_2 (
 
     scaleEqn :: ([(Int, Rational)], Int) -> [(Int, Int)]
     scaleEqn (l,c) = (map (\(x,y) -> (x, truncate (y * (fromIntegral c)))) l)
+
+    --remove all linear dependent variables 
+
+    rmDepVars :: ISet.IntSet -> ([(Int, Int)], Int, Int) -> ([(Int, Int)], Int, Int)
+    rmDepVars s (l,a,b) = (filter (\x -> ISet.member (fst x) s) l, a, b) 
+
+    --result is (matInd (from trian Map), VarLabel, factor)
+    rmDepVarsAnsList :: [Int] -> [([(Int,Int)],Int,Int)] -> [(Int,Int,Int)]
+    rmDepVarsAnsList iDeps l = concat $ map (\(x,mult,matInd) -> map (\(i,r) -> (matInd,i,r*mult)) x) lRed
+            where
+                s = ISet.fromList iDeps 
+                lRed = map (rmDepVars s) l 
 
 
     --using eigen 

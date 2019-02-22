@@ -1306,13 +1306,26 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
 
-        epsList <- readFile "/cip/austausch/cgg/epsilon18ListLines.txt"
+        etaRed' <- readFile "/cip/autausch/cgg/eta18Red.txt"
 
-        let epsList' = map read $ lines epsList :: [([(Int,Int)],Int,Int)]
+        let etaRed = map read $ lines etaRed' :: [([(Int,Int)],Int,Int)]
 
-        let epsRed = reduceAnsList $ epsList' 
+        let etaVars = getRows etaRed
 
-        writeFile "/cip/austausch/cgg/epsilon18Red.txt" $ unlines $ map show epsRed 
+        writeFile "/cip/austausch/cgg/eta18Vars.txt" $ show etaVars 
+
+        epsRed' <- readFile "/cip/austausch/cgg/epsilon18Red.txt"
+
+        let epsRed = map read $ lines epsRed' :: [([(Int,Int)],Int,Int)]
+
+        let epsVars = getRows epsRed 
+
+        writeFile "/cip/austausch/cgg/epsilon18Vars.txt" $ show epsVars 
+
+
+
+
+
        
 
         

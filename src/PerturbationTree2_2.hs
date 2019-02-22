@@ -532,7 +532,7 @@ module PerturbationTree2_2 (
     rmDepVars :: I.IntMap Int -> ([(Int, Int)], Int, Int) -> ([(Int, Int)], Int, Int)
     rmDepVars s (l,a,b) = (mapMaybe lookupPair l, a, b) 
                     where
-                        lookupPair (x,y) = let xVal = (I.lookup s x) in if isJust xVal then Just (fromJust xVal, y) else Nothing
+                        lookupPair (x,y) = let xVal = (I.lookup x s) in if isJust xVal then Just (fromJust xVal, y) else Nothing
 
     --result is (matInd (from trian Map), VarLabel, factor)
     rmDepVarsAnsList :: [Int] -> [([(Int,Int)],Int,Int)] -> [(Int,Int,Int)]

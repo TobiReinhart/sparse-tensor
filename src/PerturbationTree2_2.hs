@@ -529,14 +529,16 @@ module PerturbationTree2_2 (
 
     --remove all linear dependent variables 
 
-    rmDepVars :: ISet.IntSet -> ([(Int, Int)], Int, Int) -> ([(Int, Int)], Int, Int)
-    rmDepVars s (l,a,b) = (filter (\x -> ISet.member (fst x) s) l, a, b) 
+    rmDepVars :: I.IntMap -> ([(Int, Int)], Int, Int) -> ([(Int, Int)], Int, Int)
+    rmDepVars s (l,a,b) = (mapMaybe lookupPair l, a, b) 
+                    where
+                        lookupPair (x,y) = let xVal = (I.lookup s x) in if isJust xVal then Just (fromJust xVal, y) else Nothing
 
     --result is (matInd (from trian Map), VarLabel, factor)
     rmDepVarsAnsList :: [Int] -> [([(Int,Int)],Int,Int)] -> [(Int,Int,Int)]
     rmDepVarsAnsList iDeps l = concat $ map (\(x,mult,matInd) -> map (\(i,r) -> (matInd,i,r*mult)) x) lRed
             where
-                s = ISet.fromList iDeps 
+                s = I.fromList $ zip iDeps [1..]
                 lRed = map (rmDepVars s) l 
 
 

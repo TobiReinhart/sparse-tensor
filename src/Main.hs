@@ -1306,7 +1306,7 @@ module Main (
 
         --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
 
-        etaRed' <- readFile "/cip/austausch/cgg/eta18Red.txt"
+        etaRed' <- readFile "/cip/austausch/cgg/eta18ListRed.txt"
 
         let etaRed = map read $ lines etaRed' :: [([(Int,Int)],Int,Int)]
 

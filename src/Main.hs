@@ -1335,7 +1335,7 @@ module Main (
 
         -}
 
-        eps1' <- read "/cip/austausch/cgg/epsilon18Red.txt" 
+        eps1' <- readFile "/cip/austausch/cgg/epsilon18Red.txt" 
 
         let eps1 = map read $ lines eps1' :: [[(Int,Int)]]
         

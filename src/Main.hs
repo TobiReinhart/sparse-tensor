@@ -1318,9 +1318,9 @@ module Main (
 
         epsRed' <- readFile "/cip/austausch/cgg/epsilon18Red.txt"
 
-        let epsRed = map read $ lines epsRed' :: [([(Int,Int)],Int,Int)]
+        let epsRed = map read $ lines epsRed' :: [[(Int,Int)]]
 
-        let epsVars = getRows $ map (\(x,_,_) -> x) epsRed 
+        let epsVars = getRows epsRed 
 
         writeFile "/cip/austausch/cgg/epsilon18Vars.txt" $ unlines $ map show epsVars 
 

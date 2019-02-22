@@ -1307,7 +1307,7 @@ module Main (
         --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
 
 
-        {-
+        
 
         etaL' <- readFile "/cip/austausch/cgg/eta18List.txt"
 
@@ -1333,15 +1333,8 @@ module Main (
 
         writeFile "/cip/austausch/cgg/epsilon18BasisList.txt" $ unlines $ map show eps18BasisList
 
-        -}
-
-        eps1' <- readFile "/cip/austausch/cgg/epsilon18Red.txt" 
-
-        let eps1 = map read $ lines eps1' :: [[(Int,Int)]]
         
-        print $ length eps1 
 
-    
 
 
         

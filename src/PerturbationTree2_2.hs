@@ -529,7 +529,7 @@ module PerturbationTree2_2 (
 
     --remove all linear dependent variables 
 
-    rmDepVars :: I.IntMap -> ([(Int, Int)], Int, Int) -> ([(Int, Int)], Int, Int)
+    rmDepVars :: I.IntMap Int -> ([(Int, Int)], Int, Int) -> ([(Int, Int)], Int, Int)
     rmDepVars s (l,a,b) = (mapMaybe lookupPair l, a, b) 
                     where
                         lookupPair (x,y) = let xVal = (I.lookup s x) in if isJust xVal then Just (fromJust xVal, y) else Nothing

@@ -173,11 +173,14 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
                         (Just x) -> Just ((d*21^3*1000+c*21^2*1000+e*21*1000+l*1000+k*100+m*10+s+1,1+315+(div (315*316) 2)+x),v' v)
                         _ -> Nothing
         where
+                                ind1 = 105 + a' * 10 + i' +1
+                                ind2 = 105 + c' * 10 + k' +1
+                                ind3 = 105 + d' *10 + l' +1 
                                 v' x
-                                    | a' == c' && a' == d' && i' == k' && i' == l' = 1/3 *x
-                                    | a' == c' && i' == k' || a' == d' && i' == l'|| c' == d' && k' == l' = 1/2 *x
+                                    | ind1 == ind2 && ind1 == ind3 = 1/3 *x
+                                    | ind1 == ind2 || ind1 == ind3 || ind2 == ind3 = 1/2 *x
                                     | otherwise = x
-                                matrixInd = (M.lookup) [105 + a' * 10 + i' +1, 105 + c' * 10 + k' +1, 105 + d' *10 + l' +1 ] trian
+                                matrixInd = (M.lookup) [ind1, ind2, ind3] trian
 
 
 

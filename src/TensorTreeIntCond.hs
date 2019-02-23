@@ -167,10 +167,11 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
                         totalBlock3 = tensorTransL20 (0,1) $! tensorTransL9 (0,1) totalBlock1
                         tens = tensorAdd totalBlock1 $! tensorAdd totalBlock2 totalBlock3 
 
-    index2SparseAnsatzAIBJCKSym :: M.Map [Int] Int -> ([Int],Rational) -> Maybe ((Int,Int),Rational)
+    index2SparseAnsatzAIBJCKSym :: M.Map [Int] Int -> ([Int],Rational) -> Maybe ((Int,[Int]),Rational)
     index2SparseAnsatzAIBJCKSym trian ([d,c,e,a',c',d',l,k,m,s,i',k',l'],v) 
             = case matrixInd of
-                        (Just x) -> Just ((d*21^3*1000+c*21^2*1000+e*21*1000+l*1000+k*100+m*10+s+1,1+315+(div (315*316) 2)+x),v)
+                        --(Just x) -> Just ((d*21^3*1000+c*21^2*1000+e*21*1000+l*1000+k*100+m*10+s+1,1+315+(div (315*316) 2)+x),v)
+                        (Just x) -> Just ((d*21^3*1000+c*21^2*1000+e*21*1000+l*1000+k*100+m*10+s+1,[ind1, ind2, ind3]),v)
                         _ -> Nothing
         where
                                 ind1 = 105 + a' * 10 + i' +1

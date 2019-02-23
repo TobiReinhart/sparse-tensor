@@ -170,7 +170,7 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
     index2SparseAnsatzAIBJCKSym :: M.Map [Int] Int -> ([Int],Rational) -> Maybe ((Int,Int),Rational)
     index2SparseAnsatzAIBJCKSym trian ([d,c,e,a',c',d',l,k,m,s,i',k',l'],v) 
             = case matrixInd of
-                        (Just x) -> Just ((d*21^3*1000+c*21^2*1000+e*21*1000+l*1000+k*100+m*10+s+1,1+315+(div (315*316) 2)+x),v' v)
+                        (Just x) -> Just ((d*21^3*1000+c*21^2*1000+e*21*1000+l*1000+k*100+m*10+s+1,1+315+(div (315*316) 2)+x),v)
                         _ -> Nothing
         where
                                 ind1 = 105 + a' * 10 + i' +1

@@ -159,7 +159,7 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
                         antiSym = aSymI2 map1Metric
                         aSym = tensorContr3 (1,1) $ tensorProd invEta antiSym
                         block1' = tensorProd int3 $! tensorProd delta20 $! tensorProd delta20 $! tensorProd delta9 delta9
-                        block1 = tensorContr3 (0,0) $ tensorContr3 (0,1) prod $! tensorProd block1' aSym
+                        block1 = tensorContr3 (0,0) $ tensorContr3 (0,1) $! tensorProd block1' aSym
                         block2 = tensorTransU20 (0,2) $ tensorTransU9 (0,2) block1 
                         block3 = tensorTransU20 (0,1) $ tensorTransU9 (0,1) block1 
                         totalBlock1 = tensorAdd block1 $! tensorAdd block2 block3 

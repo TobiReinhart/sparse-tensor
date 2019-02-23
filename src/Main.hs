@@ -1341,7 +1341,7 @@ module Main (
         let map1Metric = trianMapI2
         let map2Metric = trianMapJ2
 
-        let triangle3 = triangleMap 315 
+        let triangle3 = triangleMap3P 315 
 
         let ansatzAIBJCKCond = ansatzAIBJCK map1Metric map2Metric map1Area map2Area 
 

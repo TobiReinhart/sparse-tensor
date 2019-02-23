@@ -158,16 +158,16 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
                         int3 = interEqn3 map1Metric map2Metric map1Area map2Area
                         antiSym = aSymI2 map1Metric
                         aSym = tensorContr3 (1,1) $ tensorProd invEta antiSym
-                        block1' = tensorProd int3 $! tensorProd delta20 $! tensorProd delta20 $! tensorProd delta9 delta9
-                        block1 = tensorContr3 (0,0) $ tensorContr3 (0,1) $! tensorProd block1' aSym
+                        block1' = tensorProd int3   $ tensorProd delta20   $ tensorProd delta20   $ tensorProd delta9 delta9
+                        block1 = tensorContr3 (0,0) $ tensorContr3 (0,1)   $ tensorProd block1' aSym
                         block2 = tensorTransU20 (0,2) $ tensorTransU9 (0,2) block1 
                         block3 = tensorTransU20 (0,1) $ tensorTransU9 (0,1) block1 
-                        totalBlock1 = tensorAdd block1 $! tensorAdd block2 block3 
-                        totalBlock2 = tensorTransL20 (0,2) $! tensorTransL9 (0,2) totalBlock1
-                        totalBlock3 = tensorTransL20 (0,1) $! tensorTransL9 (0,1) totalBlock1
-                        totalBlock4 = tensorTransL20 (1,2) $! tensorTransL9 (1,2) totalBlock1
-                        totalBlock5 = tensorTransL20 (1,2) $! tensorTransL9 (1,2) totalBlock3
-                        totalBlock6 = tensorTransL20 (0,2) $! tensorTransL9 (0,2) totalBlock3
+                        totalBlock1 = tensorAdd block1   $ tensorAdd block2 block3 
+                        totalBlock2 = tensorTransL20 (0,2)   $ tensorTransL9 (0,2) totalBlock1
+                        totalBlock3 = tensorTransL20 (0,1)   $ tensorTransL9 (0,1) totalBlock1
+                        totalBlock4 = tensorTransL20 (1,2)  $ tensorTransL9 (1,2) totalBlock1
+                        totalBlock5 = tensorTransL20 (1,2)  $ tensorTransL9 (1,2) totalBlock3
+                        totalBlock6 = tensorTransL20 (0,2)  $ tensorTransL9 (0,2) totalBlock3
                         tens = tensorAdd totalBlock1 $ tensorAdd totalBlock2 $ tensorAdd totalBlock3 $ tensorAdd totalBlock4 $ tensorAdd totalBlock5 totalBlock6
 
     index2SparseAnsatzAIBJCKSym :: M.Map [Int] Int -> ([Int],Rational) -> Maybe ((Int,Int),Rational)

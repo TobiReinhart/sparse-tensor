@@ -79,7 +79,7 @@ module Main (
     import Data.Maybe
     import qualified BinaryTree as Bin 
     import qualified TensorTreeNumeric3 as Tree3 
-    import PerturbationTree2_2
+    --import PerturbationTree2_2
     import qualified Data.IntMap.Strict as I
     import qualified Data.Matrix as HasMat
     import qualified Data.Vector as Vec
@@ -1246,9 +1246,9 @@ module Main (
 
 
 
-        
+       
 
-        
+        {-
 
         let trianA = trianMapArea 
 
@@ -1305,9 +1305,9 @@ module Main (
         --print "eta done!"
 
         --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
+        -}
 
-
-        
+        {-
 
         etaL' <- readFile "/cip/austausch/cgg/eta18List.txt"
 
@@ -1333,6 +1333,24 @@ module Main (
 
         writeFile "/cip/austausch/cgg/epsilon18BasisList.txt" $ unlines $ map show eps18BasisList
 
+
+        -}
+
+        let map1Area = trianMapAreaI 
+        let map2Area = trianMapAreaJ
+        let map1Metric = trianMapI2
+        let map2Metric = trianMapJ2
+
+        let triangle3 = triangleMap 315 
+
+        let ansatzAIBJCKCond = ansatzAIBJCK map1Metric map2Metric map1Area map2Area 
+
+        let ansatzAIBJCKComps = mapMaybe (index2SparseAnsatzAIBJCKSym triangle3) $ toListShow ansatzAIBJCKCond 
+
+        writeFile "/cip/austausch/cgg/ansatz18AIBJCK.txt" $ unlines $ map show ansatzAIBJCKComps
+
+
+        
         
 
 

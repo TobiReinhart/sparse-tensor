@@ -23,7 +23,7 @@
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
 module TensorTreeIntCond (
-intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, index2SparseAnsatzABSym, ansatzAaBb, ansatzAIBC
+intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, index2SparseAnsatzABSym, ansatzAaBb, ansatzAIBC, ansatzAIBJCK, index2SparseAnsatzAIBJCKSym
 ) where
     
     import TensorTreeNumeric2
@@ -149,5 +149,37 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
                         tens = tensorAdd totalBlock1 totalBlockTrans
                         totalBlock2 = tensorContr3 (1,1) $ tensorProd invEta antiSym
                         prod = tensorProd tens totalBlock2
+
+    ansatzAIBJCK :: M.Map (IndList 2 Lind_3) (IndList 1 Uind_9) -> M.Map (IndList 2 Uind_3) (IndList 1 Lind_9) -> M.Map (IndList 4 Lind_3) (IndList 1 Uind_20) -> M.Map (IndList 4 Uind_3) (IndList 1 Lind_20) -> Tensor 3 3 0 0 4 3 0 0 Rational
+    ansatzAIBJCK map1Metric map2Metric map1Area map2Area = tensorContr3 (0,0) $ tensorContr3 (0,1) prod
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                        antiSym = aSymI2 map1Metric
+                        block1 = tensorProd int3 $ tensorProd delta20 $ tensorProd delta20 $ tensorProd delta9 delta9 
+                        block2 = tensorTransU20 (0,2) $ tensorTransU9 (0,2) block1 
+                        block3 = tensorTransU20 (0,1) $ tensorTransU9 (0,1) block1 
+                        totalBlock1 = tensorAdd block1 $ tensorAdd block2 block3 
+                        totalBlock2 = tensorTransL20 (0,2) $ tensorTransL9 (0,2) totalBlock1
+                        totalBlock3 = tensorTransL20 (0,1) $ tensorTransL9 (0,1) totalBlock1
+                        tens = tensorAdd totalBlock1 $ tensorAdd totalBlock2 totalBlock3 
+                        totalBlock2' = tensorContr3 (1,1) $ tensorProd invEta antiSym
+                        prod = tensorProd tens totalBlock2'
+
+    index2SparseAnsatzAIBJCKSym :: M.Map [Int] Int -> ([Int],Rational) -> Maybe ((Int,Int),Rational)
+    index2SparseAnsatzAIBJCKSym trian ([d,c,e,a',c',d',l,k,m,s,i',k',l'],v) 
+            = case matrixInd of
+                        (Just x) -> Just ((d*21^3*1000+c*21^2*1000+e*21*1000+l*1000+k*100+m*10+s+1,1+315+(div (315*316) 2)+x),v')
+                        _ -> Nothing
+        where
+                                v' 
+                                    | a' == c' && a' == d' = 1/6 *v
+                                    | a' == c' || a' == d' || c' == d' = 1/2 *v
+                                    | otherwise = v
+                                matrixInd = (M.lookup) [105 + a' * 10 + i' +1, 105 + c' * 10 + k' +1, 105 + d' *10 + l' +1 ] trian
+
+
+
 
     

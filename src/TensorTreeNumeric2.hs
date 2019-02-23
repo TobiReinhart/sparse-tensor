@@ -32,7 +32,7 @@ module TensorTreeNumeric2 (
     tensorTransU20, tensorTransL20, tensorTransL3, interArea, flatInter, tensorTransU3, tensorTransL9,
     interI2, interJ2, interI3, interJ3, interIArea, interJArea, interMetric, interEqn2 , isValid,
     swapHead, toListInd, removeZeros, printTensorTree, invEta, toListU20, toListL20, toListU19, toListL19, toListU9, toListL9, toListU3, toListL3,
-    insertOrAddU20, insertOrAddL20, insertOrAddU19, insertOrAddL19, insertOrAddU9, insertOrAddL9, insertOrAddU3, insertOrAddL3
+    insertOrAddU20, insertOrAddL20, insertOrAddU19, insertOrAddL19, insertOrAddU9, insertOrAddL9, insertOrAddU3, insertOrAddL3, tensorTransU9
     
 ) where
 

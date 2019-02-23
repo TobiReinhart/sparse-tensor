@@ -174,7 +174,7 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
                         _ -> Nothing
         where
                                 v' x
-                                    | a' == c' && a' == d' && i' == k' && i' == l' = 1/6 *x
+                                    | a' == c' && a' == d' && i' == k' && i' == l' = 1/3 *x
                                     | a' == c' && i' == k' || a' == d' && i' == l'|| c' == d' && k' == l' = 1/2 *x
                                     | otherwise = x
                                 matrixInd = (M.lookup) [105 + a' * 10 + i' +1, 105 + c' * 10 + k' +1, 105 + d' *10 + l' +1 ] trian

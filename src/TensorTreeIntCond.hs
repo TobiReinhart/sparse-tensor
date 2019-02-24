@@ -158,10 +158,10 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
                         int3 = interEqn3 map1Metric map2Metric map1Area map2Area
                         antiSym = aSymI2 map1Metric
                         aSym = tensorContr3 (1,1) $ tensorProd invEta antiSym
-                        block1' = tensorProd int3   $ tensorProd delta20   $ tensorProd delta20   $ tensorProd delta9 delta9
-                        block1 = tensorContr3 (0,0) $ tensorContr3 (0,1)   $ tensorProd block1' aSym
-                        block2 = tensorTransU20 (0,2) $ tensorTransU9 (0,2) block1 
-                        block3 = tensorTransU20 (0,1) $ tensorTransU9 (0,1) block1 
+                        int3Contr = id $! tensorContr3 (0,0) $! tensorContr3 (0,1) $! tensorProd int3 aSym
+                        block1 = tensorProd int3Contr $ tensorProd delta20   $ tensorProd delta20   $ tensorProd delta9 delta9
+                        block2 = tensorTransU20 (0,2) $ tensorTransU9 (0,3) block1 
+                        block3 = tensorTransU20 (0,1) $ tensorTransU9 (0,2) block1 
                         totalBlock1 = tensorAdd block1   $ tensorAdd block2 block3 
                         totalBlock2 = tensorTransL20 (0,2)   $ tensorTransL9 (0,2) totalBlock1
                         totalBlock3 = tensorTransL20 (0,1)   $ tensorTransL9 (0,1) totalBlock1
@@ -171,7 +171,7 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
                         tens = tensorAdd totalBlock1 $ tensorAdd totalBlock2 $ tensorAdd totalBlock3 $ tensorAdd totalBlock4 $ tensorAdd totalBlock5 totalBlock6
 
     index2SparseAnsatzAIBJCKSym :: M.Map [Int] Int -> ([Int],Rational) -> Maybe ((Int,Int),Rational)
-    index2SparseAnsatzAIBJCKSym trian ([d,c,e,a',c',d',l,k,m,s,i',k',l'],v) 
+    index2SparseAnsatzAIBJCKSym trian ([d,c,e,a',c',d',l,s,k,m,i',k',l'],v) 
             = case matrixInd of
                         (Just x) -> Just ((d*21^3*1000+c*21^2*1000+e*21*1000+l*1000+k*100+m*10+s+1,1+315+(div (315*316) 2)+x),v)
                         _ -> Nothing

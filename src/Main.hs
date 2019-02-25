@@ -78,7 +78,7 @@ module Main (
     import Data.List
     import Data.Maybe
     import qualified BinaryTree as Bin 
-    import qualified TensorTreeNumeric3 as Tree3 
+    import qualified TensorTreeNumeric4 as Tree4 
     --import PerturbationTree2_2
     import qualified Data.IntMap.Strict as I
     import qualified Data.Matrix as HasMat
@@ -1334,7 +1334,7 @@ module Main (
         writeFile "/cip/austausch/cgg/epsilon18BasisList.txt" $ unlines $ map show eps18BasisList
 
 
-        -}
+        
 
         let map1Area = trianMapAreaI 
         let map2Area = trianMapAreaJ
@@ -1350,6 +1350,32 @@ module Main (
         writeFile "/cip/austausch/cgg/ansatz18AIBJCK.txt" $ unlines $ map show ansatzAIBJCKComps
 
 
+        -}
+
+        let map1Area = trianMapAreaI 
+        let map2Area = trianMapAreaJ
+        let map1Metric = trianMapI2
+        let map2Metric = trianMapJ2
+
+        let map1AreaTree4 = Tree4.trianMapAreaI 
+        let map2AreaTree4 = Tree4.trianMapAreaJ
+        let map1MetricTree4 = Tree4.trianMapI2
+        let map2MetricTree4 = Tree4.trianMapJ2
+
+        let interM = interMetric map1Metric map2Metric 
+        let interMTree4 = Tree4.interMetric map1MetricTree4 map2MetricTree4 
+
+        let interA = interArea map1Area map2Area 
+        let interATree4 = Tree4.interArea map1AreaTree4 map2AreaTree4 
+
+        let inter2 = interEqn2 map1Area map2Area 
+        let inter2Tree4 = Tree4.interEqn2 map1AreaTree4 map2AreaTree4
+
+        --print $ (toListShow inter2) == (Tree4.toListShow8 inter2Tree4)
+
+        print interATree4
+
+        
         
         
 

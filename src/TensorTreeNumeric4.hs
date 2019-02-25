@@ -29,7 +29,8 @@ module TensorTreeNumeric4 (
     toListT8, toListShow8, intAIB, interMetric, interArea, interEqn2, interEqn3, trianMapAreaI, trianMapAreaJ, trianMapI2, trianMapJ2,
     interI2, interJ2, aSymI2, interIArea, interJArea,
     delta20, delta19, delta9, delta3, tensorContr20, tensorContr19, tensorContr9, tensorContr3, tensorProd8, 
-    tensorTransU20, tensorTransL20, tensorTransU19, tensorTransL19, tensorTransU9, tensorTransL9, tensorTransU3, tensorTransL3, tensorSub8
+    tensorTransU20, tensorTransL20, tensorTransU19, tensorTransL19, tensorTransU9, tensorTransL9, tensorTransU3, tensorTransL3, tensorSub8,
+    triangleMap3P, ansatzAIBJCK, index2SparseAnsatzAIBJCKSym
     
 ) where
 
@@ -114,29 +115,16 @@ module TensorTreeNumeric4 (
     data Tensor n k v where 
         Scalar :: v -> Tensor 0 k v 
         Tensor :: M.Map k (Tensor n k v) -> Tensor (n+1) k v
-        ZeroTensor :: Tensor n k v 
+        ZeroTensor :: Tensor n k v
 
     instance Functor (Tensor n k) where 
         fmap f (Scalar x) = Scalar (f x)
         fmap f (Tensor m) = Tensor (M.map (fmap f) m)
-        fmap f ZeroTensor = ZeroTensor 
+        fmap f (ZeroTensor) = ZeroTensor
 
     deriving instance (Show a, Show k) => Show (Tensor n k a)
 
     deriving instance (Eq a, Eq k) => Eq (Tensor n k a)
-
-    isZeroTensor :: (Eq a, Eq k) => Tensor n k a -> Bool
-    isZeroTensor (Tensor m) =  m == M.empty 
-    isZeroTensor ZeroTensor = True 
-    isZeroTensor x = False 
-
-    filterTens :: (Eq a, Eq k) => (a -> Bool) -> Tensor n k a -> Tensor n k a 
-    filterTens isZero (Scalar x) 
-            | isZero x = ZeroTensor 
-            | otherwise = Scalar x
-    filterTens isZero (Tensor m) = Tensor $ M.filter (not.isZeroTensor) $ M.map (filterTens isZero) m
-    filterTens isZero ZeroTensor = ZeroTensor
-
 
     getTensorMap :: Tensor (n+1) k v -> M.Map k (Tensor n k v)
     getTensorMap (Tensor m) = m 
@@ -152,18 +140,25 @@ module TensorTreeNumeric4 (
     mkTens (Empty, a) = Scalar a
     mkTens (Append x xs, a) = Tensor $ M.singleton x $ mkTens (xs, a)
 
-    insertOrAdd :: (Ord k, Eq k, Eq v) => (v -> Bool) -> (v -> v -> v) -> (IndList n k, v) -> Tensor n k v -> Tensor n k v 
-    insertOrAdd isZero addF (Empty, a) (Scalar b) = let newVal = addF a b in if isZero newVal then ZeroTensor else Scalar newVal
-    insertOrAdd isZero addF (Append x xs, a) (Tensor m) = Tensor $ M.filter (not.isZeroTensor) $ M.insertWith (\_ o -> insertOrAdd isZero addF (xs, a) o) x indTens m 
+    fromListT :: (Ord k, Eq k, Eq v) => (v -> v -> v) -> [(IndList n k, v)] -> Tensor n k v 
+    fromListT addF [x] = mkTens x 
+    fromListT addF (x:xs) = foldr (insertOrAdd addF) (mkTens x) xs 
+    fromListT addF [] = ZeroTensor
+
+    insertOrAdd :: (Ord k, Eq k, Eq v) =>  (v -> v -> v) -> (IndList n k, v) -> Tensor n k v -> Tensor n k v 
+    insertOrAdd addF (Empty, a) (Scalar b) = Scalar (addF a b)
+    insertOrAdd addF (Append x xs, a) (Tensor m) = Tensor $ M.insertWith (\_ o -> insertOrAdd addF (xs, a) o) x indTens m 
                 where
                     indTens = mkTens (xs, a)
-    insertOrAdd isZero addF inds ZeroTensor = mkTens inds
+    insertOrAdd addF inds ZeroTensor = mkTens inds
+    
 
-    tensorAdd :: (Ord k, Eq v) => (v -> Bool) -> (v -> v -> v) -> Tensor n k v -> Tensor n k v -> Tensor n k v 
-    tensorAdd isZero addF (Scalar a) (Scalar b) = let newVal = addF a b in if isZero newVal then ZeroTensor else Scalar newVal
-    tensorAdd isZero addF (Tensor m1) (Tensor m2) = Tensor $ M.filter (not.isZeroTensor) $ M.unionWith (tensorAdd isZero addF) m1 m2
-    tensorAdd isZero addF t ZeroTensor = t
-    tensorAdd isZero addF ZeroTensor t = t
+    tensorAdd :: (Ord k, Eq v) => (v -> v -> v) -> Tensor n k v -> Tensor n k v -> Tensor n k v 
+    tensorAdd addF (Scalar a) (Scalar b) = Scalar (addF a b)
+    tensorAdd addF (Tensor m1) (Tensor m2) = Tensor $ M.unionWith (tensorAdd addF) m1 m2
+    tensorAdd addF t1 ZeroTensor = t1
+    tensorAdd addF ZeroTensor t2 = t2
+    
 
     --tensorProduct: append the second tensor to the right of the first one 
 
@@ -171,25 +166,26 @@ module TensorTreeNumeric4 (
     tensorProd prodF (Scalar x) (Scalar y) = Scalar (prodF x y)
     tensorProd prodF (Scalar x) t2 = fmap (prodF x) t2 
     tensorProd prodF (Tensor m) t2 = Tensor $ M.map (\t1 -> tensorProd prodF t1 t2) m 
-    tensorProd prodF x y = error $ "called with" ++ show x ++ show y
+    tensorProd prodF t1 ZeroTensor = ZeroTensor 
+    tensorProd prodF ZeroTensor t2 = ZeroTensor 
 
     --could be improved if not the whole tensor but only the part necessary is converted to a list
 
-    tensorTrans :: (Ord k, Eq v) => (v -> Bool) -> (v -> v -> v) -> (Int,Int) -> Tensor n k v -> Tensor n k v
-    tensorTrans isZero addF (0, j) t = foldr (insertOrAdd isZero addF) ZeroTensor l
+    tensorTrans :: (Ord k, Eq v) => (v -> v -> v) -> (Int,Int) -> Tensor n k v -> Tensor n k v
+    tensorTrans addF (0, j) t = fromListT addF l
                     where 
                         l = (map (\(x,y) -> (swapHead j x, y)) $ toListT t)
-    tensorTrans isZero addF (i, j) (Tensor m) = Tensor $ M.map (tensorTrans isZero addF (i-1, j-1)) m 
+    tensorTrans addF (i, j) (Tensor m) = Tensor $ M.map (tensorTrans addF (i-1, j-1)) m 
 
 
-    tensorContr :: (Ord k, Ord k', Eq k, Eq v) => (v -> Bool) -> (k -> Int) -> (k' -> Int) -> (v -> v -> v) -> (Int, Int) -> Tensor n k (Tensor m k' v) -> Tensor (n-1) k (Tensor (m-1) k' v)
-    tensorContr isZero g f addF (0,j) t = filterTens isZeroTensor $ foldr (insertOrAdd (isZeroTensor) (tensorAdd isZero addF)) ZeroTensor tensList
+    tensorContr :: (Ord k, Ord k', Eq k, Eq v) => (k -> Int) -> (k' -> Int) -> (v -> v -> v) -> (Int, Int) -> Tensor n k (Tensor m k' v) -> Tensor (n-1) k (Tensor (m-1) k' v)
+    tensorContr g f addF (0,j) t = fromListT (tensorAdd addF) tensList 
             where
                 l = map (\(x,y) -> (x, toListT y)) $ toListT t
                 l2 = map (\(x,y) -> (tailInd x,(mapMaybe (removeContractionInd g f j (headInd x)) y))) l
                 l3 = filter (\(_,y) -> length y >= 1) l2 
-                tensList = map (\(x,y) -> (x, foldr (insertOrAdd isZero addF) ZeroTensor y)) l3
-    tensorContr isZero g f addF (i,j) (Tensor m) = Tensor $ M.map (tensorContr isZero g f addF (i-1,j)) m
+                tensList = map (\(x,y) -> (x, fromListT addF y)) l3
+    tensorContr g f addF (i,j) (Tensor m) = Tensor $ M.map (tensorContr g f addF (i-1,j)) m
 
 
     data Uind20 =  Uind20 {indValU20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show)
@@ -208,25 +204,25 @@ module TensorTreeNumeric4 (
     actOnScalar f = fmap (fmap (fmap (fmap (fmap (fmap (fmap (fmap f)))))))
 
     actOnL3 :: (Tensor n8 Lind3 Rational -> Tensor m8 Lind3 Rational) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 m8 
-    actOnL3 f = (filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap f)))))))))))))
+    actOnL3 f = fmap (fmap (fmap (fmap (fmap (fmap (fmap f))))))
 
     actOnU3 :: (Tensor n7 Uind3 (Tensor n8 Lind3 Rational) -> Tensor m7 Uind3 (Tensor m8 Lind3 Rational)) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 m7 m8 
-    actOnU3 f =  (filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap f)))))))))))
+    actOnU3 f = fmap (fmap (fmap (fmap (fmap (fmap f)))))
 
     actOnL9 :: (Tensor n6 Lind9 (Tensor n7 Uind3 (Tensor n8 Lind3 Rational)) -> Tensor m6 Lind9 (Tensor m7 Uind3 (Tensor m8 Lind3 Rational))) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 m6 m7 m8 
-    actOnL9 f = (filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap f)))))))))
+    actOnL9 f = fmap (fmap (fmap (fmap (fmap f))))
 
     actOnU9 :: (Tensor n5 Uind9 (Tensor n6 Lind9 (Tensor n7 Uind3 (Tensor n8 Lind3 Rational))) -> Tensor m5 Uind9 (Tensor m6 Lind9 (Tensor m7 Uind3 (Tensor m8 Lind3 Rational)))) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 m5 m6 m7 m8 
-    actOnU9 f = (filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap f)))))))
+    actOnU9 f = fmap (fmap (fmap (fmap f)))
 
     actOnL19 :: (Tensor n4 Lind19 (Tensor n5 Uind9 (Tensor n6 Lind9 (Tensor n7 Uind3 (Tensor n8 Lind3 Rational)))) -> Tensor m4 Lind19 (Tensor m5 Uind9 (Tensor m6 Lind9 (Tensor m7 Uind3 (Tensor m8 Lind3 Rational))))) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 m4 m5 m6 m7 m8 
-    actOnL19 f = (filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap f)))))
+    actOnL19 f = fmap (fmap (fmap f))
 
     actOnU19 :: (Tensor n3 Uind19 (Tensor n4 Lind19 (Tensor n5 Uind9 (Tensor n6 Lind9 (Tensor n7 Uind3 (Tensor n8 Lind3 Rational))))) -> Tensor m3 Uind19 (Tensor m4 Lind19 (Tensor m5 Uind9 (Tensor m6 Lind9 (Tensor m7 Uind3 (Tensor m8 Lind3 Rational)))))) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 m3 m4 m5 m6 m7 m8 
-    actOnU19 f = (filterTens isZeroTensor). (fmap ((filterTens isZeroTensor). (fmap f)))
+    actOnU19 f = fmap (fmap f)
 
     actOnL20 :: (Tensor n2 Lind20 (Tensor n3 Uind19 (Tensor n4 Lind19 (Tensor n5 Uind9 (Tensor n6 Lind9 (Tensor n7 Uind3 (Tensor n8 Lind3 Rational)))))) -> Tensor m2 Lind20 (Tensor m3 Uind19 (Tensor m4 Lind19 (Tensor m5 Uind9 (Tensor m6 Lind9 (Tensor m7 Uind3 (Tensor m8 Lind3 Rational))))))) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 m2 m3 m4 m5 m6 m7 m8 
-    actOnL20 f = (filterTens isZeroTensor). (fmap f)
+    actOnL20 f = fmap f
 
     actOnU20 :: (Tensor n1 Uind20 (Tensor n2 Lind20 (Tensor n3 Uind19 (Tensor n4 Lind19 (Tensor n5 Uind9 (Tensor n6 Lind9 (Tensor n7 Uind3 (Tensor n8 Lind3 Rational))))))) -> Tensor m1 Uind20 (Tensor m2 Lind20 (Tensor m3 Uind19 (Tensor m4 Lind19 (Tensor m5 Uind9 (Tensor m6 Lind9 (Tensor m7 Uind3 (Tensor m8 Lind3 Rational)))))))) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 
     actOnU20 f = f
@@ -234,7 +230,7 @@ module TensorTreeNumeric4 (
     
 
     tensorAdd8 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
-    tensorAdd8 = tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+))))))))
+    tensorAdd8 = tensorAdd (tensorAdd  (tensorAdd (tensorAdd (tensorAdd (tensorAdd (tensorAdd (tensorAdd  (+))))))))
     
     tensorSub8 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
     tensorSub8 t1 t2 = tensorAdd8 t1 $ actOnScalar ((*) (-1)) t2 
@@ -243,48 +239,48 @@ module TensorTreeNumeric4 (
     tensorSMult s t = actOnScalar ((*) s) t
 
     tensorTransU20 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
-    tensorTransU20 inds = actOnU20 (tensorTrans (isZeroTensor) (\t1 t2 -> tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+))))))) t1 t2) inds)
+    tensorTransU20 inds = actOnU20 (tensorTrans (\t1 t2 -> tensorAdd (tensorAdd (tensorAdd (tensorAdd (tensorAdd (tensorAdd  (tensorAdd (+))))))) t1 t2) inds)
 
     tensorTransL20 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
-    tensorTransL20 inds = actOnL20 (tensorTrans (isZeroTensor) (\t1 t2 -> tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+)))))) t1 t2) inds)
+    tensorTransL20 inds = actOnL20 (tensorTrans (\t1 t2 -> tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd  (+)))))) t1 t2) inds)
 
     tensorTransU19 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
-    tensorTransU19 inds = actOnU19 (tensorTrans (isZeroTensor) (\t1 t2 -> tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+))))) t1 t2) inds)
+    tensorTransU19 inds = actOnU19 (tensorTrans  (\t1 t2 -> tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd (+))))) t1 t2) inds)
 
     tensorTransL19 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
-    tensorTransL19 inds = actOnL19 (tensorTrans (isZeroTensor) (\t1 t2 -> tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+)))) t1 t2) inds)
+    tensorTransL19 inds = actOnL19 (tensorTrans  (\t1 t2 -> tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd (+)))) t1 t2) inds)
 
     tensorTransU9 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
-    tensorTransU9 inds = actOnU9 (tensorTrans (isZeroTensor) (\t1 t2 -> tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+))) t1 t2) inds)
+    tensorTransU9 inds = actOnU9 (tensorTrans  (\t1 t2 -> tensorAdd  (tensorAdd  (tensorAdd (+))) t1 t2) inds)
 
     tensorTransL9 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
-    tensorTransL9 inds = actOnL9 (tensorTrans (isZeroTensor) (\t1 t2 -> tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+)) t1 t2) inds)
+    tensorTransL9 inds = actOnL9 (tensorTrans  (\t1 t2 -> tensorAdd  (tensorAdd  (+)) t1 t2) inds)
 
     tensorTransU3 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
-    tensorTransU3 inds = actOnU3 (tensorTrans (isZeroTensor) (\t1 t2 -> tensorAdd ((==) 0) (+) t1 t2) inds)
+    tensorTransU3 inds = actOnU3 (tensorTrans  (\t1 t2 -> tensorAdd (+) t1 t2) inds)
 
     tensorTransL3 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 
-    tensorTransL3 inds = actOnL3 (tensorTrans ((==) 0) (+) inds)
+    tensorTransL3 inds = actOnL3 (tensorTrans  (+) inds)
 
     
 
     tensorContr20 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 (n1-1) (n2-1) n3 n4 n5 n6 n7 n8 
-    tensorContr20 inds = actOnU20 (tensorContr (isZeroTensor) indValU20 indValL20 addF inds)
+    tensorContr20 inds = actOnU20 (tensorContr  indValU20 indValL20 addF inds)
                 where
-                    addF = tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+))))))
+                    addF = tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd  (+))))))
 
     tensorContr19 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 (n3-1) (n4-1) n5 n6 n7 n8 
-    tensorContr19 inds = actOnU19 (tensorContr (isZeroTensor) indValU19 indValL19 addF inds)
+    tensorContr19 inds = actOnU19 (tensorContr  indValU19 indValL19 addF inds)
                 where
-                    addF = \t1 t2 -> tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+)))) t1 t2
+                    addF = \t1 t2 -> tensorAdd  (tensorAdd  (tensorAdd  (tensorAdd (+)))) t1 t2
 
     tensorContr9 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 (n5-1) (n6-1) n7 n8 
-    tensorContr9 inds = actOnU9 (tensorContr (isZeroTensor) indValU9 indValL9 addF inds)
+    tensorContr9 inds = actOnU9 (tensorContr  indValU9 indValL9 addF inds)
                 where
-                    addF = \t1 t2 -> tensorAdd (isZeroTensor) (tensorAdd ((==) 0) (+)) t1 t2
+                    addF = \t1 t2 -> tensorAdd  (tensorAdd  (+)) t1 t2
         
     tensorContr3 :: (Int,Int) -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 -> Tensor8 n1 n2 n3 n4 n5 n6 (n7-1) (n8-1) 
-    tensorContr3 inds = actOnU3 (tensorContr ((==) 0) indValU3 indValL3 (+) inds)
+    tensorContr3 inds = actOnU3 (tensorContr  indValU3 indValL3 (+) inds)
                 
 
 
@@ -510,3 +506,44 @@ module TensorTreeNumeric4 (
                 totalBlock = tensorAdd8 block1 $ tensorAdd8 block2 block3 
                 tens = tensorContr20 (0,2) $ tensorProd8 totalBlock flatIntA 
                 tensTrans = tensorTransU3 (0,1) $ tensorTransL3 (0,1) tens 
+
+    triangleMap3P :: Int -> M.Map [Int] Int
+    triangleMap3P i = M.fromList $ zip j k
+                    where
+                        j = [ [a,b,c] | a <- [1..i], b <- [a..i], c <- [b..i] ]
+                        k = [1..]
+
+    ansatzAIBJCK :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 3 0 0 4 3 0 0 
+    ansatzAIBJCK map1Metric map2Metric map1Area map2Area = totalBlock3
+                    where
+                        intArea = interArea map1Area map2Area
+                        intMetric = interMetric map1Metric map2Metric
+                        int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                        antiSym = aSymI2 map1Metric
+                        aSym = tensorContr3 (1,1) $ tensorProd8 invEta antiSym
+                        int3Contr = tensorContr3 (0,0) $ tensorContr3 (0,1) $ tensorProd8 int3 aSym
+                        block1 = tensorProd8 int3Contr $ tensorProd8 delta20   $ tensorProd8 delta20   $ tensorProd8 delta9 delta9
+                        block2 = tensorTransU20 (0,2) $ tensorTransU9 (0,3) block1 
+                        block3 = tensorTransU20 (0,1) $ tensorTransU9 (0,2) block1 
+                        totalBlock1 = tensorAdd8 block1   $ tensorAdd8 block2 block3 
+                        totalBlock2 = tensorTransL20 (0,2)   $ tensorTransL9 (0,2) totalBlock1
+                        totalBlock3 = tensorTransL20 (0,1)   $ tensorTransL9 (0,1) totalBlock1
+                        totalBlock4 = tensorTransL20 (1,2)  $ tensorTransL9 (1,2) totalBlock1
+                        totalBlock5 = tensorTransL20 (1,2)  $ tensorTransL9 (1,2) totalBlock3
+                        totalBlock6 = tensorTransL20 (0,2)  $ tensorTransL9 (0,2) totalBlock3
+                        tens = tensorAdd8 totalBlock1 $ tensorAdd8 totalBlock2 $ tensorAdd8 totalBlock3 $ tensorAdd8 totalBlock4 $ tensorAdd8 totalBlock5 totalBlock6
+
+    index2SparseAnsatzAIBJCKSym :: M.Map [Int] Int -> ([Int],Rational) -> Maybe ((Int,Int),Rational)
+    index2SparseAnsatzAIBJCKSym trian ([d,c,e,a',c',d',l,s,k,m,i',k',l'],v) 
+            = case matrixInd of
+                        (Just x) -> Just ((d*21^3*1000+c*21^2*1000+e*21*1000+l*1000+k*100+m*10+s+1,1+315+(div (315*316) 2)+x),v)
+                        _ -> Nothing
+        where
+                                ind1 = 105 + a' * 10 + i' +1
+                                ind2 = 105 + c' * 10 + k' +1
+                                ind3 = 105 + d' *10 + l' +1 
+                                v' x
+                                    | ind1 == ind2 && ind1 == ind3 = 1/6 *x
+                                    | ind1 == ind2 || ind1 == ind3 || ind2 == ind3 = 1/2 *x
+                                    | otherwise = x
+                                matrixInd = (M.lookup) [ind1, ind2, ind3] trian

@@ -1350,7 +1350,7 @@ module Main (
         writeFile "/cip/austausch/cgg/ansatz18AIBJCK.txt" $ unlines $ map show ansatzAIBJCKComps
 
 
-        -}
+        
 
         let map1Area = trianMapAreaI 
         let map2Area = trianMapAreaJ
@@ -1371,10 +1371,27 @@ module Main (
         let inter2 = interEqn2 map1Area map2Area 
         let inter2Tree4 = Tree4.interEqn2 map1AreaTree4 map2AreaTree4
 
-        --print $ (toListShow inter2) == (Tree4.toListShow8 inter2Tree4)
+        let inter3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+        let inter3Tree4 = Tree4.interEqn3 map1MetricTree4 map2MetricTree4 map1AreaTree4 map2AreaTree4
 
-        print interATree4
+        let interAIB = intAIB map1Metric map2Metric map1Area map2Area
+        let interAIBTree4 = Tree4.intAIB map1MetricTree4 map2MetricTree4 map1AreaTree4 map2AreaTree4
 
+        -}
+        
+
+        let map1Area = Tree4.trianMapAreaI 
+        let map2Area = Tree4.trianMapAreaJ
+        let map1Metric = Tree4.trianMapI2
+        let map2Metric = Tree4.trianMapJ2
+
+        let triangle3 = Tree4.triangleMap3P 315 
+
+        let ansatzAIBJCKCond = Tree4.ansatzAIBJCK map1Metric map2Metric map1Area map2Area 
+
+        let ansatzAIBJCKComps = mapMaybe (Tree4.index2SparseAnsatzAIBJCKSym triangle3) $ Tree4.toListShow ansatzAIBJCKCond 
+
+        writeFile "/cip/austausch/cgg/ansatz18AIBJCK.txt" $ unlines $ map show ansatzAIBJCKComps
         
         
         

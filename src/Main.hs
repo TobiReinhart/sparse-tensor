@@ -1389,7 +1389,7 @@ module Main (
 
         let ansatzAIBJCKCond = Tree4.ansatzAIBJCK map1Metric map2Metric map1Area map2Area 
 
-        let ansatzAIBJCKComps = mapMaybe (Tree4.index2SparseAnsatzAIBJCKSym triangle3) $ Tree4.toListShow ansatzAIBJCKCond 
+        let ansatzAIBJCKComps = mapMaybe (Tree4.index2SparseAnsatzAIBJCKSym triangle3) $ Tree4.toListShow8 ansatzAIBJCKCond 
 
         writeFile "/cip/austausch/cgg/ansatz18AIBJCK.txt" $ unlines $ map show ansatzAIBJCKComps
         

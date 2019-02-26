@@ -1380,29 +1380,30 @@ module Main (
         -}
         
 
-        etaL' <- readFile "/cip/austausch/cgg/eta18List.txt"
+        etaTens' <- readFile "/cip/austausch/cgg/eta18TensList.txt"
 
-        let etaL = read etaL' :: [([(Int,Int)],Int,Int)]
+        let etaTens = map read $ unlines etaTens' :: [I.IntMap Int]
 
-        etaVars' <- readFile "/cip/austausch/cgg/eta18Vars.txt"
+        epsTens' <- readFile "/cip/austausch/cgg/epsilon18TensList.txt"
 
-        let etaVars = map read $ lines etaVars' :: [Int]
+        let epsTens = map read $ unlines epsTens' :: [I.IntMap Int]
 
-        let eta18TensList = rmDepVarsTensList 1 etaVars etaL
+        let tensList = map (I.map fromIntegral) $ zipWith (I.unionWith (+)) etaTens epsTens :: [Var]
 
-        writeFile "/cip/austausch/cgg/eta18TensList.txt" $ unlines $ map show eta18TensList
+        let tensIndList = area18TensList tensList 
 
-        epsL' <- readFile "/cip/austausch/cgg/epsilon18ListLines.txt"
+        writeFile "/cip/austausch/cgg/ansTens18IndList.txt" unlines $ map show tensIndList 
 
-        let epsL = map read $ lines epsL' :: [([(Int,Int)],Int,Int)]
+        print "file written !"
 
-        epsVars' <- readFile "/cip/austausch/cgg/epsilon18Vars.txt"
+        let tens18 = fromListT8 tensIndList 
 
-        let epsVars = map read $ lines epsVars' :: [Int]
+        writeFile "/cip/austausch/cgg/ansTens18Tensor.txt" show tens18 
 
-        let eps18TensList = rmDepVarsTensList (1+(length etaVars)) epsVars epsL
 
-        writeFile "/cip/austausch/cgg/epsilon18TensList.txt" $ unlines $ map show eps18TensList
+
+
+
 
 
         

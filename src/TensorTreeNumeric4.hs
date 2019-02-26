@@ -30,7 +30,8 @@ module TensorTreeNumeric4 (
     interI2, interJ2, aSymI2, interIArea, interJArea,
     delta20, delta19, delta9, delta3, tensorContr20, tensorContr19, tensorContr9, tensorContr3, tensorProd8, 
     tensorTransU20, tensorTransL20, tensorTransU19, tensorTransL19, tensorTransU9, tensorTransL9, tensorTransU3, tensorTransL3, tensorSub8,
-    triangleMap3P, ansatzAIBJCK, index2SparseAnsatzAIBJCKSym
+    triangleMap3P, ansatzAIBJCK, index2SparseAnsatzAIBJCKSym, Var, area18TensList, Tensor(..), Tesnor8, IndList(..),
+    Uind20, Lind20, Uind19, Lind19, Uind9, Lind9, Uind3, Lind3, IndTuple, fromListT8 
     
 ) where
 
@@ -124,6 +125,8 @@ module TensorTreeNumeric4 (
 
     deriving instance (Show a, Show k) => Show (Tensor n k a)
 
+    deriving instance (Read a, Read k) => Read (Tensor n k a)
+
     deriving instance (Eq a, Eq k) => Eq (Tensor n k a)
 
     getTensorMap :: Tensor (n+1) k v -> M.Map k (Tensor n k v)
@@ -188,14 +191,14 @@ module TensorTreeNumeric4 (
     tensorContr g f addF (i,j) (Tensor m) = Tensor $ M.map (tensorContr g f addF (i-1,j)) m
 
 
-    data Uind20 =  Uind20 {indValU20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show)
-    data Lind20 =  Lind20 {indValL20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show)
-    data Uind19 =  Uind19 {indValU19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show)
-    data Lind19 =  Lind19 {indValL19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show)
-    data Uind9 =  Uind9 {indValU9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show)
-    data Lind9 =  Lind9 {indValL9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show)
-    data Uind3 =  Uind3 {indValU3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show)
-    data Lind3 =  Lind3 {indValL3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show)
+    data Uind20 =  Uind20 {indValU20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
+    data Lind20 =  Lind20 {indValL20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
+    data Uind19 =  Uind19 {indValU19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
+    data Lind19 =  Lind19 {indValL19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
+    data Uind9 =  Uind9 {indValU9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
+    data Lind9 =  Lind9 {indValL9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
+    data Uind3 =  Uind3 {indValU3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
+    data Lind3 =  Lind3 {indValL3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
 
 
     type Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 a = Tensor n1 Uind20 (Tensor n2 Lind20 (Tensor n3 Uind19 (Tensor n4 Lind19 (Tensor n5 Uind9 (Tensor n6 Lind9 (Tensor n7 Uind3 (Tensor n8 Lind3 a)))))))
@@ -380,7 +383,7 @@ module TensorTreeNumeric4 (
                 l = toListT8 t 
                 showInd (i1,i2,i3,i4,i5,i6,i7,i8) = (map indValU20 $ toList i1) ++ (map indValL20 $ toList i2) ++ (map indValU19 $ toList i3) ++ (map indValL19 $ toList i4) ++ (map indValU9 $ toList i5) ++ (map indValL9 $ toList i6) ++ (map indValU3 $ toList i7) ++ (map indValL3 $ toList i8) 
     
-    type Var = I.IntMap Rational 
+    type Var = I.IntMap Rational  
 
     multVar :: Rational -> Var -> Var 
     multVar s = I.map ((*) s)
@@ -392,6 +395,9 @@ module TensorTreeNumeric4 (
     area18IndList = map (map (\[(a,i),(b,j),(c,k)] -> (Append (Uind20 a) $ Append (Uind20 b) $ singletonInd (Uind20 c), Empty, Empty, Empty, Append (Uind9 i) $ Append (Uind9 j) $ singletonInd (Uind9 k), Empty, Empty, Empty))) l
             where
                 l = [ nub $ permutations [(a,i),(b,j),(c,k)] | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k)]
+
+    area18TensList :: [Var] -> [(IndTuple 3 0 0 0 3 0 0 0, Var)]
+    area18TensList vars = concat $ zipWith (\x y -> zip x (repeat y)) area18IndList vars 
 
 
     --now the basic tensors

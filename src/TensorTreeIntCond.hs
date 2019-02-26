@@ -151,7 +151,7 @@ intAIB, triangleMap, ansatzAB, index2SparseAnsatzAB, showMatLab, ansatzABSym, in
                         prod = tensorProd tens totalBlock2
 
     ansatzAIBJCK :: M.Map (IndList 2 Lind_3) (IndList 1 Uind_9) -> M.Map (IndList 2 Uind_3) (IndList 1 Lind_9) -> M.Map (IndList 4 Lind_3) (IndList 1 Uind_20) -> M.Map (IndList 4 Uind_3) (IndList 1 Lind_20) -> Tensor 3 3 0 0 4 3 0 0 Rational
-    ansatzAIBJCK map1Metric map2Metric map1Area map2Area = totalBlock1
+    ansatzAIBJCK map1Metric map2Metric map1Area map2Area = block1
                     where
                         intArea = interArea map1Area map2Area
                         intMetric = interMetric map1Metric map2Metric

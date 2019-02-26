@@ -1380,18 +1380,30 @@ module Main (
         -}
         
 
-        let map1Area = trianMapAreaI 
-        let map2Area = trianMapAreaJ
-        let map1Metric = trianMapI2
-        let map2Metric = trianMapJ2
+        etaL' <- readFile "/cip/austausch/cgg/eta18List.txt"
 
-        let triangle3 = triangleMap3P 315 
+        let etaL = read etaL' :: [([(Int,Int)],Int,Int)]
 
-        let ansatzAIBJCKCond = ansatzAIBJCK map1Metric map2Metric map1Area map2Area 
+        etaVars' <- readFile "/cip/austausch/cgg/eta18Vars.txt"
 
-        let ansatzAIBJCKComps = mapMaybe (index2SparseAnsatzAIBJCKSym triangle3) $ toListShow ansatzAIBJCKCond 
+        let etaVars = map read $ lines etaVars' :: [Int]
 
-        writeFile "/cip/austausch/cgg/ansatz18AIBJCK.txt" $ unlines $ map show ansatzAIBJCKComps
+        let eta18TensList = rmDepVarsTensList 1 etaVars etaL
+
+        writeFile "/cip/austausch/cgg/eta18TensList.txt" $ unlines $ map show eta18TensList
+
+        epsL' <- readFile "/cip/austausch/cgg/epsilon18ListLines.txt"
+
+        let epsL = map read $ lines epsL' :: [([(Int,Int)],Int,Int)]
+
+        epsVars' <- readFile "/cip/austausch/cgg/epsilon18Vars.txt"
+
+        let epsVars = map read $ lines epsVars' :: [Int]
+
+        let eps18TensList = rmDepVarsTensList (1+(length etaVars)) epsVars epsL
+
+        writeFile "/cip/austausch/cgg/epsilon18TensList.txt" $ unlines $ map show eps18TensList
+
 
         
 

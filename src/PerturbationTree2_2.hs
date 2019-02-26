@@ -21,7 +21,7 @@ module PerturbationTree2_2 (
     filterList18, symList18, areaEvalMap18,
     trianMapArea, trianMapDerivative,
     triangleMap2P, triangleMap3P,
-     evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, rmDepVarsAnsList
+     evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, rmDepVarsAnsList, rmDepVarsTensList
 
 
     
@@ -540,6 +540,13 @@ module PerturbationTree2_2 (
             where
                 s = I.fromList $ zip iDeps [1..]
                 lRed = map (rmDepVars s) l 
+
+    rmDepVarsTensList :: Int -> [Int] -> [([(Int,Int)],Int,Int)] -> [I.IntMap Int]
+    rmDepVarsTensList fstVar iDeps l = map I.fromList lRed
+            where
+                s = I.fromList $ zip iDeps [fstVar..]
+                lRed = map (\(x,mult,matInd) -> map (\(i,r) -> (i,r*mult)) x) $ map (rmDepVars s) l 
+
 
 
     --using eigen 

@@ -30,8 +30,8 @@ module TensorTreeNumeric4 (
     interI2, interJ2, aSymI2, interIArea, interJArea,
     delta20, delta19, delta9, delta3, tensorContr20, tensorContr19, tensorContr9, tensorContr3, tensorProd8, 
     tensorTransU20, tensorTransL20, tensorTransU19, tensorTransL19, tensorTransU9, tensorTransL9, tensorTransU3, tensorTransL3, tensorSub8,
-    triangleMap3P, ansatzAIBJCK, index2SparseAnsatzAIBJCKSym, Var, area18TensList, Tensor(..), Tesnor8, IndList(..),
-    Uind20, Lind20, Uind19, Lind19, Uind9, Lind9, Uind3, Lind3, IndTuple, fromListT8 
+    triangleMap3P, ansatzAIBJCK, index2SparseAnsatzAIBJCKSym, Var, area18TensList, Tensor(..), Tensor8, IndList(..),
+    Uind20, Lind20, Uind19, Lind19, Uind9, Lind9, Uind3, Lind3, IndTuple, fromListT8, fromListTWith8
     
 ) where
 
@@ -124,8 +124,6 @@ module TensorTreeNumeric4 (
         fmap f (ZeroTensor) = ZeroTensor
 
     deriving instance (Show a, Show k) => Show (Tensor n k a)
-
-    deriving instance (Read a, Read k) => Read (Tensor n k a)
 
     deriving instance (Eq a, Eq k) => Eq (Tensor n k a)
 

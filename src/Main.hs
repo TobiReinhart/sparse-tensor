@@ -1382,23 +1382,23 @@ module Main (
 
         etaTens' <- readFile "/cip/austausch/cgg/eta18TensList.txt"
 
-        let etaTens = map read $ unlines etaTens' :: [I.IntMap Int]
+        let etaTens = map read $ lines etaTens' :: [I.IntMap Int]
 
         epsTens' <- readFile "/cip/austausch/cgg/epsilon18TensList.txt"
 
-        let epsTens = map read $ unlines epsTens' :: [I.IntMap Int]
+        let epsTens = map read $ lines epsTens' :: [I.IntMap Int]
 
-        let tensList = map (I.map fromIntegral) $ zipWith (I.unionWith (+)) etaTens epsTens :: [Var]
+        let tensList = map (I.map fromIntegral) $ zipWith (I.unionWith (+)) etaTens epsTens :: [Tree4.Var]
 
-        let tensIndList = area18TensList tensList 
+        let tensIndList = Tree4.area18TensList tensList 
 
-        writeFile "/cip/austausch/cgg/ansTens18IndList.txt" unlines $ map show tensIndList 
+        writeFile "/cip/austausch/cgg/ansTens18IndList.txt" $ unlines $ map show tensIndList 
 
         print "file written !"
 
-        let tens18 = fromListT8 tensIndList 
+        let tens18 = Tree4.fromListTWith8 (I.unionWith (+)) tensIndList 
 
-        writeFile "/cip/austausch/cgg/ansTens18Tensor.txt" show tens18 
+        writeFile "/cip/austausch/cgg/ansTens18Tensor.txt" $ show tens18 
 
 
 

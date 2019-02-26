@@ -389,7 +389,7 @@ module TensorTreeNumeric4 (
     addVars = I.unionWith (+) 
 
     area18IndList :: [[IndTuple 3 0 0 0 3 0 0 0]]
-    area18IndList = map (map (\[(a,i),(b,j),(c,k)] -> (Append (Uind20 a) $ Append (Uind20 b) $ singletonInd (Uind20 c), Empty, Empty, Empty, Append (Uind9 i) $ Append (Uind9 j) $ singletonInd (Uind9 k), Empty, Empty, Empty)))
+    area18IndList = map (map (\[(a,i),(b,j),(c,k)] -> (Append (Uind20 a) $ Append (Uind20 b) $ singletonInd (Uind20 c), Empty, Empty, Empty, Append (Uind9 i) $ Append (Uind9 j) $ singletonInd (Uind9 k), Empty, Empty, Empty))) l
             where
                 l = [ nub $ permutations [(a,i),(b,j),(c,k)] | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k)]
 

@@ -30,7 +30,7 @@ module TensorTreeNumeric2 (
     Uind_20, Lind_20, Uind_19, Lind_19, Uind_9, Lind_9, Uind_3, Lind_3, toListT, toListShow, toListShowIndex, fromListT, interEqn3, tensorProd, delta20, delta9, delta3, delta19, tensorAdd,
     tensorSub, tensorContr20, tensorContr19, tensorContr9, tensorContr3, aSymI2,
     tensorTransU20, tensorTransL20, tensorTransL3, interArea, flatInter, tensorTransU3, tensorTransL9,
-    interI2, interJ2, interI3, interJ3, interIArea, interJArea, interMetric, interEqn2 , isValid,
+    interI2, interJ2, interI3, interJ3, interIArea, interJArea, interMetric, interEqn2 , isValid, tensorSize,
     swapHead, toListInd, removeZeros, printTensorTree, invEta, toListU20, toListL20, toListU19, toListL19, toListU9, toListL9, toListU3, toListL3,
     insertOrAddU20, insertOrAddL20, insertOrAddU19, insertOrAddL19, insertOrAddU9, insertOrAddL9, insertOrAddU3, insertOrAddL3, tensorTransU9
     
@@ -162,6 +162,19 @@ module TensorTreeNumeric2 (
         fmap f (TensorL9 t) = TensorL9 $ map (\(i,t) -> (i,fmap f t)) t  
         fmap f (TensorU3 t) = TensorU3 $ map (\(i,t) -> (i,fmap f t)) t  
         fmap f (TensorL3 t) = TensorL3 $ map (\(i,t) -> (i,fmap f t)) t  
+
+    tensorSize :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Int 
+    tensorSize (Scalar l) = 1 
+    tensorSize (TensorU20 t) = length t + (foldr (\x y -> (tensorSize $ snd x) + y) 0 t)
+    tensorSize (TensorL20 t) = length t + (foldr (\x y -> (tensorSize $ snd x) + y) 0 t)
+    tensorSize (TensorU19 t) = length t + (foldr (\x y -> (tensorSize $ snd x) + y) 0 t)
+    tensorSize (TensorL19 t) = length t + (foldr (\x y -> (tensorSize $ snd x) + y) 0 t)
+    tensorSize (TensorU9 t) = length t + (foldr (\x y -> (tensorSize $ snd x) + y) 0 t)
+    tensorSize (TensorL9 t) = length t + (foldr (\x y -> (tensorSize $ snd x) + y) 0 t)
+    tensorSize (TensorU3 t) = length t + (foldr (\x y -> (tensorSize $ snd x) + y) 0 t)
+    tensorSize (TensorL3 t) = length t + (foldr (\x y -> (tensorSize $ snd x) + y) 0 t)
+
+
 
     isValid :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Bool
     isValid (Scalar x) = True 

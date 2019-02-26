@@ -1380,20 +1380,19 @@ module Main (
         -}
         
 
-        let map1Area = Tree4.trianMapAreaI 
-        let map2Area = Tree4.trianMapAreaJ
-        let map1Metric = Tree4.trianMapI2
-        let map2Metric = Tree4.trianMapJ2
+        let map1Area = trianMapAreaI 
+        let map2Area = trianMapAreaJ
+        let map1Metric = trianMapI2
+        let map2Metric = trianMapJ2
 
-        let triangle3 = Tree4.triangleMap3P 315 
+        let triangle3 = triangleMap3P 315 
 
-        let ansatzAIBJCKCond = Tree4.ansatzAIBJCK map1Metric map2Metric map1Area map2Area 
+        let ansatzAIBJCKCond = ansatzAIBJCK map1Metric map2Metric map1Area map2Area 
 
-        let ansatzAIBJCKComps = mapMaybe (Tree4.index2SparseAnsatzAIBJCKSym triangle3) $ Tree4.toListShow8 ansatzAIBJCKCond 
+        let ansatzAIBJCKComps = mapMaybe (index2SparseAnsatzAIBJCKSym triangle3) $ toListShow ansatzAIBJCKCond 
 
         writeFile "/cip/austausch/cgg/ansatz18AIBJCK.txt" $ unlines $ map show ansatzAIBJCKComps
-        
-        
+
         
 
 

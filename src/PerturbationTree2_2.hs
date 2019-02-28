@@ -42,7 +42,7 @@ module PerturbationTree2_2 (
      evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, getPivots, rmDepVarsAnsList, rmDepVarsTensList,
      getTensor, mkAnsatzTensor,
      areaEvalMap4Inds, areaEvalMap6Inds, areaEvalMap8Inds, areaEvalMap10_1Inds, areaEvalMap10_2Inds, areaEvalMap12Inds, areaEvalMap14_1Inds, areaEvalMap14_2Inds, areaEvalMap12_1Inds,
-     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon
+     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds
 
 
     
@@ -535,25 +535,25 @@ module PerturbationTree2_2 (
     --eval All Inds (list of lists with (VarNr, Factor, multiplicity))
 
     evalAllListEta :: M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEta -> [([(Int,Rational)],Int,Int)]
-    evalAllListEta epsM evalMs f = l
+    evalAllListEta epsM evalMs f = l'
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
                     l' = runEval $ parListChunk 1000 rdeepseq l
 
     evalAllTensorEta :: (NFData a) => M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> [([(Int,Rational)],Int,a)]
-    evalAllTensorEta epsM evalMs f = l
+    evalAllTensorEta epsM evalMs f = l'
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
                     l' = runEval $ parListChunk 1000 rdeepseq l
 
     evalAllListEpsilon :: M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEpsilon -> [([(Int,Rational)],Int,Int)]
-    evalAllListEpsilon epsM evalMs f = l
+    evalAllListEpsilon epsM evalMs f = l'
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
                     l' = runEval $ parListChunk 1000 rdeepseq l
 
     evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Rational)],Int,a)]
-    evalAllTensorEpsilon epsM evalMs f = l
+    evalAllTensorEpsilon epsM evalMs f = l'
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
                     l' = runEval $ parListChunk 1000 rdeepseq l

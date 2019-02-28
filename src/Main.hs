@@ -1398,9 +1398,9 @@ module Main (
         -}
 
 
-        let ansatz14Tens = mkAnsatzTensor 14 filterList14_2 symList14_2 1 epsMap (areaEvalMap14_2Inds trianMapArea trianMapDerivative)
+        let ansatz16Tens = mkAnsatzTensor 16 filterList16_1 symList16_1 1 epsMap (areaEvalMap16_1Inds trianMapArea trianMapDerivative)
 
-        let ansatz14TensTest = ansatzABCI trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz14Tens
+        let ansatz16TensTest = ansatzApBqCI trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz16Tens
 
         let testRanks = doubleCheckAnsatzEta epsMap (areaEvalMap10_1 trianMapArea trianMapDerivative triangleMap3P) (getEtaForest [1..10] filterList10_1 symList10_1)
 
@@ -1414,7 +1414,7 @@ module Main (
         
         let eps14 = evalAllListEpsilon epsMap (areaEvalMap14_2 trianMapArea trianMapDerivative triangleMap3P) $ getEpsForest [1..14] filterList14_2 symList14_2
 
-        print $ toListShowVar ansatz14TensTest
+        print $ toListShowVar ansatz16TensTest
         
 
 

@@ -535,24 +535,28 @@ module PerturbationTree2_2 (
     --eval All Inds (list of lists with (VarNr, Factor, multiplicity))
 
     evalAllListEta :: M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEta -> [([(Int,Rational)],Int,Int)]
-    evalAllListEta epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
+    evalAllListEta epsM evalMs f = l
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
+                    l' = runEval $ parListChunk 1000 rdeepseq l
 
     evalAllTensorEta :: (NFData a) => M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> [([(Int,Rational)],Int,a)]
-    evalAllTensorEta epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
+    evalAllTensorEta epsM evalMs f = l
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
+                    l' = runEval $ parListChunk 1000 rdeepseq l
 
     evalAllListEpsilon :: M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEpsilon -> [([(Int,Rational)],Int,Int)]
-    evalAllListEpsilon epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
+    evalAllListEpsilon epsM evalMs f = l
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
+                    l' = runEval $ parListChunk 1000 rdeepseq l
 
     evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Rational)],Int,a)]
-    evalAllTensorEpsilon epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
+    evalAllTensorEpsilon epsM evalMs f = l
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
+                    l' = runEval $ parListChunk 1000 rdeepseq l
 
     reduceAnsList :: [([(Int,Rational)],Int,a)] -> [[(Int,Rational)]]
     reduceAnsList l = map scaleEqn $ nubBy (\x y -> (fst x) == (fst y) ) $ mapMaybe normalizeEqn l 

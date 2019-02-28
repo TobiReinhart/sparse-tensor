@@ -17,7 +17,7 @@ executable HaskellTensor
   hs-source-dirs:      src
   main-is:             Main.hs
   default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5, containers, tf-random, split, ghc-typelits-natnormalise, ghc-typelits-knownnat, eigen, matrix, vector, hmatrix, parallel
+  build-depends:       base >= 4.7 && < 5, containers, tf-random, split, ghc-typelits-natnormalise, ghc-typelits-knownnat, eigen, matrix, vector, hmatrix, parallel, deepseq
   other-modules:       BasicTensors, EquivarianceEqns, EquivarianceMetric, Index, Ivar, Pde, Tensor, Integrabillity, Ansatz, Symmetrize,
                        Perturbation, AnsatzEqns2, Order2Int, Order3Int, IndexMap, TensorMap, BasicTensorsMap, Order1Int, PerturbationTree,
                        PerturbationTree2, Tensor2, TensorF, TensorInt, TensorTreeNumeric, TensorTreeNumeric2, TensorTreeIntCond, BinaryTree, TensorTreeNumeric3, PerturbationTree3, PerturbationTree4,

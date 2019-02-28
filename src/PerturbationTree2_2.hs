@@ -539,7 +539,7 @@ module PerturbationTree2_2 (
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
 
-    evalAllTensorEta :: M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> [([(Int,Rational)],Int,a)]
+    evalAllTensorEta :: (NFData a) => M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> [([(Int,Rational)],Int,a)]
     evalAllTensorEta epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
@@ -549,7 +549,7 @@ module PerturbationTree2_2 (
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
 
-    evalAllTensorEpsilon :: M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Rational)],Int,a)]
+    evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Rational)],Int,a)]
     evalAllTensorEpsilon epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs

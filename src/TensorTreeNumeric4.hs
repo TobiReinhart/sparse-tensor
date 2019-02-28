@@ -18,6 +18,9 @@
 
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
+
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
 
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
@@ -49,10 +52,16 @@ module TensorTreeNumeric4 (
     import Data.Proxy
     import GHC.TypeLits.Normalise
     import Data.Foldable
+    import GHC.Generics (Generic)
+    import Control.DeepSeq
 
     data IndList n a where
         Empty :: IndList 0 a 
         Append :: a -> IndList n a -> IndList (n+1) a 
+
+    instance (NFData a) => NFData (IndList n a) where
+        rnf (Empty) = ()
+        rnf (Append a i) = (rnf a) `seq` (rnf i)
 
     deriving instance (Eq a) => Eq (IndList n a)
 
@@ -192,14 +201,14 @@ module TensorTreeNumeric4 (
     tensorContr g f addF inds ZeroTensor = ZeroTensor
 
 
-    data Uind20 =  Uind20 {indValU20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
-    data Lind20 =  Lind20 {indValL20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
-    data Uind19 =  Uind19 {indValU19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
-    data Lind19 =  Lind19 {indValL19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
-    data Uind9 =  Uind9 {indValU9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
-    data Lind9 =  Lind9 {indValL9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
-    data Uind3 =  Uind3 {indValU3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
-    data Lind3 =  Lind3 {indValL3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read)
+    data Uind20 =  Uind20 {indValU20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
+    data Lind20 =  Lind20 {indValL20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
+    data Uind19 =  Uind19 {indValU19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
+    data Lind19 =  Lind19 {indValL19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
+    data Uind9 =  Uind9 {indValU9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
+    data Lind9 =  Lind9 {indValL9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
+    data Uind3 =  Uind3 {indValU3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
+    data Lind3 =  Lind3 {indValL3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
 
 
     type Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 a = Tensor n1 Uind20 (Tensor n2 Lind20 (Tensor n3 Uind19 (Tensor n4 Lind19 (Tensor n5 Uind9 (Tensor n6 Lind9 (Tensor n7 Uind3 (Tensor n8 Lind3 a)))))))

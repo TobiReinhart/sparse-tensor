@@ -1,7 +1,25 @@
---improved version of perturbationTree
+{-# LANGUAGE DataKinds #-}
+--matching on type constructors
+{-# LANGUAGE GADTs #-}
+--kind signature
+{-# LANGUAGE KindSignatures #-}
+--type family definitions
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeFamilyDependencies #-}
+{-# LANGUAGE UndecidableInstances #-}
+--infix type plus and mult
+{-# LANGUAGE TypeOperators #-}
 
---seems to be the best soultion !!!
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 
+{-# LANGUAGE StandaloneDeriving #-}
+
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
+
+{-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
 
 
@@ -21,7 +39,10 @@ module PerturbationTree2_2 (
     filterList18, symList18, areaEvalMap18,
     trianMapArea, trianMapDerivative,
     triangleMap2P, triangleMap3P,
-     evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, rmDepVarsAnsList, rmDepVarsTensList
+     evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, getPivots, rmDepVarsAnsList, rmDepVarsTensList,
+     getTensor, mkAnsatzTensor,
+     areaEvalMap4Inds, areaEvalMap6Inds, areaEvalMap8Inds, areaEvalMap10_1Inds, areaEvalMap10_2Inds, areaEvalMap12Inds, areaEvalMap14_1Inds, areaEvalMap14_2Inds, areaEvalMap12_1Inds,
+     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon
 
 
     
@@ -29,6 +50,7 @@ module PerturbationTree2_2 (
 
 ) where
 
+    import TensorTreeNumeric4
     import qualified Data.IntMap.Strict as I
     import qualified Data.IntSet as ISet 
     import qualified Data.Map.Strict as M
@@ -36,10 +58,15 @@ module PerturbationTree2_2 (
     import Data.List
     import Data.Maybe
     import Data.List
+    import Numeric.Natural
+    import GHC.TypeLits
+    import Data.Proxy
+    import GHC.TypeLits.Normalise
     import qualified Data.Eigen.Matrix as Mat 
     import qualified Data.Eigen.SparseMatrix as Sparse
     import qualified Data.Eigen.LA as Sol 
     import qualified Data.Eigen.SparseLA as SpSol
+    import Control.Parallel.Strategies
     --import qualified Data.Matrix as HasMat 
     --import qualified Data.Vector as Vec
     --import qualified Numeric.LinearAlgebra as Lin 
@@ -90,7 +117,7 @@ module PerturbationTree2_2 (
 
     data Eta = Eta {-# UNPACK #-} !Int {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord)
 
-    data Var = Var {-# UNPACK #-} !Int {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord)
+    data Var = Var {-# UNPACK #-} !Rational {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord)
 
     mkAllVars :: [Var] 
     mkAllVars = map (Var 1) [1..]
@@ -108,7 +135,7 @@ module PerturbationTree2_2 (
              where
                 [i',j',k',l'] = sortList [i,j,k,l]
     
-    getEpsSign :: Epsilon -> Int 
+    getEpsSign :: Epsilon -> Rational 
     getEpsSign (Epsilon i j k l) = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
     {-# INLINEABLE getEpsSign #-}
 
@@ -116,7 +143,7 @@ module PerturbationTree2_2 (
     addVars (Var x y) (Var x' y') = Var (x + x') y
     {-# INLINEABLE addVars #-}
 
-    multVar :: Int -> Var -> Var
+    multVar :: Rational -> Var -> Var
     multVar x (Var x' y) = Var (x * x') y
     {-# INLINEABLE multVar #-}
 
@@ -471,26 +498,26 @@ module PerturbationTree2_2 (
    
     --the next step is evaluating the tree 
 
-    evalNodeEta :: M.Map [Int] Int -> I.IntMap Int -> Eta -> Maybe Int
+    evalNodeEta :: M.Map [Int] Rational -> I.IntMap Int -> Eta -> Maybe Rational
     evalNodeEta epsM iMap (Eta x y) 
                 | a == b && a == 0 = Just (-1) 
                 | a == b = Just 1
                 | otherwise = Nothing
                  where 
                     [a,b] = [(I.!) iMap x, (I.!) iMap y]
-    evalNodeEpsilon :: M.Map [Int] Int -> I.IntMap Int -> Epsilon -> Maybe Int
+    evalNodeEpsilon :: M.Map [Int] Rational -> I.IntMap Int -> Epsilon -> Maybe Rational
     evalNodeEpsilon epsM iMap (Epsilon w x y z) = M.lookup l epsM
                  where
                     l = [(I.!) iMap w, (I.!) iMap x, (I.!) iMap y, (I.!) iMap z]               
 
-    epsMap :: M.Map [Int] Int 
+    epsMap :: M.Map [Int] Rational 
     epsMap = M.fromList $ map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
                 where
                    epsSign [i,j,k,l] = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
 
     --basic tree eval function
 
-    evalAnsatzForestEta :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEta -> I.IntMap Int
+    evalAnsatzForestEta :: M.Map [Int] Rational -> I.IntMap Int -> AnsatzForestEta -> I.IntMap Rational
     evalAnsatzForestEta epsM evalM (Leaf (Var x y)) = I.singleton y x
     evalAnsatzForestEta epsM evalM (ForestEta m) = M.foldrWithKey foldF I.empty m 
                 where
@@ -498,7 +525,7 @@ module PerturbationTree2_2 (
                                   in if nodeVal == Nothing then b 
                                      else I.unionWith (+) (I.map ((*) (fromJust nodeVal)) (evalAnsatzForestEta epsM evalM a)) b
 
-    evalAnsatzForestEpsilon :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEpsilon -> I.IntMap Int
+    evalAnsatzForestEpsilon :: M.Map [Int] Rational -> I.IntMap Int -> AnsatzForestEpsilon -> I.IntMap Rational
     evalAnsatzForestEpsilon epsM evalM m = M.foldrWithKey foldF I.empty m 
                 where
                     foldF k a b = let nodeVal = evalNodeEpsilon epsM evalM k 
@@ -507,76 +534,139 @@ module PerturbationTree2_2 (
 
     --eval All Inds (list of lists with (VarNr, Factor, multiplicity))
 
-    evalAllListEta :: M.Map [Int] Int -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEta -> [([(Int,Int)],Int,Int)]
-    evalAllListEta epsM evalMs f = l
+    evalAllListEta :: M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEta -> [([(Int,Rational)],Int,Int)]
+    evalAllListEta epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
 
-    evalAllListEpsilon :: M.Map [Int] Int -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEpsilon -> [([(Int,Int)],Int,Int)]
-    evalAllListEpsilon epsM evalMs f = l
+    evalAllTensorEta :: M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> [([(Int,Rational)],Int,a)]
+    evalAllTensorEta epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
+                where
+                    l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
+
+    evalAllListEpsilon :: M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEpsilon -> [([(Int,Rational)],Int,Int)]
+    evalAllListEpsilon epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
 
-    reduceAnsList :: [([(Int,Int)],Int,Int)] -> [[(Int,Int)]]
+    evalAllTensorEpsilon :: M.Map [Int] Rational -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Rational)],Int,a)]
+    evalAllTensorEpsilon epsM evalMs f = runEval $ parListChunk 1000 rdeepseq l
+                where
+                    l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
+
+    reduceAnsList :: [([(Int,Rational)],Int,a)] -> [[(Int,Rational)]]
     reduceAnsList l = map scaleEqn $ nubBy (\x y -> (fst x) == (fst y) ) $ mapMaybe normalizeEqn l 
 
-    normalizeEqn :: ([(Int, Int)], Int, Int) -> Maybe ([(Int, Rational)], Int)
+    normalizeEqn :: ([(Int, Rational)], Int, a) -> Maybe ([(Int, Rational)], Rational)
     normalizeEqn ([],_, _) = Nothing
-    normalizeEqn ((x,y):xs, _, _) = Just $ (map (\(a,b) -> (a, (fromIntegral b)/(fromIntegral y)) ) $ (x,y) : xs, y)
+    normalizeEqn ((x,y):xs, _, _) = Just $ (map (\(a,b) -> (a, b/y)) $ (x,y) : xs, y)
 
-    scaleEqn :: ([(Int, Rational)], Int) -> [(Int, Int)]
-    scaleEqn (l,c) = (map (\(x,y) -> (x, truncate (y * (fromIntegral c)))) l)
+    scaleEqn :: ([(Int, Rational)], Rational) -> [(Int, Rational)]
+    scaleEqn (l,c) = (map (\(x,y) -> (x, (y *  c))) l)
 
-    --remove all linear dependent variables 
+    --remove all linear dependent variables a
 
-    rmDepVars :: I.IntMap Int -> ([(Int, Int)], Int, Int) -> ([(Int, Int)], Int, Int)
+    rmDepVars :: I.IntMap Int -> ([(Int, Rational)], Int, a) -> ([(Int, Rational)], Int, a)
     rmDepVars s (l,a,b) = (mapMaybe lookupPair l, a, b) 
                     where
                         lookupPair (x,y) = let xVal = (I.lookup x s) in if isJust xVal then Just (fromJust xVal, y) else Nothing
 
+    rmDepVarsList :: [Int] -> [([(Int,Rational)],Int,Int)] -> [([(Int,Rational)],Int,Int)]
+    rmDepVarsList iDeps l = map (rmDepVars s) l
+            where
+                s = I.fromList $ zip iDeps [1..]
+
+
     --result is (matInd (from trian Map), VarLabel, factor)
-    rmDepVarsAnsList :: [Int] -> [([(Int,Int)],Int,Int)] -> [(Int,Int,Int)]
-    rmDepVarsAnsList iDeps l = concat $ map (\(x,mult,matInd) -> map (\(i,r) -> (matInd,i,r*mult)) x) lRed
+    rmDepVarsAnsList :: [Int] -> [([(Int,Rational)],Int,Int)] -> [(Int,Int,Rational)]
+    rmDepVarsAnsList iDeps l = concat $ map (\(x,mult,matInd) -> map (\(i,r) -> (matInd,i,r*(fromIntegral mult))) x) lRed
             where
                 s = I.fromList $ zip iDeps [1..]
                 lRed = map (rmDepVars s) l 
 
-    rmDepVarsTensList :: Int -> [Int] -> [([(Int,Int)],Int,Int)] -> [I.IntMap Int]
-    rmDepVarsTensList fstVar iDeps l = map I.fromList lRed
+    rmDepVarsTensList :: Int -> [Int] -> [([(Int,Rational)],Int,a)] -> [(a, VarMap)]
+    rmDepVarsTensList fstVar iDeps l = lRed
             where
                 s = I.fromList $ zip iDeps [fstVar..]
-                lRed = map (\(x,mult,matInd) -> map (\(i,r) -> (i,r*mult)) x) $ map (rmDepVars s) l 
+                lRed = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,r*(fromIntegral mult))) x)) $ map (rmDepVars s) l
+
+    doubleCheckAnsatzEta ::  M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEta -> (Int,Int)
+    doubleCheckAnsatzEta epsM evalMs ans = (r1, r2)
+            where
+                ansL = evalAllListEta epsM evalMs ans 
+                redL = reduceAnsList ansL 
+                r1 = ansatzRank redL 
+                ansVars = getRows redL 
+                ansRm = rmDepVarsList ansVars ansL 
+                ansRmRed = reduceAnsList ansRm 
+                r2 = ansatzRank ansRmRed
+
+    doubleCheckAnsatzEpsilon ::  M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEpsilon -> (Int,Int)
+    doubleCheckAnsatzEpsilon epsM evalMs ans = (r1, r2)
+            where
+                ansL = evalAllListEpsilon epsM evalMs ans 
+                redL = reduceAnsList ansL 
+                r1 = ansatzRank redL 
+                ansVars = getPivots redL 
+                ansRm = rmDepVarsList ansVars ansL 
+                ansRmRed = reduceAnsList ansRm 
+                r2 = ansatzRank ansRmRed
+
+    ---------------------------------------------------------------------------------------------------------------------------
+
+    getTensorInds :: Int -> M.Map [Int] Rational -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6 n7 n8])] -> AnsatzForestEta -> AnsatzForestEpsilon -> [(IndTuple n1 n2 n3 n4 n5 n6 n7 n8, VarMap)]
+    getTensorInds fstVar epsM evalMs ansEta ansEpsilon = filter (\(_,b) -> b /= I.empty) $ zipWith (\(a,b) (c,d) -> ( if a == c then a else undefined, I.unionWith (+) b d)) etaRmL epsRmL 
+            where
+                etaL = evalAllTensorEta epsM evalMs ansEta 
+                epsL = evalAllTensorEpsilon epsM evalMs ansEpsilon
+                etaLRed = reduceAnsList etaL 
+                epsLRed = reduceAnsList epsL 
+                etaVars = getRows etaLRed 
+                epsVars = getRows epsLRed 
+                etaRmL' = rmDepVarsTensList fstVar etaVars etaL 
+                epsRmL' = rmDepVarsTensList (fstVar + length etaVars) epsVars epsL 
+                etaRmL = concat $ map (\(x,y) -> zip x (repeat y)) etaRmL'
+                epsRmL = concat $ map (\(x,y) -> zip x (repeat y)) epsRmL'
 
 
+    getTensor :: Int -> M.Map [Int] Rational -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6 n7 n8])] -> AnsatzForestEta -> AnsatzForestEpsilon -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap 
+    getTensor fstVar epsM evalMs ansEta ansEpsilon = fromListTWith8 (I.unionWith (+)) $ getTensorInds fstVar epsM evalMs ansEta ansEpsilon 
+
+
+    mkAnsatzTensor :: Int -> [(Int,Int)] -> Symmetry -> Int -> M.Map [Int] Rational -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6 n7 n8])] -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap 
+    mkAnsatzTensor ord filters symmetries fstVar epsM evalMs = getTensor fstVar epsM evalMs ansEta ansEpsilon 
+            where
+                ansEta = getEtaForest [1..ord] filters symmetries 
+                ansEpsilon = getEpsForest [1..ord] filters symmetries  
 
     --using eigen 
 
-    evalAllMatrixSp :: [[(Int, Int)]] -> Sparse.SparseMatrixXd 
+    evalAllMatrixSp :: [[(Int, Rational)]] -> Sparse.SparseMatrixXd 
     evalAllMatrixSp l = Sparse.fromList n m l''
                 where
                     l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
                     n = length l 
-                    l'' = map (\(a,b,c) -> (a-1, b-1, fromIntegral c)) l'
+                    l'' = map (\(a,b,c) -> (a-1, b-1, fromRational c)) l'
                     m = maximum $ map fst $ concat l 
 
-    evalAllMatrix :: [[(Int, Int)]] -> Mat.MatrixXd 
+    evalAllMatrix :: [[(Int, Rational)]] -> Mat.MatrixXd 
     evalAllMatrix l = Sparse.toMatrix $ Sparse.fromList n m l''
                     where
                         l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
                         n = length l 
-                        l'' = map (\(a,b,c) -> (a-1, b-1, fromIntegral c)) l'
+                        l'' = map (\(a,b,c) -> (a-1, b-1, fromRational c)) l'
                         m = maximum $ map fst $ concat l 
 
-    ansatzRank :: [[(Int, Int)]] -> Int 
+    ansatzRank :: [[(Int, Rational)]] -> Int 
     ansatzRank l = Sol.rank Sol.FullPivLU $ evalAllMatrix l 
     
     --coloumns form basis of Image 
-    ansatzImage :: [[(Int, Int)]] -> Mat.MatrixXd 
+    ansatzImage :: [[(Int, Rational)]] -> Mat.MatrixXd 
     ansatzImage l = Sol.image Sol.FullPivLU $ evalAllMatrix l
 
     --find the correspondinding varLables -> (maybe directly reduce the full matrix)
 
-    getRows :: [[(Int, Int)]] -> [Int]
+    getRows :: [[(Int, Rational)]] -> [Int]
     getRows l = map (1+) $ mapMaybe (\x -> elemIndex x l1) l2 
             where
                 mat = evalAllMatrix l 
@@ -586,8 +676,15 @@ module PerturbationTree2_2 (
                 l1 = Mat.toList matT
                 l2 = Mat.toList solT
 
+    getPivots :: [[(Int, Rational)]] -> [Int]
+    getPivots l = map (1+) p
+            where
+                mat = evalAllMatrix l 
+                p = Sol.pivots Sol.FullPivLU mat
+                
+
     --coloumns (down) form basis of nullspace
-    ansatzKernel :: [[(Int, Int)]] -> Mat.MatrixXd 
+    ansatzKernel :: [[(Int, Rational)]] -> Mat.MatrixXd 
     ansatzKernel l = Sol.kernel Sol.FullPivLU $ evalAllMatrix l
 
     --finally the eval maps 
@@ -637,7 +734,7 @@ module PerturbationTree2_2 (
     areaList8 :: I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
     areaList8 trianArea trian2 triangle = list
         where 
-            list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ b', (areaMult a') * (areaMult b'), (M.!) triangle [a,b])  | a <- [1..21], b <- [1..21]]
+            list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ b', (areaMult a') * (areaMult b'), (M.!) triangle [a,b])  | a <- [1..21], b <- [a..21]]
 
     --Ap:Bq
     areaList10_1 :: I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
@@ -649,7 +746,7 @@ module PerturbationTree2_2 (
     areaList10_2 :: I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
     areaList10_2 trianArea trian2 triangle = list
         where 
-            list = [ let (a',b',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trian2 i) in  (a' ++ b' ++ i', (areaMult a') * (areaMult b') * (iMult2 i'), (M.!) triangle [a, ind2Div b i]) | a <- [1..21], b <- [a..21], i <- [1..10] ]
+            list = [ let (a',b',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trian2 i) in  (a' ++ b' ++ i', (areaMult a') * (areaMult b') * (iMult2 i'), (M.!) triangle [a, ind2Div b i]) | a <- [1..21], b <- [1..21], i <- [1..10] ]
 
     --A:B:C
     areaList12 ::  I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
@@ -695,7 +792,81 @@ module PerturbationTree2_2 (
         where 
             list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), (M.!) triangle [ind2Div a i, ind2Div b j, ind2Div c k] ) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
    
+    --A
+    areaList4Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 1 0 0 0 0 0 0 0])]
+    areaList4Inds trianArea trian2 = list
+         where 
+             list = [ let a' = (I.!) trianArea a in (a', areaMult a', [(singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, Empty, Empty, Empty, Empty)]) | a <- [1..21] ]
+    --AI
+    areaList6Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 1 0 0 0 1 0 0 0])]
+    areaList6Inds trianArea trian2 = list
+         where 
+             list = [ let (a',i') = ((I.!) trianArea a, (I.!) trian2 i) in  (a' ++ i', (areaMult a') * (iMult2 i'), [(singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty)]) | a <- [1..21], i <- [1..10]]
+ 
+    --A:B
+    areaList8Inds :: I.IntMap [Int] -> I.IntMap [Int]  -> [([Int], Int, [IndTuple 2 0 0 0 0 0 0 0])]
+    areaList8Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ b', (areaMult a') * (areaMult b'), map (\[a,b] -> (Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b] )  | a <- [1..21], b <- [a..21]]
+ 
+    --Ap:Bq
+    areaList10_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 2 0 0 0 0 0 2 0])]
+    areaList10_1Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ p : b' ++ [q], (areaMult a') * (areaMult b'), map (\[[a,p],[b,q]] -> (Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, Append (Uind3 $ p) $ singletonInd (Uind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], p <- [0..3], q <- [0..3],  not (a==b && p>q)]
+ 
+    --A:BI   
+    areaList10_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 2 0 0 0 1 0 0 0])]
+    areaList10_2Inds trianArea trian2  = list
+         where 
+             list = [ let (a',b',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trian2 i) in  (a' ++ b' ++ i', (areaMult a') * (areaMult b') * (iMult2 i'), [ (Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty)] ) | a <- [1..21], b <- [1..21], i <- [1..10] ]
+ 
+    --A:B:C
+    areaList12Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 3 0 0 0 0 0 0 0])]
+    areaList12Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ b' ++ c', (areaMult a') * (areaMult b') * (areaMult c'), map (\[a,b,c] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1), Empty, Empty, Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c] )| a <- [1..21], b <- [a..21], c <- [b..21] ]
+ 
+    --AI:BJ
+    areaList12_1Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 2 0 0 0 2 0 0 0])]
+    areaList12_1Inds  trianArea trian2 = list
+         where 
+             list = [ let (a',i',b',j') = ((I.!) trianArea a, (I.!) trian2 i, (I.!) trianArea b, (I.!) trian2 j) in  (a' ++ i' ++ b' ++ j' , (areaMult a') * (areaMult b') * (iMult2 i') * (iMult2 j'), map (\[[a,i],[b,j]] ->  (Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ singletonInd (Uind9 $ j-1), Empty, Empty, Empty)) $ nub $ permutations [[a,i],[b,j]] ) | a <- [1..21], b <- [a..21], i <- [1..10], j <- [1..10], not (a==b && i>j) ]
+ 
+ 
+    --A:Bp:Cq
+    areaList14_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 3 0 0 0 0 0 2 0])]
+    areaList14_1Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ b' ++ p : c' ++ [q], (areaMult a') * (areaMult b') * (areaMult c'), map (\[[b,p],[c,q]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1), Empty, Empty, Empty, Empty, Empty, Append (Uind3 $ p) $ singletonInd (Uind3 $ q), Empty)) $ nub $ permutations [[b,p],[c,q]]) | a <- [1..21], b <- [1..21], c <- [b..21], p <- [0..3], q <- [0..3], not (b==c && p>q) ]
+ 
+ 
+    --A:B:CI
+    areaList14_2Inds :: I.IntMap [Int] -> I.IntMap [Int]  -> [([Int], Int, [IndTuple 3 0 0 0 1 0 0 0])]
+    areaList14_2Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in ( a' ++ b' ++ c' ++ i', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), map (\[a,b] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] ) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10] ]
+ 
+    --Ap:Bq:CI
+    areaList16_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 3 0 0 0 1 0 2 0])]
+    areaList16_1Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in (a' ++ p : b' ++ q : c' ++ i' , (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), map (\[[a,p],[b,c]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Append (Uind3 $ p) $ singletonInd (Uind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,c]]) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
+ 
+    --A:BI:CJ
+    areaList16_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 3 0 0 0 2 0 0 0])]
+    areaList16_2Inds trianArea trian2 = list
+         where 
+             list = [let (a',b',c',i', j') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j) in  (a' ++ b' ++ i' ++ c' ++ j', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j'), map (\[[b,i],[c,j]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ singletonInd (Uind9 $ j-1), Empty, Empty, Empty) ) $ nub $ permutations [[b,i],[c,j]])| a <- [1..21], b <- [1..21], c <- [b..21], i <- [1..10], j <- [1..10], not (b==c && i>j)]
+ 
+    --AI:BJ:CK
+    areaList18Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 3 0 0 0 3 0 0 0])]
+    areaList18Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), map (\[[a,i],[b,j],[c,k]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ Append (Uind9 $ j-1) $ singletonInd (Uind9 $ k-1), Empty, Empty, Empty) ) $ nub $ permutations [[a,i],[b,j],[c,k]]) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
     
+ 
+
     isAreaSorted :: Int -> Int -> Int -> Int -> Bool
     isAreaSorted a b c d 
             | a < c || (a == c && b <= d) = True
@@ -703,7 +874,7 @@ module PerturbationTree2_2 (
    
     areaMult :: [Int] -> Int
     areaMult [a,b,c,d] 
-            | a == c && b == d = 4 
+            | a == c && b == d = 4
             | otherwise = 8
 
     iMult2 :: [Int] -> Int 
@@ -782,6 +953,81 @@ module PerturbationTree2_2 (
         where 
             area18 = areaList18 trianArea trian2 triangle
             l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+    --lists store (indexCombinationMap, Multiplicity, AbstractIndices)
+
+    areaEvalMap4Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 1 0 0 0 0 0 0 0])]
+    areaEvalMap4Inds trianArea trian2 = l
+        where 
+            area4 = areaList4Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..4] x, y,z)) area4
+
+    areaEvalMap6Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 1 0 0 0 1 0 0 0])]
+    areaEvalMap6Inds trianArea trian2 = l
+        where 
+            area6 = areaList6Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..6] x, y,z)) area6
+
+    areaEvalMap8Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 2 0 0 0 0 0 0 0])]
+    areaEvalMap8Inds trianArea trian2 = l
+        where 
+            area8 = areaList8Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..8] x, y,z)) area8
+
+    areaEvalMap10_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 2 0 0 0 0 0 2 0])]
+    areaEvalMap10_1Inds trianArea trian2 = l
+        where 
+            area10_1 = areaList10_1Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..10] x, y,z)) area10_1
+
+    areaEvalMap10_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 2 0 0 0 1 0 0 0])]
+    areaEvalMap10_2Inds trianArea trian2 = l
+        where 
+            area10_2 = areaList10_2Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..10] x, y,z)) area10_2
+
+    areaEvalMap12Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 3 0 0 0 0 0 0 0])]
+    areaEvalMap12Inds trianArea trian2 = l
+        where 
+            area12 = areaList12Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..12] x, y,z)) area12
+
+    areaEvalMap12_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 2 0 0 0 2 0 0 0])]
+    areaEvalMap12_1Inds trianArea trian2 = l
+        where 
+            area12_1 = areaList12_1Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..12] x, y,z)) area12_1
+
+    areaEvalMap14_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 3 0 0 0 0 0 2 0])]
+    areaEvalMap14_1Inds trianArea trian2 = l
+        where 
+            area14_1 = areaList14_1Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..14] x, y,z)) area14_1
+
+    areaEvalMap14_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 3 0 0 0 1 0 0 0])]
+    areaEvalMap14_2Inds trianArea trian2 = l
+        where 
+            area14_2 = areaList14_2Inds trianArea trian2 
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..14] x, y,z)) area14_2
+
+    areaEvalMap16_1Inds :: I.IntMap [Int] -> I.IntMap [Int]  -> [(I.IntMap Int, Int, [IndTuple 3 0 0 0 1 0 2 0])]
+    areaEvalMap16_1Inds trianArea trian2 = l
+        where 
+            area16_1 = areaList16_1Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..16] x, y,z)) area16_1
+
+    areaEvalMap16_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 3 0 0 0 2 0 0 0])]
+    areaEvalMap16_2Inds trianArea trian2 = l
+        where 
+            area16_2 = areaList16_2Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..16] x, y,z)) area16_2
+
+    areaEvalMap18Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 3 0 0 0 3 0 0 0])]
+    areaEvalMap18Inds trianArea trian2 = l
+        where 
+            area18 = areaList18Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
 
 
     filterList4 :: [(Int,Int)]

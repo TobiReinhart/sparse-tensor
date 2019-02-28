@@ -71,19 +71,13 @@ module Main (
     --import Control.DeepSeq
     -}
 
-    import TensorTreeNumeric2
-    import TensorTreeIntCond
-    import qualified Tensor2 as T
     import qualified Data.Map as M
     import Data.List
     import Data.Maybe
-    import qualified BinaryTree as Bin 
-    import qualified TensorTreeNumeric4 as Tree4 
-    --import PerturbationTree2_2
+    import TensorTreeNumeric4 
     import qualified Data.IntMap.Strict as I
-    import qualified Data.Matrix as HasMat
-    import qualified Data.Vector as Vec
     import PerturbationTree2_2
+    import Control.Parallel.Strategies
 
     
     
@@ -1377,7 +1371,7 @@ module Main (
         let interAIB = intAIB map1Metric map2Metric map1Area map2Area
         let interAIBTree4 = Tree4.intAIB map1MetricTree4 map2MetricTree4 map1AreaTree4 map2AreaTree4
 
-        -}
+        
         
 
         etaTens' <- readFile "/cip/austausch/cgg/eta18TensList.txt"
@@ -1388,7 +1382,7 @@ module Main (
 
         let epsTens = map read $ lines epsTens' :: [I.IntMap Int]
 
-        let tensList = map (I.map fromIntegral) $ zipWith (I.unionWith (+)) etaTens epsTens :: [Tree4.Var]
+        let tensList = map (I.map fromIntegral) $ zipWith (I.unionWith (+)) etaTens epsTens :: [Tree4.VarMap]
 
         let tensIndList = Tree4.area18TensList tensList 
 
@@ -1401,15 +1395,26 @@ module Main (
         writeFile "/cip/austausch/cgg/ansTens18Tensor.txt" $ show tens18 
 
 
+        -}
 
 
+        let ansatz14Tens = mkAnsatzTensor 14 filterList14_2 symList14_2 1 epsMap (areaEvalMap14_2Inds trianMapArea trianMapDerivative)
 
+        let ansatz14TensTest = ansatzABCI trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz14Tens
 
+        let testRanks = doubleCheckAnsatzEta epsMap (areaEvalMap10_1 trianMapArea trianMapDerivative triangleMap3P) (getEtaForest [1..10] filterList10_1 symList10_1)
 
+        let eps10 = getEpsForest [1..10] filterList10_1 symList10_1
+
+        let eps10List = reduceAnsList $ evalAllListEpsilon epsMap (areaEvalMap10_1 trianMapArea trianMapDerivative triangleMap3P) eps10
+
+        let eta10 = getEtaForest [1..10] filterList10_1 symList10_1
+
+        let eta10List = reduceAnsList $ evalAllListEta epsMap (areaEvalMap10_1 trianMapArea trianMapDerivative triangleMap3P) eta10
         
+        let eps14 = evalAllListEpsilon epsMap (areaEvalMap14_2 trianMapArea trianMapDerivative triangleMap3P) $ getEpsForest [1..14] filterList14_2 symList14_2
 
-
-
+        print $ toListShowVar ansatz14TensTest
         
 
 

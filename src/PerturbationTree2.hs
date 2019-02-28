@@ -1,6 +1,25 @@
---improved version of perturbationTree
+{-# LANGUAGE DataKinds #-}
+--matching on type constructors
+{-# LANGUAGE GADTs #-}
+--kind signature
+{-# LANGUAGE KindSignatures #-}
+--type family definitions
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeFamilyDependencies #-}
+{-# LANGUAGE UndecidableInstances #-}
+--infix type plus and mult
+{-# LANGUAGE TypeOperators #-}
 
---seems to be the best soultion !!!
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
+
+{-# LANGUAGE StandaloneDeriving #-}
+
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
+
+{-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
 
 module PerturbationTree2 (
@@ -32,6 +51,7 @@ module PerturbationTree2 (
 
     import qualified Data.IntMap.Strict as I
     import qualified Data.Map.Strict as M
+    import TensorTreeNumeric4
     import Data.Foldable
     import Data.List 
     import Data.Maybe
@@ -755,8 +775,81 @@ module PerturbationTree2 (
     areaList18 trianArea trian2 triangle = list
         where 
             list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), (M.!) triangle [ind2Div a i, ind2Div b j, ind2Div c k] ) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
-   
     
+    --A
+    areaList4Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 1 0 0 0 0 0 0 0)]
+    areaList4Inds trianArea trian2 = list
+        where 
+            list = [ let a' = (I.!) trianArea a in (a', areaMult a', (singletonInd (Uind20 a) , Empty, Empty, Empty, Empty, Empty, Empty, Empty)) | a <- [1..21] ]
+    --AI
+    areaList6Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 1 0 0 0 1 0 0 0)]
+    areaList6Inds trianArea trian2 = list
+        where 
+            list = [ let (a',i') = ((I.!) trianArea a, (I.!) trian2 i) in  (a' ++ i', (areaMult a') * (iMult2 i'), (singletonInd (Uind20 a) , Empty, Empty, Empty, singletonInd (Uind9 i), Empty, Empty, Empty)) | a <- [1..21], i <- [1..10]]
+
+    --A:B
+    areaList8Inds :: I.IntMap [Int] -> I.IntMap [Int]  -> [([Int], Int, IndTuple 2 0 0 0 0 0 0 0)]
+    areaList8Inds trianArea trian2 = list
+        where 
+            list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ b', (areaMult a') * (areaMult b'), (Append (Uind20 a) $ singletonInd (Uind20 b) , Empty, Empty, Empty, Empty, Empty, Empty, Empty))  | a <- [1..21], b <- [1..21]]
+
+    --Ap:Bq
+    areaList10_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 2 0 0 0 0 0 2 0)]
+    areaList10_1Inds trianArea trian2 = list
+        where 
+            list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ p : b' ++ [q], (areaMult a') * (areaMult b'), (Append (Uind20 a) $ singletonInd (Uind20 b) , Empty, Empty, Empty, Empty, Empty, Append (Uind3 p) $ singletonInd (Uind3 q), Empty)) | a <- [1..21], b <- [a..21], p <- [0..3], q <- [0..3], not (a==b && p>q)]
+
+    --A:BI   
+    areaList10_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 2 0 0 0 1 0 0 0)]
+    areaList10_2Inds trianArea trian2  = list
+        where 
+            list = [ let (a',b',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trian2 i) in  (a' ++ b' ++ i', (areaMult a') * (areaMult b') * (iMult2 i'), (Append (Uind20 a) $ singletonInd (Uind20 b) , Empty, Empty, Empty, singletonInd (Uind9 i), Empty, Empty, Empty)) | a <- [1..21], b <- [a..21], i <- [1..10] ]
+
+    --A:B:C
+    areaList12Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 3 0 0 0 0 0 0 0)]
+    areaList12Inds trianArea trian2 = list
+        where 
+            list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ b' ++ c', (areaMult a') * (areaMult b') * (areaMult c'), (Append (Uind20 a) $ Append (Uind20 b) $ singletonInd (Uind20 c), Empty, Empty, Empty, Empty, Empty, Empty, Empty) )| a <- [1..21], b <- [a..21], c <- [b..21] ]
+
+    --AI:BJ
+    areaList12_1Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 2 0 0 0 2 0 0 0)]
+    areaList12_1Inds  trianArea trian2 = list
+        where 
+            list = [ let (a',i',b',j') = ((I.!) trianArea a, (I.!) trian2 i, (I.!) trianArea b, (I.!) trian2 j) in  (a' ++ i' ++ b' ++ j' , (areaMult a') * (areaMult b') * (iMult2 i') * (iMult2 j'), (Append (Uind20 a) $ singletonInd (Uind20 b) , Empty, Empty, Empty, Append (Uind9 i) $ singletonInd (Uind9 j), Empty, Empty, Empty)) | a <- [1..21], b <- [a..21], i <- [1..10], j <- [1..10], not (a==b && i>j) ]
+
+
+    --A:Bp:Cq
+    areaList14_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 3 0 0 0 0 0 2 0)]
+    areaList14_1Inds trianArea trian2 = list
+        where 
+            list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ b' ++ p : c' ++ [q], (areaMult a') * (areaMult b') * (areaMult c'), (Append (Uind20 a) $ Append (Uind20 b) $ singletonInd (Uind20 c), Empty, Empty, Empty, Empty, Empty, Append (Uind3 p) $ singletonInd (Uind3 q), Empty)) | a <- [1..21], b <- [1..21], c <- [b..21], p <- [0..3], q <- [0..3], not (b==c && p>q) ]
+
+
+    --A:B:CI
+    areaList14_2Inds :: I.IntMap [Int] -> I.IntMap [Int]  -> [([Int], Int, IndTuple 3 0 0 0 1 0 0 0)]
+    areaList14_2Inds trianArea trian2 = list
+        where 
+            list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in ( a' ++ b' ++ c' ++ i', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), (Append (Uind20 a) $ Append (Uind20 b) $ singletonInd (Uind20 c) , Empty, Empty, Empty, singletonInd (Uind9 c), Empty, Empty, Empty)) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10] ]
+
+    --Ap:Bq:CI
+    areaList16_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 3 0 0 0 1 0 2 0)]
+    areaList16_1Inds trianArea trian2 = list
+        where 
+            list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in (a' ++ p : b' ++ q : c' ++ i' , (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), (Append (Uind20 a) $ Append (Uind20 b) $ singletonInd (Uind20 c) , Empty, Empty, Empty, singletonInd (Uind9 i), Empty, Append (Uind3 p) $ singletonInd (Uind3 q), Empty)) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
+
+    --A:BI:CJ
+    areaList16_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 3 0 0 0 2 0 0 0)]
+    areaList16_2Inds trianArea trian2 = list
+        where 
+            list = [let (a',b',c',i', j') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j) in  (a' ++ b' ++ i' ++ c' ++ j', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j'), (Append (Uind20 a) $ Append (Uind20 b) $ singletonInd (Uind20 c) , Empty, Empty, Empty, Append (Uind9 i) $ singletonInd (Uind9 j), Empty, Empty, Empty) )| a <- [1..21], b <- [1..21], c <- [b..21], i <- [1..10], j <- [1..10], not (b==c && i>j)]
+
+    --AI:BJ:CK
+    areaList18Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, IndTuple 3 0 0 0 3 0 0 0)]
+    areaList18Inds trianArea trian2 = list
+        where 
+            list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), (Append (Uind20 a) $ Append (Uind20 b) $ singletonInd (Uind20 c) , Empty, Empty, Empty, Append (Uind9 i) $ Append (Uind9 j) $ singletonInd (Uind9 k), Empty, Empty, Empty) ) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
+   
+
     isAreaSorted :: Int -> Int -> Int -> Int -> Bool
     isAreaSorted a b c d 
             | a < c || (a == c && b <= d) = True
@@ -843,6 +936,82 @@ module PerturbationTree2 (
         where 
             area18 = areaList18 trianArea trian2 triangle
             l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+
+    --lists store (indexCombinationMap, Multiplicity, AbstractIndices)
+
+    areaEvalMap4Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 1 0 0 0 0 0 0 0)]
+    areaEvalMap4Inds trianArea trian2 = l
+        where 
+            area4 = areaList4Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..4] x, y,z)) area4
+
+    areaEvalMap6Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 1 0 0 0 1 0 0 0)]
+    areaEvalMap6Inds trianArea trian2 = l
+        where 
+            area6 = areaList6Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..6] x, y,z)) area6
+
+    areaEvalMap8Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 2 0 0 0 0 0 0 0)]
+    areaEvalMap8Inds trianArea trian2 = l
+        where 
+            area8 = areaList8Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..8] x, y,z)) area8
+
+    areaEvalMap10_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 2 0 0 0 0 0 2 0)]
+    areaEvalMap10_1Inds trianArea trian2 = l
+        where 
+            area10_1 = areaList10_1Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..10] x, y,z)) area10_1
+
+    areaEvalMap10_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 2 0 0 0 1 0 0 0)]
+    areaEvalMap10_2Inds trianArea trian2 = l
+        where 
+            area10_2 = areaList10_2Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..10] x, y,z)) area10_2
+
+    areaEvalMap12Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 3 0 0 0 0 0 0 0)]
+    areaEvalMap12Inds trianArea trian2 = l
+        where 
+            area12 = areaList12Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..12] x, y,z)) area12
+
+    areaEvalMap12_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 2 0 0 0 2 0 0 0)]
+    areaEvalMap12_1Inds trianArea trian2 = l
+        where 
+            area12_1 = areaList12_1Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..12] x, y,z)) area12_1
+
+    areaEvalMap14_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 3 0 0 0 0 0 2 0)]
+    areaEvalMap14_1Inds trianArea trian2 = l
+        where 
+            area14_1 = areaList14_1Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..14] x, y,z)) area14_1
+
+    areaEvalMap14_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 3 0 0 0 1 0 0 0)]
+    areaEvalMap14_2Inds trianArea trian2 = l
+        where 
+            area14_2 = areaList14_2Inds trianArea trian2 
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..14] x, y,z)) area14_2
+
+    areaEvalMap16_1Inds :: I.IntMap [Int] -> I.IntMap [Int]  -> [(I.IntMap Int, Int, IndTuple 3 0 0 0 1 0 2 0)]
+    areaEvalMap16_1Inds trianArea trian2 = l
+        where 
+            area16_1 = areaList16_1Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..16] x, y,z)) area16_1
+
+    areaEvalMap16_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 3 0 0 0 2 0 0 0)]
+    areaEvalMap16_2Inds trianArea trian2 = l
+        where 
+            area16_2 = areaList16_2Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..16] x, y,z)) area16_2
+
+    areaEvalMap18Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, IndTuple 3 0 0 0 3 0 0 0)]
+    areaEvalMap18Inds trianArea trian2 = l
+        where 
+            area18 = areaList18Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
 
 
     filterList4 :: [(Int,Int)]

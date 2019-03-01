@@ -42,7 +42,7 @@ module PerturbationTree2_2 (
      evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, getPivots, rmDepVarsAnsList, rmDepVarsTensList,
      getTensor, mkAnsatzTensor,
      areaEvalMap4Inds, areaEvalMap6Inds, areaEvalMap8Inds, areaEvalMap10_1Inds, areaEvalMap10_2Inds, areaEvalMap12Inds, areaEvalMap14_1Inds, areaEvalMap14_2Inds, areaEvalMap12_1Inds,
-     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds
+     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds, areaEvalMap16_2Inds
 
 
     
@@ -570,10 +570,11 @@ module PerturbationTree2_2 (
             uniques <- HT.toList table
             return $ map fst uniques
 
-    reduceAnsList :: [([(Int,Rational)],Int,a)] -> [[(Int,Rational)]]
-    reduceAnsList l =  getUniques n l' 
+    reduceAnsList :: (NFData a) => [([(Int,Rational)],Int,a)] -> [[(Int,Rational)]]
+    reduceAnsList l =  getUniques n l''
         where
             l' = mapMaybe normalizeEqnNoFac l
+            l'' = runEval $ parListChunk 1000 rdeepseq l'
             n = length l' 
 
     reduceAnsList' :: [([(Int,Rational)],Int,a)] -> [[(Int,Rational)]]
@@ -592,7 +593,7 @@ module PerturbationTree2_2 (
 
     --remove all linear dependent variables a
 
-    rmDepVars :: I.IntMap Int -> ([(Int, Rational)], Int, a) -> ([(Int, Rational)], Int, a)
+    rmDepVars ::  I.IntMap Int -> ([(Int, Rational)], Int, a) -> ([(Int, Rational)], Int, a)
     rmDepVars s (l,a,b) = (mapMaybe lookupPair l, a, b) 
                     where
                         lookupPair (x,y) = let xVal = (I.lookup x s) in if isJust xVal then Just (fromJust xVal, y) else Nothing
@@ -605,16 +606,19 @@ module PerturbationTree2_2 (
 
     --result is (matInd (from trian Map), VarLabel, factor)
     rmDepVarsAnsList :: [Int] -> [([(Int,Rational)],Int,Int)] -> [(Int,Int,Rational)]
-    rmDepVarsAnsList iDeps l = concat $ map (\(x,mult,matInd) -> map (\(i,r) -> (matInd,i,r*(fromIntegral mult))) x) lRed
+    rmDepVarsAnsList iDeps l = concat $ map (\(x,mult,matInd) -> map (\(i,r) -> (matInd,i,r*(fromIntegral mult))) x) lRed'
             where
                 s = I.fromList $ zip iDeps [1..]
                 lRed = map (rmDepVars s) l 
+                lRed' = runEval $ parListChunk 1000 rdeepseq lRed
 
-    rmDepVarsTensList :: Int -> [Int] -> [([(Int,Rational)],Int,a)] -> [(a, VarMap)]
+    rmDepVarsTensList :: (NFData a) =>  Int -> [Int] -> [([(Int,Rational)],Int,a)] -> [(a, VarMap)]
     rmDepVarsTensList fstVar iDeps l = lRed
             where
                 s = I.fromList $ zip iDeps [fstVar..]
-                lRed = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,r*(fromIntegral mult))) x)) $ map (rmDepVars s) l
+                l' = map (rmDepVars s) l
+                l'' = runEval $ parListChunk 1000 rdeepseq l'
+                lRed = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,r*(fromIntegral mult))) x)) l''
 
     doubleCheckAnsatzEta ::  M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEta -> (Int,Int)
     doubleCheckAnsatzEta epsM evalMs ans = (r1, r2)
@@ -647,8 +651,8 @@ module PerturbationTree2_2 (
                 epsL = evalAllTensorEpsilon epsM evalMs ansEpsilon
                 etaLRed = reduceAnsList etaL 
                 epsLRed = reduceAnsList epsL 
-                etaVars = getRows etaLRed 
-                epsVars = getRows epsLRed 
+                etaVars = getPivots etaLRed 
+                epsVars = getPivots epsLRed 
                 etaRmL' = rmDepVarsTensList fstVar etaVars etaL 
                 epsRmL' = rmDepVarsTensList (fstVar + length etaVars) epsVars epsL 
                 etaRmL = concat $ map (\(x,y) -> zip x (repeat y)) etaRmL'

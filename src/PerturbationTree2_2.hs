@@ -67,6 +67,10 @@ module PerturbationTree2_2 (
     import qualified Data.Eigen.LA as Sol 
     import qualified Data.Eigen.SparseLA as SpSol
     import Control.Parallel.Strategies
+    import Control.Monad.ST (runST)
+    import qualified Data.HashTable.Class as HT (toList)
+    import qualified Data.HashTable.ST.Cuckoo as HTC (newSized, insert)
+    import Data.Hashable (Hashable)
     --import qualified Data.Matrix as HasMat 
     --import qualified Data.Vector as Vec
     --import qualified Numeric.LinearAlgebra as Lin 
@@ -558,12 +562,30 @@ module PerturbationTree2_2 (
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
                     l' = runEval $ parListChunk 1000 rdeepseq l
 
+    getUniques :: (Eq a, Hashable a) => Int -> [a] -> [a]
+    getUniques maxSize elements = runST $
+        do
+            table <- HTC.newSized maxSize
+            sequence_ $ map (\k -> HTC.insert table k ()) elements
+            uniques <- HT.toList table
+            return $ map fst uniques
+
     reduceAnsList :: [([(Int,Rational)],Int,a)] -> [[(Int,Rational)]]
-    reduceAnsList l = map scaleEqn $ nubBy (\x y -> (fst x) == (fst y) ) $ mapMaybe normalizeEqn l 
+    reduceAnsList l =  getUniques n l' 
+        where
+            l' = mapMaybe normalizeEqnNoFac l
+            n = length l' 
+
+    reduceAnsList' :: [([(Int,Rational)],Int,a)] -> [[(Int,Rational)]]
+    reduceAnsList' l = map scaleEqn $ nubBy (\x y -> (fst x) == (fst y) ) $ mapMaybe normalizeEqn l 
 
     normalizeEqn :: ([(Int, Rational)], Int, a) -> Maybe ([(Int, Rational)], Rational)
     normalizeEqn ([],_, _) = Nothing
     normalizeEqn ((x,y):xs, _, _) = Just $ (map (\(a,b) -> (a, b/y)) $ (x,y) : xs, y)
+
+    normalizeEqnNoFac :: ([(Int, Rational)], Int, a) -> Maybe [(Int, Rational)]
+    normalizeEqnNoFac ([],_, _) = Nothing
+    normalizeEqnNoFac ((x,y):xs, _, _) = Just $ (map (\(a,b) -> (a, b/y)) $ (x,y) : xs)
 
     scaleEqn :: ([(Int, Rational)], Rational) -> [(Int, Rational)]
     scaleEqn (l,c) = (map (\(x,y) -> (x, (y *  c))) l)

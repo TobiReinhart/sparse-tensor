@@ -1402,18 +1402,6 @@ module Main (
 
         let ansatz16TensTest = ansatzApBqCI trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz16Tens
 
-        let testRanks = doubleCheckAnsatzEta epsMap (areaEvalMap10_1 trianMapArea trianMapDerivative triangleMap3P) (getEtaForest [1..10] filterList10_1 symList10_1)
-
-        let eps10 = getEpsForest [1..10] filterList10_1 symList10_1
-
-        let eps10List = reduceAnsList $ evalAllListEpsilon epsMap (areaEvalMap10_1 trianMapArea trianMapDerivative triangleMap3P) eps10
-
-        let eta10 = getEtaForest [1..10] filterList10_1 symList10_1
-
-        let eta10List = reduceAnsList $ evalAllListEta epsMap (areaEvalMap10_1 trianMapArea trianMapDerivative triangleMap3P) eta10
-        
-        let eps14 = evalAllListEpsilon epsMap (areaEvalMap14_2 trianMapArea trianMapDerivative triangleMap3P) $ getEpsForest [1..14] filterList14_2 symList14_2
-
         print $ toListShowVar ansatz16TensTest
         
 

@@ -33,10 +33,10 @@ module TensorTreeNumeric4 (
     interI2, interJ2, aSymI2, interIArea, interJArea, toListShowVar,
     delta20, delta19, delta9, delta3, tensorContr20, tensorContr19, tensorContr9, tensorContr3, tensorProd8, 
     tensorTransU20, tensorTransL20, tensorTransU19, tensorTransL19, tensorTransU9, tensorTransL9, tensorTransU3, tensorTransL3, tensorSub8,
-    triangleMap3P', ansatzAIBJCK, index2SparseAnsatzAIBJCKSym, VarMap, area18TensList, Tensor(..), Tensor8, IndList(..),
+    triangleMap3P', ansatzAIBJCK', index2SparseAnsatzAIBJCKSym, VarMap, area18TensList, Tensor(..), Tensor8, IndList(..),
     Uind20(..), Lind20(..), Uind19(..), Lind19(..), Uind9(..), Lind9(..), Uind3(..), Lind3(..), IndTuple, fromListT8, fromListTWith8, singletonInd, ansatzAIB,
     ansatzAI, ansatzAB, ansatzAaBb, ansatzABC, ansatzA, tensorTransWithU20, tensorTransWithL20, tensorTransWithU19, tensorTransWithL19, tensorTransWithU9, tensorTransWithL9,
-    tensorTransWithU3, tensorTransWithL3, addVarsMap, ansatzAIBJ, ansatzABbCc, ansatzABCI, ansatzApBqCI, ansatzABICJ
+    tensorTransWithU3, tensorTransWithL3, addVarsMap, ansatzAIBJ, ansatzABbCc, ansatzABCI, ansatzApBqCI, ansatzABICJ, ansatzAIBJCK
     
 ) where
 
@@ -611,8 +611,8 @@ module TensorTreeNumeric4 (
                         j = [ [a,b,c] | a <- [1..i], b <- [a..i], c <- [b..i] ]
                         k = [1..]
 
-    ansatzAIBJCK :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 3 0 0 4 3 0 0 Rational
-    ansatzAIBJCK map1Metric map2Metric map1Area map2Area = totalBlock3
+    ansatzAIBJCK' :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 3 0 0 4 3 0 0 Rational
+    ansatzAIBJCK' map1Metric map2Metric map1Area map2Area = totalBlock3
                     where
                         intArea = interArea map1Area map2Area
                         intMetric = interMetric map1Metric map2Metric
@@ -716,7 +716,7 @@ module TensorTreeNumeric4 (
                 intAContr = tensorContr3 (0,0) $ tensorContr3 (0,1) $ tensorProd8 intA aSym
                 block1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens intAContr 
                 block2 = tensorTransWithU20 (1,2) addVarsMap block1 
-                block3 = tensorTransWithU20 (1,2) addVarsMap $ tensorTransWithU20 (0,2) addVarsMap block1
+                block3 = tensorTransWithU20 (0,2) addVarsMap block1
 
     ansatzABbCc :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 0 0 2 0 VarMap -> Tensor8 3 0 0 0 1 0 2 0 VarMap
     ansatzABbCc map1Metric map2Metric map1Area map2Area ansatzTens = tensorAddWith8 addVarsMap block1 $ tensorAddWith8 addVarsMap block2 block3 
@@ -769,3 +769,14 @@ module TensorTreeNumeric4 (
                 block1 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens int3Contr 
                 block2 = tensorTransWithU9 (0,1) addVarsMap $ tensorTransWithU20 (1,2) addVarsMap block1 
                 block3 = tensorTransWithU9 (1,2) addVarsMap $ tensorTransWithU9 (0,1) addVarsMap $ tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 multVar intAContr ansatzTens
+
+    ansatzAIBJCK :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 3 0 0 0 VarMap -> Tensor8 3 0 0 0 4 0 0 0 VarMap
+    ansatzAIBJCK map1Metric map2Metric map1Area map2Area ansatzTens = tensorAddWith8 addVarsMap block1 $ tensorAddWith8 addVarsMap block2 block3 
+            where
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                antiSym = aSymI2 map1Metric
+                aSym = tensorContr3 (1,1) $ tensorProd8 invEta antiSym
+                int3Contr = tensorContr3 (0,0) $ tensorContr3 (0,1) $ tensorProd8 int3 aSym
+                block1 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens int3Contr 
+                block2 = tensorTransWithU9 (1,2) addVarsMap $ tensorTransWithU20 (1,2) addVarsMap block1 
+                block3 = tensorTransWithU9 (0,2) addVarsMap $ tensorTransWithU20 (0,2) addVarsMap block1

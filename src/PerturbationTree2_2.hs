@@ -42,7 +42,7 @@ module PerturbationTree2_2 (
      evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, getPivots, rmDepVarsAnsList, rmDepVarsTensList,
      getTensor, mkAnsatzTensor,
      areaEvalMap4Inds, areaEvalMap6Inds, areaEvalMap8Inds, areaEvalMap10_1Inds, areaEvalMap10_2Inds, areaEvalMap12Inds, areaEvalMap14_1Inds, areaEvalMap14_2Inds, areaEvalMap12_1Inds,
-     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds, areaEvalMap16_2Inds
+     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds, areaEvalMap16_2Inds, areaEvalMap18Inds
 
 
     

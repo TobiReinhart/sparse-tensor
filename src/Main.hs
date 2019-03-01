@@ -1398,7 +1398,7 @@ module Main (
         -}
 
 
-        let ansatz18Tens = mkAnsatzTensor 18 filterList12 symList18 1 epsMap (areaEvalMap18Inds trianMapArea trianMapDerivative)
+        let ansatz18Tens = mkAnsatzTensor 18 filterList18 symList18 1 epsMap (areaEvalMap18Inds trianMapArea trianMapDerivative)
 
         let ansatz18TensTest = ansatzAIBJCK trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz18Tens
 

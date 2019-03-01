@@ -1398,11 +1398,11 @@ module Main (
         -}
 
 
-        let ansatz18Tens = mkAnsatzTensor 18 filterList18 symList18 1 epsMap (areaEvalMap18Inds trianMapArea trianMapDerivative)
+        let ansatz16Tens = mkAnsatzTensor 16 filterList16_2 symList16_2 1 epsMap (areaEvalMap16_2Inds trianMapArea trianMapDerivative)
 
-        let ansatz18TensTest = ansatzAIBJCK trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz18Tens
+        let ansatz14TensTest = ansatzABICJ trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz16Tens
 
-        print $ toListShowVar ansatz18TensTest
+        print $ toListShowVar ansatz16TensTest
         
 
 

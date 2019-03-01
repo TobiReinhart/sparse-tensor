@@ -877,7 +877,7 @@ module PerturbationTree2_2 (
     areaList16_1Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 3 0 0 0 1 0 2 0])]
     areaList16_1Inds trianArea trian2 = list
          where 
-             list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in (a' ++ p : b' ++ q : c' ++ i' , (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), map (\[[a,p],[b,c]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Append (Uind3 $ p) $ singletonInd (Uind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,c]]) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
+             list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in (a' ++ p : b' ++ q : c' ++ i' , (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), map (\[[a,p],[b,q]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Append (Uind3 $ p) $ singletonInd (Uind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
  
     --A:BI:CJ
     areaList16_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 3 0 0 0 2 0 0 0])]

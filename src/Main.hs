@@ -1400,7 +1400,7 @@ module Main (
 
         let ansatz16Tens = mkAnsatzTensor 16 filterList16_2 symList16_2 1 epsMap (areaEvalMap16_2Inds trianMapArea trianMapDerivative)
 
-        let ansatz14TensTest = ansatzABICJ trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz16Tens
+        let ansatz16TensTest = ansatzABICJ trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz16Tens
 
         print $ toListShowVar ansatz16TensTest
         

@@ -1,7 +1,7 @@
 
 
 module TensorTreeNumeric (
-    deltaList, mkTens, tensorProd, Tensor(..), toListT, fromList, tensorAdd, tensorContract, filterT,
+    deltaList, mkTens, tensorProd, Tensor(..), toListT, fromList, tensorAdd, tensorContract, filterT, tensorTranspose,
     interI2, interJ2, interI3, interJ3, interIArea, interJArea, interMetric, interArea, triangleMap2, triangleMap3, triangleMapArea, interEqn2, interEqn3,
     intAIB, flatInter, intAIBSeq, intAIBIMap, intAIBSub, toListSubT, tensorProdList, swapHead, removeContractionInd, mkMatrixIndAIB, showTensorFrac,
     mkMatrixIndInter3, mkMatrixIndInterArea, mkMatrixIndInterMetric, canonicalizeArea, areaSign, triangleMap, intAIBJC, mkMatrixIndAIBJC, showTensorFracMaple, isValid
@@ -215,13 +215,13 @@ module TensorTreeNumeric (
     deltaList i = [([a,a],1) | a <- [0..i]]
 
     triangleMap2 :: M.Map [Int] Int
-    triangleMap2 = M.fromList $ zip [ [a,b] | a <- [0..3], b <- [a..3] ] [1..]
+    triangleMap2 = M.fromList $ zip [ [a,b] | a <- [0..3], b <- [a..3] ] [0..]
 
     triangleMap3 :: M.Map [Int] Int
-    triangleMap3 = M.fromList $ zip [ [a,b,c] | a <- [0..3], b <- [a..3], c <- [b..3] ]  [1..]
+    triangleMap3 = M.fromList $ zip [ [a,b,c] | a <- [0..3], b <- [a..3], c <- [b..3] ]  [0..]
 
     triangleMapArea :: M.Map [Int] Int
-    triangleMapArea = M.fromList $ zip [[a,b,c,d] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], not $ a == c && b > d ] [1..]
+    triangleMapArea = M.fromList $ zip [[a,b,c,d] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], not $ a == c && b > d ] [0..]
     
     jMult2 :: [Int] -> Rational 
     jMult2 [a,b] 
@@ -287,7 +287,7 @@ module TensorTreeNumeric (
             where
                 inds = [[a,b,c,d] | a <- [0..19], b <- [0..3], c <- [0..3], d <- [0..3]]
                 f [a,b,c,d] 
-                    | a == ((M.!) trian3 $ sort [b,c,d]) = jMult2 [b,c,d]
+                    | a == ((M.!) trian3 $ sort [b,c,d]) = jMult3 [b,c,d]
                     | otherwise = 0 
     --indices are [^A,_b,_c,_d,_e]
     interIArea :: M.Map [Int] Int -> Tensor Rational 
@@ -329,7 +329,7 @@ module TensorTreeNumeric (
                 delta20 = fromList $ deltaList 20
                 intArea = interArea trianArea
                 int1 = tensorProd intArea delta3
-                int2 = tensorTranspose (3,4) $ tensorTranspose (1,2) $ tensorProd delta20 $ tensorProd delta3 delta3 
+                int2 = tensorTranspose (2,3) $ tensorTranspose (1,3) $ tensorProd delta20 $ tensorTranspose (1,3) $ tensorProd delta3 delta3 
 
     --indices are [^A,_n,_B,^m,^J,_I]
     interEqn3 :: M.Map [Int] Int -> M.Map [Int] Int -> Tensor Rational

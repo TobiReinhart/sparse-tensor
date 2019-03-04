@@ -17,11 +17,22 @@ module Main (main) where
 
 {-# LANGUAGE BangPatterns #-}
 
+
+{-# LANGUAGE StandaloneDeriving #-}
+
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
+
+{-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
+
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver #-}
+
 module Main (
  main
 ) where
     
-    
+    {-
     
     import Index
     import Tensor
@@ -56,15 +67,26 @@ module Main (
     
     
 
-    --import TensorTreeNumeric
+    import qualified TensorTreeNumeric as Tree
 
     --import Control.DeepSeq
+    -}
+
+    import qualified Data.Map as M
+    import Data.List
+    import Data.Maybe
+    import TensorTreeNumeric4 
+    import qualified Data.IntMap.Strict as I
+    import PerturbationTree2_2
+    import Control.Parallel.Strategies
+
+    
     
      
 
     main = do
 
-        
+        {-
         
         let map1Area = M.mapKeys mkInd triangleMapArea :: M.Map (Linds_3 4) Uind_20
         let map2Area = M.mapKeys mkInd triangleMapArea :: M.Map (Uinds_3 4) Lind_20
@@ -72,7 +94,7 @@ module Main (
         let map1Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Linds_3 2) Uind_9  
         let map2Metric = M.mapKeys mkInd triangleMap2 :: M.Map (Uinds_3 2) Lind_9 
 
-        {-
+        
 
         let mapInter3 = M.mapKeys mkInd triangleMap3 :: M.Map (Linds_3 3) Uind_19
 
@@ -821,7 +843,7 @@ module Main (
         
         print $ isValid test6
 
-        -}
+        
 
         let trian2 = Tens.triangleMap2
 
@@ -847,11 +869,554 @@ module Main (
 
         let intMetric2 = Tens.interMetric trian2 trian2 
 
+        let intI2 = Tens.interJ_2 trian2  
+
+        let interEqn1_2Tens = Tens.interEqn1_2 trianA trianA
+
         let areaFlat = M.filter (/= 0) $  M.mapKeysMonotonic index2List $ getMap $ intAIB map1Area map2Area  map1Metric map2Metric
 
         let areaFlat2 = Tens.intAIB trianA trianA trian2 trian2
+
+        let trian2Tree = Tree.triangleMap2
+
+        let trianATree = Tree.triangleMapArea
+
+        let intMetricTree = Tree.interMetric trian2Tree
+
+        let intAreaTree = Tree.interArea trianATree
+
+        let intEqn1_2Tree = Tree.interEqn2 trianATree
+
+        let i1 = sort $ Tree.toListT intEqn1_2Tree
+
+        let i2 = sort $ map (\(a,b) -> (Tens.swapPosInd (2,3)  $ Tens.swapPosInd (1,3) $ Tens.index2List a,b)) $ M.assocs interEqn1_2Tens
+        
+        putStr $ unlines $ map show $ zip i1 i2 
+
+        print $ i1 == i2
+
         
 
-        print $ areaFlat == areaFlat2
+        let map1Area = trianMapAreaI 
+        let map2Area = trianMapAreaJ
+        let map1Metric = trianMapI2
+        let map2Metric = trianMapJ2
+
+        let map1AreaTree3 = Tree3.trianMapAreaI 
+        let map2AreaTree3 = Tree3.trianMapAreaJ
+        let map1MetricTree3 = Tree3.trianMapI2
+        let map2MetricTree3 = Tree3.trianMapJ2
+
+        let mapAreaT = T.triangleMapArea :: M.Map [Int] Int
+        let mapMetricT = T.triangleMap2 :: M.Map [Int] Int
+
+        let intM = interMetric map1Metric map2Metric 
+
+        --print $ map snd $ toListShow intM 
+
+        let intMT = T.interMetric mapMetricT mapMetricT 
+
+        let intMTree3 = Tree3.interMetric map1MetricTree3 map2MetricTree3 
+
+        let intI2 = interI2 map1Metric 
+
+        let intI2Tree3 = Tree3.interI2 map1MetricTree3
+
+        --print $ M.elems intMT 
+
+        --print $ (M.elems intMT) == (map snd $ toListShow intM) 
+
+        let intA = interArea map1Area map2Area
+
+        let intATree3 = Tree3.interArea map1AreaTree3 map2AreaTree3
+
+        let intAT = T.interArea mapAreaT mapAreaT 
+
+        --print $ (M.elems intAT) == (map snd $ toListShow intA) 
+
+        let int2 = interEqn2 map1Area map2Area
+
+        let int2T = T.interEqn1_2 mapAreaT mapAreaT 
+
+        let int2_1 = tensorProd intA delta3
+
+        let int2_1Tree3 = Tree3.tensorProd intATree3 Tree3.delta3
+
+        let int2Tree3 = Tree3.interEqn2 map1AreaTree3 map2AreaTree3
+        
+        let int2_2 = tensorProd (tensorTransL3 (0,1) $ tensorProd delta3 delta3 ) delta20
+
+        let int2_2Tree3 = Tree3.tensorProd (Tree3.tensorTransL3 (0,1) $ Tree3.tensorProd Tree3.delta3 Tree3.delta3 ) Tree3.delta20
+
+        let int2_1T =  T.tensorProductNumeric intAT T.delta_3 
+
+        let int2_2T = T.tensorProductNumeric  (T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3 ) T.delta_20
+
+        let test10 =  tensorTransL3 (0,1) $ tensorProd delta3 delta3
+
+        let test11 = T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3
+
+        let test12 = tensorProd  (tensorProd test10 delta3) delta3
+
+        let test13 = T.tensorProductNumeric ( T.tensorProductNumeric test11 T.delta_3) T.delta_3
+
+        let test14 = tensorTransL3 (0,1) $ tensorProd delta3 $ tensorProd delta3 delta3
+
+        let intCond = intAIB map1Metric map2Metric map1Area map2Area 
+
+        let intCondT = T.intAIB mapAreaT mapAreaT mapMetricT mapMetricT
+
+        let int3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+
+        let int3T = T.interEqn1_3 mapAreaT mapAreaT mapMetricT mapMetricT 
 
 
+
+        --print $ zip ( map (truncate) (M.elems int2T) ) (map (truncate) $ (map snd $ toListShow int2) )
+
+        --print $ toListShow $ tensorProd delta3 delta3  
+
+        --print $ map snd $ toListShow $ tensorTransL3 (0,1) $ tensorProd delta3 delta3 
+        
+        --print $ M.elems $ T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3
+
+        --print $ (map snd $ toListShow $ tensorProd (tensorTransL3 (0,1) $ tensorProd delta3 delta3) delta20) == (M.elems $ T.tensorProductNumeric (T.tensorTranspose 8 (0,1) $ T.tensorProductNumeric T.delta_3 T.delta_3) T.delta_20)
+
+        
+        --print $ length l1
+        --print $ length l2
+        
+        let l3 = toListT intCond
+
+        let l4 = filter (\(a,b) -> b /= 0) $ toListT intCond
+
+        let ansAB = ansatzAB map1Metric map2Metric map1Area map2Area 
+
+        let trianM = triangleMap 315 
+
+        let ansABString = M.assocs $ M.fromListWith (+) $ map ((index2SparseAnsatzAB trianM)) $ toListShow ansAB 
+
+        let ansatzABT = T.ansatzAB mapAreaT mapAreaT mapMetricT mapMetricT 
+
+        let l1 = filter (\(a,b) -> b /= 0) $ sort ( map (\(x,y) -> (x,truncate y)) $ toListShowIndex $ int2)
+        let l2 = filter (\(a,b) -> b /= 0) $ sort $ map (\(x,y) -> (x,truncate y)) $ M.toAscList $ int2T
+        
+        --putStr $ unlines ansABString
+
+        let ansABSym = ansatzABSym map1Metric map2Metric map1Area map2Area 
+
+        let ansABStringSym = sort $ mapMaybe ((index2SparseAnsatzABSym trianM)) $ toListShow ansABSym 
+
+  --      print $ ansABStringSym == ansABString
+
+    --    putStr $ unlines $ map show $ zip ansABStringSym ansABString
+        --print $ length $ ansABStringSym
+
+        let t = zip  [ [a,b,c] | a <- [1..30], b <- [a..30], c <- [b..30] ] [1..]
+
+        let t2 = zip [1..] [1..10000000]
+
+        let map2 = Bin.fromAscList t2 
+
+        let map3 = M.fromAscList t2 
+
+
+        --putStr $ unlines $ map show $ zip l1 l2
+
+        let ansAaBb = ansatzAaBb map1Metric map2Metric map1Area map2Area 
+
+
+        let l3 = filter (\(a,b) -> b /= 0) $ sort ( map (\(x,y) -> (x,truncate y)) $ toListShowIndex $ ansAaBb)
+
+        --print $ Bin.lookupTree 90 map2
+
+        let prod =  Tree3.tensorContr3 (0,0) Tree3.delta3
+        let prod2 = tensorContr3 (0,0) delta3
+
+        --print $ ( map (\(x,y) -> (x,Tree3.toListL3 y)) $ Tree3.toListU3 Tree3.delta3)
+
+        --print $ map (\(x,y) -> (x,toListL3 y)) $ toListU3 delta3
+
+        let list1 =  ( map (\(a,Tree3.TensorL3 b) -> Bin.treeSize b) $  (\(Tree3.TensorU9 m) -> Bin.toAscList m) intI2Tree3)
+        
+        let list2 =  ( map (\(a,TensorL3 b) -> length b) $  (\(TensorU9 m) -> m) intI2)
+
+        --print $ M.assocs map1Metric
+
+        --print $ M.assocs map1MetricTree3
+
+        let list3 = [((Tree3.Empty, Tree3.Empty, Tree3.Empty, Tree3.Empty, (Tree3.Append a Tree3.Empty), Tree3.Empty, Tree3.Empty, (Tree3.Append b $ Tree3.Append c Tree3.Empty)),1) | a <- [toEnum 0..toEnum 2], b <- [toEnum 0..toEnum 2], c <- [toEnum 0..toEnum 2]]
+
+        let tens1 = Tree3.fromListT list3 
+
+        let tens2 = map Tree3.mkTens list3
+
+        let intAIBTree3 = Tree3.intAIB map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
+
+        let int3Tree3 = Tree3.interEqn3 map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
+
+        let flatIntTree3 = Tree3.flatInter map1AreaTree3 map2AreaTree3
+
+        let flatIntTree2 = flatInter map1Area map2Area
+
+        let intAIBTree2 = intAIB map1Metric map2Metric map1Area map2Area
+
+        --print $ ( Tree3.toListShow intAIBTree3) == ( toListShow intAIBTree2)
+
+        --print $ Tree3.toListShow intAIBTree3
+
+        --print $ toListShow intAIBTree2
+
+        let ansAaBb = ansatzAaBb map1Metric map2Metric map1Area map2Area 
+
+        let ansAIBC = ansatzAIBC map1Metric map2Metric map1Area map2Area 
+
+        let ansAaBbTree3 = Tree3.ansatzAaBb map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
+
+        let ansAIBCTree3 = Tree3.ansatzAIBC map1MetricTree3 map2MetricTree3 map1AreaTree3 map2AreaTree3
+
+        print $ (Tree3.toListShow ansAaBbTree3) == (toListShow ansAaBb)
+
+        -}
+
+        --filter area metric symmetries
+
+        {-        
+
+        let trianA = trianMapArea 
+
+        let trian2 = trianMapDerivative
+
+        let triangle2 = triangleMap2P 
+
+        let triangle3 = triangleMap3P 
+
+        let epsM = epsMap 
+
+        let ansatz4 = relabelAnsatzForest $ getEpsForest [1..4] filterList4 1 symList4 
+
+        let ansatz4Eta = relabelAnsatzForest $ getEtaForest [1..4] filterList4 1 symList4 
+
+        let evalList4 = areaEvalMap4 trianA trian2 triangle2
+
+        let ans4 = evalAllList epsM evalList4 ansatz4
+
+        let ans4Eta = evalAllList epsM evalList4 ansatz4Eta
+
+        let ansatz6 = relabelAnsatzForest $ getEpsForest [1..6] filterList6 1 symList6 
+
+        let ansatz6Eta = relabelAnsatzForest $ getEtaForest [1..6] filterList6 1 symList6 
+
+        let evalList6 = areaEvalMap6 trianA trian2 triangle2
+
+        let ans6 = evalAllList epsM evalList6 ansatz6
+
+        let ans6Eta = evalAllList epsM evalList6 ansatz6Eta
+
+        let ansatz8 = relabelAnsatzForest $ getEpsForest [1..8] filterList8 1 symList8
+
+        let ansatz8Eta = relabelAnsatzForest $ getEtaForest [1..8] filterList8 1 symList8
+
+        let evalList8 = areaEvalMap8 trianA trian2 triangle2
+
+        let ans8 = evalAllList epsM evalList8 ansatz8
+
+        let ans8Eta = evalAllList epsM evalList8 ansatz8Eta
+
+        let ansatz10_1 = relabelAnsatzForest $ getEpsForest [1..10] filterList10_1 1 symList10_1  
+
+        let ansatz10_1Eta = relabelAnsatzForest $ getEtaForest [1..10] filterList10_1 1 symList10_1  
+
+        let evalList10_1 = areaEvalMap10_1 trianA trian2 triangle2
+
+        let ans10_1 = evalAllList epsM evalList10_1 ansatz10_1
+
+        let ans10_1Eta = evalAllList epsM evalList10_1 ansatz10_1Eta
+
+        let ansatz10_2 = relabelAnsatzForest $ getEpsForest [1..10] filterList10_2 2 symList10_2 
+
+        let ansatz10_2Eta = relabelAnsatzForest $ getEtaForest [1..10] filterList10_2 2 symList10_2 
+        
+        let evalList10_2 = areaEvalMap10_2 trianA trian2 triangle2
+
+        let ans10_2 = evalAllList epsM evalList10_2 ansatz10_2
+
+        let ans10_2Eta = evalAllList epsM evalList10_2 ansatz10_2Eta
+
+        let ansatz12 = relabelAnsatzForest $ getEpsForest [1..12] filterList12 1 symList12
+
+        let ansatz12Eta = relabelAnsatzForest $ getEtaForest [1..12] filterList12 1 symList12
+
+        let evalList12 = areaEvalMap12 trianA trian2 triangle3
+
+        let ans12 = evalAllList epsM evalList12 ansatz12
+
+        let ans12Eta = evalAllList epsM evalList12 ansatz12Eta 
+
+        let ansatz12_1 = relabelAnsatzForest $ getEpsForest [1..12] filterList12_1 1 symList12_1
+
+        let ansatz12_1Eta = relabelAnsatzForest $ getEtaForest [1..12] filterList12_1 1 symList12_1
+
+        let evalList12_1 = areaEvalMap12_1 trianA trian2 triangle2
+
+        let ans12_1 = evalAllList epsM evalList12_1 ansatz12_1
+
+        let ans12_1Eta = evalAllList epsM evalList12_1 ansatz12_1Eta
+
+        let ansatz14_1 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_1 1 symList14_1  
+
+        let ansatz14_1Eta = relabelAnsatzForest $ getEtaForest [1..14] filterList14_1 1 symList14_1  
+
+        let evalList14_1 = areaEvalMap14_1 trianA trian2 triangle3
+
+        let ans14_1 = evalAllList epsM evalList14_1 ansatz14_1
+
+        let ans14_1Eta = evalAllList epsM evalList14_1 ansatz14_1Eta
+
+        let ansatz14_2 = relabelAnsatzForest $ getEpsForest [1..14] filterList14_2 2 symList14_2 
+
+        let ansatz14_2Eta = relabelAnsatzForest $ getEtaForest [1..14] filterList14_2 2 symList14_2 
+        
+        let evalList14_2 = areaEvalMap14_2 trianA trian2 triangle3
+
+        let ans14_2 = evalAllList epsM evalList14_2 ansatz14_2
+
+        let ans14_2Eta = evalAllList epsM evalList14_2 ansatz14_2Eta
+
+        let ansatz16_1 = relabelAnsatzForest $ getEpsForest [1..16] filterList16_1 1 symList16_1  
+
+        let ansatz16_1Eta = relabelAnsatzForest $ getEtaForest [1..16] filterList16_1 1 symList16_1  
+
+        let evalList16_1 = areaEvalMap16_1 trianA trian2 triangle3
+
+        let ans16_1 = evalAllList epsM evalList16_1 ansatz16_1
+
+        let ans16_1Eta = evalAllList epsM evalList16_1 ansatz16_1Eta
+
+        let ansatz16_2 = relabelAnsatzForest $ getEpsForest [1..16] filterList16_2 2 symList16_2 
+
+        let ansatz16_2Eta = relabelAnsatzForest $ getEtaForest [1..16] filterList16_2 2 symList16_2 
+        
+        let evalList16_2 = areaEvalMap16_2 trianA trian2 triangle3
+
+        let ans16_2 = evalAllList epsM evalList16_2 ansatz16_2
+
+        let ans16_2Eta = evalAllList epsM evalList16_2 ansatz16_2Eta
+
+        let ansatz18 = relabelAnsatzForest $ getEpsForest [1..18] filterList18 1 symList18
+
+        let ansatz18Eta = relabelAnsatzForest $ getEtaForest [1..18] filterList18 1 symList18
+
+        let evalList18 = areaEvalMap18 trianA trian2 triangle3
+
+        let ans18 = evalAllList epsM evalList18 ansatz18 
+
+        let ans18Eta = evalAllList epsM evalList18 ansatz18Eta 
+
+        let ans10_1Red = evalAllAnsatzForest epsM evalList10_1 ansatz10_1
+
+        let ans14_1EtaRed = evalAllAnsatzForest epsM evalList14_1 ansatz14_1Eta
+
+
+        --writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
+
+        --print "eta done!"
+
+        --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
+
+        --print ans12_1
+
+        --print $ evalAllMatrix ans10_1Red
+
+        --print $ ansatzImage ans10_1Red
+
+        --print $ length $ getRows ans14_1EtaRed
+
+        print $ treeLength ansatz14_2
+
+
+       -}
+
+       
+
+
+
+       
+
+        {-
+
+        let trianA = trianMapArea 
+
+        let trian2 = trianMapDerivative
+
+        let triangle2 = triangleMap2P 
+
+        let triangle3 = triangleMap3P 
+
+        let epsM = epsMap 
+
+        let ansatz10_1 = getEpsForest [1..10] filterList10_1 symList10_1  
+
+        let ansatz10_1Eta = getEtaForest [1..10] filterList10_1 symList10_1  
+
+        let evalList10_1 = areaEvalMap10_1 trianA trian2 triangle2
+
+        let ans10_1 = evalAllListEpsilon epsM evalList10_1 ansatz10_1
+
+        let ans10_1Eta = evalAllListEta epsM evalList10_1 ansatz10_1Eta
+
+        let ansatz14_1 = getEpsForest [1..14] filterList14_1 symList14_1  
+
+        let ansatz14_1Eta = getEtaForest [1..14] filterList14_1 symList14_1  
+
+        let evalList14_1 = areaEvalMap14_1 trianA trian2 triangle3
+
+        let ans14_1 = evalAllListEpsilon epsM evalList14_1 ansatz14_1
+
+        let ans14_1Eta = evalAllListEta epsM evalList14_1 ansatz14_1Eta
+
+        let ansatz14_2 =  getEpsForest [1..14] filterList14_2 symList14_2 
+
+        let ansatz14_2Eta =  getEtaForest [1..14] filterList14_2 symList14_2 
+        
+        let evalList14_2 = areaEvalMap14_2 trianA trian2 triangle3
+
+        let ans14_2 = evalAllListEpsilon epsM evalList14_2 ansatz14_2
+
+        let ans14_2Eta = evalAllListEta epsM evalList14_2 ansatz14_2Eta
+
+        let ansatz18 = getEpsForest [1..18] filterList18 symList18
+
+        let ansatz18Eta = getEtaForest [1..18] filterList18 symList18
+
+        let evalList18 = areaEvalMap18 trianA trian2 triangle3
+
+        let ans18 = evalAllListEpsilon epsM evalList18 ansatz18 
+
+        let ans18Eta = evalAllListEta epsM evalList18 ansatz18Eta 
+
+        --writeFile "/cip/austausch/cgg/eta18List.txt" $ show ans18Eta 
+
+        --print "eta done!"
+
+        --writeFile "/cip/austausch/cgg/epsilon18List.txt" $ show ans18
+        -}
+
+        {-
+
+        etaL' <- readFile "/cip/austausch/cgg/eta18List.txt"
+
+        let etaL = read etaL' :: [([(Int,Int)],Int,Int)]
+
+        etaVars' <- readFile "/cip/austausch/cgg/eta18Vars.txt"
+
+        let etaVars = map read $ lines etaVars' :: [Int]
+
+        let eta18BasisList = rmDepVarsAnsList etaVars etaL
+
+        writeFile "/cip/austausch/cgg/eta18BasisList.txt" $ unlines $ map show eta18BasisList
+
+        epsL' <- readFile "/cip/austausch/cgg/epsilon18ListLines.txt"
+
+        let epsL = map read $ lines epsL' :: [([(Int,Int)],Int,Int)]
+
+        epsVars' <- readFile "/cip/austausch/cgg/epsilon18Vars.txt"
+
+        let epsVars = map read $ lines epsVars' :: [Int]
+
+        let eps18BasisList = rmDepVarsAnsList epsVars epsL
+
+        writeFile "/cip/austausch/cgg/epsilon18BasisList.txt" $ unlines $ map show eps18BasisList
+
+
+        
+
+        let map1Area = trianMapAreaI 
+        let map2Area = trianMapAreaJ
+        let map1Metric = trianMapI2
+        let map2Metric = trianMapJ2
+
+        let triangle3 = triangleMap3P 315 
+
+        let ansatzAIBJCKCond = ansatzAIBJCK map1Metric map2Metric map1Area map2Area 
+
+        let ansatzAIBJCKComps = mapMaybe (index2SparseAnsatzAIBJCKSym triangle3) $ toListShow ansatzAIBJCKCond 
+
+        writeFile "/cip/austausch/cgg/ansatz18AIBJCK.txt" $ unlines $ map show ansatzAIBJCKComps
+
+
+        
+
+        let map1Area = trianMapAreaI 
+        let map2Area = trianMapAreaJ
+        let map1Metric = trianMapI2
+        let map2Metric = trianMapJ2
+
+        let map1AreaTree4 = Tree4.trianMapAreaI 
+        let map2AreaTree4 = Tree4.trianMapAreaJ
+        let map1MetricTree4 = Tree4.trianMapI2
+        let map2MetricTree4 = Tree4.trianMapJ2
+
+        let interM = interMetric map1Metric map2Metric 
+        let interMTree4 = Tree4.interMetric map1MetricTree4 map2MetricTree4 
+
+        let interA = interArea map1Area map2Area 
+        let interATree4 = Tree4.interArea map1AreaTree4 map2AreaTree4 
+
+        let inter2 = interEqn2 map1Area map2Area 
+        let inter2Tree4 = Tree4.interEqn2 map1AreaTree4 map2AreaTree4
+
+        let inter3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+        let inter3Tree4 = Tree4.interEqn3 map1MetricTree4 map2MetricTree4 map1AreaTree4 map2AreaTree4
+
+        let interAIB = intAIB map1Metric map2Metric map1Area map2Area
+        let interAIBTree4 = Tree4.intAIB map1MetricTree4 map2MetricTree4 map1AreaTree4 map2AreaTree4
+
+        
+        
+
+        etaTens' <- readFile "/cip/austausch/cgg/eta18TensList.txt"
+
+        let etaTens = map read $ lines etaTens' :: [I.IntMap Int]
+
+        epsTens' <- readFile "/cip/austausch/cgg/epsilon18TensList.txt"
+
+        let epsTens = map read $ lines epsTens' :: [I.IntMap Int]
+
+        let tensList = map (I.map fromIntegral) $ zipWith (I.unionWith (+)) etaTens epsTens :: [Tree4.VarMap]
+
+        let tensIndList = Tree4.area18TensList tensList 
+
+        writeFile "/cip/austausch/cgg/ansTens18IndList.txt" $ unlines $ map show tensIndList 
+
+        print "file written !"
+
+        let tens18 = Tree4.fromListTWith8 (I.unionWith (+)) tensIndList 
+
+        writeFile "/cip/austausch/cgg/ansTens18Tensor.txt" $ show tens18 
+
+
+        -}
+
+
+        let ansatz18Tens = mkAnsatzTensor 18 filterList18 symList18 1 epsMap (areaEvalMap18Inds trianMapArea trianMapDerivative)
+
+        let ansatz18TensTest = ansatzAIBJCK trianMapI2 trianMapJ2 trianMapAreaI trianMapAreaJ ansatz18Tens
+
+        print $ toListShowVar ansatz18TensTest
+        
+
+
+
+
+
+       
+
+        
+        
+        
+
+        
+
+       
+        

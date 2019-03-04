@@ -17,7 +17,7 @@ module Tensor (
     Tensor(..), mkTensorfromList, mkTensorfromF, getVal, tensorProductWith, tensorProductNumeric, tensorContractWith_3, tensorContractWith_9, tensorContractWith_19,
     tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor, tensorTranspose,
     tensorIndList, mkTensorfromFZeros, evalFullTensor, evalTensorVals, unsafeGetVal, tensorProductWith2, tensorProductNumeric2, tensorProductNew,
-    getMap
+    getMap, toListShow
 ) where
 
     import Index
@@ -208,7 +208,7 @@ module Tensor (
                         pairs1 = M.assocs map1 
                         pairs2 = M.assocs map2
                         combineF = \(a,b) (c,d) -> (combineIndex a c, f b d)
-                        newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
+                        newMap = M.fromList $ combineF <$> pairs1 <*> pairs2
 
     tensorProductNumeric :: (Num a, Eq a) => Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> Tensor m1 m2 m3 m4 m5 m6 m7 m8 a -> 
         Tensor (n1+m1) (n2+m2) (n3+m3) (n4+m4) (n5+m5) (n6+m6) (n7+m7) (n8+m8) a
@@ -217,7 +217,7 @@ module Tensor (
                         pairs1 = M.assocs $ M.filter (/=0) map1 
                         pairs2 = M.assocs $ M.filter (/=0) map2
                         combineF = \(a,b) (c,d) -> (combineIndex a c, (*) b d)
-                        newMap = M.fromAscList $ combineF <$> pairs1 <*> pairs2
+                        newMap = M.fromList $ combineF <$> pairs1 <*> pairs2
 
     --see if this implementation of the tensor product is fast enough ??
 
@@ -335,6 +335,14 @@ module Tensor (
     --this is all information we need to extract from the tensor
 
     --the only thing missing is mapping the keys (Index n1 .. n8) to sparse matrix indices (Int,Int) -> in BasicTensor
+
+    toListShow :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> [(([Int],[Int],[Int],[Int],[Int],[Int],[Int],[Int]), a)]
+    toListShow (Tensor t) = map showIndex l 
+            where
+                l = M.assocs t
+                showIndex ((Index i1 i2 i3 i4 i5 i6 i7 i8),y) = (((map fromEnum $ ind2List i1), (map fromEnum $ ind2List i2), (map fromEnum $ ind2List i3), (map fromEnum $ ind2List i4), (map fromEnum $ ind2List i5), (map fromEnum $ ind2List i6), (map fromEnum $ ind2List i7), (map fromEnum $ ind2List i8)),y) 
+
+
 
    
     

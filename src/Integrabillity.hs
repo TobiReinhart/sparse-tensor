@@ -997,7 +997,7 @@ module Integrabillity (
                             tensTrans = tensorTranspose 2 (0,1) $ tensorTranspose 8 (1,2) tens
 
     index2Sparseprolongation2AaBb :: Index 2 2 0 0 0 0 3 3 -> (Int,Int) 
-    index2Sparseprolongation2AaBb  (Index x1  x2  _  _  _  _  x7  x8) = ((e-1)*21*4^6+(f-1)*4^4+(r-1)*4^3+(s-1)*4^2+(m-1)*4+u,(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
+    index2Sparseprolongation2AaBb  (Index x1  x2  _  _  _  _  x7 x8) = ((e-1)*21*4^6+(f-1)*4^4+(r-1)*4^3+(s-1)*4^2+(m-1)*4+u,(b-1)*21*4*4+(q-1)*21*4+(a-1)*4+p)
                                                   where 
                                                       e = 1 + (fromEnum $ getValInd x1 0)
                                                       f = 1 + (fromEnum $ getValInd x1 1)

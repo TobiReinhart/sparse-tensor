@@ -18,10 +18,18 @@
 
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+{-# LANGUAGE RankNTypes #-}
+
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
 
+{-# LANGUAGE LambdaCase #-}
+
+
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver   #-}
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
+
+{-# OPTIONS_GHC -dcore-lint #-}
 
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
@@ -52,12 +60,59 @@ module TensorTreeNumeric4 (
     import Data.Proxy
     import GHC.TypeLits.Normalise
     import Data.Foldable
-    import GHC.Generics (Generic)
+    import GHC.Generics
     import Control.DeepSeq
+
+    import Data.Serialize
+
+    import Data.Type.Equality
+
+    import Data.Singletons
+    import Data.Singletons.Decide
+    import Data.Singletons.Prelude.Enum
+    import Data.Singletons.TypeLits
+
+    import Unsafe.Coerce (unsafeCoerce)
 
     data IndList n a where
         Empty :: IndList 0 a 
-        Append :: a -> IndList n a -> IndList (n+1) a 
+        Append :: a -> IndList (n-1) a -> IndList n a 
+
+    data IsZero (n :: Nat) where
+        Zero :: (0 ~ n)     => IsZero n
+        NonZero :: (1 <= n) => IsZero n
+    deriving instance Show (IsZero n)
+    
+    isZero :: forall (n :: Nat). SNat n -> IsZero n
+    isZero n = case n %~ (SNat @0)
+                 of Proved Refl -> Zero
+                    Disproved _ -> unsafeCoerce (NonZero @1)
+    
+    fromList :: forall (n :: Nat). SNat n -> forall (a :: *). [a] -> Maybe (IndList n a)
+    fromList n xs = case isZero n
+                      of Zero    -> case xs
+                                      of [] -> Just Empty
+                                         _  -> Nothing
+                         NonZero -> case xs
+                                      of []    -> Nothing
+                                         x:xs' -> case fromList (sPred n) xs'
+                                                    of Just v  -> Just (x `Append` v)
+                                                       Nothing -> Nothing
+    
+    fromList' :: forall (n :: Nat). SingI n => forall (a :: *). [a] -> IndList n a
+    fromList' = \case
+                   Just v  -> v
+                   Nothing -> undefined
+                . fromList sing
+    
+    instance (KnownNat n, Generic a) => Generic (IndList n a) where
+        type Rep (IndList n a) = Rep [a]
+    
+        to r = fromList' $ to r
+        from = from . toList
+    
+    deriving instance Generic Int
+    deriving instance (KnownNat n, Generic a, Serialize a) => Serialize (IndList n a)
 
     instance (NFData a) => NFData (IndList n a) where
         rnf (Empty) = ()
@@ -128,6 +183,47 @@ module TensorTreeNumeric4 (
         Scalar :: v -> Tensor 0 k v 
         Tensor :: M.Map k (Tensor n k v) -> Tensor (n+1) k v
         ZeroTensor :: Tensor n k v
+
+    data TensorRep k v = ScalarR v | TensorR Natural (M.Map k (TensorRep k v)) | ZeroR Natural deriving (Show, Generic, Serialize)
+
+    lemma :: forall n m. (n-1 :~: m) -> (m+1 :~: n)
+    lemma _ = unsafeCoerce (Refl @n)
+
+    toRep :: forall n k v. KnownNat n => Tensor n k v -> TensorRep k v
+    toRep (Scalar v) = ScalarR v
+    toRep (Tensor m) = case isZero (SNat @n)
+                       of Zero -> undefined
+                          NonZero ->
+                            case lemma @n Refl
+                             of Refl ->
+                                   let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
+                                   in TensorR r $ fmap (\(t :: Tensor (n-1) k v) -> toRep t) m
+    toRep ZeroTensor = let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
+                       in ZeroR r
+
+    fromRep :: forall n k v. KnownNat n => TensorRep k v -> Tensor n k v
+    fromRep (ScalarR v) = case isZero (SNat @n)
+                            of Zero    -> Scalar v
+                               NonZero -> undefined
+    fromRep (TensorR r m) = case someNatVal (fromIntegral r)
+                              of Just l  -> case l
+                                              of SomeNat (_ :: Proxy x) -> case isZero (SNat @x)
+                                                                             of NonZero -> case sameNat (Proxy @x) (Proxy @n)
+                                                                                             of Nothing   -> undefined
+                                                                                                Just Refl -> Tensor (fmap (\t -> (fromRep t) :: Tensor (x-1) k v) m)
+                                                                                Zero    -> undefined
+                                 Nothing -> undefined
+    fromRep (ZeroR r) = case someNatVal (fromIntegral r)
+                          of Just l  -> ZeroTensor
+                             Nothing -> undefined
+    
+    instance KnownNat n => Generic (Tensor n k v) where
+        type Rep (Tensor n k v) = Rep (TensorRep k v)
+
+        from = from . toRep
+        to   = fromRep . to
+
+    deriving instance (KnownNat n, Ord k, Serialize k, Serialize v) => Serialize (Tensor n k v)
 
     instance Functor (Tensor n k) where 
         fmap f (Scalar x) = Scalar (f x)
@@ -201,14 +297,14 @@ module TensorTreeNumeric4 (
     tensorContr g f addF inds ZeroTensor = ZeroTensor
 
 
-    data Uind20 =  Uind20 {indValU20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
-    data Lind20 =  Lind20 {indValL20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
-    data Uind19 =  Uind19 {indValU19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
-    data Lind19 =  Lind19 {indValL19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
-    data Uind9 =  Uind9 {indValU9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
-    data Lind9 =  Lind9 {indValL9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
-    data Uind3 =  Uind3 {indValU3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
-    data Lind3 =  Lind3 {indValL3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData)
+    data Uind20 =  Uind20 {indValU20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    data Lind20 =  Lind20 {indValL20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    data Uind19 =  Uind19 {indValU19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    data Lind19 =  Lind19 {indValL19 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    data Uind9 =  Uind9 {indValU9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    data Lind9 =  Lind9 {indValL9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    data Uind3 =  Uind3 {indValU3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    data Lind3 =  Lind3 {indValL3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
 
     type Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 a = Tensor n1 Uind20 (Tensor n2 Lind20 (Tensor n3 Uind19 (Tensor n4 Lind19 (Tensor n5 Uind9 (Tensor n6 Lind9 (Tensor n7 Uind3 (Tensor n8 Lind3 a)))))))

@@ -1,5 +1,4 @@
-
-
+{-# LANGUAGE BangPatterns #-}
 
 
 module Tensor2 (
@@ -129,7 +128,10 @@ module Tensor2 (
     repInd i x l = (head l) : (repInd (i-1) x $ tail l)
 
     combineInd :: Ind -> Ind -> Ind 
-    combineInd = (++)
+    combineInd [] [] = []
+    combineInd [] a = a
+    combineInd a [] = a
+    combineInd a b = head a : combineInd (tail a) b
 
 
     contractionInd :: (Int,Int) -> (Ind, Ind) -> (Ind, Ind)

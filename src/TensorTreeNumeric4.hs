@@ -74,15 +74,15 @@ module TensorTreeNumeric4 (
 
     import Unsafe.Coerce (unsafeCoerce)
 
-    data IndList n a where
-        Empty :: IndList 0 a 
-        Append :: a -> IndList (n-1) a -> IndList n a 
-
     data IsZero (n :: Nat) where
-        Zero :: (0 ~ n)     => IsZero n
+        Zero    :: (0 ~ n)  => IsZero n
         NonZero :: (1 <= n) => IsZero n
     deriving instance Show (IsZero n)
     
+    data IndList (n :: Nat) a where
+        Empty  :: (0 ~ n)  => IndList n a 
+        Append :: (1 <= n) => a -> IndList (n-1) a -> IndList n a 
+
     isZero :: forall (n :: Nat). SNat n -> IsZero n
     isZero n = case n %~ (SNat @0)
                  of Proved Refl -> Zero

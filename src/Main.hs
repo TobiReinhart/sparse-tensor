@@ -60,18 +60,18 @@ main = do
     let ansatz16_2 = encodeLazy ansatz16_2'
     let ansatz18 = encodeLazy ansatz18'
 
-    BS.writeFile "/cip/austausch/cgg/ansatz4.dat.gz" $ compress ansatz4
-    BS.writeFile "/cip/austausch/cgg/ansatz6.dat.gz" $ compress ansatz6
-    BS.writeFile "/cip/austausch/cgg/ansatz8.dat.gz" $ compress ansatz8
-    BS.writeFile "/cip/austausch/cgg/ansatz10_1.dat.gz" $ compress ansatz10_1
-    BS.writeFile "/cip/austausch/cgg/ansatz10_2.dat.gz" $ compress ansatz10_2
-    BS.writeFile "/cip/austausch/cgg/ansatz12.dat.gz" $ compress ansatz12
-    BS.writeFile "/cip/austausch/cgg/ansatz12_1.dat.gz" $ compress ansatz12_1
-    BS.writeFile "/cip/austausch/cgg/ansatz14_1.dat.gz" $ compress ansatz14_1
-    BS.writeFile "/cip/austausch/cgg/ansatz14_2.dat.gz" $ compress ansatz14_2
-    BS.writeFile "/cip/austausch/cgg/ansatz16_1.dat.gz" $ compress ansatz16_1
-    BS.writeFile "/cip/austausch/cgg/ansatz16_2.dat.gz" $ compress ansatz16_2
-    --BS.writeFile "/cip/austausch/cgg/ansatz18.dat.gz" $ compress ansatz18
+    --BS.writeFile "/cip/austausch/cgg/ansatz4.dat.gz" $ compress ansatz4
+    --BS.writeFile "/cip/austausch/cgg/ansatz6.dat.gz" $ compress ansatz6
+    --BS.writeFile "/cip/austausch/cgg/ansatz8.dat.gz" $ compress ansatz8
+    --BS.writeFile "/cip/austausch/cgg/ansatz10_1.dat.gz" $ compress ansatz10_1
+    --BS.writeFile "/cip/austausch/cgg/ansatz10_2.dat.gz" $ compress ansatz10_2
+    --BS.writeFile "/cip/austausch/cgg/ansatz12.dat.gz" $ compress ansatz12
+    --BS.writeFile "/cip/austausch/cgg/ansatz12_1.dat.gz" $ compress ansatz12_1
+    --BS.writeFile "/cip/austausch/cgg/ansatz14_1.dat.gz" $ compress ansatz14_1
+    --BS.writeFile "/cip/austausch/cgg/ansatz14_2.dat.gz" $ compress ansatz14_2
+    --BS.writeFile "/cip/austausch/cgg/ansatz16_1.dat.gz" $ compress ansatz16_1
+    --BS.writeFile "/cip/austausch/cgg/ansatz16_2.dat.gz" $ compress ansatz16_2
+    BS.writeFile "/cip/austausch/cgg/ansatz18.dat.gz" $ compress ansatz18
 
     --e' <- BS.readFile "tensor_bs.dat.gz"
     --let d = (fromRight undefined $ decodeLazy $ decompress e') :: Tensor8 3 0 0 0 1 0 0 0 VarMap

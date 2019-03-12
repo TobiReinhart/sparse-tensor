@@ -38,13 +38,17 @@
 
 module TensorTreeNumeric4 (
     toListT8, toListShow8, intAIB, interMetric, interArea, interEqn2, interEqn3, trianMapAreaI, trianMapAreaJ, trianMapI2, trianMapJ2,
-    interI2, interJ2, aSymI2, interIArea, interJArea, toListShowVar,
-    delta20, delta19, delta9, delta3, tensorContr20, tensorContr19, tensorContr9, tensorContr3, tensorProd8, 
+    interI2, interJ2, aSymI2, interIArea, interJArea, toListShowVar, toMatrix, getTensorRank, shiftVarLabels, getTensorRank3, getTensorRank4, toMatrix4, toMatrix3, toMatrix2,
+    delta20, delta19, delta9, delta3, tensorContr20, tensorContr19, tensorContr9, tensorContr3, tensorProd8, toMatList,
     tensorTransU20, tensorTransL20, tensorTransU19, tensorTransL19, tensorTransU9, tensorTransL9, tensorTransU3, tensorTransL3, tensorSub8,
     triangleMap3P', ansatzAIBJCK', index2SparseAnsatzAIBJCKSym, VarMap, area18TensList, Tensor(..), Tensor8, IndList(..),
     Uind20(..), Lind20(..), Uind19(..), Lind19(..), Uind9(..), Lind9(..), Uind3(..), Lind3(..), IndTuple, fromListT8, fromListTWith8, singletonInd, ansatzAIB,
     ansatzAI, ansatzAB, ansatzAaBb, ansatzABC, ansatzA, tensorTransWithU20, tensorTransWithL20, tensorTransWithU19, tensorTransWithL19, tensorTransWithU9, tensorTransWithL9,
-    tensorTransWithU3, tensorTransWithL3, addVarsMap, ansatzAIBJ, ansatzABbCc, ansatzABCI, ansatzApBqCI, ansatzABICJ, ansatzAIBJCK
+    tensorTransWithU3, tensorTransWithL3, addVarsMap, ansatzAIBJ, ansatzABbCc, ansatzABCI, ansatzApBqCI, ansatzABICJ, ansatzAIBJCK, ansatz10_2Test, ansatz10_2Test2, ansatz6Test, 
+    ansatz6Test2, ansatz6Test3, ansatz10_2Test3, ansatz10_2Test4, ansatz6Test4, ansatz10_2Test5, ansatz6Test5, ansatz6Test6, ansatz10_2Test6, getTensorRank2, 
+    eqn1Test, eqn3Test1, eqn3Test2, intCondTest, eqn1TestnoDens, intCondTestnoDens,
+    interTest, interTest2, ansatz14Test, ansatz14Test2, ansatz14Test3, ansatz14Test4, ansatz14Test5, ansatz14Test6, ansatz14Test7, ansatz14Test8, ansatz14Test9, ansatz14Test10, ansatz14Test11, ansatz14Test12, ansatz14Test13, ansatz14Test14,
+    ansatz10_2Test7
     
 ) where
 
@@ -71,6 +75,10 @@ module TensorTreeNumeric4 (
     import Data.Singletons.Decide
     import Data.Singletons.Prelude.Enum
     import Data.Singletons.TypeLits
+
+    import qualified Data.Eigen.Matrix as Mat 
+    import qualified Data.Eigen.SparseMatrix as Sparse
+    import qualified Data.Eigen.LA as Sol 
 
     import Unsafe.Coerce (unsafeCoerce)
 
@@ -284,7 +292,7 @@ module TensorTreeNumeric4 (
                     where 
                         l = (map (\(x,y) -> (swapHead j x, y)) $ toListT t)
     tensorTrans addF (i, j) (Tensor m) = Tensor $ M.map (tensorTrans addF (i-1, j-1)) m 
-
+    tensorTrans addF (i ,j) ZeroTensor = ZeroTensor
 
     tensorContr :: (Ord k, Ord k', Eq k, Eq v) => (k -> Int) -> (k' -> Int) -> (v -> v -> v) -> (Int, Int) -> Tensor n k (Tensor m k' v) -> Tensor (n-1) k (Tensor (m-1) k' v)
     tensorContr g f addF (0,j) t = fromListT (tensorAdd addF) tensList 
@@ -494,7 +502,54 @@ module TensorTreeNumeric4 (
             where
                 l = toListShow8 t 
 
+    toMatList :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> [[(Int, Rational)]]
+    toMatList t = map snd $ toListShowVar t
+
+    toMatrix' :: [[(Int, Rational)]] -> Mat.MatrixXd 
+    toMatrix' l = Sparse.toMatrix $ Sparse.fromList n m l''
+                    where
+                        l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
+                        n = length l 
+                        l'' = map (\(a,b,c) -> (a-1, b-1, fromRational c)) l'
+                        m = maximum $ map fst $ concat l 
+
+    toMatrix :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Mat.MatrixXd
+    toMatrix t = toMatrix' $ toMatList t
+
+    toMatrix2 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Mat.MatrixXd 
+    toMatrix2 t1 t2 = toMatrix' l 
+            where
+                l = toMatList t1 ++ toMatList t2
+
+    toMatrix3 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Mat.MatrixXd 
+    toMatrix3 t1 t2 t3 = toMatrix' l 
+            where
+                l = toMatList t1 ++ toMatList t2 ++ toMatList t3
+
+    toMatrix4 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Mat.MatrixXd 
+    toMatrix4 t1 t2 t3 t4 = toMatrix' l 
+            where
+                l = toMatList t1 ++ toMatList t2 ++ toMatList t3 ++ toMatList t4
+
+    getTensorRank :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Int 
+    getTensorRank t = Sol.rank Sol.FullPivLU $ toMatrix t
+
+    getTensorRank2 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Int 
+    getTensorRank2 t1 t2 = Sol.rank Sol.FullPivLU $ toMatrix2 t1 t2
+
+    getTensorRank3 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Int 
+    getTensorRank3 t1 t2 t3 = Sol.rank Sol.FullPivLU $ toMatrix3 t1 t2 t3
+
+    getTensorRank4 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Int 
+    getTensorRank4 t1 t2 t3 t4 = Sol.rank Sol.FullPivLU $ toMatrix4 t1 t2 t3 t4 
+
+
     type VarMap = I.IntMap Rational   
+
+    shiftVarLabels :: Int -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap 
+    shiftVarLabels s t = actOnScalar f t 
+                where
+                    f i = I.mapKeys ((+) s) i
 
     multVar :: Rational -> VarMap -> VarMap 
     multVar s = I.map ((*) s)
@@ -876,3 +931,386 @@ module TensorTreeNumeric4 (
                 block1 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens int3Contr 
                 block2 = tensorTransWithU9 (1,2) addVarsMap $ tensorTransWithU20 (1,2) addVarsMap block1 
                 block3 = tensorTransWithU9 (0,2) addVarsMap $ tensorTransWithU20 (0,2) addVarsMap block1
+
+    interTest :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 0 1 0 0 0 0 2 2 Rational
+    interTest map1Metric map2Metric map1Area map2Area =  tensorSub8 tens tensTrans 
+            where
+                intArea = interArea map1Area map2Area
+                flatInt = flatInter map1Area map2Area 
+                tens = tensorContr20 (0,1) $ tensorProd8 intArea flatInt
+                tensTrans = tensorTransU3 (0,1) $ tensorTransL3 (0,1) tens
+
+    interTest2 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 0 1 0 0 0 0 4 0 Rational
+    interTest2 map1Metric map2Metric map1Area map2Area =  tensorSub8 tens tensTrans 
+            where
+                intArea = interArea map1Area map2Area
+                flatInt = flatInter map1Area map2Area 
+                symIntArea' = tensorContr3 (1,0) $ tensorProd8 intArea invEta 
+                symIntArea = tensorAdd8 symIntArea' $ tensorTransU3 (0,1) symIntArea'
+                symFlatInt' = tensorContr3 (1,0) $ tensorProd8 flatInt invEta 
+                tens = tensorContr20 (0,1) $ tensorProd8 symIntArea symFlatInt'
+                tensTrans = tensorTransU3 (0,2) $ tensorTransU3 (1,3) tens
+
+    ansatz10_2Test :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 3 1 VarMap
+    ansatz10_2Test map1Metric map2Metric map1Area map2Area ansatzTens = tensorAddWith8 addVarsMap resultSym resultTrans 
+            where
+                intArea = interArea map1Area map2Area
+                flatInt = flatInter map1Area map2Area 
+                block1 = tensorContr20 (0,1) $ tensorProd8 intArea flatInt 
+                block1Total = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1 
+                block2 = tensorTransWithL3 (0,1) addVarsMap $ tensorTransWithU3 (0,1) addVarsMap block1Total
+                result = tensorSubWith8 (addVarsMap) multVar block1Total block2
+                resultSym = tensorContrWith3 (2,0) addVarsMap $ tensorProdWith8 (flip multVar) result invEta 
+                resultTrans = tensorTransWithU3 (0,2) addVarsMap resultSym
+
+    ansatz10_2Test2 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 3 0 0 0 VarMap
+    ansatz10_2Test2 map1Metric map2Metric map1Area map2Area ansatzTens = tensorSubWith8 (addVarsMap) multVar block1Total block2 
+            where
+                intArea = interArea map1Area map2Area
+                sym = interI2 map1Metric 
+                intAreaSym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 intArea invEta) sym 
+                flatInt = flatInter map1Area map2Area 
+                intFlatSym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 flatInt invEta) sym 
+                block1 = tensorContr20 (0,1) $ tensorProd8 intAreaSym intFlatSym 
+                block1Total = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1 
+                block2 = tensorTransWithU9 (1,2) addVarsMap block1Total
+
+    ansatz6Test :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 3 0 0 0 VarMap
+    ansatz6Test map1Metric map2Metric map1Area map2Area ansatzTens = block1Total
+            where
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                sym = interI2 map1Metric 
+                int3Sym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 int3 invEta) sym
+                block1 = tensorContr9 (0,1) $ tensorContr20 (0,1) $ tensorProd8 int3Sym int3Sym 
+                block1Total = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1 
+                block2 = tensorTransWithU9 (0,2) addVarsMap block1Total
+                result = tensorSubWith8 (addVarsMap) multVar block1Total block2
+
+    ansatz6Test2 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 3 0 0 0 VarMap
+    ansatz6Test2 map1Metric map2Metric map1Area map2Area ansatzTens = total
+            where
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                sym = interI2 map1Metric 
+                int3Sym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 int3 invEta) sym
+                block1 = tensorProd8 int3Sym $ tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 invEta sym
+                block1Trans = tensorTransU9 (1,2) block1
+                block1Total = tensorSub8 block1 block1Trans
+                total = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1Total
+
+    ansatz6Test3 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    ansatz6Test3 map1Metric map2Metric map1Area map2Area ansatzTens = tensorSubWith8 (addVarsMap) multVar block1Total block2 
+            where
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                block1 = tensorContr9 (0,1) $ tensorContr20 (0,1) $ tensorProd8 int3 int3 
+                block1Total = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1 
+                block2 = tensorTransWithL3 (0,1) addVarsMap $ tensorTransWithU3 (0,1) addVarsMap block1Total
+
+    ansatz10_2Test3 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    ansatz10_2Test3 map1Metric map2Metric map1Area map2Area ansatzTens = tensorSubWith8 (addVarsMap) multVar totalTens totalTensTrans 
+            where
+                intArea = interArea map1Area map2Area
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                flatInt = flatInter map1Area map2Area 
+                block1 = tensorProd8 int3 flatInt  
+                block1Total = tensorContrWith20 (0,0) addVarsMap $ tensorContrWith20 (1,0) addVarsMap $ tensorContrWith9 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1 
+                block2 = tensorContr20 (0,1) $ tensorProd8 intArea flatInt 
+                block2Total = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block2
+                totalTens = tensorAddWith8 addVarsMap block1Total block2Total
+                totalTensTrans = tensorTransWithL3 (0,1) addVarsMap $ tensorTransWithU3 (0,1) addVarsMap totalTens 
+
+    ansatz10_2Test4 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 4 0 VarMap
+    ansatz10_2Test4 map1Metric map2Metric map1Area map2Area ansatzTens = tensorSubWith8 addVarsMap multVar tens tensTrans 
+            where
+                intArea = interArea map1Area map2Area
+                flatInt = flatInter map1Area map2Area 
+                intAreaSym1 = tensorContr3 (1,0) $ tensorProd8 intArea invEta 
+                intAreaSym2 = tensorTransU3 (0,1) intAreaSym1 
+                intAreaSym = tensorAdd8 intAreaSym1 intAreaSym2 
+                flatSym1 = tensorContr3 (1,0) $ tensorProd8 flatInt invEta 
+                flatSym2 = tensorTransU3 (0,1) flatSym1 
+                flatSym = tensorAdd8 flatSym1 flatSym2 
+                block2 = tensorContr20 (0,1) $ tensorProd8 intAreaSym flatSym
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block2
+                tensTrans = tensorTransWithU3 (0,2) addVarsMap $ tensorTransWithU3 (1,3) addVarsMap tens
+
+    ansatz6Test4 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 4 0 VarMap
+    ansatz6Test4 map1Metric map2Metric map1Area map2Area ansatzTens = tensorSubWith8 (addVarsMap) multVar tens tensTrans 
+            where
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                block1 = tensorContr3 (1,0) $ tensorProd8 int3 invEta 
+                block1Trans = tensorTransU3 (0,1) block1 
+                block2 = tensorAdd8 block1 block1Trans 
+                totalBlock = tensorContr9 (0,1) $ tensorContr20 (0,1) $ tensorProd8 block1 block2
+                tens = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens totalBlock 
+                tensTrans = tensorTransWithU3 (0,2) addVarsMap $ tensorTransWithU3 (1,3) addVarsMap $ tens
+
+    ansatz10_2Test5 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    ansatz10_2Test5 map1Metric map2Metric map1Area map2Area ansatzTens = tensorSubWith8 (addVarsMap) multVar total totalTrans 
+            where
+                intArea = interArea map1Area map2Area
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                flatInt = flatInter map1Area map2Area 
+                block1 = tensorProd8 delta3 flatInt  
+                block1Tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1
+                block2 = tensorContr20 (0,1) $ tensorProd8 intArea flatInt 
+                block2Tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block2 
+                block3 = tensorProd8 int3 flatInt 
+                block3Tens = tensorContrWith20 (1,0) addVarsMap $ tensorContrWith20 (0,1) addVarsMap $ tensorContrWith9 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block3
+                total = tensorAddWith8 addVarsMap block1Tens $ tensorAddWith8 addVarsMap block2Tens block3Tens
+                totalTrans = tensorTransWithU3 (0,1) addVarsMap $ tensorTransWithL3 (0,1) addVarsMap total 
+
+    ansatz6Test5 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 4 0 VarMap
+    ansatz6Test5 map1Metric map2Metric map1Area map2Area ansatzTens = tensorSubWith8 (addVarsMap) multVar block1Total block2 
+            where
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                int3Sym' = tensorContr3 (1,0) $ tensorProd8 int3 invEta 
+                int3Sym = tensorAdd8 int3Sym' $ tensorTransU3 (0,1) int3Sym'
+                block1 = tensorContr9 (0,1) $ tensorContr20 (0,1) $ tensorProd8 int3Sym' int3Sym
+                block1Total = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1 
+                block2 = tensorTransWithU3 (0,2) addVarsMap $ tensorTransWithU3 (1,3) addVarsMap block1Total
+
+    ansatz6Test6 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 4 0 VarMap
+    ansatz6Test6 map1Metric map2Metric map1Area map2Area ansatzTens = tens
+            where
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area
+                int3Sym = tensorContr3 (1,0) $ tensorProd8 int3 invEta 
+                block1 = tensorContr9 (0,1) $ tensorContr20 (0,1) $ tensorProd8 int3Sym int3Sym
+                block2 = tensorTransU3 (2,3) block1 
+                block3 = tensorTransU3 (0,2) $ tensorTransU3 (1,3) block1
+                block4 = tensorTransU3 (0,2) $ tensorTransU3 (1,3) $ tensorTransU3 (2,3) block1 
+                total1 = tensorAdd8 block1 block2 
+                total2 = tensorAdd8 block3 block4 
+                total = tensorSub8 total1 total2 
+                tens = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens total
+
+    ansatz10_2Test6 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    ansatz10_2Test6 map1Metric map2Metric map1Area map2Area ansatzTens = result
+            where
+                intArea = interArea map1Area map2Area
+                flatInt = flatInter map1Area map2Area 
+                block1 = tensorContr20 (0,1) $ tensorProd8 intArea flatInt 
+                block1Total = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1 
+                block2 = tensorTransWithL3 (0,1) addVarsMap $ tensorTransWithU3 (0,1) addVarsMap block1Total
+                result = tensorSubWith8 (addVarsMap) multVar block1Total block2
+    
+    eqn1Test ::  M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 1 1 VarMap
+    eqn1Test map1Metric map2Metric map1Area map2Area ansatzTens6 ansatzTens10 = tensorAddWith8 addVarsMap block0 $ tensorAddWith8 addVarsMap block1 block2 
+            where
+                flatInt = flatInter map1Area map2Area 
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+                block0 = tensorProdWith8 (flip multVar) ansatzTens6 delta3 
+                block1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens10 flatInt
+                block2 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens6 int3 
+
+    eqn3Test1 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap -> Tensor8 0 0 0 0 0 0 3 1 VarMap
+    eqn3Test1 map1Metric map2Metric map1Area map2Area ansatzTens6 = total
+            where
+                flatInt = flatInter map1Area map2Area 
+                intJ = interJ2 map2Metric 
+                flatInt1 = tensorProd8 intJ flatInt 
+                flatInt2 = tensorTransU3 (0,1) flatInt1
+                flatInt3 = tensorTransU3 (1,2) flatInt1
+                flatInt4 = tensorTransU3 (0,2) flatInt1 
+                flatInt5 = tensorTransU3 (0,1) $ tensorTransU3 (1,2) flatInt1
+                flatInt6 = tensorTransU3 (0,1) $ tensorTransU3 (0,2) flatInt1 
+                tens = tensorAdd8 flatInt1 $ tensorAdd8 flatInt2 $ tensorAdd8 flatInt3 $ tensorAdd8 flatInt4 $ tensorAdd8 flatInt5 flatInt6
+                total = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens6 tens  
+
+    eqn3Test2 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap ->  Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 0 0 3 1 VarMap
+    eqn3Test2 map1Metric map2Metric map1Area map2Area ansatzTens6 ansatzTens10 = tensorAddWith8 addVarsMap total1 total2
+            where
+                flatInt = flatInter map1Area map2Area 
+                intA = interArea map1Area map2Area
+                intJ = interJ2 map2Metric 
+                flatInt1 = tensorProd8 intJ flatInt 
+                flatInt2 = tensorTransU3 (0,1) flatInt1
+                flatInt3 = tensorTransU3 (1,2) flatInt1
+                flatInt4 = tensorTransU3 (0,2) flatInt1 
+                flatInt5 = tensorTransU3 (0,1) $ tensorTransU3 (1,2) flatInt1
+                flatInt6 = tensorTransU3 (0,1) $ tensorTransU3 (0,2) flatInt1 
+                intA1 = tensorProd8 intJ intA 
+                intA2 = tensorTransU3 (0,1) intA1
+                intA3 = tensorTransU3 (1,2) intA1
+                intA4 = tensorTransU3 (0,2) intA1 
+                intA5 = tensorTransU3 (0,1) $ tensorTransU3 (1,2) intA1
+                intA6 = tensorTransU3 (0,1) $ tensorTransU3 (0,2) intA1 
+                tens1 = tensorAdd8 flatInt1 $ tensorAdd8 flatInt2 $ tensorAdd8 flatInt3 $ tensorAdd8 flatInt4 $ tensorAdd8 flatInt5 flatInt6
+                tens2 = tensorAdd8 intA1 $ tensorAdd8 intA2 $ tensorAdd8 intA3 $ tensorAdd8 intA4 $ tensorAdd8 intA5 intA6
+                total1 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens6 tens2 
+                total2 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens10 tens1   
+
+    intCondTest :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    intCondTest map1Metric map2Metric map1Area map2Area ansatzTens10 = tensorSubWith8 addVarsMap multVar total totalTrans 
+            where
+                flatInt = flatInter map1Area map2Area
+                intA = interArea map1Area map2Area
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+                block1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens10 $ tensorProd8 delta3 flatInt 
+                block2 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens10 $ tensorContr20 (0,1) $ tensorProd8 intA flatInt 
+                block3 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens10 $ tensorProd8 int3 flatInt 
+                total = tensorAddWith8 addVarsMap block1 $ tensorAddWith8 addVarsMap block2 block3
+                totalTrans = tensorTransWithU3 (0,1) addVarsMap $ tensorTransWithL3 (0,1) addVarsMap total 
+
+    eqn1TestnoDens ::  M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 1 0 0 0 1 0 0 0 VarMap -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 1 1 VarMap
+    eqn1TestnoDens map1Metric map2Metric map1Area map2Area ansatzTens6 ansatzTens10 = tensorAddWith8 addVarsMap block1 block2 
+            where
+                flatInt = flatInter map1Area map2Area 
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+                block1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens10 flatInt
+                block2 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens6 int3 
+
+    intCondTestnoDens :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    intCondTestnoDens map1Metric map2Metric map1Area map2Area ansatzTens10 = tensorSubWith8 addVarsMap multVar total totalTrans 
+            where
+                flatInt = flatInter map1Area map2Area
+                intA = interArea map1Area map2Area
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+                block2 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens10 $ tensorContr20 (0,1) $ tensorProd8 intA flatInt 
+                block3 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens10 $ tensorProd8 int3 flatInt 
+                total = tensorAddWith8 addVarsMap block2 block3
+                totalTrans = tensorTransWithU3 (0,1) addVarsMap $ tensorTransWithL3 (0,1) addVarsMap total 
+    
+    
+    
+    ansatz14Test :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 2 0 0 0 1 0 1 1 VarMap
+    ansatz14Test map1Metric map2Metric map1Area map2Area ansatz14Tens = tens
+            where
+                flatInt = flatInter map1Area map2Area 
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens flatInt
+
+    ansatz14Test2 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 1 1 VarMap
+    ansatz14Test2 map1Metric map2Metric map1Area map2Area ansatz14Tens = tens
+            where
+                flatInt = flatInter map1Area map2Area 
+                tens' = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens flatInt
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) tens' flatArea
+
+    ansatz14Test3 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 0 0 0 0 1 0 1 1 VarMap
+    ansatz14Test3 map1Metric map2Metric map1Area map2Area ansatz14Tens = res
+            where
+                flatInt = flatInter map1Area map2Area 
+                tens' = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens flatInt
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) tens' flatArea
+                res = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) tens flatArea
+
+    ansatz14Test4 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    ansatz14Test4 map1Metric map2Metric map1Area map2Area ansatz14Tens = tens 
+            where
+                flatInt = flatInter map1Area map2Area 
+                tens' = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens flatInt
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) tens' flatInt 
+
+    ansatz14Test5 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    ansatz14Test5 map1Metric map2Metric map1Area map2Area ansatz14Tens = tens 
+            where
+                flatInt = flatInter map1Area map2Area 
+                tens' = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens flatInt
+                tens = tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) tens' flatInt 
+
+    ansatz14Test6 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    ansatz14Test6 map1Metric map2Metric map1Area map2Area ansatz14Tens = tensorSubWith8 addVarsMap multVar tens tensTrans  
+            where
+                flatInt = flatInter map1Area map2Area 
+                tens' = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens flatInt
+                tens = tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) tens' flatInt 
+                tensTrans = tensorTransWithU3 (0,1) addVarsMap $ tensorTransWithL3 (0,1) addVarsMap tens
+
+    ansatz14Test7 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    ansatz14Test7 map1Metric map2Metric map1Area map2Area ansatz14Tens = tensorAddWith8 addVarsMap tens tensTrans  
+            where
+                flatInt = flatInter map1Area map2Area 
+                tens' = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens flatInt
+                tens = tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) tens' flatInt 
+                tensTrans = tensorTransWithU3 (0,1) addVarsMap $ tensorTransWithL3 (0,1) addVarsMap tens
+                
+    ansatz14Test8 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 1 0 2 2 VarMap
+    ansatz14Test8 map1Metric map2Metric map1Area map2Area ansatz14Tens = tensorSubWith8 addVarsMap multVar tens tensTrans  
+            where
+                flatInt = flatInter map1Area map2Area 
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+                flatInt3 = tensorContr20 (0,1) $ tensorProd8 int3 flatArea 
+                tens' = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens flatInt
+                tens = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) tens' flatInt3 
+                tensTrans = tensorTransWithU3 (0,1) addVarsMap $ tensorTransWithL3 (0,1) addVarsMap tens
+
+    ansatz14Test9 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 2 0 0 0 2 0 0 0 VarMap
+    ansatz14Test9 map1Metric map2Metric map1Area map2Area ansatz14Tens = tensorSubWith8 addVarsMap multVar tens tensTrans  
+            where
+                flatInt = flatInter map1Area map2Area 
+                sym = interI2 map1Metric
+                intFlatSym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 flatInt invEta) sym 
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens intFlatSym 
+                tensTrans = tensorTransWithU9 (0,1) addVarsMap tens 
+                
+    ansatz14Test10 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 2 0 0 0 1 0 1 1 VarMap
+    ansatz14Test10 map1Metric map2Metric map1Area map2Area ansatz14Tens = tensorSubWith8 addVarsMap multVar tens tensTrans  
+            where
+                flatInt = flatInter map1Area map2Area 
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens flatInt 
+                tensTrans = tensorTransWithU20 (0,1) addVarsMap tens 
+                
+
+    ansatz14Test11 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 2 0 0 0 2 0 0 0 VarMap
+    ansatz14Test11 map1Metric map2Metric map1Area map2Area ansatz14Tens = tensorSubWith8 addVarsMap multVar tens tensTrans  
+            where
+                flatInt = flatInter map1Area map2Area 
+                sym = interI2 map1Metric
+                intFlatSym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 flatInt invEta) sym 
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens intFlatSym 
+                tensTrans = tensorTransWithU20 (0,1) addVarsMap $ tensorTransWithU9 (0,1) addVarsMap tens 
+
+    ansatz14Test12 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 2 0 0 0 VarMap
+    ansatz14Test12 map1Metric map2Metric map1Area map2Area ansatz14Tens = res  
+            where
+                flatInt = flatInter map1Area map2Area 
+                sym = interI2 map1Metric
+                intFlatSym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 flatInt invEta) sym 
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens intFlatSym 
+                tensTrans = tensorTransWithU9 (0,1) addVarsMap tens 
+                res' = tensorSubWith8 addVarsMap multVar tens tensTrans 
+                res = tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) res' flatArea
+
+    ansatz14Test13 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 1 0 0 0 2 0 0 0 VarMap
+    ansatz14Test13 map1Metric map2Metric map1Area map2Area ansatz14Tens = res  
+            where
+                flatInt = flatInter map1Area map2Area 
+                sym = interI2 map1Metric
+                intFlatSym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 flatInt invEta) sym 
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens intFlatSym 
+                tensTrans = tensorTransWithU9 (0,1) addVarsMap tens 
+                res' = tensorSubWith8 addVarsMap multVar tens tensTrans 
+                res = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) res' flatArea
+
+    ansatz14Test14 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap -> Tensor8 0 0 0 0 2 0 0 0 VarMap
+    ansatz14Test14 map1Metric map2Metric map1Area map2Area ansatz14Tens = res  
+            where
+                flatInt = flatInter map1Area map2Area 
+                sym = interI2 map1Metric
+                intFlatSym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 flatInt invEta) sym 
+                tens = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatz14Tens intFlatSym 
+                tensTrans = tensorTransWithU9 (0,1) addVarsMap tens 
+                res'' = tensorSubWith8 addVarsMap multVar tens tensTrans 
+                res' = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) res'' flatArea
+                res = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVar) res' flatArea
+
+
+    ansatz10_2Test7 :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 0 0 0 1 0 0 0 VarMap -> Tensor8 0 0 0 0 2 0 0 0 VarMap
+    ansatz10_2Test7 map1Metric map2Metric map1Area map2Area ansatzTens = result
+            where
+                intArea = interArea map1Area map2Area
+                flatInt = flatInter map1Area map2Area 
+                int3 = interEqn3 map1Metric map2Metric map1Area map2Area 
+                sym = interI2 map1Metric 
+                intFlatSym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 flatInt invEta) sym 
+                intAreaSym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 intArea invEta) sym 
+                int3Sym = tensorContr3 (0,0) $ tensorContr3 (1,1) $ tensorProd8 (tensorContr3 (1,0) $ tensorProd8 int3 invEta) sym 
+                int3SymASym = tensorSub8 int3Sym $ tensorTransU9 (0,1) int3Sym 
+                block1 = tensorProd8 intFlatSym flatArea 
+                block2 = tensorContr20 (0,1) $ tensorProd8 int3SymASym $ tensorProd8 flatArea flatArea
+                tens1 = tensorContrWith20 (0,0) addVarsMap $ tensorContrWith20 (1,1) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block1 
+                tens1Trans = tensorTransWithU9 (0,1) addVarsMap tens1 
+                total1 = tensorSubWith8 addVarsMap multVar tens1 tens1Trans 
+                tens2 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVar) ansatzTens block2 
+                tens2Trans = tensorTransWithU9 (0,1) addVarsMap tens2 
+                total2 = tensorSubWith8 addVarsMap multVar tens2 tens2Trans
+                result = tensorAddWith8 addVarsMap total1 total2

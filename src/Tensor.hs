@@ -17,7 +17,7 @@ module Tensor (
     Tensor(..), mkTensorfromList, mkTensorfromF, getVal, tensorProductWith, tensorProductNumeric, tensorContractWith_3, tensorContractWith_9, tensorContractWith_19,
     tensorContractWith_20, tensorSMult, tensorAdd, tensorSub, symTensor, aSymTensor, blockSymTensor, cyclicSymTensor, tensorTranspose,
     tensorIndList, mkTensorfromFZeros, evalFullTensor, evalTensorVals, unsafeGetVal, tensorProductWith2, tensorProductNumeric2, tensorProductNew,
-    getMap, toListShow
+    getMap, toListShow, toListShow2
 ) where
 
     import Index
@@ -342,7 +342,11 @@ module Tensor (
                 l = M.assocs t
                 showIndex ((Index i1 i2 i3 i4 i5 i6 i7 i8),y) = (((map fromEnum $ ind2List i1), (map fromEnum $ ind2List i2), (map fromEnum $ ind2List i3), (map fromEnum $ ind2List i4), (map fromEnum $ ind2List i5), (map fromEnum $ ind2List i6), (map fromEnum $ ind2List i7), (map fromEnum $ ind2List i8)),y) 
 
-
+    toListShow2 :: Tensor n1 n2 n3 n4 n5 n6 n7 n8 a -> [( [Int], a)]
+    toListShow2 t = map (\(x,y) -> (f x, y)) l 
+            where
+                l = toListShow t
+                f (a,b,c,d,e,f,g,h) = a++b++c++d++e++f++g++h
 
    
     

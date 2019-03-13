@@ -24,6 +24,7 @@
 
 
 module PerturbationTree2_2 (
+    AnsatzForestEpsilon(..), AnsatzForestEta(..),
     getEtaForest, getEpsForest, getForestLabels, getForestLabelsEpsilon, epsMap, evalAnsatzForestEta, evalAnsatzForestEpsilon,
     filterList4, symList4, areaEvalMap4,
     filterList6, symList6, areaEvalMap6,
@@ -42,7 +43,8 @@ module PerturbationTree2_2 (
      evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, getPivots, rmDepVarsAnsList, rmDepVarsTensList,
      getTensor, mkAnsatzTensor,
      areaEvalMap4Inds, areaEvalMap6Inds, areaEvalMap8Inds, areaEvalMap10_1Inds, areaEvalMap10_2Inds, areaEvalMap12Inds, areaEvalMap14_1Inds, areaEvalMap14_2Inds, areaEvalMap12_1Inds,
-     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds, areaEvalMap16_2Inds, areaEvalMap18Inds
+     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds, areaEvalMap16_2Inds, areaEvalMap18Inds, flattenForest,
+     areaEvalMap6IndsFull
 
 
     
@@ -832,7 +834,8 @@ module PerturbationTree2_2 (
     areaList6Inds trianArea trian2 = list
          where 
              list = [ let (a',i') = ((I.!) trianArea a, (I.!) trian2 i) in  (a' ++ i', (areaMult a') * (iMult2 i'), [(singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty)]) | a <- [1..21], i <- [1..10]]
- 
+
+
     --A:B
     areaList8Inds :: I.IntMap [Int] -> I.IntMap [Int]  -> [([Int], Int, [IndTuple 2 0 0 0 0 0 0 0])]
     areaList8Inds trianArea trian2 = list
@@ -1139,3 +1142,15 @@ module PerturbationTree2_2 (
                 ([13,14],[15,16])], [], [[[1,2,3,4,5,6],[7,8,9,10,11,12],[13,14,15,16,17,18]]])
 
 
+    --try eavluating the full tensor
+
+    areaList6IndsFull :: [([Int], Int, [IndTuple 0 0 0 0 0 0 6 0])]
+    areaList6IndsFull = list
+         where 
+             list = [ ([a,b,c,d,e,f], 1 , [(Empty, Empty, Empty, Empty, Empty, Empty, Append (Uind3 a) $ Append (Uind3 b) $ Append (Uind3 c) $ Append (Uind3 d) $ Append (Uind3 e) (singletonInd (Uind3 f)), Empty)]) | a <- [0..3], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], f <- [0..3]]
+
+    areaEvalMap6IndsFull :: [(I.IntMap Int, Int, [IndTuple 0 0 0 0 0 0 6 0])]
+    areaEvalMap6IndsFull = l
+        where 
+            area6 = areaList6IndsFull
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..6] x, y,z)) area6

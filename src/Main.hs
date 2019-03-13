@@ -47,16 +47,8 @@ import qualified Data.Eigen.Matrix as Mat
 import qualified Data.Eigen.SparseMatrix as Sparse
 import qualified Data.Eigen.LA as Sol 
 
-import qualified BasicTensors as B 
-import qualified Tensor as T 
-import qualified Index as I
 import qualified Data.Map.Strict as M
-import qualified Data.Sequence as S 
-import Numeric.Natural
-import GHC.TypeLits
-import Data.Proxy
-import GHC.TypeLits.Normalise
-import Data.List
+import Data.Ratio
 
 main = do
 
@@ -148,30 +140,6 @@ main = do
 
     let intTest2 = interTest2 map1Metric map2Metric map1Area map2Area 
 
-
-    --print $ toListShow8 intTest 
-
-    let trianAreaT1 = M.mapKeys I.mkInd B.triangleMapArea :: M.Map (I.Linds_3 4) I.Uind_20  
-    let trianAreaT2 = M.mapKeys I.mkInd B.triangleMapArea :: M.Map (I.Uinds_3 4) I.Lind_20 
-
-    let trianMetricT1 = M.mapKeys I.mkInd B.triangleMap2 :: M.Map (I.Linds_3 2) I.Uind_9  
-    let trianMetricT2 = M.mapKeys I.mkInd B.triangleMap2 :: M.Map (I.Uinds_3 2) I.Lind_9 
-
-    let interT = B.interArea trianAreaT1 trianAreaT2 
-
-    let flatInterT = B.flatInter trianAreaT1 trianAreaT2
-
-    let interProd = T.tensorContractWith_20 (0,1) (+) $ T.tensorProductNumeric interT flatInterT
-
-    let interProd2 = T.tensorSub interProd $ T.tensorTranspose 7 (0,1) $ T.tensorTranspose 8 (0,1) interProd
-
-    let l1 = sort $ filter (\(x,y) -> y /= 0) $ T.toListShow2 interProd
-    let l2 = sort $ filter (\(x,y) -> y /= 0) $ toListShow8 intTest
-
-    let l3 = sort $ filter (\(x,y) -> y /= 0) $ T.toListShow2 interProd2
-
-    let l4 = sort $ filter (\(x,y) -> y /= 0) $ toListShow8 intTest2
-
     let ans14Test = ansatz14Test map1Metric map2Metric map1Area map2Area ansatz14_2' 
 
     let ans14Test2 = ansatz14Test2 map1Metric map2Metric map1Area map2Area ansatz14_2' 
@@ -202,24 +170,70 @@ main = do
 
     let ans10Test = ansatz10_2Test7 map1Metric map2Metric map1Area map2Area ansatz10_2'
 
-    let int3' = B.interEqn1_3 trianAreaT1 trianAreaT2 trianMetricT1 trianMetricT2 
+    let ans6TestZero = ansatz6TestZero map1Metric map2Metric map1Area map2Area 
 
-    let int3 = T.tensorContractWith_3 (1,0) (+) $ T.tensorProductNumeric int3' B.invEta 
+    let ans6TestZero2 = ansatz6Test map1Metric map2Metric map1Area map2Area ansatz6' 
 
-    let int3Sym = T.tensorAdd int3 $ T.tensorTranspose 7 (0,1) int3 
+    let ans6TestZero3 = ansatz6TestZero2 map1Metric map2Metric map1Area map2Area  
+
+    let ans6TestZero4 = ansatz6TestZero3 map1Metric map2Metric map1Area map2Area 
     
-    let int3Prod = T.tensorContractWith_20 (0,1) (+) $ T.tensorContractWith_9 (0,1) (+) $ T.tensorProductNumeric int3Sym int3Sym
+    let ans6TestZero5' = ansatz6TestZero4 map1Metric map2Metric map1Area map2Area testTens  
 
-    let int3Res = T.tensorSub int3Prod $ T.tensorTranspose 7 (0,2) $ T.tensorTranspose 7 (1,3) int3Prod 
+    let ans6TestZero6 = ansatz6TestZero5 map1Metric map2Metric map1Area map2Area   
 
-    print $ T.toListShow2 int3Res
+    let ans10Mat = ansatz10TestMat map1Metric map2Metric map1Area map2Area
+
+    let matAI = map evalAnsatz6Test $ filter (\(x,y) -> y/=0) $ toListShow8 ans6TestZero6 
+
+    let trian315 = triangleMap2P' 315 
+
+    let matACJ = map (evalAnsatz10Test trian315) $ filter (\(x,y) -> y/=0) $ toListShow8 ans10Mat
+
+    let eqn1_1 = map evalEqn1Part1 $ filter (\(x,y) -> y/=0) $ toListShow8 (eqn1Part1 map1Metric map2Metric map1Area map2Area)
+
+    let eqn1_2 = map (evalEqn1Part2 trian315) $ filter (\(x,y) -> y/=0) $ toListShow8 (eqn1Part2 map1Metric map2Metric map1Area map2Area)
+
+    let eqn1 = eqn1_1 ++ eqn1_2 
+
+
+    let ans6Full' = mkAnsatzTensor 6 filterList6 symList6 1 epsMap areaEvalMap6IndsFull 
+
+    let ans6Full = tensorContrWith3 (0,0) addVarsMap $ tensorContrWith3 (1,1) addVarsMap $ tensorContrWith3 (2,2) addVarsMap $ tensorContrWith3 (3,3) addVarsMap $ tensorContrWith3 (4,4) addVarsMap $  tensorContrWith3 (5,5) addVarsMap $ tensorProdWith8 (flip multVarsMap) ans6Full' $ tensorProd8 (interIArea map1Area) (interI2 map1Metric) 
+
+    let ans6TestZero5 = ansatz6TestZero4 map1Metric map2Metric map1Area map2Area ans6Full  
+
+    --print $ toListShowVar ans6TestZero5
+
+    let ans6TestZero7 = ansatzAI map1Metric map2Metric map1Area map2Area ans6Full  
+
+    --print $ toListShowVar ans6TestZero7
+
+    --print $ toListShowVar ans6Full 
+
+    let sym1 = symbol1 map1Metric map2Metric map1Area map2Area ansatz10_2' 
+
+    let sym1Mat =  map evalSymbol1Mat $ toListShow8 $ symbol1Mat map1Metric map2Metric map1Area map2Area 
+
+    let ans1Mat = map evalAnsatz1Mat $ toListShow8 $ ansatz1Mat map1Metric map2Metric map1Area map2Area
+
+    let totalMat = sym1Mat ++ (map (\(a,b,c) -> (a+2100,b,c)) ans1Mat) 
+
+    print $ Sol.rank Sol.FullPivLU $ toMatrix'' sym1Mat 
+
+    print $ Sol.rank Sol.FullPivLU $ toMatrix'' ans1Mat 
+
+    print $ Sol.rank Sol.FullPivLU $ toMatrix'' totalMat 
+
+
+    --let ans10NewInt = ansatz10NewInt map1Metric map2Metric map1Area map2Area ansatz10_2' 
+
+    --print $ toListShowVar ans10NewInt
 
 
 
-
-
-
-
+    --putStr $ unlines $ map (\((i, j), v) -> if denominator v /= 1
+    --                                        then undefined
+    --                                        else show i ++ " " ++ show j ++ " " ++ show (numerator v)) matACJ
 
     
-

@@ -44,7 +44,11 @@ module PerturbationTree2_2 (
      getTensor, mkAnsatzTensor,
      areaEvalMap4Inds, areaEvalMap6Inds, areaEvalMap8Inds, areaEvalMap10_1Inds, areaEvalMap10_2Inds, areaEvalMap12Inds, areaEvalMap14_1Inds, areaEvalMap14_2Inds, areaEvalMap12_1Inds,
      doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds, areaEvalMap16_2Inds, areaEvalMap18Inds, flattenForest,
-     areaEvalMap6IndsFull
+     areaEvalMap6IndsFull,
+     filterList18_2, symList18_2, areaEvalMap18_2, areaEvalMap18_2Inds,
+     filterList18_3, symList18_3, areaEvalMap18_3, areaEvalMap18_3Inds
+
+
 
 
     
@@ -743,6 +747,12 @@ module PerturbationTree2_2 (
                         j = [ [a,b,c] | a <- [1..315], b <- [a..315], c <- [b..315] ]
                         k = [1..]
 
+    triangleMap4P ::  M.Map [Int] Int
+    triangleMap4P = M.fromList $ zip j k
+                    where
+                        j = [ [a,b,c,d] | a <- [1..315], b <- [a..315], c <- [b..315], d <- [c..315] ]
+                        k = [1..]
+
     ind1Div :: Int -> Int -> Int 
     ind1Div a p = 21 + (a-1)*4 + p + 1
 
@@ -824,6 +834,21 @@ module PerturbationTree2_2 (
         where 
             list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), (M.!) triangle [ind2Div a i, ind2Div b j, ind2Div c k] ) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
    
+    --now order 4 
+
+    --A:B:C:DI
+    areaList18_2 ::  I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
+    areaList18_2 trianArea trian2 triangle = list
+        where 
+            list = [ let (a',b',c',d',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trian2 i) in  (a' ++ b' ++ c'++d'++i', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (iMult2 i'), (M.!) triangle [a,b,c,d,i]) | a <- [1..21], b <- [a..21], c <- [b..21], d <- [1..21], i <- [1..10] ]
+
+    --A:B:Cp:Dq
+    areaList18_3 ::  I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
+    areaList18_3 trianArea trian2 triangle = list
+        where 
+            list = [ let (a',b',c',d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c'++ p : d'++[q], (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), (M.!) triangle [a,b,c,p,d,q]) | a <- [1..21], b <- [a..21], c <- [1..21], d <- [c..21], p <- [0..3], q <- [0..3] , not (c == d && p > q) ]
+
+
     --A
     areaList4Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 1 0 0 0 0 0 0 0])]
     areaList4Inds trianArea trian2 = list
@@ -898,6 +923,20 @@ module PerturbationTree2_2 (
          where 
              list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), map (\[[a,i],[b,j],[c,k]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ Append (Uind9 $ j-1) $ singletonInd (Uind9 $ k-1), Empty, Empty, Empty) ) $ nub $ permutations [[a,i],[b,j],[c,k]]) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
     
+
+    --order 4 
+
+    --A:B:C:DI
+    areaList18_2Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 4 0 0 0 1 0 0 0])]
+    areaList18_2Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c',d',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trian2 i) in  (a' ++ b' ++ c'++d'++i', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (iMult2 i'), map (\[a,b,c] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) (singletonInd (Uind20 $ d-1)), Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty) ) $ nub $ permutations [a,b,c] ) | a <- [1..21], b <- [a..21], c <- [b..21], d <- [1..21], i <- [1..10] ]
+ 
+    --A:B:Cp:Dq
+    areaList18_3Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 4 0 0 0 0 0 2 0])]
+    areaList18_3Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c',d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c'++ p : d'++[q], (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), map ( \(a,b,c,p,d,q) -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) (singletonInd (Uind20 $ d-1)), Empty, Empty, Empty, Empty, Empty, Append (Uind3 p) (singletonInd (Uind3 q)), Empty) ) $ nub [(a,b,c,p,d,q),(b,a,c,p,d,q),(a,b,d,q,c,p),(b,a,d,q,c,p)] ) | a <- [1..21], b <- [a..21], c <- [1..21], d <- [c..21], p <- [0..3], q <- [0..3] , not (c == d && p > q) ]
  
 
     isAreaSorted :: Int -> Int -> Int -> Int -> Bool
@@ -987,6 +1026,20 @@ module PerturbationTree2_2 (
             area18 = areaList18 trianArea trian2 triangle
             l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
 
+    --order 4
+
+    areaEvalMap18_2 :: I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [(I.IntMap Int, Int, Int)]
+    areaEvalMap18_2 trianArea trian2 triangle = l
+        where 
+            area18 = areaList18_2 trianArea trian2 triangle
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+    areaEvalMap18_3 :: I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [(I.IntMap Int, Int, Int)]
+    areaEvalMap18_3 trianArea trian2 triangle = l
+        where 
+            area18 = areaList18_3 trianArea trian2 triangle
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
     --lists store (indexCombinationMap, Multiplicity, AbstractIndices)
 
     areaEvalMap4Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 1 0 0 0 0 0 0 0])]
@@ -1059,6 +1112,20 @@ module PerturbationTree2_2 (
     areaEvalMap18Inds trianArea trian2 = l
         where 
             area18 = areaList18Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+    --order 4
+
+    areaEvalMap18_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 4 0 0 0 1 0 0 0])]
+    areaEvalMap18_2Inds trianArea trian2 = l
+        where 
+            area18 = areaList18_2Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+    areaEvalMap18_3Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 4 0 0 0 0 0 2 0])]
+    areaEvalMap18_3Inds trianArea trian2 = l
+        where 
+            area18 = areaList18_3Inds trianArea trian2
             l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
 
 
@@ -1140,6 +1207,22 @@ module PerturbationTree2_2 (
     symList18 :: Symmetry  
     symList18 = ([(5,6),(11,12),(17,18)], [(1,2),(3,4),(7,8),(9,10),(13,14),(15,16)], [([1,2],[3,4]),([7,8],[9,10]),
                 ([13,14],[15,16])], [], [[[1,2,3,4,5,6],[7,8,9,10,11,12],[13,14,15,16,17,18]]])
+
+    --order 4
+
+    filterList18_2 :: [(Int,Int)]
+    filterList18_2 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(5,9),(9,10),(9,11),(11,12),(13,14),(13,15),(15,16),(17,18)]
+
+    symList18_2 :: Symmetry  
+    symList18_2 = ([(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16)], [([1,2],[3,4]),([5,6],[7,8]),
+                ([9,10],[11,12]),([13,14],[15,16])], [], [[[1,2,3,4],[5,6,7,8],[9,10,11,12]]])
+
+    filterList18_3 :: [(Int,Int)]
+    filterList18_3 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(9,10),(9,11),(11,12),(9,14),(14,15),(14,16),(16,17)]
+
+    symList18_3 :: Symmetry  
+    symList18_3 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(14,15),(16,17)], [([1,2],[3,4]),([5,6],[7,8]),
+                ([9,10],[11,12]),([14,15],[16,17]),([1,2,3,4],[5,6,7,8]),([9,10,11,12,13],[14,15,16,17,18])], [], [])
 
 
     --try eavluating the full tensor

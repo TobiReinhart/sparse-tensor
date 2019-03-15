@@ -69,6 +69,9 @@ main = do
     let aList16_1 = areaEvalMap16_1Inds trianMapArea trianMapDerivative
     let aList16_2 = areaEvalMap16_2Inds trianMapArea trianMapDerivative
     let aList18 = areaEvalMap18Inds trianMapArea trianMapDerivative
+    let aList18_2 = areaEvalMap18_2Inds trianMapArea trianMapDerivative
+    let aList18_3 = areaEvalMap18_3Inds trianMapArea trianMapDerivative
+
 
 
     let ansatz4' = mkAnsatzTensor 4 filterList4 symList4 1 epsMap aList4 
@@ -83,6 +86,9 @@ main = do
     let ansatz16_1' = mkAnsatzTensor 16 filterList16_1 symList16_1 1 epsMap aList16_1 
     let ansatz16_2' = mkAnsatzTensor 16 filterList16_2 symList16_2 1 epsMap aList16_2
     let ansatz18' = mkAnsatzTensor 18 filterList18 symList18 1 epsMap aList18 
+    let ansatz18_2' = mkAnsatzTensor 18 filterList18_2 symList18_2 1 epsMap aList18_2 
+    let ansatz18_3' = mkAnsatzTensor 18 filterList18_3 symList18_3 1 epsMap aList18_3 
+
  
 
     let ansatz4 = encodeLazy ansatz4'
@@ -97,6 +103,9 @@ main = do
     let ansatz16_1 = encodeLazy ansatz16_1'
     let ansatz16_2 = encodeLazy ansatz16_2'
     let ansatz18 = encodeLazy ansatz18'
+    let ansatz18_2 = encodeLazy ansatz18_2'
+    let ansatz18_3 = encodeLazy ansatz18_3'
+
 
     --BS.writeFile "/cip/austausch/cgg/ansatz4.dat.gz" $ compress ansatz4
     --BS.writeFile "/cip/austausch/cgg/ansatz6.dat.gz" $ compress ansatz6
@@ -110,6 +119,7 @@ main = do
     --BS.writeFile "/cip/austausch/cgg/ansatz16_1.dat.gz" $ compress ansatz16_1
     --BS.writeFile "/cip/austausch/cgg/ansatz16_2.dat.gz" $ compress ansatz16_2
     --BS.writeFile "/cip/austausch/cgg/ansatz18.dat.gz" $ compress ansatz18
+
 
     --e' <- BS.readFile "tensor_bs.dat.gz"
     --let d = (fromRight undefined $ decodeLazy $ decompress e') :: Tensor8 3 0 0 0 1 0 0 0 VarMap
@@ -192,9 +202,9 @@ main = do
 
     let eqn1_1 = map evalEqn1Part1 $ filter (\(x,y) -> y/=0) $ toListShow8 (eqn1Part1 map1Metric map2Metric map1Area map2Area)
 
-    let eqn1_2 = map (evalEqn1Part2 trian315) $ filter (\(x,y) -> y/=0) $ toListShow8 (eqn1Part2 map1Metric map2Metric map1Area map2Area)
+    --let eqn1_2 = map (evalEqn1Part2 trian315) $ filter (\(x,y) -> y/=0) $ toListShow8 (eqn1Part2 map1Metric map2Metric map1Area map2Area)
 
-    let eqn1 = eqn1_1 ++ eqn1_2 
+    --let eqn1 = eqn1_1 ++ eqn1_2 
 
 
     let ans6Full' = mkAnsatzTensor 6 filterList6 symList6 1 epsMap areaEvalMap6IndsFull 
@@ -219,21 +229,39 @@ main = do
 
     let totalMat = sym1Mat ++ (map (\(a,b,c) -> (a+2100,b,c)) ans1Mat) 
 
-    print $ Sol.rank Sol.FullPivLU $ toMatrix'' sym1Mat 
+    let ansatz6'' = shiftVarLabels 213 ansatz6'
 
-    print $ Sol.rank Sol.FullPivLU $ toMatrix'' ans1Mat 
+    let ansatz10_2'' = shiftVarLabels 197 ansatz10_2'
 
-    print $ Sol.rank Sol.FullPivLU $ toMatrix'' totalMat 
+    let ansatz10_1'' = shiftVarLabels 182 ansatz10_1'
+
+    let ansatz14_1'' = shiftVarLabels 72 ansatz14_1' 
+
+    let (m3,_,eqn3_1) = toSparseMatRed $ eqn3Test1 map1Metric map2Metric map1Area map2Area ansatz6''
+
+    let (m4,_,eqn3_2) = toSparseMatRed $ eqn3Test2 map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_2''
+
+    let (m5,_,eqn3_3) = toSparseMatRed $ eqn3Test3 map1Metric map2Metric map1Area map2Area ansatz10_2'' ansatz14_2'
+    
+    let (m,_,eqn1List) = toSparseMatRed $ eqn1Total map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_2'' 
+
+    let (m',_,eqn2List) = toSparseMatRed $ eqn1Prolong map1Metric map2Metric map1Area map2Area ansatz10_2'' ansatz14_2' 
+
+    let (m6,_,eqn2_1) = toSparseMatRed $ eqn2 map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_1''
+
+    let (m7,_,eqn2_2') = toSparseMatRed $ eqn2_2 map1Metric map2Metric map1Area map2Area ansatz10_1'' ansatz10_2'' ansatz14_1''
+
+    let (m8,_,eqn1_2') = toSparseMatRed $ eqn1_2 map1Metric map2Metric map1Area map2Area ansatz10_1'' ansatz14_1''
 
 
-    --let ans10NewInt = ansatz10NewInt map1Metric map2Metric map1Area map2Area ansatz10_2' 
 
-    --print $ toListShowVar ans10NewInt
+    let fullEqn1 = eqn1List ++ (map (\((x,y),z) -> ((x+m,y),z)) eqn2List) ++ (map (\((x,y),z) -> ((x+m+m',y),z)) eqn3_1) ++ (map (\((x,y),z) -> ((x+m+m'+m3,y),z)) eqn3_2) ++ (map (\((x,y),z) -> ((x+m+m'+m3 +m4 ,y),z)) eqn3_3)++ (map (\((x,y),z) -> ((x+m+m'+m3 +m4+m5 ,y),z)) eqn2_1) ++ (map (\((x,y),z) -> ((x+m+m'+m3 +m4+m5+m6 ,y),z)) eqn2_2')++ (map (\((x,y),z) -> ((x+m+m'+m3 +m4+m5+m6+m7 ,y),z)) eqn1_2')
 
+    --print $ m+m'+m3+m4 +m5 +m6 +m7 +m8
 
+    --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) fullEqn1 
 
-    --putStr $ unlines $ map (\((i, j), v) -> if denominator v /= 1
-    --                                        then undefined
-    --                                        else show i ++ " " ++ show j ++ " " ++ show (numerator v)) matACJ
+    BS.writeFile "/cip/austausch/cgg/ansatz18_2Ord4.dat.gz" $ compress ansatz18_2
+
 
     

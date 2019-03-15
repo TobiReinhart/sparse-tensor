@@ -261,7 +261,7 @@ main = do
 
     --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) fullEqn1 
 
-    BS.writeFile "/cip/austausch/cgg/ansatz18_2Ord4.dat.gz" $ compress ansatz18_2
+    BS.writeFile "/cip/austausch/cgg/ansatz18_3Ord4.dat.gz" $ compress ansatz18_3
 
 
     

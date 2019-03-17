@@ -261,7 +261,26 @@ main = do
 
     --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) fullEqn1 
 
-    BS.writeFile "/cip/austausch/cgg/ansatz18_2Ord4.dat.gz" $ compress ansatz18_2
+    --BS.writeFile "/cip/austausch/cgg/ansatz18_2Ord4.dat.gz" $ compress ansatz18_2
+
+    byteString1 <- BS.readFile "/cip/austausch/cgg/ansatz18_2Ord4.dat.gz"
+
+    byteString2 <- BS.readFile "/cip/austausch/cgg/ansatz18_3Ord4.dat.gz"
+
+    let ansatz18_2Ord4 = (fromRight undefined $ decodeLazy $ decompress byteString1) :: Tensor8 4 0 0 0 1 0 0 0 VarMap
+
+    let ansatz18_3Ord4 = (fromRight undefined $ decodeLazy $ decompress byteString2) :: Tensor8 4 0 0 0 0 0 2 0 VarMap
+
+    let ansatzEqn18_2 = ansatzABCDJ map1Metric map2Metric map1Area map2Area ansatz18_2Ord4
+
+    let ansatzEqn18_3 = ansatzABCcDd map1Metric map2Metric map1Area map2Area ansatz18_3Ord4 
+
+    print $ toListShowVar ansatzEqn18_2 
+
+    print $ toListShowVar ansatzEqn18_3 
+
+
+
 
 
     

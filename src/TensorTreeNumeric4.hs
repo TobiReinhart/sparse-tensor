@@ -1164,7 +1164,8 @@ module TensorTreeNumeric4 (
                 block3 = tensorContrWith20 (1,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatz14_1 intA
                 block3Trans = tensorTransWithU3 (0,2) addVarsMap block3
                 tens3 = tensorTransWithU20 (1,2) addVarsMap $ tensorAddWith8 addVarsMap block3 block3Trans 
-                tens4 = tensorTransWithU20 (0,1) addVarsMap tens4
+                tens4 = tensorTransWithU20 (0,1) addVarsMap tens3
+
     eqn3ABC :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 1 0 0 0 VarMap ->  Tensor8 4 0 0 0 1 0 0 0 VarMap -> Tensor8 3 0 0 0 0 0 3 1 VarMap
     eqn3ABC map1Metric map2Metric map1Area map2Area ansatzTens14 ansatzTens18 = tensorAddWith8 addVarsMap total1 $ tensorAddWith8 addVarsMap total2 $ tensorAddWith8 addVarsMap total3 total4
             where

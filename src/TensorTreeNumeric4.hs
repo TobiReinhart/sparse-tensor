@@ -983,9 +983,9 @@ module TensorTreeNumeric4 (
                 aSym = tensorContr3 (1,1) $ tensorProd8 invEta antiSym
                 intAContr = tensorContr3 (0,0) $ tensorContr3 (0,1) $ tensorProd8 intA aSym
                 int3Contr = tensorContr3 (0,0) $ tensorContr3 (0,1) $ tensorProd8 int3 aSym
-                block1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens intAContr 
-                block2 = tensorTransWithU20 (1,3) addVarsMap block1 
-                block3 = tensorTransWithU20 (0,3) addVarsMap block1
+                block1 = tensorTransWithU20 (2,3) addVarsMap $ tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens intAContr 
+                block2 = tensorTransWithU20 (1,2) addVarsMap block1 
+                block3 = tensorTransWithU20 (0,2) addVarsMap block1
                 block4 = tensorContrWith9 (0,0) addVarsMap $ tensorContrWith20 (3,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens int3Contr 
 
 

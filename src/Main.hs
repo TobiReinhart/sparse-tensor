@@ -277,7 +277,7 @@ main = do
 
     print $ toListShowVar ansatzEqn18_2 
 
-    print $ toListShowVar ansatzEqn18_3 
+    --print $ toListShowVar ansatzEqn18_3 
 
 
 

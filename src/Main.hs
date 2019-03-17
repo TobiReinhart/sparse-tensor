@@ -168,7 +168,7 @@ main = do
 
     let ansatz10_1Rank = getTensorRank ansatz10_1' 
 
-    let ansatz10_2'' = (ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank) ansatz10_2' 
+    let ansatz10_2'' = shiftVarLabels (ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank) ansatz10_2' 
 
     let ansatz10_2Rank = getTensorRank ansatz10_2' 
 

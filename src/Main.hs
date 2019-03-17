@@ -201,7 +201,7 @@ main = do
 
     let (m11,_,eqn2ABCcList) = toSparseMatRed $ eqn2ABCc map1Metric map2Metric map1Area map2Area ansatz14_1'' ansatz14_2'' ansatz18_3''
 
-    let (m12,_,eqn3ABCList) = toSparseMatRed $ eqn3ABC map1Metric map2Metric map1Area map2Area ansatz14_2'' ansatz18_3''
+    let (m12,_,eqn3ABCList) = toSparseMatRed $ eqn3ABC map1Metric map2Metric map1Area map2Area ansatz14_2'' ansatz18_2''
 
 
 

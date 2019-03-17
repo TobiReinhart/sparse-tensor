@@ -124,163 +124,109 @@ main = do
     --e' <- BS.readFile "tensor_bs.dat.gz"
     --let d = (fromRight undefined $ decodeLazy $ decompress e') :: Tensor8 3 0 0 0 1 0 0 0 VarMap
 
-    let ansatz10_2'' = shiftVarLabels 3 ansatz10_2' 
+    byteString14_1 <- BS.readFile "/cip/austausch/cgg/ansatz14_1.dat.gz"
 
-    let intCond = intCondTestnoDens map1Metric map2Metric map1Area map2Area ansatz10_2''
+    byteString14_2 <- BS.readFile "/cip/austausch/cgg/ansatz14_2.dat.gz"
 
-    let eqn1Pro = eqn1TestnoDens map1Metric map2Metric map1Area map2Area ansatz6' ansatz10_2''
+    byteString18 <- BS.readFile "/cip/austausch/cgg/ansatz18.dat.gz"
 
-    let eqn3 = eqn3Test1 map1Metric map2Metric map1Area map2Area ansatz6' 
+    byteString18_2 <- BS.readFile "/cip/austausch/cgg/ansatz18_2Ord4.dat.gz"
 
-    let eqn3Pro = eqn3Test2 map1Metric map2Metric map1Area map2Area ansatz6' ansatz10_2''
+    byteString18_3 <- BS.readFile "/cip/austausch/cgg/ansatz18_3Ord4.dat.gz"
 
-    let mat = toMatrix2 eqn1Pro intCond
+    let ansatz14_1Tens = (fromRight undefined $ decodeLazy $ decompress byteString14_1) :: Tensor8 3 0 0 0 0 0 2 0 VarMap
 
-    let matList = Mat.toList mat 
+    let ansatz14_2Tens = (fromRight undefined $ decodeLazy $ decompress byteString14_2) :: Tensor8 3 0 0 0 1 0 0 0 VarMap
 
-    let testList = [0,1] ++ replicate ((length $ head matList)-1) 0 
+    let ansatz18Tens = (fromRight undefined $ decodeLazy $ decompress byteString18) :: Tensor8 3 0 0 0 0 3 0 0 VarMap
 
-    let newList = matList ++ [testList]
+    let ansatz18_2Tens = (fromRight undefined $ decodeLazy $ decompress byteString18_2) :: Tensor8 4 0 0 0 1 0 0 0 VarMap
 
-    let newMat = Mat.fromList newList 
+    let ansatz18_3Tens = (fromRight undefined $ decodeLazy $ decompress byteString18_3) :: Tensor8 4 0 0 0 0 0 2 0 VarMap
 
-    --print $ Sol.rank Sol.FullPivLU newMat
 
-    let intTest = interTest map1Metric map2Metric map1Area map2Area 
 
-    let intTest2 = interTest2 map1Metric map2Metric map1Area map2Area 
 
-    let ans14Test = ansatz14Test map1Metric map2Metric map1Area map2Area ansatz14_2' 
 
-    let ans14Test2 = ansatz14Test2 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test3 = ansatz14Test3 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test4 = ansatz14Test4 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test5 = ansatz14Test5 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test6 = ansatz14Test6 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test7 = ansatz14Test7 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test8 = ansatz14Test8 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test9 = ansatz14Test9 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test10 = ansatz14Test10 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test11 = ansatz14Test11 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test12 = ansatz14Test12 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test13 = ansatz14Test13 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans14Test14 = ansatz14Test14 map1Metric map2Metric map1Area map2Area ansatz14_2' 
-
-    let ans10Test = ansatz10_2Test7 map1Metric map2Metric map1Area map2Area ansatz10_2'
-
-    let ans6TestZero = ansatz6TestZero map1Metric map2Metric map1Area map2Area 
-
-    let ans6TestZero2 = ansatz6Test map1Metric map2Metric map1Area map2Area ansatz6' 
-
-    let ans6TestZero3 = ansatz6TestZero2 map1Metric map2Metric map1Area map2Area  
-
-    let ans6TestZero4 = ansatz6TestZero3 map1Metric map2Metric map1Area map2Area 
+    let ansatz18_2'' = ansatz18_2Tens 
     
-    let ans6TestZero5' = ansatz6TestZero4 map1Metric map2Metric map1Area map2Area testTens  
+    let ansatz18_2Rank = getTensorRank ansatz18_2''
 
-    let ans6TestZero6 = ansatz6TestZero5 map1Metric map2Metric map1Area map2Area   
+    let ansatz18_3'' = shiftVarLabels ansatz18_2Rank ansatz18_3Tens
 
-    let ans10Mat = ansatz10TestMat map1Metric map2Metric map1Area map2Area
+    let ansatz18_3Rank = getTensorRank ansatz18_3Tens 
 
-    let matAI = map evalAnsatz6Test $ filter (\(x,y) -> y/=0) $ toListShow8 ans6TestZero6 
+    let ansatz14_1'' = shiftVarLabels (ansatz18_2Rank + ansatz18_3Rank) ansatz14_1Tens 
 
-    let trian315 = triangleMap2P' 315 
+    let ansatz14_1Rank = getAnsatzRank ansatz14_1Tens 
 
-    let matACJ = map (evalAnsatz10Test trian315) $ filter (\(x,y) -> y/=0) $ toListShow8 ans10Mat
+    let ansatz14_2'' = shiftVarLabels (ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank) ansatz14_2Tens 
 
-    let eqn1_1 = map evalEqn1Part1 $ filter (\(x,y) -> y/=0) $ toListShow8 (eqn1Part1 map1Metric map2Metric map1Area map2Area)
+    let ansatz14_2Rank = getTensorRank ansatz14_2Tens 
 
-    --let eqn1_2 = map (evalEqn1Part2 trian315) $ filter (\(x,y) -> y/=0) $ toListShow8 (eqn1Part2 map1Metric map2Metric map1Area map2Area)
+    let ansatz10_1'' = shiftVarLabels (ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank) ansatz10_1' 
 
-    --let eqn1 = eqn1_1 ++ eqn1_2 
+    let ansatz10_1Rank = getTensorRank ansatz10_1' 
 
+    let ansatz10_2'' = (ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank) ansatz10_2' 
 
-    let ans6Full' = mkAnsatzTensor 6 filterList6 symList6 1 epsMap areaEvalMap6IndsFull 
+    let ansatz10_2Rank = getTensorRank ansatz10_2' 
 
-    let ans6Full = tensorContrWith3 (0,0) addVarsMap $ tensorContrWith3 (1,1) addVarsMap $ tensorContrWith3 (2,2) addVarsMap $ tensorContrWith3 (3,3) addVarsMap $ tensorContrWith3 (4,4) addVarsMap $  tensorContrWith3 (5,5) addVarsMap $ tensorProdWith8 (flip multVarsMap) ans6Full' $ tensorProd8 (interIArea map1Area) (interI2 map1Metric) 
+    let ansatz6'' = shiftVarLabels (ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank + ansatz10_2Rank) ansatz6'
 
-    let ans6TestZero5 = ansatz6TestZero4 map1Metric map2Metric map1Area map2Area ans6Full  
+    let ansatz6Rank = getTensorRank ansatz6' 
 
-    --print $ toListShowVar ans6TestZero5
-
-    let ans6TestZero7 = ansatzAI map1Metric map2Metric map1Area map2Area ans6Full  
-
-    --print $ toListShowVar ans6TestZero7
-
-    --print $ toListShowVar ans6Full 
-
-    let sym1 = symbol1 map1Metric map2Metric map1Area map2Area ansatz10_2' 
-
-    let sym1Mat =  map evalSymbol1Mat $ toListShow8 $ symbol1Mat map1Metric map2Metric map1Area map2Area 
-
-    let ans1Mat = map evalAnsatz1Mat $ toListShow8 $ ansatz1Mat map1Metric map2Metric map1Area map2Area
-
-    let totalMat = sym1Mat ++ (map (\(a,b,c) -> (a+2100,b,c)) ans1Mat) 
-
-    let ansatz6'' = shiftVarLabels 213 ansatz6'
-
-    let ansatz10_2'' = shiftVarLabels 197 ansatz10_2'
-
-    let ansatz10_1'' = shiftVarLabels 182 ansatz10_1'
-
-    let ansatz14_1'' = shiftVarLabels 72 ansatz14_1' 
-
-    let (m3,_,eqn3_1) = toSparseMatRed $ eqn3Test1 map1Metric map2Metric map1Area map2Area ansatz6''
-
-    let (m4,_,eqn3_2) = toSparseMatRed $ eqn3Test2 map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_2''
-
-    let (m5,_,eqn3_3) = toSparseMatRed $ eqn3Test3 map1Metric map2Metric map1Area map2Area ansatz10_2'' ansatz14_2'
     
-    let (m,_,eqn1List) = toSparseMatRed $ eqn1Total map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_2'' 
-
-    let (m',_,eqn2List) = toSparseMatRed $ eqn1Prolong map1Metric map2Metric map1Area map2Area ansatz10_2'' ansatz14_2' 
-
-    let (m6,_,eqn2_1) = toSparseMatRed $ eqn2 map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_1''
-
-    let (m7,_,eqn2_2') = toSparseMatRed $ eqn2_2 map1Metric map2Metric map1Area map2Area ansatz10_1'' ansatz10_2'' ansatz14_1''
-
-    let (m8,_,eqn1_2') = toSparseMatRed $ eqn1_2 map1Metric map2Metric map1Area map2Area ansatz10_1'' ansatz14_1''
 
 
+    let (m1,_,eqn1AIList) = toSparseMatRed $ eqn1AI map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_2'' 
 
-    let fullEqn1 = eqn1List ++ (map (\((x,y),z) -> ((x+m,y),z)) eqn2List) ++ (map (\((x,y),z) -> ((x+m+m',y),z)) eqn3_1) ++ (map (\((x,y),z) -> ((x+m+m'+m3,y),z)) eqn3_2) ++ (map (\((x,y),z) -> ((x+m+m'+m3 +m4 ,y),z)) eqn3_3)++ (map (\((x,y),z) -> ((x+m+m'+m3 +m4+m5 ,y),z)) eqn2_1) ++ (map (\((x,y),z) -> ((x+m+m'+m3 +m4+m5+m6 ,y),z)) eqn2_2')++ (map (\((x,y),z) -> ((x+m+m'+m3 +m4+m5+m6+m7 ,y),z)) eqn1_2')
+    let (m2,_,eqn1ABIList) = toSparseMatRed $ eqn1ABI map1Metric map2Metric map1Area map2Area ansatz10_2'' ansatz14_2''
 
-    --print $ m+m'+m3+m4 +m5 +m6 +m7 +m8
+    let (m3,_,eqn3List) = toSparseMatRed $ eqn3 map1Metric map2Metric map1Area map2Area ansatz6''
 
-    --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) fullEqn1 
+    let (m4,_,eqn3AList) = toSparseMatRed $ eqn3A map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_2''
 
-    --BS.writeFile "/cip/austausch/cgg/ansatz18_2Ord4.dat.gz" $ compress ansatz18_2
+    let (m5,_,eqn3ABList) = toSparseMatRed $ eqn3AB map1Metric map2Metric map1Area map2Area ansatz10_2'' ansatz14_2'
 
-    byteString1 <- BS.readFile "/cip/austausch/cgg/ansatz18_2Ord4.dat.gz"
+    let (m6,_,eqn2AaList) = toSparseMatRed $ eqn2Aa map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_1''
 
-    byteString2 <- BS.readFile "/cip/austausch/cgg/ansatz18_3Ord4.dat.gz"
+    let (m7,_,eqn2ABbList) = toSparseMatRed $ eqn2ABb map1Metric map2Metric map1Area map2Area ansatz10_1'' ansatz10_2'' ansatz14_1''
 
-    let ansatz18_2Ord4 = (fromRight undefined $ decodeLazy $ decompress byteString1) :: Tensor8 4 0 0 0 1 0 0 0 VarMap
+    let (m8,_,eqn1AaBbList) = toSparseMatRed $ eqn1AaBb map1Metric map2Metric map1Area map2Area ansatz10_1'' ansatz14_1''
 
-    let ansatz18_3Ord4 = (fromRight undefined $ decodeLazy $ decompress byteString2) :: Tensor8 4 0 0 0 0 0 2 0 VarMap
+    let (m9,_,eqn1ABCIList) = toSparseMatRed $ eqn1ABCI map1Metric map2Metric map1Area map2Area ansatz14_2'' ansatz18_2''
 
-    let ansatzEqn18_2 = ansatzABCDJ map1Metric map2Metric map1Area map2Area ansatz18_2Ord4
+    let (m10,_,eqn1ABbCcList) = toSparseMatRed $ eqn1ABbCc map1Metric map2Metric map1Area map2Area ansatz14_1'' ansatz18_3''
 
-    let ansatzEqn18_3 = ansatzABCcDd map1Metric map2Metric map1Area map2Area ansatz18_3Ord4 
+    let (m11,_,eqn2ABCcList) = toSparseMatRed $ eqn2ABCc map1Metric map2Metric map1Area map2Area ansatz14_1'' ansatz14_2'' ansatz18_3''
 
-    --print $ toListShowVar ansatzEqn18_2 
-
-    print $ toListShowVar ansatzEqn18_3 
+    let (m12,_,eqn3ABCList) = toSparseMatRed $ eqn3ABc map1Metric map2Metric map1Area map2Area ansatz14_2'' ansatz18_3''
 
 
 
+
+
+
+
+    let fullEqn1 = eqn1AIList ++ (map (\((x,y),z) -> ((x+m1,y),z)) eqn1ABIList) 
+            ++ (map (\((x,y),z) -> ((x+m1+m2,y),z)) eqn3List)
+            ++ (map (\((x,y),z) -> ((x+m1+m2+m3,y),z)) eqn3AList) 
+            ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4 ,y),z)) eqn3ABList)
+            ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5 ,y),z)) eqn2AaList) 
+            ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6 ,y),z)) eqn2ABbList)
+            ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6+m7 ,y),z)) eqn1AaBbList)
+            ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6+m7+m8 ,y),z)) eqn1ABCIList)
+            ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6+m7+m8+m9 ,y),z)) eqn1ABbCcList)
+            ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6+m7+m8+m9+m10 ,y),z)) eqn2ABCcList)
+            ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11 ,y),z)) eqn3ABCList)
+
+
+    print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12
+
+    print $ ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank + ansatz10_2Rank + ansatz6Rank 
+
+    putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) fullEqn1 
 
 
     

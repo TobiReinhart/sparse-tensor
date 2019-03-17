@@ -275,9 +275,9 @@ main = do
 
     let ansatzEqn18_3 = ansatzABCcDd map1Metric map2Metric map1Area map2Area ansatz18_3Ord4 
 
-    print $ toListShowVar ansatzEqn18_2 
+    --print $ toListShowVar ansatzEqn18_2 
 
-    --print $ toListShowVar ansatzEqn18_3 
+    print $ toListShowVar ansatzEqn18_3 
 
 
 

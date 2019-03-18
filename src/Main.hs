@@ -124,6 +124,8 @@ main = do
     --e' <- BS.readFile "tensor_bs.dat.gz"
     --let d = (fromRight undefined $ decodeLazy $ decompress e') :: Tensor8 3 0 0 0 1 0 0 0 VarMap
 
+    
+
     byteString14_1 <- BS.readFile "/cip/austausch/cgg/ansatz14_1.dat.gz"
 
     byteString14_2 <- BS.readFile "/cip/austausch/cgg/ansatz14_2.dat.gz"
@@ -176,14 +178,12 @@ main = do
 
     let ansatz6Rank = getTensorRank ansatz6' 
 
-    
+
 
 
     let (m1,_,eqn1AIList) = toSparseMatRed $ eqn1AI map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_2'' 
 
     let (m2,_,eqn1ABIList) = toSparseMatRed $ eqn1ABI map1Metric map2Metric map1Area map2Area ansatz10_2'' ansatz14_2''
-
-    let (m3,_,eqn3List) = toSparseMatRed $ eqn3 map1Metric map2Metric map1Area map2Area ansatz6''
 
     let (m4,_,eqn3AList) = toSparseMatRed $ eqn3A map1Metric map2Metric map1Area map2Area ansatz6'' ansatz10_2''
 
@@ -203,11 +203,15 @@ main = do
 
     let (m12,_,eqn3ABCList) = toSparseMatRed $ eqn3ABC map1Metric map2Metric map1Area map2Area ansatz14_2'' ansatz18_2''
 
+    
 
+    let (m3,_,eqn3List) = toSparseMatRed $ eqn3 map1Metric map2Metric map1Area map2Area ansatz6'
 
+    --let ansatz4'' = shiftVarLabels 3 ansatz4'
 
+    --let (m13,_,eqn1List) = toSparseMatRed  $ eqn1 map1Metric map2Metric map1Area map2Area ansatz4''  
 
-
+    
 
     let fullEqn1 = eqn1AIList ++ (map (\((x,y),z) -> ((x+m1,y),z)) eqn1ABIList) 
             ++ (map (\((x,y),z) -> ((x+m1+m2,y),z)) eqn3List)
@@ -221,8 +225,12 @@ main = do
             ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6+m7+m8+m9+m10 ,y),z)) eqn2ABCcList)
             ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11 ,y),z)) eqn3ABCList)
 
+    
 
-    print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12
+    --let eqnOrd1 = eqn3List ++ (map (\((x,y),z) -> ((x+m3,y),z)) eqn1List)
+
+
+    print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12 
 
     print $ ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank + ansatz10_2Rank + ansatz6Rank 
 

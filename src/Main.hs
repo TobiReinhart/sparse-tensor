@@ -124,7 +124,7 @@ main = do
     --e' <- BS.readFile "tensor_bs.dat.gz"
     --let d = (fromRight undefined $ decodeLazy $ decompress e') :: Tensor8 3 0 0 0 1 0 0 0 VarMap
 
-    
+    {-
 
     byteString14_1 <- BS.readFile "/cip/austausch/cgg/ansatz14_1.dat.gz"
 
@@ -203,15 +203,58 @@ main = do
 
     let (m12,_,eqn3ABCList) = toSparseMatRed $ eqn3ABC map1Metric map2Metric map1Area map2Area ansatz14_2'' ansatz18_2''
 
+    -}
+
+
+    let ansatz12_1'' = ansatz12_1'
+
+    let ansatzRank12_1 = getTensorRank ansatz12_1' 
+
+    let ansatz10_1'' = shiftVarLabels ansatzRank12_1 ansatz10_1' 
+
+    let ansatzRank10_1 = getTensorRank ansatz10_1' 
+
+    let ansatz10_2'' = shiftVarLabels (ansatzRank12_1 + ansatzRank10_1) ansatz10_2' 
+
+    let ansatzRank10_2 = getTensorRank ansatz10_2' 
+
+    let ansatz8'' = shiftVarLabels (ansatzRank12_1 + ansatzRank10_1 + ansatzRank10_2) ansatz8'
+
+    let ansatzRank8 = getTensorRank ansatz8' 
+
+    let ansatz6'' = shiftVarLabels (ansatzRank12_1 + ansatzRank10_1 + ansatzRank10_2 + ansatzRank8) ansatz6' 
+
+    let ansatzRank6 = getTensorRank ansatz6' 
+
+    let ansatz4'' = shiftVarLabels (ansatzRank12_1 + ansatzRank10_1 + ansatzRank10_2 + ansatzRank8 + ansatzRank6) ansatz4' 
+
+    let ansatzRank4 = getTensorRank ansatz4' 
+
+
+    let (m1,_,eqn3List) = toSparseMatRed $ eqn3 map1Metric map2Metric map1Area map2Area ansatz6''
+
+    let (m2,_,eqn1List) = toSparseMatRed  $ eqn1 map1Metric map2Metric map1Area map2Area ansatz4''  
+
+
+
+    let (m3,_,eqn1AList) = toSparseMatRed  $ eqn1A map1Metric map2Metric map1Area map2Area ansatz4''  ansatz8''  
+
+    let (m4,_,eqn1AIList) = toSparseMatRed  $ eqn1AI map1Metric map2Metric map1Area map2Area ansatz6''  ansatz10_2''  
+
+    let (m5,_,eqn2AaList) = toSparseMatRed  $ eqn2Aa map1Metric map2Metric map1Area map2Area ansatz6''  ansatz10_1'' 
     
-
-    let (m3,_,eqn3List) = toSparseMatRed $ eqn3 map1Metric map2Metric map1Area map2Area ansatz6'
-
-    --let ansatz4'' = shiftVarLabels 3 ansatz4'
-
-    --let (m13,_,eqn1List) = toSparseMatRed  $ eqn1 map1Metric map2Metric map1Area map2Area ansatz4''  
-
+    let (m6,_,eqn3AList) = toSparseMatRed  $ eqn3A map1Metric map2Metric map1Area map2Area ansatz6''  ansatz10_2''
     
+    let (m7,_,eqn3AIList) = toSparseMatRed  $ eqn3AI map1Metric map2Metric map1Area map2Area ansatz12_1''  
+
+
+
+
+
+
+
+
+    {-
 
     let fullEqn1 = eqn1AIList ++ (map (\((x,y),z) -> ((x+m1,y),z)) eqn1ABIList) 
             ++ (map (\((x,y),z) -> ((x+m1+m2,y),z)) eqn3List)
@@ -225,16 +268,35 @@ main = do
             ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6+m7+m8+m9+m10 ,y),z)) eqn2ABCcList)
             ++ (map (\((x,y),z) -> ((x+m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11 ,y),z)) eqn3ABCList)
 
+    -}
     
 
-    --let eqnOrd1 = eqn3List ++ (map (\((x,y),z) -> ((x+m3,y),z)) eqn1List)
+    let eqnOrd1 = eqn3List ++ (map (\((x,y),z) -> ((x+m1,y),z)) eqn1List)
+
+    let eqnOrd2 = eqn1AList ++ (map (\((x,y),z) -> ((x+m3,y),z)) eqn1AIList) 
+            ++ (map (\((x,y),z) -> ((x+m3+m4,y),z)) eqn2AaList)
+            ++ (map (\((x,y),z) -> ((x+m3+m4+m5,y),z)) eqn3AList) 
+            ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6 ,y),z)) eqn3AIList)
+            ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7 ,y),z)) eqn3List)
+            ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7+m1 ,y),z)) eqn1List)
+
+    let eqn1Mass = eqn1List 
+
+    let eqn2Mass = eqn1AList 
+            ++ (map (\((x,y),z) -> ((x+m3 ,y),z)) eqn1List)
 
 
-    print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12 
+            
 
-    print $ ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank + ansatz10_2Rank + ansatz6Rank 
+    --print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12 
 
-    putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) fullEqn1 
+    --print $ ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank + ansatz10_2Rank + ansatz6Rank 
+
+    --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqn2Mass  
 
 
-    
+    --print  (ansatzRank6, ansatzRank4, ansatzRank8, ansatzRank10_1, ansatzRank10_2, ansatzRank12_1)  
+
+    --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqnOrd2  
+
+    print $ ansatzTestAB'' map1Metric map2Metric map1Area map2Area ansatz4' 

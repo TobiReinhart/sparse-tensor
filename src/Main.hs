@@ -1,37 +1,3 @@
---pushes type stuff to kind stuff (prefixed with ')
-{-# LANGUAGE DataKinds #-}
---matching on type constructors
-{-# LANGUAGE GADTs #-}
---kind signature
-{-# LANGUAGE KindSignatures #-}
---type family definitions
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeFamilyDependencies #-}
-{-# LANGUAGE UndecidableInstances #-}
---infix type plus and mult
-{-# LANGUAGE TypeOperators #-}
-
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
-
-{-# LANGUAGE StandaloneDeriving #-}
-
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
-{-# LANGUAGE RankNTypes #-}
-
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DeriveAnyClass #-}
-
-{-# LANGUAGE LambdaCase #-}
-
-
-{-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver   #-}
-{-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
-
-{-# OPTIONS_GHC -dcore-lint #-}
-
-{-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 module Main (
  main
 ) where
@@ -299,4 +265,4 @@ main = do
 
     --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqnOrd2  
 
-    print $ ansatzTestAB'' map1Metric map2Metric map1Area map2Area ansatz4' 
+    print $ ansatzTestAB'' map1Metric map2Metric map1Area map2Area ansatz4'

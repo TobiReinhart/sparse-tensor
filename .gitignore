@@ -23,3 +23,5 @@ cabal.project.local~
 .HTF/
 .ghc.environment.*
 .DS_Store
+*.dat
+*.dat.gz

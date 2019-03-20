@@ -47,7 +47,8 @@ module TensorTreeNumeric4 (
     tensorTransWithU3, tensorTransWithL3, addVarsMap, ansatzAIBJ, ansatzABbCc, ansatzABCI, ansatzApBqCI, ansatzABICJ, ansatzAIBJCK,
     ansatzABCDJ, ansatzABCcDd,
     eqn3, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn2ABb, eqn3AB, eqn1AaBb, eqn1ABCI, eqn1ABbCc, eqn2ABCc, eqn3ABC,
-    eqn1, eqn1A, eqn3AI
+    eqn1, eqn1A, eqn3AI,
+    tensorAdd8, invEta, flatArea, tensorSMult
 ) where
 
     import Data.Foldable

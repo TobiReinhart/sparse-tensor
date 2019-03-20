@@ -21,5 +21,6 @@ executable HaskellTensor
   other-modules:       BasicTensors, EquivarianceEqns, EquivarianceMetric, Index, Ivar, Pde, Tensor, Integrabillity, Ansatz, Symmetrize,
                        Perturbation, AnsatzEqns2, Order2Int, Order3Int, IndexMap, TensorMap, BasicTensorsMap, Order1Int, PerturbationTree,
                        PerturbationTree2, Tensor2, TensorF, TensorInt, TensorTreeNumeric, TensorTreeNumeric2, TensorTreeIntCond, BinaryTree, TensorTreeNumeric3, PerturbationTree3, PerturbationTree4,
-                       PerturbationTree5, PerturbationTree2_2, TensorTreeNumeric4
+                       PerturbationTree5, PerturbationTree2_2, TensorTreeNumeric4, SymbolicTensor,
+                       AnsatzMatrices, IntMatrices, DiffeoMatrices
   ghc-options:         -O -threaded -rtsopts -with-rtsopts=-N -funbox-strict-fields 

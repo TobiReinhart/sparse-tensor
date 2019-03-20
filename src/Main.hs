@@ -213,6 +213,20 @@ main = do
     
     let (m7,_,eqn3AIList) = toSparseMatRed  $ eqn3AI map1Metric map2Metric map1Area map2Area ansatz12_1''  
 
+    --the extra int conditions (from the restriction of the Jetbundle)
+
+    let (m8,_,ansatzAB2List) = toSparseMatRed  $ ansatzAB2 map1Metric map2Metric map1Area map2Area ansatz8''  
+
+    let (m9,_,ansatzAIB2_1List) = toSparseMatRed  $ ansatzAIB2_1 map1Metric map2Metric map1Area map2Area ansatz10_2''  
+
+    let (m10,_,ansatzAIB2_2List) = toSparseMatRed  $ ansatzAIB2_2 map1Metric map2Metric map1Area map2Area ansatz10_2''
+    
+    let (m11,_,ansatzAIBJ2List) = toSparseMatRed  $ ansatzAIBJ2 map1Metric map2Metric map1Area map2Area ansatz12_1''  
+
+
+
+
+
 
 
 
@@ -245,6 +259,11 @@ main = do
             ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6 ,y),z)) eqn3AIList)
             ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7 ,y),z)) eqn3List)
             ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7+m1 ,y),z)) eqn1List)
+            ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7+m1+m2 ,y),z)) ansatzAB2List)
+            ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7+m1+m2+m8 ,y),z)) ansatzAIB2_1List)
+            ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7+m1+m2+m8+m9 ,y),z)) ansatzAIB2_2List)
+            ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7+m1+m2+m8+m9+m10 ,y),z)) ansatzAIBJ2List)
+
 
     let eqn1Mass = eqn1List 
 
@@ -254,11 +273,11 @@ main = do
 
             
 
-    --print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12 
+    print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11 
 
     --print $ ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank + ansatz10_2Rank + ansatz6Rank 
 
-    --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqn2Mass  
+    putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqnOrd2  
 
 
     --print  (ansatzRank6, ansatzRank4, ansatzRank8, ansatzRank10_1, ansatzRank10_2, ansatzRank12_1)  

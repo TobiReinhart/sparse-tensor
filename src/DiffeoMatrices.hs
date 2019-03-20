@@ -82,7 +82,7 @@ evalDiffeo_1_0_0_A :: ([Int], Rational) -> ((Int, Int), Rational)
 evalDiffeo_1_0_0_A ([b,a,m,n], x) = ((row, column), x)
     where
         row = 16*b + 4*m + n + 1
-        column = a + 21 + 1 + 1
+        column = a + 1 + 1
 
 diffeo_1_0_0_AB :: Tensor8 1 2 0 0 0 0 1 1 Rational
 diffeo_1_0_0_AB = result
@@ -94,7 +94,7 @@ diffeo_1_0_0_AB = result
 evalDiffeo_1_0_0_AB :: ([Int], Rational) -> ((Int, Int), Rational)
 evalDiffeo_1_0_0_AB ([a2,a1,b1,m,n], x) = ((row, column), x)
     where
-        row = 16*b1 + 4*m + n + 1
+        row = 16*a2 + 4*m + n + 1
         a' = min a1 b1 + 1
         b' = max a1 b1 + 1
         column = trian M.! [a', b'] + 315 + 1
@@ -112,7 +112,7 @@ diffeo_1_0_2_ABJ :: Tensor8 1 2 0 0 1 1 1 1 Rational
 diffeo_1_0_2_ABJ = tensorProd8 intFlat $ tensorProd8 delta20 delta9
 
 evalDiffeo_1_0_2_ABJ :: ([Int], Rational) -> ((Int, Int), Rational)
-evalDiffeo_1_0_2_ABJ ([b2,j2,a,b1,j1,m,n], x) = ((row, column), x)
+evalDiffeo_1_0_2_ABJ ([b2,a,b1,j2,j1,m,n], x) = ((row, column), x)
     where
         row = 16*10*b2 + 16*j2 + 4*m + n + 1
         a' = a + 1
@@ -131,11 +131,11 @@ evalDiffeo_1_1_1_AI ([a2,a1,i,a,m,b,n], x) = ((row, column), x)
 diffeo_1_1_1_AaBb :: Tensor8 1 2 0 0 0 0 3 3 Rational
 diffeo_1_1_1_AaBb = result
     where
-        block1 = tensorProd8 delta20 $ tensorProd8 delta3 $ tensorProd8 delta3 intFlat
-        block2 = tensorTransU3 (1,2) block1
-        block3 = tensorTransL20 (0,1) $ tensorTransL3 (0,1) block1
-        block4 = tensorTransL20 (0,1) $ tensorTransL3 (0,1) block2
-        result = tensorAdd8 block1 $ tensorAdd8 block2 $ tensorAdd8 block3 block4
+        block1'  = tensorProd8 delta20 $ tensorProd8 delta3 $ tensorProd8 delta3 intFlat
+        block1'' = tensorTransU3 (1,2) block1'
+        block1   = tensorAdd8 block1' block1''
+        block2   = tensorTransL20 (0,1) $ tensorTransL3 (0,1) block1
+        result   = tensorAdd8 block1 block2
 
 evalDiffeo_1_1_1_AaBb :: ([Int], Rational) -> ((Int, Int), Rational)
 evalDiffeo_1_1_1_AaBb ([a2,a1,b1,p2,q2,m,p1,q1,n], x) = ((row, column), x)

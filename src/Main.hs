@@ -2,6 +2,7 @@ module Main (
  main
 ) where
 
+import Matrices
 import TensorTreeNumeric4
 import PerturbationTree2_2 
 
@@ -273,15 +274,17 @@ main = do
 
             
 
-    print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11 
+    --print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11 
 
     --print $ ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank + ansatz10_2Rank + ansatz6Rank 
 
-    putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqnOrd2  
+    --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqnOrd2  
 
 
     --print  (ansatzRank6, ansatzRank4, ansatzRank8, ansatzRank10_1, ansatzRank10_2, ansatzRank12_1)  
 
     --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqnOrd2  
 
-    print $ ansatzTestAB'' map1Metric map2Metric map1Area map2Area ansatz4'
+    --print $ ansatzTestAB'' map1Metric map2Metric map1Area map2Area ansatz4'
+
+    writeMatrices

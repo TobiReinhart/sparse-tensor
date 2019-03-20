@@ -762,6 +762,15 @@ module TensorTreeNumeric4 (
                 block1 = tensorAdd8 block1' $ tensorTransU3 (1,2) block1' 
                 block2 = tensorProd8 delta20 $ tensorProd8 delta3 sym
 
+    interIntCond ::  M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 1 0 0 0 0 0 4 Rational
+    interIntCond map1Metric map2Metric map1Area map2Area = tensorSAdd8 tens tensTrans  
+            where
+                intA = inetrArea map1Area map2Area 
+                intI = interIArea map1Area 
+                tens' = tensorProd8 intA intI 
+                tens = tensorContr3 (0,1) tens' 
+                tensTrans = tensorTransL3 (0,1) tens 
+
     flatArea :: Tensor8 0 1 0 0 0 0 0 0 Rational
     flatArea = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(5,-1),(6,-1),(9,1),(11,-1),(12,-1),(15,1),(18,1),(20,1)]
 

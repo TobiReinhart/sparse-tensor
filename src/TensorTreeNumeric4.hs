@@ -954,7 +954,7 @@ module TensorTreeNumeric4 (
                 block2 = tensorTransWithU20 (1,2) addVarsMap block1 
                 block3 = tensorTransWithU20 (0,2) addVarsMap block1
 
-    ansatzABCD :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 0 0 0 0 VarMap -> Tensor8 3 0 0 0 1 0 0 0 VarMap
+    ansatzABCD :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 4 0 0 0 0 0 0 0 VarMap -> Tensor8 4 0 0 0 1 0 0 0 VarMap
     ansatzABCD map1Metric map2Metric map1Area map2Area ansatzTens = tensorAddWith8 addVarsMap block1 $ tensorAddWith8 addVarsMap block2 $ tensorAddWith8 addVarsMap block3 block4 
             where
                 intA = interArea map1Area map2Area

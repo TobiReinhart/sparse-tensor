@@ -97,13 +97,20 @@ main = do
     --BS.writeFile "/cip/austausch/cgg/ansatz16_2.dat.gz" $ compress ansatz16_2
     --BS.writeFile "/cip/austausch/cgg/ansatz18.dat.gz" $ compress ansatz18
     --BS.writeFile "/cip/austausch/cgg/ansatz16.dat.gz" $ compress ansatz16
-    BS.writeFile "/cip/austausch/cgg/ansatz20.dat.gz" $ compress ansatz20
+    --BS.writeFile "/cip/austausch/cgg/ansatz20.dat.gz" $ compress ansatz20
 
 
 
 
     --e' <- BS.readFile "tensor_bs.dat.gz"
     --let d = (fromRight undefined $ decodeLazy $ decompress e') :: Tensor8 3 0 0 0 1 0 0 0 VarMap
+
+    byteString16 <- BS.readFile "/cip/austausch/cgg/ansatz16.dat.gz"
+
+    let ansatz16Tens = (fromRight undefined $ decodeLazy $ decompress byteString16) :: Tensor8 4 0 0 0 0 0 0 0 VarMap
+
+    let ansatzEqn16Tens = ansatzABCD map1Metric map2Metric map1Area map2Area ansatz16Tens 
+
 
     {-
 
@@ -355,7 +362,7 @@ main = do
 
     --print $ filter (\(a,b) -> b /= 0) $ toListShow8 $ ansatzAIntCond map1Metric map2Metric map1Area map2Area
 
-    print 1 
+    print $ toListShowVar ansatzEqn16Tens
     
 
     

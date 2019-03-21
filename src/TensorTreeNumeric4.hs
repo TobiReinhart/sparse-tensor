@@ -46,7 +46,7 @@ module TensorTreeNumeric4 (
     Uind20(..), Lind20(..), Uind19(..), Lind19(..), Uind9(..), Lind9(..), Uind3(..), Lind3(..), IndTuple, fromListT8, fromListTWith8, singletonInd, ansatzAIB,
     ansatzAI, ansatzAB, ansatzAaBb, ansatzABC, ansatzA, tensorTransWithU20, tensorTransWithL20, tensorTransWithU19, tensorTransWithL19, tensorTransWithU9, tensorTransWithL9,
     tensorTransWithU3, tensorTransWithL3, addVarsMap, ansatzAIBJ, ansatzABbCc, ansatzABCI, ansatzApBqCI, ansatzABICJ, ansatzAIBJCK,
-    ansatzABCDJ, ansatzABCcDd,
+    ansatzABCDJ, ansatzABCcDd, ansatzABCD,
     eqn3, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn2ABb, eqn3AB, eqn1AaBb, eqn1ABCI, eqn1ABbCc, eqn2ABCc, eqn3ABC,
     eqn1, eqn1A, eqn3AI, eqn1AB,
     ansatzAB2, ansatzAIB2_1, ansatzAIB2_2, ansatzAIBJ2,
@@ -953,6 +953,19 @@ module TensorTreeNumeric4 (
                 block1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens intAContr 
                 block2 = tensorTransWithU20 (1,2) addVarsMap block1 
                 block3 = tensorTransWithU20 (0,2) addVarsMap block1
+
+    ansatzABCD :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 0 0 0 0 VarMap -> Tensor8 3 0 0 0 1 0 0 0 VarMap
+    ansatzABCD map1Metric map2Metric map1Area map2Area ansatzTens = tensorAddWith8 addVarsMap block1 $ tensorAddWith8 addVarsMap block2 $ tensorAddWith8 addVarsMap block3 block4 
+            where
+                intA = interArea map1Area map2Area
+                antiSym = aSymI2 map1Metric
+                aSym = tensorContr3 (1,1) $ tensorProd8 invEta antiSym
+                intAContr = tensorContr3 (0,0) $ tensorContr3 (0,1) $ tensorProd8 intA aSym
+                block1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens intAContr 
+                block2 = tensorTransWithU20 (0,3) addVarsMap block1 
+                block3 = tensorTransWithU20 (1,3) addVarsMap block1
+                block4 = tensorTransWithU20 (2,3) addVarsMap block1
+
 
     ansatzABbCc :: M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 0 0 2 0 VarMap -> Tensor8 3 0 0 0 1 0 2 0 VarMap
     ansatzABbCc map1Metric map2Metric map1Area map2Area ansatzTens = tensorAddWith8 addVarsMap block1 $ tensorAddWith8 addVarsMap block2 block3 

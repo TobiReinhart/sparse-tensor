@@ -1292,8 +1292,8 @@ module TensorTreeNumeric4 (
             where
                 intFlat = flatInter map1Area map2Area 
                 intArea = interArea map1Area map2Area 
-                tens1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens12 intFlat 
-                tens2 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens8 intArea 
+                tens1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens16 intFlat 
+                tens2 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens12 intArea 
                 tens3 = tensorTransWithU20 (0,2) addVarsMap tens2 
                 tens4 = tensorTransWithU20 (1,2) addVarsMap tens2 
 

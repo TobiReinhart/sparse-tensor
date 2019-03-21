@@ -348,7 +348,10 @@ main = do
 
                 
 
-    print $ ansatzRank16 + ansatzRank12 + ansatzRank8 + ansatzRank4 
+    print $ (ansatzRank16, getTensorRank eqn1ABCTens) 
+    print $ (ansatzRank12, getTensorRank eqn1ABTens) 
+    print $ (ansatzRank8, getTensorRank eqn1ATens)
+    print $ (ansatzRank4, getTensorRank eqn1Tens) 
 
     print $ getTensorRank4 eqn1ABCTens eqn1ABTens eqn1ATens eqn1Tens
 

@@ -48,7 +48,7 @@ module TensorTreeNumeric4 (
     tensorTransWithU3, tensorTransWithL3, addVarsMap, ansatzAIBJ, ansatzABbCc, ansatzABCI, ansatzApBqCI, ansatzABICJ, ansatzAIBJCK,
     ansatzABCDJ, ansatzABCcDd, ansatzABCD,
     eqn3, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn2ABb, eqn3AB, eqn1AaBb, eqn1ABCI, eqn1ABbCc, eqn2ABCc, eqn3ABC,
-    eqn1, eqn1A, eqn3AI, eqn1AB,
+    eqn1, eqn1A, eqn3AI, eqn1AB, eqn1ABC,
     ansatzAB2, ansatzAIB2_1, ansatzAIB2_2, ansatzAIBJ2,
     flatArea', eta, epsilon, epsilonInv, flatAreaInv, flatAreaST
 ) where
@@ -1286,6 +1286,16 @@ module TensorTreeNumeric4 (
                 tens1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens12 intFlat 
                 tens2 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens8 intArea 
                 tens3 = tensorTransWithU20 (0,1) addVarsMap tens2 
+
+    eqn1ABC ::  M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 3 0 0 0 0 0 0 0 VarMap -> Tensor8 4 0 0 0 0 0 0 0 VarMap -> Tensor8 3 0 0 0 0 0 1 1 VarMap
+    eqn1ABC map1Metric map2Metric map1Area map2Area ansatzTens12 ansatzTens16 = tensorAddWith8 addVarsMap tens1 $ tensorAddWith8 addVarsMap tens2 $ tensorAddWith8 addVarsMap tens3 tens4   
+            where
+                intFlat = flatInter map1Area map2Area 
+                intArea = interArea map1Area map2Area 
+                tens1 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens12 intFlat 
+                tens2 = tensorContrWith20 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatzTens8 intArea 
+                tens3 = tensorTransWithU20 (0,2) addVarsMap tens2 
+                tens4 = tensorTransWithU20 (1,2) addVarsMap tens2 
 
 
 

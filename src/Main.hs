@@ -306,12 +306,16 @@ main = do
 
     let ansatzRank12 = getTensorRank ansatz12' 
 
+    let ansatzRank16 = getTensorRank ansatz16Tens
 
-    let ansatz8'' = shiftVarLabels ansatzRank12 ansatz8'
+
+    let ansatz8'' = shiftVarLabels (ansatzRank16 + ansatzRank12) ansatz8'
     
-    let ansatz4'' = shiftVarLabels (ansatzRank12 + ansatzRank8) ansatz4' 
+    let ansatz4'' = shiftVarLabels (ansatzRank16 + ansatzRank12 + ansatzRank8) ansatz4' 
 
-    let ansatz12'' = ansatz12' 
+    let ansatz12'' = shiftVarLabels ansatzRank16 ansatz12' 
+
+    let ansatz16'' = ansatz16Tens
 
 
     let eqn1Tens = eqn1 map1Metric map2Metric map1Area map2Area ansatz4''
@@ -319,6 +323,8 @@ main = do
     let eqn1ATens = eqn1A map1Metric map2Metric map1Area map2Area ansatz4'' ansatz8''
 
     let eqn1ABTens = eqn1AB map1Metric map2Metric map1Area map2Area ansatz8'' ansatz12''
+
+    let eqn1ABCTens = eqn1ABC map1Metric map2Metric map1Area map2Area ansatz12'' ansatz16'' 
 
 
 
@@ -329,18 +335,22 @@ main = do
 
     let (m3,_,eqn1ABList) = toSparseMatRed $ eqn1ABTens
 
+    let (m4,_,eqn1ABCList) = toSparseMatRed $ eqn1ABCTens
 
 
-    let eqnMass = eqn1ABList 
-                ++ (map (\((x,y),z) -> ((x+m3 ,y),z)) eqn1AList)
-                ++ (map (\((x,y),z) -> ((x+m3+m2 ,y),z)) eqn1List)
+
+
+    let eqnMass = eqn1ABCList 
+                ++ (map (\((x,y),z) -> ((x+m4 ,y),z)) eqn1ABList)
+                ++ (map (\((x,y),z) -> ((x+m4+m3 ,y),z)) eqn1AList)
+                ++ (map (\((x,y),z) -> ((x+m4+m3+m2 ,y),z)) eqn1List)
+
 
                 
 
+    print $ ansatzRank16 + ansatzRank12 + ansatzRank8 + ansatzRank4 
 
-
-    --print $ getTensorRank3 (eqn1 map1Metric map2Metric map1Area map2Area ansatz4'') (eqn1A map1Metric map2Metric map1Area map2Area ansatz4'' ansatz8'') (eqn1AB map1Metric map2Metric map1Area map2Area ansatz8'' ansatz12')
-
+    print $ getTensorRank4 eqn1ABCTens eqn1ABTens eqn1ATens eqn1Tens
 
             
 
@@ -365,7 +375,7 @@ main = do
 
     --print $ filter (\(a,b) -> b /= 0) $ toListShow8 $ ansatzAIntCond map1Metric map2Metric map1Area map2Area
 
-    print $ toListShowVar ansatzEqn16Tens
+    print 1
     
 
     

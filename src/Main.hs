@@ -38,6 +38,7 @@ main = do
     let aList18 = areaEvalMap18Inds trianMapArea trianMapDerivative
     let aList18_2 = areaEvalMap18_2Inds trianMapArea trianMapDerivative
     let aList18_3 = areaEvalMap18_3Inds trianMapArea trianMapDerivative
+    let aList16 = areaEvalMap16Inds trianMapArea trianMapDerivative 
 
 
 
@@ -55,6 +56,8 @@ main = do
     let ansatz18' = mkAnsatzTensor 18 filterList18 symList18 1 epsMap aList18 
     let ansatz18_2' = mkAnsatzTensor 18 filterList18_2 symList18_2 1 epsMap aList18_2 
     let ansatz18_3' = mkAnsatzTensor 18 filterList18_3 symList18_3 1 epsMap aList18_3 
+    let ansatz16' = mkAnsatzTensor 16 filterList16 symList16 1 epsMap aList16 
+
 
  
 
@@ -72,6 +75,7 @@ main = do
     let ansatz18 = encodeLazy ansatz18'
     let ansatz18_2 = encodeLazy ansatz18_2'
     let ansatz18_3 = encodeLazy ansatz18_3'
+    let ansatz16 = encodeLazy ansatz16'
 
 
     --BS.writeFile "/cip/austausch/cgg/ansatz4.dat.gz" $ compress ansatz4
@@ -86,6 +90,8 @@ main = do
     --BS.writeFile "/cip/austausch/cgg/ansatz16_1.dat.gz" $ compress ansatz16_1
     --BS.writeFile "/cip/austausch/cgg/ansatz16_2.dat.gz" $ compress ansatz16_2
     --BS.writeFile "/cip/austausch/cgg/ansatz18.dat.gz" $ compress ansatz18
+    BS.writeFile "/cip/austausch/cgg/ansatz16.dat.gz" $ compress ansatz16
+
 
 
     --e' <- BS.readFile "tensor_bs.dat.gz"
@@ -170,7 +176,7 @@ main = do
 
     let (m12,_,eqn3ABCList) = toSparseMatRed $ eqn3ABC map1Metric map2Metric map1Area map2Area ansatz14_2'' ansatz18_2''
 
-    -}
+    
 
 
     let ansatz12_1'' = ansatz12_1'
@@ -265,20 +271,66 @@ main = do
             ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7+m1+m2+m8+m9 ,y),z)) ansatzAIB2_2List)
             ++ (map (\((x,y),z) -> ((x+m3+m4+m5+m6+m7+m1+m2+m8+m9+m10 ,y),z)) ansatzAIBJ2List)
 
+    
 
     let eqn1Mass = eqn1List 
 
     let eqn2Mass = eqn1AList 
             ++ (map (\((x,y),z) -> ((x+m3 ,y),z)) eqn1List)
 
+    -}
+
+    --mass equations
+
+    let ansatzRank4 = getTensorRank ansatz4'
+
+    let ansatzRank8 = getTensorRank ansatz8' 
+
+    let ansatzRank12 = getTensorRank ansatz12' 
+
+
+    let ansatz8'' = shiftVarLabels ansatzRank12 ansatz8'
+    
+    let ansatz4'' = shiftVarLabels (ansatzRank12 + ansatzRank8) ansatz4' 
+
+    let ansatz12'' = ansatz12' 
+
+
+    let eqn1Tens = eqn1 map1Metric map2Metric map1Area map2Area ansatz4''
+
+    let eqn1ATens = eqn1A map1Metric map2Metric map1Area map2Area ansatz4'' ansatz8''
+
+    let eqn1ABTens = eqn1AB map1Metric map2Metric map1Area map2Area ansatz8'' ansatz12''
+
+
+
+
+    let (m1,_,eqn1List) = toSparseMatRed eqn1Tens
+
+    let (m2,_,eqn1AList) = toSparseMatRed $ eqn1ATens
+
+    let (m3,_,eqn1ABList) = toSparseMatRed $ eqn1ABTens
+
+
+
+    let eqnMass = eqn1ABList 
+                ++ (map (\((x,y),z) -> ((x+m3 ,y),z)) eqn1AList)
+                ++ (map (\((x,y),z) -> ((x+m3+m2 ,y),z)) eqn1List)
+
+                
+
+
+
+    --print $ getTensorRank3 (eqn1 map1Metric map2Metric map1Area map2Area ansatz4'') (eqn1A map1Metric map2Metric map1Area map2Area ansatz4'' ansatz8'') (eqn1AB map1Metric map2Metric map1Area map2Area ansatz8'' ansatz12')
+
 
             
 
-    --print $ m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11 
+    --print $ m1+m2+m3
 
-    --print $ ansatz18_2Rank + ansatz18_3Rank + ansatz14_1Rank + ansatz14_2Rank + ansatz10_1Rank + ansatz10_2Rank + ansatz6Rank 
+    --print $ ansatzRank4 + ansatzRank8 + ansatzRank12  
 
-    --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqnOrd2  
+    --putStr $ unlines $ map (\((i, j), v) -> "(" ++ show i ++ "," ++ show j ++ ")" ++ "=" ++  show (numerator v) ++ "/" ++ show (denominator v) ++ "," ) eqnMass  
 
 
     --print  (ansatzRank6, ansatzRank4, ansatzRank8, ansatzRank10_1, ansatzRank10_2, ansatzRank12_1)  
@@ -287,4 +339,15 @@ main = do
 
     --print $ ansatzTestAB'' map1Metric map2Metric map1Area map2Area ansatz4'
 
-    writeMatrices
+    --writeMatrices
+
+    --print $ toListShowVar intCondTest
+
+    --print $ filter (\(x,y) -> y /= 0) $ toListShow8 $ interIntCond map1Metric map2Metric map1Area map2Area
+
+    --print $ filter (\(a,b) -> b /= 0) $ toListShow8 $ ansatzAIntCond map1Metric map2Metric map1Area map2Area
+
+    print 1 
+    
+
+    

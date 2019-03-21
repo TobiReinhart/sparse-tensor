@@ -39,6 +39,8 @@ main = do
     let aList18_2 = areaEvalMap18_2Inds trianMapArea trianMapDerivative
     let aList18_3 = areaEvalMap18_3Inds trianMapArea trianMapDerivative
     let aList16 = areaEvalMap16Inds trianMapArea trianMapDerivative 
+    let aList20 = areaEvalMap20Inds trianMapArea trianMapDerivative 
+
 
 
 
@@ -57,6 +59,8 @@ main = do
     let ansatz18_2' = mkAnsatzTensor 18 filterList18_2 symList18_2 1 epsMap aList18_2 
     let ansatz18_3' = mkAnsatzTensor 18 filterList18_3 symList18_3 1 epsMap aList18_3 
     let ansatz16' = mkAnsatzTensor 16 filterList16 symList16 1 epsMap aList16 
+    let ansatz20' = mkAnsatzTensor 20 filterList20 symList20 1 epsMap aList20 
+
 
 
  
@@ -76,6 +80,8 @@ main = do
     let ansatz18_2 = encodeLazy ansatz18_2'
     let ansatz18_3 = encodeLazy ansatz18_3'
     let ansatz16 = encodeLazy ansatz16'
+    let ansatz20 = encodeLazy ansatz20'
+
 
 
     --BS.writeFile "/cip/austausch/cgg/ansatz4.dat.gz" $ compress ansatz4
@@ -90,7 +96,9 @@ main = do
     --BS.writeFile "/cip/austausch/cgg/ansatz16_1.dat.gz" $ compress ansatz16_1
     --BS.writeFile "/cip/austausch/cgg/ansatz16_2.dat.gz" $ compress ansatz16_2
     --BS.writeFile "/cip/austausch/cgg/ansatz18.dat.gz" $ compress ansatz18
-    BS.writeFile "/cip/austausch/cgg/ansatz16.dat.gz" $ compress ansatz16
+    --BS.writeFile "/cip/austausch/cgg/ansatz16.dat.gz" $ compress ansatz16
+    BS.writeFile "/cip/austausch/cgg/ansatz20.dat.gz" $ compress ansatz20
+
 
 
 

@@ -40,6 +40,9 @@ readAnsatz1 = readTensor "ansatz/ansatz8.dat.gz"
 readAnsatz2 :: IO (Ansatz2)
 readAnsatz2 = readTensor "ansatz/ansatz12.dat.gz"
 
+readInt :: IO (Tensor8 2 2 0 0 0 0 0 0 Rational)
+readInt = readTensor "inverseDerivativeInt.dat.gz"
+
 generateAnsaetze :: IO ()
 generateAnsaetze =
     do
@@ -62,7 +65,5 @@ writeMatrix fileName tensor =
 main :: IO ()
 main =
     do
-     let t = inverseDerivativeInt
-     let encoded = S.encodeLazy t
-     let compressed = GZ.compress encoded
-     BS.writeFile "../inverseDerivativeInt.dat.gz" compressed
+     t <- readInt
+     putStr $ unlines $ map show $ toListShow8 t

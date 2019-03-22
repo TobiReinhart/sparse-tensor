@@ -49,7 +49,9 @@ module TensorTreeNumeric4 (
     ansatzABCDJ, ansatzABCcDd,
     eqn3, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn2ABb, eqn3AB, eqn1AaBb, eqn1ABCI, eqn1ABbCc, eqn2ABCc, eqn3ABC,
     eqn1, eqn1A, eqn3AI, 
-    ansatzAB2, ansatzAIB2_1, ansatzAIB2_2, ansatzAIBJ2 
+    ansatzAB2, ansatzAIB2_1, ansatzAIB2_2, ansatzAIBJ2,
+    flatAreaSDown, flatAreaSUp, epsilonUp, epsilonDown,
+    tensorProdWith8, multVarsMap, tensorContrWith20, tensorAddWith8, toSparseMat
 ) where
 
     import Data.Foldable
@@ -763,16 +765,46 @@ module TensorTreeNumeric4 (
                 block2 = tensorProd8 delta20 $ tensorProd8 delta3 sym
 
     interIntCond ::  M.Map (IndList 2 Lind3) (IndList 1 Uind9) -> M.Map (IndList 2 Uind3) (IndList 1 Lind9) -> M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 2 1 0 0 0 0 0 4 Rational
-    interIntCond map1Metric map2Metric map1Area map2Area = tensorSAdd8 tens tensTrans  
+    interIntCond map1Metric map2Metric map1Area map2Area = tensorSub8 tens tensTrans  
             where
-                intA = inetrArea map1Area map2Area 
+                intA = interArea map1Area map2Area 
                 intI = interIArea map1Area 
                 tens' = tensorProd8 intA intI 
                 tens = tensorContr3 (0,1) tens' 
                 tensTrans = tensorTransL3 (0,1) tens 
 
+    epsMap :: M.Map [Int] Rational 
+    epsMap = M.fromList $ map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
+                where
+                   epsSign [i,j,k,l] = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+
+    epsList :: [(Int, Int, Int, Int, Rational)]
+    epsList = map (\([i, j, k, l], x) -> (i, j, k, l, x)) $ filter ((/=0) . snd) $ M.assocs epsMap
+
+    epsilonDown :: Tensor8 0 0 0 0 0 0 0 4 Rational
+    epsilonDown = fromListT8 $ map (\(i, j, k, l, v) -> ((Empty,Empty,Empty,Empty,Empty,Empty,Empty,Append (Lind3 i) $ Append (Lind3 j) $ Append (Lind3 k) $ Append (Lind3 l) Empty), v)) epsList
+
+    epsilonUp :: Tensor8 0 0 0 0 0 0 4 0 Rational
+    epsilonUp = fromListT8 $ map (\(i, j, k, l, v) -> ((Empty,Empty,Empty,Empty,Empty,Empty,Append (Uind3 i) $ Append (Uind3 j) $ Append (Uind3 k) $ Append (Uind3 l) Empty, Empty), v)) epsList
+
     flatArea :: Tensor8 0 1 0 0 0 0 0 0 Rational
     flatArea = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(5,-1),(6,-1),(9,1),(11,-1),(12,-1),(15,1),(18,1),(20,1)]
+
+    flatAreaSDown :: Tensor8 0 0 0 0 0 0 0 4 Rational
+    flatAreaSDown = result
+        where
+            block1 = tensorTransL3 (1,2) $ tensorProd8 eta eta
+            block2 = tensorSMult (-1) $ tensorTransL3 (1,3) $ tensorProd8 eta eta
+            block3 = tensorSMult (-1) epsilonDown
+            result = tensorAdd8 block1 $ tensorAdd8 block2 block3
+
+    flatAreaSUp :: Tensor8 0 0 0 0 0 0 4 0 Rational
+    flatAreaSUp = result
+        where
+            block1 = tensorTransU3 (1,2) $ tensorProd8 invEta invEta
+            block2 = tensorSMult (-1) $ tensorTransU3 (1,3) $ tensorProd8 invEta invEta
+            block3 = tensorSMult (-1) epsilonUp
+            result = tensorAdd8 block1 $ tensorAdd8 block2 block3
 
     eta :: Tensor8 0 0 0 0 0 0 0 2 Rational
     eta =  fromListT8 l 

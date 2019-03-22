@@ -1,6 +1,6 @@
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE DataKinds #-}
-
-
 module Main (
  main
 ) where

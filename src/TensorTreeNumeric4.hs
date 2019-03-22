@@ -50,11 +50,12 @@ module TensorTreeNumeric4 (
     eqn3, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn2ABb, eqn3AB, eqn1AaBb, eqn1ABCI, eqn1ABbCc, eqn2ABCc, eqn3ABC,
     eqn1, eqn1A, eqn3AI, eqn1AB, eqn1ABC,
     ansatzAB2, ansatzAIB2_1, ansatzAIB2_2, ansatzAIBJ2,
+    epsilonUp, epsilonDown,
     flatArea', eta, epsilon, epsilonInv, flatAreaInv, flatAreaST,
+    tensorProdWith8, multVarsMap, tensorContrWith20, tensorAddWith8, toSparseMat, interJAreaInv, interIAreaInv,
     interAnsatzEqn1, interAnsatzEqn1Test, interAnsatzEqn3, interAnsatzEqn3Test, interAnsatzEqn1Zero, flatAreaInvSTNoEps, flatAreaNoEps,
     interAnsatzEqn1NoInv, interAnsatzEqn1TestNoInv, interAnsatzEqn3NoInv, interAnsatzEqn3TestNoInv, interAnsatzEqn1ZeroNoInv, interIntCondTest
     
-
 ) where
 
     import Data.Foldable
@@ -720,12 +721,50 @@ module TensorTreeNumeric4 (
                         where
                             (indArea, s) = canonicalizeArea ind2 
 
+    interIAreaInv :: M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 0 1 0 0 0 0 4 0 Rational
+    interIAreaInv trianArea = fromListT8 $ filter ((/=0) . snd) $ map (\x -> (x, f x)) inds
+        where
+            inds = [ (Empty,
+                      singletonInd $ Lind20 a,
+                      Empty,
+                      Empty,
+                      Empty,
+                      Empty,
+                      Append (Uind3 b) $ Append (Uind3 c) $ Append (Uind3 d) $ singletonInd (Uind3 e),
+                      Empty)
+                        | a <- [0..20], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], not (b == c || d == e)
+                   ]
+            f (_, ind1, _, _, _, _, ind2, _)
+                | ind1 == trianArea M.! indArea = s
+                | otherwise = 0
+                    where
+                        (indArea, s) = canonicalizeArea ind2
+
     interJArea :: M.Map (IndList 4 Uind3) (IndList 1 Lind20) -> Tensor8 0 1 0 0 0 0 4 0 Rational
     interJArea trianArea = fromListT8 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
             where
                 inds = [  (Empty, (singletonInd $ Lind20 a), Empty, Empty, Empty, Empty, (Append (Uind3 b) $ Append (Uind3 c) $ Append (Uind3 d) $ singletonInd $ Uind3 e), Empty) | a <- [0..20], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], not (b == c || d == e)]
                 f (_, ind1, _, _, _, _, ind2, _)
                     | ind1 == ((M.!) trianArea indArea) = s * (jMultArea indArea)
+                    | otherwise = 0
+                        where
+                            (indArea, s) = canonicalizeArea ind2 
+
+    interJAreaInv :: M.Map (IndList 4 Lind3) (IndList 1 Uind20) -> Tensor8 1 0 0 0 0 0 0 4 Rational
+    interJAreaInv trianArea = fromListT8 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                inds = [  (singletonInd $ Uind20 a,
+                           Empty,
+                           Empty,
+                           Empty,
+                           Empty,
+                           Empty,
+                           Empty,
+                           Append (Lind3 b) $ Append (Lind3 c) $ Append (Lind3 d) $ singletonInd (Lind3 e))
+                             | a <- [0..20], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], not (b == c || d == e)
+                       ]
+                f (ind1, _, _, _, _, _, _, ind2)
+                    | ind1 == trianArea M.! indArea = s * (jMultArea indArea)
                     | otherwise = 0
                         where
                             (indArea, s) = canonicalizeArea ind2 
@@ -879,7 +918,6 @@ module TensorTreeNumeric4 (
                         int = interAnsatzEqn3NoInv map1Metric map2Metric map1Area map2Area 
                         tens = tensorContrWith20 (0,0) addVarsMap $ tensorContrWith9 (0,0) addVarsMap $ tensorProdWith8 (flip multVarsMap) ansatz int 
 
-
     epsilon :: Tensor8 0 0 0 0 0 0 0 4 Rational 
     epsilon = fromListT8 $ map (\([i,j,k,l],v) -> ((Empty, Empty, Empty, Empty, Empty, Empty, Empty, Append (Lind3 i) $ Append (Lind3 j) $ Append (Lind3 k) $ singletonInd (Lind3 l)),v)) epsL 
                     where
@@ -947,13 +985,25 @@ module TensorTreeNumeric4 (
                 tens = tensorSub8 etaProd1 $ tensorAdd8 etaProd2 epsilonInv
                 tens' = tensorProd8 intIA tens 
 
+    epsMap :: M.Map [Int] Rational 
+    epsMap = M.fromList $ map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
+                where
+                   epsSign [i,j,k,l] = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+
+    epsList :: [(Int, Int, Int, Int, Rational)]
+    epsList = map (\([i, j, k, l], x) -> (i, j, k, l, x)) $ filter ((/=0) . snd) $ M.assocs epsMap
+
+    epsilonDown :: Tensor8 0 0 0 0 0 0 0 4 Rational
+    epsilonDown = fromListT8 $ map (\(i, j, k, l, v) -> ((Empty,Empty,Empty,Empty,Empty,Empty,Empty,Append (Lind3 i) $ Append (Lind3 j) $ Append (Lind3 k) $ Append (Lind3 l) Empty), v)) epsList
+
+    epsilonUp :: Tensor8 0 0 0 0 0 0 4 0 Rational
+    epsilonUp = fromListT8 $ map (\(i, j, k, l, v) -> ((Empty,Empty,Empty,Empty,Empty,Empty,Append (Uind3 i) $ Append (Uind3 j) $ Append (Uind3 k) $ Append (Uind3 l) Empty, Empty), v)) epsList
 
     flatArea :: Tensor8 0 1 0 0 0 0 0 0 Rational
     flatArea = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(5,-1),(6,-1),(9,1),(11,-1),(12,-1),(15,1),(18,1),(20,1)]
 
     flatAreaNoEps :: Tensor8 0 1 0 0 0 0 0 0 Rational
     flatAreaNoEps = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(6,-1),(12,-1),(15,1),(18,1),(20,1)]
-
 
     eta :: Tensor8 0 0 0 0 0 0 0 2 Rational
     eta =  fromListT8 l 

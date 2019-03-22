@@ -3,6 +3,12 @@ module Matrices (writeMatrices) where
 import AnsatzMatrices
 import DiffeoMatrices
 import IntMatrices
+import ScalarMatrices
+
+import VariousMatrices
+
+various :: [(String, String)]
+various = [("cond.dat", showMatLab condMat)]
 
 ansaetze :: [(String, String)]
 ansaetze = [("ansatzA.dat",     showMatLab ansatzAMat),
@@ -28,8 +34,13 @@ diffeos = [("diffeo_0_0.dat",    showMatLab diffeo_0_0Mat),
 ints :: [(String, String)]
 ints = [("intABJ.dat", showMatLab intABJMat)]
 
+scalar :: [(String, String)]
+scalar = [("pde0.dat", showMatLab pde0Mat),
+          ("pde1.dat", showMatLab pde1Mat),
+          ("intcond.dat", showMatLab intcondMat)]
+
 writeMat :: String -> String -> IO ()
 writeMat name mat = writeFile name $ "1 50086 0\n" ++ mat
 
 writeMatrices :: IO ()
-writeMatrices = sequence_ $ map (uncurry writeMat) (ansaetze ++ diffeos ++ ints)
+writeMatrices = sequence_ $ map (uncurry writeFile) scalar

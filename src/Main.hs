@@ -1,14 +1,15 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE DataKinds #-}
-
 module Main (
  main
 ) where
 
-import TensorTreeNumeric4 (Tensor, toListShow8, Tensor8, getTensorRank, shiftVarLabels, getTensorRank2, getTensorRank3, toSparseMat, VarMap, toListShowVar)
+import TensorTreeNumeric4 (Tensor, toListShow8, Tensor8, getTensorRank, shiftVarLabels, getTensorRank2, getTensorRank3, toSparseMat, VarMap, toListShowVar, interIArea, interJArea, interJAreaInv, interIAreaInv, trianMapAreaI, trianMapAreaJ)
 import PerturbationTree2_2 (mkAnsatzTensor, epsMap, symList12, filterList12, trianMapArea, trianMapDerivative, areaEvalMap12Inds)
 import ScalarEquations
+
+import Intertwiners (inverseDerivativeInt)
 
 import qualified Data.ByteString.Lazy as BS (readFile, writeFile)
 import qualified Codec.Compression.GZip as GZ (decompress, compress)
@@ -61,17 +62,7 @@ writeMatrix fileName tensor =
 main :: IO ()
 main =
     do
-     ansatz0 <- readAnsatz0
-     ansatz1' <- readAnsatz1
-     ansatz2' <- readAnsatz2
-     let vars0 = getTensorRank ansatz0
-     let vars1 = getTensorRank ansatz1'
-     let ansatz1 = shiftVarLabels vars0 ansatz1'
-     let ansatz2 = shiftVarLabels (vars0+vars1) ansatz2'
-     let e0 = eqn0 ansatz0
-     let e1 = eqn1 ansatz0 ansatz1
-     let e2 = eqn2 ansatz1 ansatz2
-     let r = getTensorRank3 e0 e1 e2
-     writeMatrix "eqn0.dat" e0
-     writeMatrix "eqn1.dat" e1
-     writeMatrix "eqn2.dat" e2
+     let t = inverseDerivativeInt
+     let encoded = S.encodeLazy t
+     let compressed = GZ.compress encoded
+     BS.writeFile "../inverseDerivativeInt.dat.gz" compressed

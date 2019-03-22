@@ -51,9 +51,9 @@ module TensorTreeNumeric4 (
     eqn1, eqn1A, eqn3AI, eqn1AB, eqn1ABC,
     ansatzAB2, ansatzAIB2_1, ansatzAIB2_2, ansatzAIBJ2,
     epsilonUp, epsilonDown,
-    flatArea', eta, epsilon, epsilonInv, flatAreaInv, flatAreaST,
+    flatArea', eta, epsilon, epsilonInv, flatAreaInv, flatAreaST, flatAreaInvST,
     tensorProdWith8, multVarsMap, tensorContrWith20, tensorAddWith8, toSparseMat, interJAreaInv, interIAreaInv,
-    interAnsatzEqn1, interAnsatzEqn1Test, interAnsatzEqn3, interAnsatzEqn3Test, interAnsatzEqn1Zero, flatAreaInvSTNoEps, flatAreaNoEps,
+    interAnsatzEqn1, interAnsatzEqn1Test, interAnsatzEqn3, interAnsatzEqn3Test, interAnsatzEqn1Zero, flatAreaInvSTNoEps, flatAreaInvNoEps, flatAreaNoEps,
     interAnsatzEqn1NoInv, interAnsatzEqn1TestNoInv, interAnsatzEqn3NoInv, interAnsatzEqn3TestNoInv, interAnsatzEqn1ZeroNoInv, interIntCondTest
     
 ) where
@@ -1003,7 +1003,10 @@ module TensorTreeNumeric4 (
     flatArea = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(5,-1),(6,-1),(9,1),(11,-1),(12,-1),(15,1),(18,1),(20,1)]
 
     flatAreaNoEps :: Tensor8 0 1 0 0 0 0 0 0 Rational
-    flatAreaNoEps = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(6,-1),(12,-1),(15,1),(18,1),(20,1)]
+    flatAreaNoEps = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(6,-1),(11,-1),(15,1),(18,1),(20,1)]
+
+    flatAreaInvNoEps :: Tensor8 1 0 0 0 0 0 0 0 Rational
+    flatAreaInvNoEps = fromListT8 $ map (\(i,v) -> ( ((singletonInd $ Uind20 i), Empty, Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(6,-1),(11,-1),(15,1),(18,1),(20,1)]
 
     eta :: Tensor8 0 0 0 0 0 0 0 2 Rational
     eta =  fromListT8 l 

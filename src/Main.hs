@@ -108,11 +108,11 @@ main = do
     --e' <- BS.readFile "tensor_bs.dat.gz"
     --let d = (fromRight undefined $ decodeLazy $ decompress e') :: Tensor8 3 0 0 0 1 0 0 0 VarMap
 
-    byteString16 <- BS.readFile "/cip/austausch/cgg/ansatz16.dat.gz"
+    --byteString16 <- BS.readFile "/cip/austausch/cgg/ansatz16.dat.gz"
 
-    let ansatz16Tens = (fromRight undefined $ decodeLazy $ decompress byteString16) :: Tensor8 4 0 0 0 0 0 0 0 VarMap
+    --let ansatz16Tens = (fromRight undefined $ decodeLazy $ decompress byteString16) :: Tensor8 4 0 0 0 0 0 0 0 VarMap
 
-    let ansatzEqn16Tens = ansatzABCD map1Metric map2Metric map1Area map2Area ansatz16Tens 
+    --let ansatzEqn16Tens = ansatzABCD map1Metric map2Metric map1Area map2Area ansatz16Tens 
 
 
     {-
@@ -300,6 +300,8 @@ main = do
 
     --mass equations
 
+    {-
+
     let ansatzRank4 = getTensorRank ansatz4'
 
     let ansatzRank8 = getTensorRank ansatz8' 
@@ -346,7 +348,7 @@ main = do
                 ++ (map (\((x,y),z) -> ((x+m4+m3+m2 ,y),z)) eqn1List)
 
 
-                
+             
 
     print $ (ansatzRank16, getTensorRank eqn1ABCTens) 
     print $ (ansatzRank12, getTensorRank eqn1ABTens) 
@@ -355,7 +357,7 @@ main = do
 
     print $ getTensorRank4 eqn1ABCTens eqn1ABTens eqn1ATens eqn1Tens
 
-            
+    -}      
 
     --print $ m1+m2+m3
 
@@ -378,7 +380,11 @@ main = do
 
     --print $ filter (\(a,b) -> b /= 0) $ toListShow8 $ ansatzAIntCond map1Metric map2Metric map1Area map2Area
 
-    print 1
-    
+    --print $  filter (\(a,b) -> b /= 0) $ toListShow8 $ flatIntCondCheck map1Area map2Area 
 
-    
+    --print $  filter (\(a,b) -> b /= 0) $ toListShow8 $ flatInter map1Area map2Area 
+
+    --print $  filter (\(a,b) -> b /= 0) $ toListShow8 $ interAnsatzEqn1ZeroNoInv map1Area map2Area 
+
+    print $ getTensorRank2 (interIntCondTest  map1Area map2Area generic4Ansatz) (eqn1 map1Metric map2Metric map1Area map2Area generic4Ansatz)
+

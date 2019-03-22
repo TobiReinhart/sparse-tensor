@@ -44,11 +44,11 @@ module PerturbationTree2_2 (
      getTensor, mkAnsatzTensor,
      areaEvalMap4Inds, areaEvalMap6Inds, areaEvalMap8Inds, areaEvalMap10_1Inds, areaEvalMap10_2Inds, areaEvalMap12Inds, areaEvalMap14_1Inds, areaEvalMap14_2Inds, areaEvalMap12_1Inds,
      doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds, areaEvalMap16_2Inds, areaEvalMap18Inds, flattenForest,
-     areaEvalMap6IndsFull,
      filterList18_2, symList18_2, areaEvalMap18_2, areaEvalMap18_2Inds,
      filterList18_3, symList18_3, areaEvalMap18_3, areaEvalMap18_3Inds,
      filterList16, symList16, areaEvalMap16, areaEvalMap16Inds,
-     filterList20, symList20, areaEvalMap20, areaEvalMap20Inds
+     filterList20, symList20, areaEvalMap20, areaEvalMap20Inds,
+     generic4Ansatz, generic6Ansatz
 
 
 
@@ -1311,17 +1311,21 @@ module PerturbationTree2_2 (
     symList20 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18),(19,20)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16]),([17,18],[19,20])], [], 
                 [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]])
 
+    --generate generic ansatz tensors 
 
-
-    --try eavluating the full tensor
-
-    areaList6IndsFull :: [([Int], Int, [IndTuple 0 0 0 0 0 0 6 0])]
-    areaList6IndsFull = list
+    --A
+    generic4Ansatz :: Tensor8 1 0 0 0 0 0 0 0 VarMap
+    generic4Ansatz = fromListTWith8 (addVarsMap) list 
          where 
-             list = [ ([a,b,c,d,e,f], 1 , [(Empty, Empty, Empty, Empty, Empty, Empty, Append (Uind3 a) $ Append (Uind3 b) $ Append (Uind3 c) $ Append (Uind3 d) $ Append (Uind3 e) (singletonInd (Uind3 f)), Empty)]) | a <- [0..3], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], f <- [0..3]]
-
-    areaEvalMap6IndsFull :: [(I.IntMap Int, Int, [IndTuple 0 0 0 0 0 0 6 0])]
-    areaEvalMap6IndsFull = l
-        where 
-            area6 = areaList6IndsFull
-            l = map (\(x,y,z) -> (I.fromList $ zip [1..6] x, y,z)) area6
+             list = [ let varMap = I.singleton (dof a) 1
+                      in ((singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, Empty, Empty, Empty, Empty), varMap)
+                      | a <- [1..21] ]
+             dof a = a
+    --AI
+    generic6Ansatz :: Tensor8 1 0 0 0 1 0 0 0 VarMap
+    generic6Ansatz = fromListTWith8 (addVarsMap) list
+         where 
+            list = [ let varMap = I.singleton (dof a i) 1
+                     in ((singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty), varMap)
+                     | a <- [1..21], i <- [1..10] ]
+            dof a i = 1 + 21 + 84 + 10*(a-1) + (i-1)

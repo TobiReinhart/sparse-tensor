@@ -386,5 +386,10 @@ main = do
 
     --print $  filter (\(a,b) -> b /= 0) $ toListShow8 $ interAnsatzEqn1ZeroNoInv map1Area map2Area 
 
-    print $ getTensorRank2 (interIntCondTest  map1Area map2Area generic4Ansatz) (eqn1 map1Metric map2Metric map1Area map2Area generic4Ansatz)
+    let ansatz4'' = shiftVarLabels 6 ansatz4' 
 
+    --print $ getTensorRank2 (eqn1 map1Metric map2Metric map1Area map2Area ansatz4'') (eqn1A map1Metric map2Metric map1Area map2Area ansatz4'' ansatz8') 
+
+    --print $ getTensorRank3 (eqn1 map1Metric map2Metric map1Area map2Area ansatz4'') (ansatzEqn2Test map1Area map2Area ansatz8') (eqn1A map1Metric map2Metric map1Area map2Area ansatz4'' ansatz8') 
+
+    print $ filter (\(a,b) -> b /= 0) $ toListShow8 $ interAnsatzEqn1ZeroTest map1Area map2Area  

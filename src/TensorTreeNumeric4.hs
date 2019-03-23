@@ -958,6 +958,9 @@ module TensorTreeNumeric4 (
     flatAreaNoEps :: Tensor8 0 1 0 0 0 0 0 0 Rational
     flatAreaNoEps = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(6,-1),(11,-1),(15,1),(18,1),(20,1)]
 
+    flatAreaInvNoEps :: Tensor8 1 0 0 0 0 0 0 0 Rational
+    flatAreaInvNoEps = fromListT8 $ map (\(i,v) -> ( ((singletonInd $ Uind20 i), Empty, Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(6,-1),(11,-1),(15,1),(18,1),(20,1)]
+
     eta :: Tensor8 0 0 0 0 0 0 0 2 Rational
     eta =  fromListT8 l 
                 where

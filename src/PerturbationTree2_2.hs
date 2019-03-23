@@ -1367,3 +1367,18 @@ module PerturbationTree2_2 (
                      in ((singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty), varMap)
                      | a <- [1..21], i <- [1..10] ]
             dof a i = 1 + 21 + 84 + 10*(a-1) + (i-1)
+    --AB
+    generic8Ansatz :: Tensor8 2 0 0 0 0 0 0 0 VarMap
+    generic8Ansatz = fromListTWith8 (addVarsMap) list
+         where 
+            list = [ let varMap = I.singleton (dof a b) 1
+                     in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, Empty, Empty), varMap)
+                     | a <- [1..21], b <- [1..21] ]
+            dof a b = let a' = min a b
+                          b' = max a b
+                      in trian M.! [a',b'] + 21
+            trian = M.fromList $ zip j k
+                      where
+                          j = [ [a,b] | a <- [1..21], b <- [a..21] ]
+                          k = [1..]
+

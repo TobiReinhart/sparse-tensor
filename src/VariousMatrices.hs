@@ -9,7 +9,7 @@ import TensorTreeNumeric4 (Tensor8, interArea, trianMapAreaI, trianMapAreaJ,
                            tensorTransU20, delta20, delta9, delta3, interEqn3,
                            interEqn2, trianMapI2, trianMapJ2, tensorTransL3, tensorTransU3,
                            tensorSub8, flatArea, tensorContr20, interJ2,
-                           tensorSMult, interIArea, flatAreaSDown, flatAreaSUp)
+                           tensorSMult, interIArea, flatAreaST, flatAreaInvST)
 import PerturbationTree2_2 (triangleMap2P)
 
 import AnsatzMatrices (int, inta, intI)
@@ -40,7 +40,7 @@ cond = intASym
 newInt :: Tensor8 0 1 0 0 0 0 4 0 Rational
 newInt = result
     where
-        prod = tensorProd8 int $ tensorProd8 flatArea flatAreaSUp
+        prod = tensorProd8 int $ tensorProd8 flatArea flatAreaInvST
         block1 = tensorContr20 (0,1) $ tensorContr3 (1,0) prod
         block2 = tensorSMult (-1) $ tensorTransU3 (0,1) $ block1
         total  = tensorAdd8 block1 block2

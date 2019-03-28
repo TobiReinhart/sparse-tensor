@@ -35,6 +35,7 @@
 
 
 
+
  
 module TensorTreeNumeric4 (
     toListT8, toListShow8, intAIB, interMetric, interArea, interEqn2, interEqn3, interEqn4, trianMapAreaI, trianMapAreaJ, trianMapI2, trianMapJ2, flatInter,
@@ -56,7 +57,8 @@ module TensorTreeNumeric4 (
     interAnsatzEqn1, flatAreaInvSTNoEps, flatAreaNoEps, ansatzEqn1Test, interAnsatzEqn1ZeroTest, interAnsatzEqn2ZeroTest, ansatzEqn2Test, flatAreaInvNoEps, intCondAnsatz1, sumBetas,
     eqn2, toMatrix6, getTensorRank6, interMetricAreaTest, interMetricArea, genericFlatArea, 
     eqn1G, eqn2G, eqn3G, eqn1AG, eqn2AG, eqn3AG, eqn1AaG, eqn2AaG, eqn3AaG, eqn1AIG, eqn2AIG, eqn3AIG,
-    eqn1M_1, eqn1M_2, eqn1M_3, eqn1AM_1, eqn1AM_2, eqn1AM_3, eqn1M_4, interArea_4, metricInducedArea, eqn1M_5
+    eqn1M_1, eqn1M_2, eqn1M_3, eqn1AM_1, eqn1AM_2, eqn1AM_3, eqn1M_4, interArea_4, metricInducedArea, eqn1M_5,
+    getTensorRankHMat, TensList(..), getHRank'
 
 ) where
 
@@ -75,6 +77,10 @@ module TensorTreeNumeric4 (
     import Data.Foldable
     import GHC.Generics
     import Control.DeepSeq
+
+    import qualified Numeric.LinearAlgebra.Data as HMat
+    import qualified Numeric.LinearAlgebra as HLin 
+ 
 
     import Data.Serialize
 
@@ -535,6 +541,8 @@ module TensorTreeNumeric4 (
                 n = length l 
                 m = maximum $ map fst $ concat l 
 
+    
+
     toMatrix' :: [[(Int, Rational)]] -> Mat.MatrixXd 
     toMatrix' l = Sparse.toMatrix $ Sparse.fromList n m l''
                     where
@@ -596,7 +604,39 @@ module TensorTreeNumeric4 (
     getTensorRank6 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Tensor8 p1 p2 p3 p4 p5 p6 p7 p8 VarMap -> Tensor8 q1 q2 q3 q4 q5 q6 q7 q8 VarMap -> Int 
     getTensorRank6 t1 t2 t3 t4 t5 t6 = Sol.rank Sol.FullPivLU $ toMatrix6 t1 t2 t3 t4 t5 t6   
 
+    toHMatrix :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> HMat.Matrix Double 
+    toHMatrix t = HMat.toDense l' 
+            where 
+                (_,_,l) = toSparseMatRed t
+                l' = map (\((x,y),z) -> ((x,y),fromRational z)) l 
 
+    getTensorRankHMat :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Int 
+    getTensorRankHMat = HLin.rank . toHMatrix   
+
+
+    data TensList where
+        EmptyTList :: TensList
+        AppendTList :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> TensList -> TensList 
+
+   
+    mapTensList :: (forall n1 n2 n3 n4 n5 n6 n7 n8 . Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> b ) -> TensList -> [b]
+    mapTensList f EmptyTList = [] 
+    mapTensList f (AppendTList t l) = (f t) : (mapTensList f l)
+
+    toHMat' :: TensList -> HMat.Matrix Double 
+    toHMat' t = HMat.toDense l'' 
+        where
+            matList = concat $ mapTensList toMatList t 
+            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
+            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
+            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
+            l'' = map (\((x,y),z) -> ((x,y),fromRational z)) l'
+
+    getHRank' :: TensList -> Int 
+    getHRank' = HLin.rank . toHMat' 
+
+
+            
     --compute the sum of the beta numbers for the involutivity check -> does not work yet ! 
 
     sumBetas :: Mat.MatrixXd -> Int 

@@ -1393,14 +1393,14 @@ module PerturbationTree2_2 (
                           j = [ [a,b] | a <- [1..315], b <- [a..315] ]
                           k = [1..]
 
-    --AaB 
+    --ABb 
     generic9Ansatz :: Tensor8 2 0 0 0 0 0 1 0 VarMap 
     generic9Ansatz = fromListTWith8 (addVarsMap) list
         where
             list = [ let varMap = I.singleton (dof a b p) 1
                     in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, singletonInd (Uind3 $ p-1), Empty), varMap)
                     | a <- [1..21], b <- [1..21], p <- [1..4]]
-            dof a b p = trian M.! [a,1 + 21 + 4*(a-1) + (p-1)] + 315
+            dof a b p = trian M.! [a,1 + 21 + 4*(b-1) + (p-1)] + 315
             trian = M.fromList $ zip j k
                     where
                         j = [ [a,b] | a <- [1..315], b <- [a..315] ]

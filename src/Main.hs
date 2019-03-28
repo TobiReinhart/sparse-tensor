@@ -161,6 +161,10 @@ main = do
                                                   _ -> undefined) totalEqnG
     -}
 
-    let eqn1MetricInduced = eqn1M_5 [2,3,5,7,11,13,17,19,23,29] map1Metric map2Metric map1Area map2Area generic4Ansatz
+    let tensL = AppendTList eqn1Generic $ AppendTList eqn2Generic $ AppendTList eqn3Generic $
+                AppendTList eqn1AGeneric $ AppendTList eqn1AaGeneric $ AppendTList eqn1AIGeneric $ 
+                AppendTList eqn2AGeneric $ AppendTList eqn2AaGeneric $ AppendTList eqn2AIGeneric $ 
+                AppendTList eqn3AGeneric $ AppendTList eqn3AaGeneric $ AppendTList eqn3AIGeneric EmptyTList 
 
-    print $ getTensorRank eqn1MetricInduced 
+    print $ getHRank' tensL 
+    

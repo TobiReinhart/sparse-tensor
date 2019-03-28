@@ -48,7 +48,8 @@ module PerturbationTree2_2 (
      filterList18_3, symList18_3, areaEvalMap18_3, areaEvalMap18_3Inds,
      filterList16, symList16, areaEvalMap16, areaEvalMap16Inds,
      filterList20, symList20, areaEvalMap20, areaEvalMap20Inds,
-     generic4Ansatz, generic6Ansatz, redAnsatzForestEta, redAnsatzForestEps
+     generic4Ansatz, generic6Ansatz, redAnsatzForestEta, redAnsatzForestEps, generic8Ansatz, generic5Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz,
+     generic11Ansatz, generic12Ansatz
 
 
 
@@ -761,7 +762,7 @@ module PerturbationTree2_2 (
             where
                 mat = evalAllMatrix l 
                 p = Sol.pivots Sol.FullPivLU mat
-                
+
 
     --coloumns (down) form basis of nullspace
     ansatzKernel :: [[(Int, Rational)]] -> Mat.MatrixXd 
@@ -1359,6 +1360,16 @@ module PerturbationTree2_2 (
                       in ((singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, Empty, Empty, Empty, Empty), varMap)
                       | a <- [1..21] ]
              dof a = a
+
+    --Aa
+    generic5Ansatz :: Tensor8 1 0 0 0 0 0 1 0 VarMap
+    generic5Ansatz = fromListTWith8 (addVarsMap) list
+          where 
+             list = [ let varMap = I.singleton (dof a p) 1
+                      in ((singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, Empty, Empty, singletonInd (Uind3 $ p-1 ), Empty), varMap)
+                      | a <- [1..21], p <- [1..4] ]
+             dof a p = 1 + 21 + 4*(a-1) + (p-1)
+
     --AI
     generic6Ansatz :: Tensor8 1 0 0 0 1 0 0 0 VarMap
     generic6Ansatz = fromListTWith8 (addVarsMap) list
@@ -1376,9 +1387,81 @@ module PerturbationTree2_2 (
                      | a <- [1..21], b <- [1..21] ]
             dof a b = let a' = min a b
                           b' = max a b
-                      in trian M.! [a',b'] + 21
+                      in trian M.! [a',b'] + 315
             trian = M.fromList $ zip j k
                       where
-                          j = [ [a,b] | a <- [1..21], b <- [a..21] ]
+                          j = [ [a,b] | a <- [1..315], b <- [a..315] ]
                           k = [1..]
+
+    --AaB 
+    generic9Ansatz :: Tensor8 2 0 0 0 0 0 1 0 VarMap 
+    generic9Ansatz = fromListTWith8 (addVarsMap) list
+        where
+            list = [ let varMap = I.singleton (dof a b p) 1
+                    in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, singletonInd (Uind3 $ p-1), Empty), varMap)
+                    | a <- [1..21], b <- [1..21], p <- [1..4]]
+            dof a b p = trian M.! [a,1 + 21 + 4*(a-1) + (p-1)] + 315
+            trian = M.fromList $ zip j k
+                    where
+                        j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                        k = [1..]
+
+    --AaBb 
+    generic10_1Ansatz :: Tensor8 2 0 0 0 0 0 2 0 VarMap 
+    generic10_1Ansatz = fromListTWith8 (addVarsMap) list
+        where
+            list = [ let varMap = I.singleton (dof a b p q) 1
+                    in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, Append (Uind3 $ p-1) $ singletonInd (Uind3 $ q-1), Empty), varMap)
+                    | a <- [1..21], b <- [1..21], p <- [1..4], q <- [1..4]]
+            dof a b p q = let 
+                    a' = min (1 + 21 + 4*(a-1) + (p-1)) (1 + 21 + 4*(b-1) + (q-1)) 
+                    b' = max (1 + 21 + 4*(a-1) + (p-1)) (1 + 21 + 4*(b-1) + (q-1)) 
+                    in trian M.! [a',b'] + 315
+            trian = M.fromList $ zip j k
+                    where
+                        j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                        k = [1..]
+
+    --ABI 
+    generic10_2Ansatz :: Tensor8 2 0 0 0 1 0 0 0 VarMap 
+    generic10_2Ansatz = fromListTWith8 (addVarsMap) list
+         where
+             list = [ let varMap = I.singleton (dof a b i) 1
+                     in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i -1), Empty, Empty, Empty), varMap)
+                     | a <- [1..21], b <- [1..21], i <- [1..10]]
+             dof a b i = trian M.! [a,1 + 105 + 10*(b-1) + (i-1)] + 315
+             trian = M.fromList $ zip j k
+                     where
+                         j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                         k = [1..]
+ 
+    --ApBI 
+    generic11Ansatz :: Tensor8 2 0 0 0 1 0 1 0 VarMap 
+    generic11Ansatz = fromListTWith8 (addVarsMap) list
+         where
+             list = [ let varMap = I.singleton (dof a b i p) 1
+                     in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i -1), Empty, singletonInd (Uind3 $ p-1), Empty), varMap)
+                     | a <- [1..21], b <- [1..21], i <- [1..10], p <- [1..4]]
+             dof a b i p = trian M.! [1 + 21 + 4*(a-1) + (p-1),1 + 105 + 10*(b-1) + (i-1)] + 315
+             trian = M.fromList $ zip j k
+                     where
+                         j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                         k = [1..]
+
+    --AIBJ 
+    generic12Ansatz :: Tensor8 2 0 0 0 2 0 0 0 VarMap 
+    generic12Ansatz = fromListTWith8 (addVarsMap) list
+        where
+            list = [ let varMap = I.singleton (dof a b i j) 1
+                    in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ singletonInd (Uind9 $ j -1), Empty, Empty, Empty), varMap)
+                    | a <- [1..21], b <- [1..21], i <- [1..10], j <- [1..10]]
+            dof a b i j = let 
+                    a' =  min (1 + 105 + 10*(a-1) + (i-1)) (1 + 105 + 10*(b-1) + (j-1))
+                    b' =  max (1 + 105 + 10*(a-1) + (i-1)) (1 + 105 + 10*(b-1) + (j-1))
+                    in trian M.! [a',b'] + 315
+            trian = M.fromList $ zip j k
+                    where
+                        j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                        k = [1..]
+ 
 

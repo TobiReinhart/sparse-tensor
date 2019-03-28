@@ -53,7 +53,7 @@ module TensorTreeNumeric4 (
     epsilonUp, epsilonDown,
     flatArea', eta, epsilon, epsilonInv, flatAreaInv, flatAreaST, flatAreaInvST,
     tensorProdWith8, multVarsMap, tensorContrWith20, tensorAddWith8, toSparseMat, interJAreaInv, interIAreaInv,
-    interAnsatzEqn1, flatAreaInvSTNoEps, flatAreaNoEps, ansatzEqn1Test, interAnsatzEqn1ZeroTest, ansatzEqn2Test,
+    interAnsatzEqn1, flatAreaInvSTNoEps, flatAreaInvNoEps, flatAreaNoEps, ansatzEqn1Test, interAnsatzEqn1ZeroTest, ansatzEqn2Test,
     genericArea, genericAreaM
 ) where
 

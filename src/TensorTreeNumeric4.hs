@@ -38,7 +38,7 @@
 
 module TensorTreeNumeric4 (
     toListT8, toListShow8, intAIB, interMetric, interArea, interEqn2, interEqn3, interEqn4, trianMapAreaI, trianMapAreaJ, trianMapI2, trianMapJ2, flatInter,
-    interI2, interJ2, aSymI2, interIArea, interJArea, toListShowVar, toMatrix, getTensorRank, getTensorRank2, shiftVarLabels, getTensorRank3, getTensorRank4, toMatrix4, toMatrix3, toMatrix2,
+    interI2, interJ2, aSymI2, interIArea, interJArea, toListShowVar, toMatrix, getTensorRank, getTensorRank2, shiftVarLabels, getTensorRank3, getTensorRank4, getTensorRank5, toMatrix5, toMatrix4, toMatrix3, toMatrix2,
     delta20, delta19, delta9, delta3, tensorContr20, tensorContr19, tensorContr9, tensorContr3, tensorProd8, toMatList, toSparseMatRed,
     tensorTransU20, tensorTransL20, tensorTransU19, tensorTransL19, tensorTransU9, tensorTransL9, tensorTransU3, tensorTransL3, tensorSub8,
     triangleMap3P', ansatzAIBJCK', index2SparseAnsatzAIBJCKSym, VarMap, area18TensList, Tensor(..), Tensor8, IndList(..),
@@ -54,7 +54,8 @@ module TensorTreeNumeric4 (
     flatArea', eta, epsilon, epsilonInv, flatAreaInv, flatAreaST, flatAreaInvST,
     tensorProdWith8, multVarsMap, tensorContrWith20, tensorAddWith8, toSparseMat, interJAreaInv, interIAreaInv,
     interAnsatzEqn1, interAnsatzEqn1Test, interAnsatzEqn3, interAnsatzEqn3Test, interAnsatzEqn1Zero, flatAreaInvSTNoEps, flatAreaInvNoEps, flatAreaNoEps,
-    interAnsatzEqn1NoInv, interAnsatzEqn1TestNoInv, interAnsatzEqn3NoInv, interAnsatzEqn3TestNoInv, interAnsatzEqn1ZeroNoInv, interIntCondTest
+    interAnsatzEqn1NoInv, interAnsatzEqn1TestNoInv, interAnsatzEqn3NoInv, interAnsatzEqn3TestNoInv, interAnsatzEqn1ZeroNoInv, interIntCondTest,
+    genericArea, genericAreaM
     
 ) where
 
@@ -564,6 +565,11 @@ module TensorTreeNumeric4 (
             where
                 l = toMatList t1 ++ toMatList t2 ++ toMatList t3 ++ toMatList t4
 
+    toMatrix5 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Tensor8 t1 t2 t3 t4 t5 t6 t7 t8 VarMap -> Mat.MatrixXd 
+    toMatrix5 t1 t2 t3 t4 t5 = toMatrix' l 
+            where
+                l = toMatList t1 ++ toMatList t2 ++ toMatList t3 ++ toMatList t4 ++ toMatList t5
+
     getTensorRank :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Int 
     getTensorRank t = Sol.rank Sol.FullPivLU $ toMatrix t
 
@@ -575,6 +581,9 @@ module TensorTreeNumeric4 (
 
     getTensorRank4 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Int 
     getTensorRank4 t1 t2 t3 t4 = Sol.rank Sol.FullPivLU $ toMatrix4 t1 t2 t3 t4 
+
+    getTensorRank5 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Tensor8 t1 t2 t3 t4 t5 t6 t7 t8 VarMap -> Int 
+    getTensorRank5 t1 t2 t3 t4 t5 = Sol.rank Sol.FullPivLU $ toMatrix5 t1 t2 t3 t4 t5
 
 
     type VarMap = I.IntMap Rational
@@ -998,6 +1007,15 @@ module TensorTreeNumeric4 (
 
     epsilonUp :: Tensor8 0 0 0 0 0 0 4 0 Rational
     epsilonUp = fromListT8 $ map (\(i, j, k, l, v) -> ((Empty,Empty,Empty,Empty,Empty,Empty,Append (Uind3 i) $ Append (Uind3 j) $ Append (Uind3 k) $ Append (Uind3 l) Empty, Empty), v)) epsList
+
+    genericArea :: Rational -> Rational -> Rational -> Rational -> Rational -> Rational -> Tensor8 0 1 0 0 0 0 0 0 Rational
+    genericArea t1 t2 t3 s1 s2 s3 = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v))
+                                    [(0,-t1),(5,s1),(6,-t2),(9,s2),(11,-t3),(12,s3),(15,t1),(18,t2),(20,t3)]
+
+    genericAreaM :: Tensor8 0 1 0 0 0 0 0 0 VarMap
+    genericAreaM = fromListTWith8 addVarsMap $
+                   map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v))
+                                    [(0,I.singleton 1 (-1)),(5,I.singleton 4 1),(6,I.singleton 2 (-1)),(9,I.singleton 5 (-1)),(11,I.singleton 3 (-1)),(12,I.singleton 6 1),(15,I.singleton 1 1),(18,I.singleton 2 1),(20,I.singleton 3 1)]
 
     flatArea :: Tensor8 0 1 0 0 0 0 0 0 Rational
     flatArea = fromListT8 $ map (\(i,v) -> ( (Empty, (singletonInd $ Lind20 i), Empty, Empty, Empty, Empty, Empty, Empty), v)) [(0,-1),(5,-1),(6,-1),(9,1),(11,-1),(12,-1),(15,1),(18,1),(20,1)]

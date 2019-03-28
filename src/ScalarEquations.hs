@@ -1,7 +1,8 @@
 {-# LANGUAGE DataKinds #-}
 
 module ScalarEquations (Ansatz0, Ansatz1, Ansatz2, Ansatz3,
-                        Eqn0, Eqn1, Eqn2, Eqn3, eqn0, eqn1, eqn2)
+                        Eqn0, Eqn1, Eqn2, Eqn3, eqn0, eqn1, eqn2,
+                        genericInt)
 where
 
 import TensorTreeNumeric4 (Tensor8, interArea, trianMapAreaI, trianMapAreaJ,
@@ -9,7 +10,7 @@ import TensorTreeNumeric4 (Tensor8, interArea, trianMapAreaI, trianMapAreaJ,
                            toListShow8, tensorTransU9, tensorTransL20, tensorTransL9,
                            tensorTransU20, delta20, delta9, delta3, interEqn3,
                            interEqn2, trianMapI2, trianMapJ2, tensorTransL3, tensorTransU3,
-                           tensorSub8, flatArea, tensorContr20, VarMap, tensorProdWith8, multVarsMap, tensorContrWith20, addVarsMap, tensorAddWith8, tensorTransWithU20)
+                           tensorSub8, flatArea, tensorContr20, VarMap, tensorProdWith8, multVarsMap, tensorContrWith20, addVarsMap, tensorAddWith8, tensorTransWithU20, genericAreaM)
 
 import PerturbationTree2_2 (triangleMap2P)
 
@@ -42,6 +43,9 @@ type Eqn3 = Tensor8 3 0 0 0 0 0 1 1 VarMap
 
 flatInt :: Tensor8 0 1 0 0 0 0 1 1 Rational
 flatInt = tensorContr20 (0,1) $ tensorProd8 int flatArea
+
+genericInt :: Tensor8 0 1 0 0 0 0 1 1 VarMap
+genericInt = tensorContrWith20 (0,1) addVarsMap $ tensorProdWith8 (flip mult) int $ genericAreaM
 
 mult :: VarMap -> Rational -> VarMap
 mult = flip multVarsMap

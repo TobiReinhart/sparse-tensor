@@ -1,11 +1,11 @@
 {-# LANGUAGE DataKinds #-}
 
-module IntEquations (intEquation, ansatz8Solved, cyclic, invAreaDerivativeFlat) where
+module IntEquations (intEquation) where
 
 import Intertwiners (inverseDerivativeInt, intCondInt)
 
 import TensorTreeNumeric4 (Tensor, Tensor8, VarMap, multVarsMap,
-                           addVarsMap,
+                           addVarsMap, getTensorRank, shiftVarLabels,
                            tensorProd8, tensorContr20,
                            tensorSMult, tensorProdWith8,
                            tensorContrWith20, tensorTransWithU20,
@@ -13,9 +13,6 @@ import TensorTreeNumeric4 (Tensor, Tensor8, VarMap, multVarsMap,
                            flatAreaNoEps, tensorAdd8, tensorTransU3,
                            interIAreaInv, trianMapAreaJ, trianMapAreaI,
                            interJAreaInv, tensorContr3)
-import PerturbationTree2_2 (generic8Ansatz,
-                            areaEvalMap8Inds, filterList8, symList8,
-                            epsMap, mkAnsatzTensor, trianMapArea, trianMapDerivative)
 
 import qualified Data.Map.Strict as M (empty)
 
@@ -61,22 +58,17 @@ cyclic tens = result
                    tensorProd8 iJInv anti'
         result   = tensorAdd8 tens anti
 
-ansatz8Solved :: Tensor8 2 0 0 0 0 0 0 0 VarMap
-ansatz8Solved = mkAnsatzTensor 8 filterList8 symList8 1 epsMap eval
+intEquation :: Tensor8 2 0 0 0 0 0 0 0 VarMap -> Tensor8 2 0 0 0 0 0 4 0 VarMap
+intEquation ansatz8 = result
     where
-        eval       = areaEvalMap8Inds trianMapArea trianMapDerivative
-
-intEquation :: Tensor8 2 0 0 0 0 0 4 0 VarMap
-intEquation = result
-    where
-        ansatz   = generic8Ansatz
+        ansatz   = ansatz8
         flatInt1 = tensorContr20 (1,1) $
                    tensorProd8 intCondInt flatAreaInvNoEps
         flatInt2 = tensorSMult (-1) $
                    tensorContr20 (0,1) $
                    tensorContr20 (0,2) $
                    tensorProd8 intCondInt $
-                   tensorProd8 flatAreaNoEps $ cyclic invAreaDerivativeFlat
+                   tensorProd8 flatAreaNoEps invAreaDerivativeFlat
         block1'  = tensorProdWith8 mult ansatz flatInt1
         block1   = tensorContrWith20 (0,0) addVarsMap block1'
         block2'  = tensorProdWith8 mult ansatz flatInt2

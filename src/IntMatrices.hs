@@ -8,7 +8,7 @@ import TensorTreeNumeric4 (Tensor8, interArea, trianMapAreaI, trianMapAreaJ,
                            toListShow8, tensorTransU9, tensorTransL20, tensorTransL9,
                            tensorTransU20, delta20, delta9, delta3, interEqn3,
                            interEqn2, trianMapI2, trianMapJ2, tensorTransL3, tensorTransU3,
-                           tensorSub8, flatArea, tensorContr20)
+                           tensorSub8, flatAreaNoEps, tensorContr20)
 import PerturbationTree2_2 (triangleMap2P)
 
 import AnsatzMatrices (int, inta, intI)
@@ -17,7 +17,7 @@ import qualified Data.Map.Strict as M ((!))
 trian = triangleMap2P
 
 intFlat :: Tensor8 0 1 0 0 0 0 1 1 Rational
-intFlat = tensorContr20 (0,1) $ tensorProd8 int flatArea
+intFlat = tensorContr20 (0,1) $ tensorProd8 int flatAreaNoEps
 
 intABJ :: Tensor8 1 2 0 0 1 1 2 2 Rational
 intABJ = result

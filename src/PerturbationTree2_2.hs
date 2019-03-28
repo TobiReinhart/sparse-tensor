@@ -48,7 +48,8 @@ module PerturbationTree2_2 (
      filterList18_3, symList18_3, areaEvalMap18_3, areaEvalMap18_3Inds,
      filterList16, symList16, areaEvalMap16, areaEvalMap16Inds,
      filterList20, symList20, areaEvalMap20, areaEvalMap20Inds,
-     generic4Ansatz, generic6Ansatz, generic8Ansatz
+     generic4Ansatz, generic6Ansatz, generic8Ansatz,
+     etaEps4Ansatz, etaEps8Ansatz
 
 
 
@@ -1312,6 +1313,16 @@ module PerturbationTree2_2 (
                 [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]])
 
     --generate generic ansatz tensors 
+
+    etaEps4Ansatz :: Tensor8 1 0 0 0 0 0 0 0 VarMap
+    etaEps4Ansatz = mkAnsatzTensor 4 filterList4 symList4 1 epsMap evalMap
+        where
+            evalMap = areaEvalMap4Inds trianMapArea trianMapDerivative
+
+    etaEps8Ansatz :: Tensor8 2 0 0 0 0 0 0 0 VarMap
+    etaEps8Ansatz = mkAnsatzTensor 8 filterList8 symList8 1 epsMap evalMap
+        where
+            evalMap = areaEvalMap8Inds trianMapArea trianMapDerivative
 
     --A
     generic4Ansatz :: Tensor8 1 0 0 0 0 0 0 0 VarMap

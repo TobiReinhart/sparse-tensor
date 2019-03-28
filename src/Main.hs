@@ -4,55 +4,28 @@ module Main (
  main
 ) where
 
-import TensorTreeNumeric4 (Tensor8, VarMap, toMatrix,
-                           toListShowVar, toListShow8,
-                           getTensorRank, flatAreaNoEps,
-                           toSparseMatRed,
-                           flatAreaInvNoEps)
-import IntEquations (intEquation, ansatz8Solved, cyclic, invAreaDerivativeFlat)
-import PerturbationTree2_2 (generic8Ansatz)
+import TensorTreeNumeric4 (getTensorRank,
+                           getTensorRank2,
+                           getTensorRank3,
+                           getTensorRank4,
+                           getTensorRank5,
+                           shiftVarLabels,
+                           genericAreaM,
+                           toListShowVar)
+import ScalarEquations (genericInt)
+import Data.List (sort, intersperse)
 
-import Data.Serialize (encodeLazy, decodeLazy)
-import Codec.Compression.GZip (compress, decompress)
-import qualified Data.ByteString.Lazy as BS (writeFile, readFile)
+import Data.Ratio ((%), denominator, numerator)
 
-import Data.Ratio (numerator, denominator)
+prettyVar :: (Int, Rational) -> String
+prettyVar (i, v) = case denominator v of 
+                    1 -> "x" ++ show i ++ " * (" ++ show (numerator v) ++ ")"
 
-readTensor :: IO (Tensor8 2 0 0 0 0 0 4 0 VarMap)
-readTensor = do
-                compressed <- BS.readFile "intCond.dat.gz"
-                let decompressed = decompress compressed
-                let Right t = decodeLazy decompressed
-                return t
+prettyVars :: [(Int, Rational)] -> String
+prettyVars = concat . intersperse " + " . map prettyVar
 
-showMaple :: (Int, Int, [((Int, Int), Rational)]) -> String
-showMaple (r, c, vs) = "mat := Matrix(" ++ show r ++ ", " ++ show c ++ ", {\n" ++ content ++ "\n});"
-    where
-        content = unlines $ map (\((i, j), v) -> "(" ++ show i ++ ", " ++ show j ++ ") = (" ++ show (numerator v) ++ ")/" ++ show (denominator v) ++ ",") vs
-
-prettyT :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 Rational -> String
-prettyT = unlines . map show . filter ((/=0) . snd) . toListShow8
+prettySparse :: ((Int, Int), [(Int, Rational)]) -> String
+prettySparse ((i, j), v) = "(" ++ show i ++ ", " ++ show j ++ ") = " ++ prettyVars v ++ ","
 
 main :: IO ()
-main = do
-        let t = intEquation
-        --let serialized = encodeLazy t
-        --let compressed = compress serialized
-        --BS.writeFile "intCond.dat.gz" compressed
-        --t <- readTensor
-        print $ getTensorRank t
-        {-
-        let t = invAreaDerivativeFlat
-        let t' = cyclic t
-        let t'' = cyclic t'
-        putStrLn "vanilla:"
-        putStr $ prettyT t
-        putStrLn "one cycle:"
-        putStr $ prettyT t'
-        putStrLn "two cycles:"
-        putStr $ prettyT t''
-        putStrLn "equal?"
-        putStrLn $ if prettyT t' == prettyT t''
-                 then "yes!"
-                 else "no"
-                 -}
+main = putStr $ unlines $ map prettySparse $ sort $ map (\([a,m,n], x) -> ((4*m+n+1, a+1), x)) $ toListShowVar genericInt

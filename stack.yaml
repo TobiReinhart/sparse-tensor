@@ -41,6 +41,10 @@ packages:
 extra-deps:
   - git: https://github.com/nilsalex/eigen.git
     commit: 9c60f753ff5dc14b7d89b09c7ceb1d8b55af0701
+  - git: https://github.com/nilsalex/hmatrix.git
+    commit: f4422f06f6bb1c2181d5ef9aeac6a8fd9d6e48ba
+    subdirs:
+      - packages/base
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

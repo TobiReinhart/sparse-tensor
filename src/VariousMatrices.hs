@@ -16,6 +16,7 @@ import AnsatzMatrices (int, inta, intI)
 import qualified Data.Map.Strict as M ((!))
 import Data.Ratio
 
+
 trian = triangleMap2P
 
 interI :: Tensor8 1 0 0 0 0 0 0 4 Rational

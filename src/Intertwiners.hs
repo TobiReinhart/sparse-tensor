@@ -58,6 +58,6 @@ intCondInt' = result
 intCondInt :: Tensor8 1 2 0 0 0 0 4 0 Rational
 intCondInt = result
     where
-        product = tensorProd8 int intCondInt'
+        product = tensorProd8 int intCondInt' 
         contracted = tensorContr3 (4,0) $ tensorContr3 (0,1) product
         result = contracted

@@ -25,7 +25,7 @@
 
 module PerturbationTree2_2 (
     AnsatzForestEpsilon(..), AnsatzForestEta(..),
-    getEtaForest, getEpsForest, getForestLabels, getForestLabelsEpsilon, epsMap, evalAnsatzForestEta, evalAnsatzForestEpsilon,
+    getEtaForest, getEpsForest, getForestLabels, getForestLabelsEpsilon, epsMap, evalAnsatzForestEta, evalAnsatzForestEpsilon, flattenForestEpsilon,
     filterList4, symList4, areaEvalMap4,
     filterList6, symList6, areaEvalMap6,
     filterList8, symList8, areaEvalMap8,
@@ -48,8 +48,8 @@ module PerturbationTree2_2 (
      filterList18_3, symList18_3, areaEvalMap18_3, areaEvalMap18_3Inds,
      filterList16, symList16, areaEvalMap16, areaEvalMap16Inds,
      filterList20, symList20, areaEvalMap20, areaEvalMap20Inds,
-     generic4Ansatz, generic6Ansatz, generic8Ansatz,
-     etaEps4Ansatz, etaEps8Ansatz
+     etaEps4Ansatz, etaEps8Ansatz,
+     generic4Ansatz, generic6Ansatz, generic8Ansatz, redAnsatzForestEta, redAnsatzForestEps
 
 
 
@@ -503,12 +503,26 @@ module PerturbationTree2_2 (
                 relabMap = I.fromList $ zip vars [1..]
                 update = relabelVar ((I.!) relabMap) 
 
+
+    removeVarsEta :: [Int] -> AnsatzForestEta -> AnsatzForestEta 
+    removeVarsEta vars (Leaf (Var i j)) 
+                | elem j vars = EmptyForest 
+                | otherwise = (Leaf (Var i j))
+    removeVarsEta vars (ForestEta m) = ForestEta $ M.filter (/= EmptyForest) $ M.map (removeVarsEta vars) m  
+    removeVarsEta vars EmptyForest = EmptyForest
+
+
+
     relabelAnsatzForestEpsilon :: AnsatzForestEpsilon -> AnsatzForestEpsilon
     relabelAnsatzForestEpsilon ans = multForestEpsilon update ans
             where
                 vars = getForestLabelsEpsilon ans 
                 relabMap = I.fromList $ zip vars [1..]
                 update = relabelVar ((I.!) relabMap) 
+
+    removeVarsEps :: [Int] -> AnsatzForestEpsilon -> AnsatzForestEpsilon
+    removeVarsEps vars m = M.filter (/= EmptyForest) $ M.map (removeVarsEta vars) m  
+
 
    
     --the next step is evaluating the tree 
@@ -541,6 +555,7 @@ module PerturbationTree2_2 (
                     foldF k a b = let nodeVal = evalNodeEta epsM evalM k 
                                   in if nodeVal == Nothing then b 
                                      else I.unionWith (+) (I.map ((*) (fromJust nodeVal)) (evalAnsatzForestEta epsM evalM a)) b
+    evalAnsatzForestEta epsM evalM EmptyForest = I.empty
 
     evalAnsatzForestEpsilon :: M.Map [Int] Rational -> I.IntMap Int -> AnsatzForestEpsilon -> I.IntMap Rational
     evalAnsatzForestEpsilon epsM evalM m = M.foldrWithKey foldF I.empty m 
@@ -656,6 +671,29 @@ module PerturbationTree2_2 (
                 r2 = ansatzRank ansRmRed
 
     ---------------------------------------------------------------------------------------------------------------------------
+
+    --reduce the ansatzForest 
+
+    redAnsatzForestEta :: Int -> [(Int,Int)] -> Symmetry -> M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEta  
+    redAnsatzForestEta ord filters symmetries epsM evalMs = removeVarsEta remVars ansEta
+            where
+                ansEta = getEtaForest [1..ord] filters symmetries 
+                ansL = evalAllListEta epsM evalMs ansEta
+                redL = reduceAnsList ansL 
+                ansVars = getPivots redL 
+                allVars = getForestLabels ansEta 
+                remVars = allVars \\ ansVars
+
+    redAnsatzForestEps :: Int -> [(Int,Int)] -> Symmetry -> M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEpsilon  
+    redAnsatzForestEps ord filters symmetries epsM evalMs = removeVarsEps remVars ansEps
+            where
+                ansEps = getEpsForest [1..ord] filters symmetries 
+                ansL = evalAllListEpsilon epsM evalMs ansEps
+                redL = reduceAnsList ansL  
+                ansVars = getPivots redL 
+                allVars = getForestLabelsEpsilon ansEps
+                remVars = allVars \\ ansVars
+
 
     getTensorInds :: Int -> M.Map [Int] Rational -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6 n7 n8])] -> AnsatzForestEta -> AnsatzForestEpsilon -> [(IndTuple n1 n2 n3 n4 n5 n6 n7 n8, VarMap)]
     getTensorInds fstVar epsM evalMs ansEta ansEpsilon = filter (\(_,b) -> b /= I.empty) $ zipWith (\(a,b) (c,d) -> ( if a == c then a else undefined, I.unionWith (+) b d)) etaRmL epsRmL 

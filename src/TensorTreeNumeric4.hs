@@ -58,7 +58,7 @@ module TensorTreeNumeric4 (
     eqn2, toMatrix6, getTensorRank6, interMetricAreaTest, interMetricArea, genericFlatArea, 
     eqn1G, eqn2G, eqn3G, eqn1AG, eqn2AG, eqn3AG, eqn1AaG, eqn2AaG, eqn3AaG, eqn1AIG, eqn2AIG, eqn3AIG,
     eqn1M_1, eqn1M_2, eqn1M_3, eqn1AM_1, eqn1AM_2, eqn1AM_3, eqn1M_4, interArea_4, metricInducedArea, eqn1M_5,
-    getTensorRankHMat, TensList(..), getHRank'
+    getTensorRankHMat, TensList(..), getHRank', toHMat'
 
 ) where
 

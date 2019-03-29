@@ -10,6 +10,10 @@ import qualified Data.Eigen.Matrix as Mat
 import Data.List
 import qualified Data.Eigen.LA as Sol 
 
+import qualified Numeric.LinearAlgebra.Data as HMat
+import qualified Numeric.LinearAlgebra as HLin 
+ 
+
 import Data.Ratio
 
 
@@ -162,9 +166,11 @@ main = do
     -}
 
     let tensL = AppendTList eqn1Generic $ AppendTList eqn2Generic $ AppendTList eqn3Generic $
-                AppendTList eqn1AGeneric $ AppendTList eqn1AaGeneric $ AppendTList eqn1AIGeneric EmptyTList  
-                --AppendTList eqn2AGeneric $ AppendTList eqn2AaGeneric $ AppendTList eqn2AIGeneric $ 
-                --AppendTList eqn3AGeneric $ AppendTList eqn3AaGeneric $ AppendTList eqn3AIGeneric EmptyTList 
+                AppendTList eqn1AGeneric $ AppendTList eqn1AaGeneric $ AppendTList eqn1AIGeneric $  
+                AppendTList eqn2AGeneric $ AppendTList eqn2AaGeneric $ AppendTList eqn2AIGeneric $ 
+                AppendTList eqn3AGeneric $ AppendTList eqn3AaGeneric $ AppendTList eqn3AIGeneric EmptyTList 
 
-    print $ getHRank' tensL 
+    let mat = toHMat' tensL
+    
+    print $ HMat.size mat 
     

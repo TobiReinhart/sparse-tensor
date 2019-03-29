@@ -1,0 +1,7 @@
+flags:
+  hmatrix:
+    openblas: true
+extra-include-dirs: 
+  - /home/hu76gigi/.local/opt/OpenBLAS/include
+extra-lib-dirs:
+  - /home/hu76gigi/.local/opt/OpenBLAS/lib

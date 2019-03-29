@@ -120,7 +120,7 @@ main = do
 
     let eqn3AIGeneric = eqn3AIG 2 3 4 7 11 13 map1Metric map2Metric map1Area map2Area generic12Ansatz  
 
-    print $ rankN [{- HB eqn1Generic, HB eqn2Generic, HB eqn3Generic, -}
+    print $ rankN [HB eqn1Generic, HB eqn2Generic, HB eqn3Generic,
                    HB eqn1AGeneric, HB eqn1AaGeneric, HB eqn1AIGeneric,
                    HB eqn2AGeneric, HB eqn2AaGeneric, HB eqn2AIGeneric,
                    HB eqn3AGeneric, HB eqn3AaGeneric, HB eqn3AIGeneric]

@@ -45,9 +45,10 @@ extra-deps:
     commit: f4422f06f6bb1c2181d5ef9aeac6a8fd9d6e48ba
     subdirs:
       - packages/base
+      - packages/tests
 
 # Override default flag values for local packages and extra-deps
-# flags: {}
+# flags:
 
 # Extra package databases containing global packages
 # extra-package-dbs: []
@@ -64,8 +65,10 @@ extra-deps:
 # arch: x86_64
 #
 # Extra directories used by stack for building
-# extra-include-dirs: [/path/to/dir]
-# extra-lib-dirs: [/path/to/dir]
+extra-include-dirs: 
+  - /home/hu76gigi/.local/opt/OpenBLAS/include
+extra-lib-dirs:
+  - /home/hu76gigi/.local/opt/OpenBLAS/lib
 #
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor

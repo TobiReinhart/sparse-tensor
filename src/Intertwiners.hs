@@ -8,7 +8,7 @@ import TensorTreeNumeric4
      delta3,
      toListShow8,
      tensorProd8, tensorContr3, tensorSMult, tensorTransU3,
-     tensorSub8,
+     tensorSub8, tensorAdd8,
      interArea,
      interIArea, interJArea, interJAreaInv, interIAreaInv,
      trianMapAreaI, trianMapAreaJ)
@@ -52,8 +52,8 @@ intCondInt' = result
         block1'  = tensorTransU3 (3,4) $ tensorProd8 iIInv delta3
         block1'' = tensorTransU3 (2,3) block1'
         block1   = tensorSub8 block1' block1''
-        block2   = tensorTransU3 (0,2) $ tensorTransU3 (1,3) $ block1
-        result   = tensorSub8 block1 block2
+        block2  = tensorTransU3 (0,2) $ tensorTransU3 (1,3) block1
+        result  = tensorSub8 block1 block2
 
 intCondInt :: Tensor8 1 2 0 0 0 0 4 0 Rational
 intCondInt = result

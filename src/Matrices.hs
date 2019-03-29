@@ -43,4 +43,4 @@ writeMat :: String -> String -> IO ()
 writeMat name mat = writeFile name $ "1 50086 0\n" ++ mat
 
 writeMatrices :: IO ()
-writeMatrices = sequence_ $ map (uncurry writeFile) scalar
+writeMatrices = sequence_ $ map (uncurry writeMat) $ ansaetze ++ diffeos ++ ints

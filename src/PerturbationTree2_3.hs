@@ -33,8 +33,13 @@ module PerturbationTree2_3 (
         import Data.List
         import Data.Maybe
 
-        import qualified Numeric.LinearAlgebra.Data as HMat
-        import qualified Numeric.LinearAlgebra as HLin 
+        import qualified Data.Eigen.Matrix as Mat 
+        import qualified Data.Eigen.SparseMatrix as Sparse
+        import qualified Data.Eigen.LA as Sol 
+        import qualified Data.Eigen.SparseLA as SpSol
+
+        import Control.Parallel.Strategies
+        import Control.Monad.ST (runST)
 
 
     getAllIndsEta :: [Int] -> [[Int]]
@@ -147,7 +152,6 @@ module PerturbationTree2_3 (
 
     multVarsEpsilon :: Int -> AnsatzForestEpsilon -> AnsatzForestEpsilon
     multVarsEpsilon i = mapVarsEpsilon (multVar i)
-
 
     --add 2 sorted forests (are all zeros removed ? -> probably yes !)
 
@@ -375,26 +379,18 @@ module PerturbationTree2_3 (
 
     --convert the indLists to lists of eta and or epsilon tensors, if present epsilons are always first 
     
-    mkEtaList' :: [Int] -> [Eta]
-    mkEtaList' [] = [] 
-    mkEtaList' x = (Eta a b) : (mkEtaList' rest) 
+    mkEtaList :: [Int] -> [Eta]
+    mkEtaList [] = [] 
+    mkEtaList x = (Eta a b) : (mkEtaList' rest) 
             where
                 [a,b] = take 2 x
                 rest = drop 2 x
 
-    mkEtaList :: Var -> [Int] -> ([Eta],Var)
-    mkEtaList var l = (mkEtaList' l, var)
-
-    mkEpsilonList' :: [Int] -> (Epsilon,[Eta])
-    mkEpsilonList' x = (Epsilon i j k l , mkEtaList' rest) 
+    mkEpsilonList :: [Int] -> (Epsilon,[Eta])
+    mkEpsilonList x = (Epsilon i j k l , mkEtaList' rest) 
             where
                 [i,j,k,l] = take 4 x
                 rest = drop 4 x
-
-    mkEpsilonList :: Var -> [Int] -> (Epsilon,[Eta],Var)
-    mkEpsilonList var l = (eps, eta, var)
-            where
-                (eps,eta) = mkEpsilonList' l
 
     --look up a 1d Forest (obtained from the index list) in the given Forest
 
@@ -455,20 +451,154 @@ module PerturbationTree2_3 (
                                   in if nodeVal == Nothing then b 
                                      else I.unionWith (+) (I.map ((*) (fromJust nodeVal)) (evalAnsatzForestEta epsM evalM a)) b
 
-    type VecList = [(Int,Double)] 
+    --for a single Ansatz we do not need the IntMap to keep track of the VarLabels 
 
-    evalAnsatzEtaVecList :: M.Map [Int] Rational -> I.IntMap Int -> AnsatzForestEta -> VecList 
-    evalAnsatzEtaVecList epsM evalM f  = map (\(x,y) -> (x,fromIntegral)) $ I.assocs $ evalAnsatzForestEta epsM evalM f 
+    eval1AnsatzForestEta :: M.Map [Int] Rational -> I.IntMap Int -> AnsatzForestEta -> Int
+    eval1AnsatzForestEta epsM evalM (Leaf (Var x _)) = x
+    eval1AnsatzForestEta epsM evalM (ForestEta m) = M.foldrWithKey foldF 0 
+                where
+                    foldF k a b = let nodeVal = evalNodeEta epsM evalM k 
+                                  in if nodeVal == Nothing then b 
+                                     else  b + ((fromJust nodeVal) * (evalAnsatzForestEta epsM evalM a))
+    eval1AnsatzForestEta epsM evalM EmptyForest = 0
 
-    evalAnsatzEpsilonVecList :: M.Map [Int] Rational -> I.IntMap Int -> AnsatzForestEpsilon -> VecList 
-    evalAnsatzEpsilonVecList epsM evalM f  = map (\(x,y) -> (x,fromIntegral)) $ I.assocs $ evalAnsatzForestEpsilon epsM evalM f 
+    eval1AnsatzForestEpsilon :: M.Map [Int] Rational -> I.IntMap Int -> AnsatzForestEpsilon -> Int
+    eval1AnsatzForestEpsilon epsM evalM m = M.foldrWithKey foldF 0
+                where
+                    foldF k a b = let nodeVal = evalNodeEpsilon epsM evalM k 
+                                  in if nodeVal == Nothing then b 
+                                    else  b + ((fromJust nodeVal) * (evalAnsatzForestEta epsM evalM a))
+
+    --eval a given ansatz to a sparse Matrix (a row vector) -> Eigen Indices start at 0 !!
+
+    evalAnsatzEtaVecList :: M.Map [Int] Rational -> [I.IntMap Int] -> AnsatzForestEta -> SpMat.SparseMatrixXd 
+    evalAnsatzEtaVecList epsM evalM f  = SpMat.fromList vecList
+            where
+                l' = map (\x -> eval1AnsatzForestEta epsM x f) evalM
+                l = runEval $ parListChunk 10000 rdeepseq l'
+                valList = filter (\(_,_,val) -> val /=0) $ zip $ [0..] l 
+                vecList = map (\(x,y) -> (0,x,y)) valList
+
+    evalAnsatzEpsilonVecList :: M.Map [Int] Rational -> [I.IntMap Int] -> AnsatzForestEpsilon -> SpMat.SparseMatrixXd  
+    evalAnsatzEpsilonVecList epsM evalM f  = SpMat.fromList vecList
+            where 
+                l' = map (\x -> eval1AnsatzForestEpsilon epsM x f) evalM
+                l = runEval $ parListChunk 10000 rdeepseq l'
+                valList = filter (\(_,_,val) -> val /=0) $ zip $ [0..] l                 vecList = map (\(x,y) -> (0,x,y)) valList
 
     --the next step is to check whether a given Ansatz is elemment of the span of the previos ansätze and therefore can be discarded 
 
-    --symDet :: Double -> HMat.Matrix Double -> HMat.Vector Double -> Double 
-    --symDet lastDet mat vec = 
-        --where
-            --scalar = 
+    --function takes as arguments: current determinant of upper left block, current upper left block, the corresponding matrix inverse, current Sparse Ansatz Matrix, new Ansatz rowVector (stored as a sparse matrix)
+    
+    --function returns: (newDet, newMatA, newMatAInv, newfullMat)
+
+    type RankData = (Double, Mat.MatrixXd, Mat.MatrixXd, SpMat.SparseMatrixXd)
+
+    getVarNr :: RankData -> Int 
+    getVarNr (_,_,_,ans) = SpMat.rows ans
+            
+
+    checkNumericLinDep :: RankData -> SpMat.SparseMatrixXd -> Maybe RankData 
+    checkNumericLinDep (lastDet, lastMat, lastMatInv, lastFullMat) newVec 
+                | newDet == 0 = Nothing
+                | otherwise = Just (newDet, newMat, newInv, newAnsatzMat)
+                 where
+                    newVecTrans = SpMat.transpose newVec 
+                    scalar = SpMat.toMatrix $ SpMat.mul newVec newVecTrans
+                    scalarVal = (Mat.!) (0,0) $ scalar
+                    prodBlock = Sp.toMatrix $ SpMat.mul newVecTrans lastFullMat
+                    prodBlockTrans = Mat.transpose prodBlock
+                    newDetPart2Val = (SpMat.!) (0,0) $ SpMat.mul prodBlockTrans $ SpMat.mul lastMatInv prodBlock 
+                    newDet = lastDet * (scalarVal - newDetPart2Val)
+                    newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar'  
+                    newInv = Mat.inverse newMat
+                    ansatzNr = SpMat.rows lastFullMat
+                    dofLength = SpMat.cols newVec  
+                    newVecAnsatzL = map (\x,y,z) -> (ansatzNr,y,z)) $ SpMat.toList newVec 
+                    newAnsatzMat = SpMat.fromList $ ansatzNr dofLength $ (SpMat.toList lastFullMat) ++ newVecAnsatzL
+    
+    concatBlockMat :: Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd 
+    concatBlockMat a b c d = Mat.fromList $ newTopList ++ newBottomList
+                where
+                    aList = Mat.toList a
+                    bList = Mat.toList b
+                    cList = Mat.toList c
+                    dList = Mat.toList d
+                    newTopList = zipWith (++) aList bList 
+                    newBottomList = zipWith (++) cList dList 
+
+    addOrDiscardEta :: Symmetry ->  M.Map [Int] Rational -> [I.IntMap Int] -> [Eta] -> (AnsatzForestEta, RankData) -> (AnsatzForestEta, RankData)
+    addOrDiscardEta symList epsM evalM etaL (ans,rDat) 
+                | isElem etaL ans = (ans,rDat)
+                | otherwise = case newRDat of 
+                                   Nothing          -> (ans,rDat)
+                                   Just newRDat'    -> (sumAns,newRDat')      
+                 where
+                    numVars = getVarNr rDat
+                    newAns = symAnsatzForestEta sym $ mkForestFromAscList (etaL,Var 1 numVars+1)
+                    newVec = evalAnsatzEtaVecList epsM evalM newAns
+                    newRDat = checkNumericLinDep rDat newVec
+                    sumAns = addForests ans newAns
+
+    addOrDiscardEpsilon :: Symmetry ->  M.Map [Int] Rational -> [I.IntMap Int] -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankData) -> (AnsatzForestEpsilon, RankData)
+    addOrDiscardEpsilon symList epsM evalM epsL (ans,rDat) 
+                | isElemEpsilon epsL ans = (ans,rDat)
+                | otherwise = case newRDat of 
+                                   Nothing          -> (ans,rDat)
+                                   Just newRDat'    -> (sumAns,newRDat')      
+                 where
+                    numVars = getVarNr rDat
+                    newAns = symAnsatzForestEpsilon sym $ mkForestFromAscListEpsilon (epsL,Var 1 numVars+1)
+                    newVec = evalAnsatzEpsilonVecList epsM evalM newAns
+                    newRDat = checkNumericLinDep rDat newVec
+                    sumAns = addForestsEpsilon ans newAns
+
+    --construct the RankData from the first Ansatz 
+
+    mkRankDataEta :: Symmetry -> [Eta] -> M.Map [Int] Rational -> [I.IntMap Int] -> (AnsatzForestEta,RankData)
+    mkRankDataEta symL etaL epsM evalM = (newAns, newRankData)
+            where
+                newAns = symAnsatzForestEta sym $ mkForestFromAscList (etaL,Var 1 1)
+                newVec = evalAnsatzEtaVecList epsM evalM newAns
+                newMat = SpMat.toMatrix $ SpMat.mul newVec newVecTrans
+                newMatInv = Mat.inverse newMat 
+                newDet = Mat.determinant newMat 
+                newRankData = (newDet, newMat, newMatInv, newVec)
+
+    mkRankDataEpsilon :: Symmetry -> (Epsilon,[Eta]) -> M.Map [Int] Rational -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankData)
+    mkRankDataEpsilon symL epsL epsM evalM = (newAns, newRankData)
+            where
+                newAns = symAnsatzForestEpsilon sym $ mkForestFromAscListEpsilon (epsL,Var 1 1)
+                newVec = evalAnsatzEpsilonVecList epsM evalM newAns
+                newMat = SpMat.toMatrix $ SpMat.mul newVec newVecTrans
+                newMatInv = Mat.inverse newMat 
+                newDet = Mat.determinant newMat 
+                newRankData = (newDet, newMat, newMatInv, newVec)
+
+    --finally reduce the ansatzList 
+
+    reduceAnsatzEta :: Symmetry -> [[Eta]] -> [I.IntMap] -> (AnsatzForestEta,SpMat.SparseMatrixXd)
+    reduceAnsatzEta symL etaL evalM = (finalForest, finalEtaL, finalMat)
+            where
+                epsM = epsMap
+                rDat1 = mkRankDataEta symL (head etaL) epsM evalM
+                restEtaL = tail etaL 
+                (finalForest, (_,_,_,finalMat)) = foldr (addOrDiscardEta symL epsM evalM) rDat1 restEtaL 
+
+    reduceAnsatzEpsilon :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap] -> (AnsatzForestEpsilon,SpMat.SparseMatrixXd)
+    reduceAnsatzEpsilon symL epsL evalM = (finalForest, finalEpsL, finalMat)
+            where
+                epsM = epsMap
+                rDat1 = mkRankDataEpsilon symL (head epsL) epsM evalM
+                restEpsL = tail epsL 
+                (finalForest, (_,_,_,finalMat)) = foldr (addOrDiscardEpsilon symL epsM evalM) rDat1 restEpsL 
+
+
+
+
+
     
 
-                  
+
+
+

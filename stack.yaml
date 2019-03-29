@@ -51,6 +51,8 @@ extra-deps:
 flags:
   hmatrix:
     openblas: true
+  hmatrix-tests:
+    gsl: false
 
 # Extra package databases containing global packages
 # extra-package-dbs: []

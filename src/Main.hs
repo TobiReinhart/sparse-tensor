@@ -165,12 +165,12 @@ main = do
                                                   _ -> undefined) totalEqnG
     -}
 
-    let tensL = AppendTList eqn1Generic $ AppendTList eqn2Generic $ AppendTList eqn3Generic $
-                AppendTList eqn1AGeneric $ AppendTList eqn1AaGeneric $ AppendTList eqn1AIGeneric $  
-                AppendTList eqn2AGeneric $ AppendTList eqn2AaGeneric $ AppendTList eqn2AIGeneric $ 
-                AppendTList eqn3AGeneric $ AppendTList eqn3AaGeneric $ AppendTList eqn3AIGeneric EmptyTList 
+    let tensL = AppendTList eqn1Generic $ AppendTList eqn2Generic $ AppendTList eqn3Generic $ 
+                AppendTList eqn1AGeneric $ AppendTList eqn1AaGeneric $ AppendTList eqn1AIGeneric $ EmptyTList
+                --AppendTList eqn2AGeneric $ AppendTList eqn2AaGeneric $ AppendTList eqn2AIGeneric $ 
+                --AppendTList eqn3AGeneric $ AppendTList eqn3AaGeneric $ AppendTList eqn3AIGeneric EmptyTList 
 
-    let mat = toHMat' tensL
+    --let mat = toHMat' tensL
     
-    print $ HMat.size mat 
+    print $ getHRank' tensL 
     

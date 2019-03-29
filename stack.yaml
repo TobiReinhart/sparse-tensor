@@ -42,7 +42,7 @@ extra-deps:
   - git: https://github.com/nilsalex/eigen.git
     commit: 9c60f753ff5dc14b7d89b09c7ceb1d8b55af0701
   - git: https://github.com/nilsalex/hmatrix.git
-    commit: f4422f06f6bb1c2181d5ef9aeac6a8fd9d6e48ba
+    commit: 36a386165e358f131af01c2c9d771891a1f37aa9
     subdirs:
       - packages/base
       - packages/tests
@@ -67,10 +67,6 @@ flags:
 # arch: x86_64
 #
 # Extra directories used by stack for building
-extra-include-dirs: 
-  - /home/hu76gigi/.local/opt/OpenBLAS/include
-extra-lib-dirs:
-  - /home/hu76gigi/.local/opt/OpenBLAS/lib
 #
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor

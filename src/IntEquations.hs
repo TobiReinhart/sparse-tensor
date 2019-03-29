@@ -5,7 +5,7 @@ module IntEquations (intEquation) where
 import Intertwiners (inverseDerivativeInt, intCondInt)
 
 import TensorTreeNumeric4 (Tensor, Tensor8, VarMap, multVarsMap,
-                           addVarsMap, getTensorRank, shiftVarLabels,
+                           addVarsMap, shiftVarLabels,
                            tensorProd8, tensorContr20,
                            tensorSMult, tensorProdWith8,
                            tensorContrWith20, tensorTransWithU20,

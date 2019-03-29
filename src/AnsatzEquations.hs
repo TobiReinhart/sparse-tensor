@@ -4,7 +4,7 @@ module AnsatzEquations (ansatzA, ansatzAB)
 where
 
 import TensorTreeNumeric4 (Tensor8, VarMap,
-                           shiftVarLabels, getTensorRank,
+                           shiftVarLabels,
                            interArea, trianMapAreaI, trianMapAreaJ,
                            tensorContr3, tensorProd8, invEta, tensorAdd8,
                            tensorProdWith8, tensorAddWith8, tensorContrWith20,

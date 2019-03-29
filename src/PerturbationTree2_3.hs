@@ -24,22 +24,20 @@
 
 module PerturbationTree2_3 ( 
 
-)
+) where
 
-    where
+    import qualified Data.IntMap.Strict as I
+    import qualified Data.Map.Strict as M 
+    import Data.List
+    import Data.Maybe
 
-        import qualified Data.IntMap.Strict as I
-        import qualified Data.Map.Strict as M 
-        import Data.List
-        import Data.Maybe
+    import qualified Data.Eigen.Matrix as Mat 
+    import qualified Data.Eigen.SparseMatrix as Sparse
+    import qualified Data.Eigen.LA as Sol 
+    import qualified Data.Eigen.SparseLA as SpSol
 
-        import qualified Data.Eigen.Matrix as Mat 
-        import qualified Data.Eigen.SparseMatrix as Sparse
-        import qualified Data.Eigen.LA as Sol 
-        import qualified Data.Eigen.SparseLA as SpSol
-
-        import Control.Parallel.Strategies
-        import Control.Monad.ST (runST)
+    import Control.Parallel.Strategies
+    import Control.Monad.ST (runST)
 
 
     getAllIndsEta :: [Int] -> [[Int]]
@@ -593,12 +591,285 @@ module PerturbationTree2_3 (
                 restEpsL = tail epsL 
                 (finalForest, (_,_,_,finalMat)) = foldr (addOrDiscardEpsilon symL epsM evalM) rDat1 restEpsL 
 
+    --construct a tensor from the evaluated ansatz 
 
 
+    --trianglemaps converting from abstract indices to spacetime indices 
 
+    trianMapArea :: I.IntMap [Int]
+    trianMapArea = I.fromList $ zip [1..21] list 
+            where 
+                list = [ [a,b,c,d] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], (isAreaSorted a b c d)]
 
+    trianMap2 :: I.IntMap [Int] 
+    trianMap2 = I.fromList $ zip [1..10] list 
+            where
+                list = [ [p,q] | p <- [0..3], q <- [p..3]]
+
+    isAreaSorted :: Int -> Int -> Int -> Int -> Bool
+    isAreaSorted a b c d 
+             | a < c || (a == c && b <= d) = True
+             | otherwise = False 
+
+    --computing the muliplicities that result from the use of the area metric inter twiner
     
+    areaMult :: [Int] -> Int
+    areaMult [a,b,c,d] 
+             | a == c && b == d = 4
+             | otherwise = 8
+ 
+    iMult2 :: [Int] -> Int 
+    iMult2 [p,q] = if p == q then 1 else 2 
+
+    --the lists for evaluating the ansätze -> output = [(evalMap, multiplicity, Index8)]
+
+    mkEvalMap :: Int -> [([Int],a,b)] -> [(I.IntMap Int,a,b)]
+    mkEvalMap ord l = map (\(x,y,z) -> (I.fromList $ zip [1..ord] x, y, z)) l 
+
+    --A
+    areaList4Inds :: [(I.IntMap Int, Int, [IndTuple 1 0 0 0 0 0 0 0])]
+    areaList4Inds = mkEvalMap list 
+          where 
+              trinaArea = trianMapArea
+              list = [ let a' = (I.!) trianArea a in (a', areaMult a', [(singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, Empty, Empty, Empty, Empty)]) | a <- [1..21] ]
+    --AI
+    areaList6Inds :: [(I.IntMap Int, Int, [IndTuple 1 0 0 0 1 0 0 0])]
+    areaList6Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',i') = ((I.!) trianArea a, (I.!) trian2 i) in  (a' ++ i', (areaMult a') * (iMult2 i'), [(singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty)]) | a <- [1..21], i <- [1..10]]
+ 
+    --A:B
+    areaList8Inds :: [(I.IntMap Int, Int, [IndTuple 2 0 0 0 0 0 0 0])]
+    areaList8Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ b', (areaMult a') * (areaMult b'), map (\[a,b] -> (Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b] )  | a <- [1..21], b <- [a..21]]
+  
+    --Ap:Bq
+    areaList10_1Inds :: [(I.IntMap Int, Int, [IndTuple 2 0 0 0 0 0 2 0])]
+    areaList10_1Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ p : b' ++ [q], (areaMult a') * (areaMult b'), map (\[[a,p],[b,q]] -> (Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, Append (Uind3 $ p) $ singletonInd (Uind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], p <- [0..3], q <- [0..3],  not (a==b && p>q)]
+  
+    --A:BI   
+    areaList10_2Inds :: [(I.IntMap Int, Int, [IndTuple 2 0 0 0 1 0 0 0])]
+    areaList10_2Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trian2 i) in  (a' ++ b' ++ i', (areaMult a') * (areaMult b') * (iMult2 i'), [ (Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty)] ) | a <- [1..21], b <- [1..21], i <- [1..10] ]
+  
+    --A:B:C
+    areaList12Inds ::  [(I.IntMap Int, Int, [IndTuple 3 0 0 0 0 0 0 0])]
+    areaList12Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ b' ++ c', (areaMult a') * (areaMult b') * (areaMult c'), map (\[a,b,c] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1), Empty, Empty, Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c] )| a <- [1..21], b <- [a..21], c <- [b..21] ]
+  
+    --AI:BJ
+    areaList12_1Inds ::  [(I.IntMap Int, Int, [IndTuple 2 0 0 0 2 0 0 0])]
+    areaList12_1Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',i',b',j') = ((I.!) trianArea a, (I.!) trian2 i, (I.!) trianArea b, (I.!) trian2 j) in  (a' ++ i' ++ b' ++ j' , (areaMult a') * (areaMult b') * (iMult2 i') * (iMult2 j'), map (\[[a,i],[b,j]] ->  (Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ singletonInd (Uind9 $ j-1), Empty, Empty, Empty)) $ nub $ permutations [[a,i],[b,j]] ) | a <- [1..21], b <- [a..21], i <- [1..10], j <- [1..10], not (a==b && i>j) ]
+  
+  
+    --A:Bp:Cq
+    areaList14_1Inds :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 0 0 2 0])]
+    areaList14_1Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ b' ++ p : c' ++ [q], (areaMult a') * (areaMult b') * (areaMult c'), map (\[[b,p],[c,q]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1), Empty, Empty, Empty, Empty, Empty, Append (Uind3 $ p) $ singletonInd (Uind3 $ q), Empty)) $ nub $ permutations [[b,p],[c,q]]) | a <- [1..21], b <- [1..21], c <- [b..21], p <- [0..3], q <- [0..3], not (b==c && p>q) ]
+  
+  
+    --A:B:CI
+    areaList14_2Inds :: I.IntMap [Int] -> I.IntMap [Int]  -> [([Int], Int, [IndTuple 3 0 0 0 1 0 0 0])]
+    areaList14_2Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in ( a' ++ b' ++ c' ++ i', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), map (\[a,b] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] ) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10] ]
+  
+    --Ap:Bq:CI
+    areaList16_1Inds :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 1 0 2 0])]
+    areaList16_1Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in (a' ++ p : b' ++ q : c' ++ i' , (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), map (\[[a,p],[b,q]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Append (Uind3 $ p) $ singletonInd (Uind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
+  
+    --A:BI:CJ
+    areaList16_2Inds :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 2 0 0 0])]
+    areaList16_2Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [let (a',b',c',i', j') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j) in  (a' ++ b' ++ i' ++ c' ++ j', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j'), map (\[[b,i],[c,j]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ singletonInd (Uind9 $ j-1), Empty, Empty, Empty) ) $ nub $ permutations [[b,i],[c,j]])| a <- [1..21], b <- [1..21], c <- [b..21], i <- [1..10], j <- [1..10], not (b==c && i>j)]
+  
+    --AI:BJ:CK
+    areaList18Inds :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 3 0 0 0])]
+    areaList18Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), map (\[[a,i],[b,j],[c,k]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ Append (Uind9 $ j-1) $ singletonInd (Uind9 $ k-1), Empty, Empty, Empty) ) $ nub $ permutations [[a,i],[b,j],[c,k]]) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
+     
+    --order 4 
+ 
+    --A:B:C_D
+    areaList16Inds ::  [(I.IntMap Int, Int, [IndTuple 4 0 0 0 0 0 0 0])]
+    areaList16Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c', d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c' ++ d', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), map (\[a,b,c,d] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) $ singletonInd (Uind20 $ d-1), Empty, Empty, Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c,d] )| a <- [1..21], b <- [a..21], c <- [b..21], d <- [c..21] ]
+  
+ 
+    --A:B:C:DI
+    areaList18_2Inds ::  [(I.IntMap Int, Int, [IndTuple 4 0 0 0 1 0 0 0])]
+    areaList18_2Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',d',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trian2 i) in  (a' ++ b' ++ c'++d'++i', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (iMult2 i'), map (\[a,b,c] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) (singletonInd (Uind20 $ d-1)), Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty) ) $ nub $ permutations [a,b,c] ) | a <- [1..21], b <- [a..21], c <- [b..21], d <- [1..21], i <- [1..10] ]
+  
+    --A:B:Cp:Dq
+    areaList18_3Inds ::  [(I.IntMap Int, Int, [IndTuple 4 0 0 0 0 0 2 0])]
+    areaList18_3Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c'++ p : d'++[q], (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), map ( \(a,b,c,p,d,q) -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) (singletonInd (Uind20 $ d-1)), Empty, Empty, Empty, Empty, Empty, Append (Uind3 p) (singletonInd (Uind3 q)), Empty) ) $ nub [(a,b,c,p,d,q),(b,a,c,p,d,q),(a,b,d,q,c,p),(b,a,d,q,c,p)] ) | a <- [1..21], b <- [a..21], c <- [1..21], d <- [c..21], p <- [0..3], q <- [0..3] , not (c == d && p > q) ]
+  
+    --order 5 
+ 
+    areaList20Inds ::  [(I.IntMap Int, Int, [IndTuple 5 0 0 0 0 0 0 0])]
+    areaList20Inds = mkEvalMap list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c', d', e') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trianArea e) in  (a' ++ b' ++ c' ++ d' ++ e', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (areaMult e'), map (\[a,b,c,d,e] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) $ Append (Uind20 $ d-1) $ singletonInd (Uind20 $ e-1), Empty, Empty, Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c,d,e] )| a <- [1..21], b <- [a..21], c <- [b..21], d <- [c..21], e <- [d..21] ]
+  
+ 
+    --now the symmetry and filter lists 
+
+    filterList4 :: [(Int,Int)]
+    filterList4 = [(1,2),(1,3),(3,4)]
+
+    symList4 :: Symmetry  
+    symList4 = ([], [(1,2),(3,4)], [([1,2],[3,4])], [], [])
+
+    filterList6 :: [(Int,Int)]
+    filterList6 = [(1,2),(1,3),(3,4),(5,6)]
+
+    symList6 :: Symmetry  
+    symList6 = ([(5,6)], [(1,2),(3,4)], [([1,2],[3,4])], [], [])
+
+    filterList8 :: [(Int,Int)]
+    filterList8 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8)]
+
+    symList8 :: Symmetry  
+    symList8 = ([], [(1,2),(3,4),(5,6),(7,8)], [([1,2],[3,4]),([5,6],[7,8]),([1,2,3,4],[5,6,7,8])], [], [])
+
+    filterList10_1 :: [(Int,Int)]
+    filterList10_1 = [(1,2),(1,3),(3,4),(1,6),(6,7),(6,8),(8,9)]
+
+    symList10_1 :: Symmetry  
+    symList10_1 = ([], [(1,2),(3,4),(6,7),(8,9)], [([1,2],[3,4]),([6,7],[8,9]),([1,2,3,4,5],[6,7,8,9,10])], [], [])
+
+    filterList10_2 :: [(Int,Int)]
+    filterList10_2 = [(1,2),(1,3),(3,4),(5,6),(5,7),(7,8),(9,10)]
+
+    symList10_2 :: Symmetry  
+    symList10_2 = ([(9,10)], [(1,2),(3,4),(5,6),(7,8)], [([1,2],[3,4]),([5,6],[7,8])], [], [])
+
+    filterList12 :: [(Int,Int)]
+    filterList12 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(5,9),(9,10),(9,11),(11,12)]
+
+    symList12 :: Symmetry  
+    symList12 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], 
+                [[[1,2,3,4],[5,6,7,8],[9,10,11,12]]])
+
+    filterList12_1 :: [(Int,Int)]
+    filterList12_1 = [(1,2),(1,3),(3,4),(5,6),(1,7),(7,8),(7,9),(9,10),(11,12)]
+
+    symList12_1 :: Symmetry  
+    symList12_1 = ([(5,6),(11,12)], [(1,2),(3,4),(7,8),(9,10)], [([1,2],[3,4]),([7,8],[9,10]),([1,2,3,4,5,6],[7,8,9,10,11,12])], [], 
+                [])
+
+    filterList14_1 :: [(Int,Int)]
+    filterList14_1 = [(1,2),(1,3),(3,4),(5,6),(5,7),(7,8),(5,10),(10,11),(10,12),(12,13)]
+    
+    symList14_1 :: Symmetry  
+    symList14_1 = ([], [(1,2),(3,4),(5,6),(7,8),(10,11),(12,13)], [([1,2],[3,4]),([5,6],[7,8]),([10,11],[12,13]),
+                ([5,6,7,8,9],[10,11,12,13,14])], [], [])
+
+    filterList14_2 :: [(Int,Int)]
+    filterList14_2 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(9,10),(9,11),(11,12),(13,14)]
+
+    symList14_2 :: Symmetry  
+    symList14_2 = ([(13,14)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4],[5,6,7,8])], [], [])
+
+    filterList16_1 :: [(Int,Int)]
+    filterList16_1 = [(1,2),(1,3),(3,4),(1,6),(6,7),(6,8),(8,9),(11,12),(11,13),(13,14),(15,16)]
+
+    symList16_1 :: Symmetry  
+    symList16_1 = ([(15,16)], [(1,2),(3,4),(6,7),(8,9),(11,12),(13,14)], [([1,2],[3,4]),([6,7],[8,9]),([11,12],[13,14]),
+                ([1,2,3,4,5],[6,7,8,9,10])], [], [])
+
+    filterList16_2 :: [(Int,Int)]
+    filterList16_2 = [(1,2),(1,3),(3,4),(5,6),(5,7),(7,8),(9,10),(5,11),(11,12),(11,13),(13,14),(15,16)]
+
+    symList16_2 :: Symmetry  
+    symList16_2 = ([(9,10),(15,16)], [(1,2),(3,4),(5,6),(7,8),(11,12),(13,14)], [([1,2],[3,4]),([5,6],[7,8]),([11,12],[13,14]),
+                ([5,6,7,8,9,10],[11,12,13,14,15,16])], [], [])
+
+    filterList18 :: [(Int,Int)]
+    filterList18 = [(1,2),(1,3),(3,4),(1,7),(5,6),(7,8),(7,9),(9,10),(7,13),(11,12),(13,14),(13,15),(15,16),(17,18)]
+
+    symList18 :: Symmetry  
+    symList18 = ([(5,6),(11,12),(17,18)], [(1,2),(3,4),(7,8),(9,10),(13,14),(15,16)], [([1,2],[3,4]),([7,8],[9,10]),
+                ([13,14],[15,16])], [], [[[1,2,3,4,5,6],[7,8,9,10,11,12],[13,14,15,16,17,18]]])
+
+    --order 4
+
+    filterList16 :: [(Int,Int)]
+    filterList16 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(5,9),(9,10),(9,11),(11,12),(9,13),(13,14),(13,15),(15,16)]
+
+    symList16 :: Symmetry  
+    symList16 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16])], [], 
+                [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]])
 
 
+    filterList18_2 :: [(Int,Int)]
+    filterList18_2 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(5,9),(9,10),(9,11),(11,12),(13,14),(13,15),(15,16),(17,18)]
 
+    symList18_2 :: Symmetry  
+    symList18_2 = ([(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16)], [([1,2],[3,4]),([5,6],[7,8]),
+                ([9,10],[11,12]),([13,14],[15,16])], [], [[[1,2,3,4],[5,6,7,8],[9,10,11,12]]])
 
+    filterList18_3 :: [(Int,Int)]
+    filterList18_3 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(9,10),(9,11),(11,12),(9,14),(14,15),(14,16),(16,17)]
+
+    symList18_3 :: Symmetry  
+    symList18_3 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(14,15),(16,17)], [([1,2],[3,4]),([5,6],[7,8]),
+                ([9,10],[11,12]),([14,15],[16,17]),([1,2,3,4],[5,6,7,8]),([9,10,11,12,13],[14,15,16,17,18])], [], [])
+
+    --order 5
+
+    filterList20 :: [(Int,Int)]
+    filterList20 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(5,9),(9,10),(9,11),(11,12),(9,13),(13,14),(13,15),(15,16),(13,17),(17,18),(17,19),(19,20)]
+
+    symList20 :: Symmetry  
+    symList20 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18),(19,20)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16]),([17,18],[19,20])], [], 
+                [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]])
+ 
+     

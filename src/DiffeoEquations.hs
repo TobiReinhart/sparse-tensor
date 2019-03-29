@@ -4,7 +4,7 @@ module DiffeoEquations (diffeo0, diffeo1)
 where
 
 import TensorTreeNumeric4 (Tensor8, VarMap,
-                           shiftVarLabels, getTensorRank,
+                           shiftVarLabels,
                            interArea, trianMapAreaI, trianMapAreaJ,
                            flatAreaNoEps,
                            tensorContr20,

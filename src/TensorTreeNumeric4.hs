@@ -39,8 +39,8 @@
  
 module TensorTreeNumeric4 (
     toListT8, toListShow8, intAIB, interMetric, interArea, interEqn2, interEqn3, interEqn4, trianMapAreaI, trianMapAreaJ, trianMapI2, trianMapJ2, flatInter,
-    interI2, interJ2, aSymI2, interIArea, interJArea, toListShowVar, toMatrix, getTensorRank, getTensorRank2, shiftVarLabels, getTensorRank3, getTensorRank4, getTensorRank5, toMatrix5, toMatrix4, toMatrix3, toMatrix2,
-    delta20, delta19, delta9, delta3, tensorContr20, tensorContr19, tensorContr9, tensorContr3, tensorProd8, toMatList, toSparseMatRed,
+    interI2, interJ2, aSymI2, interIArea, interJArea, toListShowVar, shiftVarLabels,
+    delta20, delta19, delta9, delta3, tensorContr20, tensorContr19, tensorContr9, tensorContr3, tensorProd8,
     tensorTransU20, tensorTransL20, tensorTransU19, tensorTransL19, tensorTransU9, tensorTransL9, tensorTransU3, tensorTransL3, tensorSub8,
     triangleMap3P', ansatzAIBJCK', index2SparseAnsatzAIBJCKSym, VarMap, area18TensList, Tensor(..), Tensor8, IndList(..),
     tensorAdd8, invEta, flatArea, tensorSMult,
@@ -53,14 +53,14 @@ module TensorTreeNumeric4 (
     ansatzAB2, ansatzAIB2_1, ansatzAIB2_2, ansatzAIBJ2,
     epsilonUp, epsilonDown, ansatzAa,
     flatArea', eta, epsilon, epsilonInv, flatAreaInv, flatAreaST, flatAreaInvST,
-    tensorProdWith8, multVarsMap, tensorContrWith20, tensorAddWith8, toSparseMat, interJAreaInv, interIAreaInv,
-    interAnsatzEqn1, flatAreaInvSTNoEps, flatAreaNoEps, ansatzEqn1Test, interAnsatzEqn1ZeroTest, interAnsatzEqn2ZeroTest, ansatzEqn2Test, flatAreaInvNoEps, intCondAnsatz1, sumBetas,
-    eqn2, toMatrix6, getTensorRank6, interMetricAreaTest, interMetricArea, genericFlatArea, 
+    tensorProdWith8, multVarsMap, tensorContrWith20, tensorAddWith8, interJAreaInv, interIAreaInv,
+    interAnsatzEqn1, flatAreaInvSTNoEps, flatAreaNoEps, ansatzEqn1Test, interAnsatzEqn1ZeroTest, interAnsatzEqn2ZeroTest, ansatzEqn2Test, flatAreaInvNoEps, intCondAnsatz1,
+    eqn2, interMetricAreaTest, interMetricArea, genericFlatArea, 
     eqn1G, eqn2G, eqn3G, eqn1AG, eqn2AG, eqn3AG, eqn1AaG, eqn2AaG, eqn3AaG, eqn1AIG, eqn2AIG, eqn3AIG,
     eqn1M_1, eqn1M_2, eqn1M_3, eqn1AM_1, eqn1AM_2, eqn1AM_3, eqn1M_4, interArea_4, metricInducedArea, eqn1M_5,
     genericArea, genericAreaM,
     normalize,
-    getTensorRankHMat, TensList(..), getHRank', toHMat'
+    TensList(..), getHRank', toMatList, getHRank, toMatListRat, getHRank1, toMatList1
 ) where
 
     import Data.Foldable
@@ -518,102 +518,17 @@ module TensorTreeNumeric4 (
             where
                 l = toListShow8 t 
 
-    toMatList :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> [[(Int, Rational)]]
-    toMatList t = map snd $ toListShowVar t
+    --convert to several matrix formats 
 
-    toSparseMat :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> (Int,Int,[((Int, Int), Rational)])
-    toSparseMat t = (n,m,l')
-            where
-                l = toMatList t 
-                l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
-                n = length l 
-                m = maximum $ map fst $ concat l 
+    toMatList1 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> [[(Int, Rational)]]
+    toMatList1 t = map snd $ toListShowVar t
 
     normalize :: [(Int,Rational)] -> ([(Int,Rational)],Rational)
     normalize [] = ([],1) 
     normalize ((a,b) : xs) = ((a,1) : (map (\(x,y) -> (x,y / b)) xs),b)
 
-    toSparseMatRed :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> (Int,Int,[((Int, Int), Rational)])
-    toSparseMatRed t = (n,m,l')
-            where
-                l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ toMatList t 
-                l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
-                l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
-                n = length l 
-                m = maximum $ map fst $ concat l 
 
-    
-
-    toMatrix' :: [[(Int, Rational)]] -> Mat.MatrixXd 
-    toMatrix' l = Sparse.toMatrix $ Sparse.fromList n m l''
-                    where
-                        l' = concat $ zipWith (\r z -> map (\(x,y) -> (z, x, y)) r) l [1..]
-                        n = length l 
-                        l'' = map (\(a,b,c) -> (a-1, b-1, fromRational c)) l'
-                        m = maximum $ map fst $ concat l 
-
-    toMatrix'' :: [(Int,Int,Rational)] -> Mat.MatrixXd
-    toMatrix'' l = Sparse.toMatrix $ Sparse.fromList n m l'
-            where
-                n = maximum $ map (\(a,b,c) -> a) l 
-                m = maximum $ map (\(a,b,c) -> b) l 
-                l' = map (\(a,b,c) -> (a-1, b-1, fromRational c)) l
-
-    toMatrix :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Mat.MatrixXd
-    toMatrix t = toMatrix' $ toMatList t
-
-    toMatrix2 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Mat.MatrixXd 
-    toMatrix2 t1 t2 = toMatrix' l 
-            where
-                l = toMatList t1 ++ toMatList t2
-
-    toMatrix3 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Mat.MatrixXd 
-    toMatrix3 t1 t2 t3 = toMatrix' l 
-            where
-                l = toMatList t1 ++ toMatList t2 ++ toMatList t3
-
-    toMatrix4 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Mat.MatrixXd 
-    toMatrix4 t1 t2 t3 t4 = toMatrix' l 
-            where
-                l = toMatList t1 ++ toMatList t2 ++ toMatList t3 ++ toMatList t4
-
-    toMatrix5 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Tensor8 p1 p2 p3 p4 p5 p6 p7 p8 VarMap -> Mat.MatrixXd 
-    toMatrix5 t1 t2 t3 t4 t5 = toMatrix' l 
-            where
-                l = toMatList t1 ++ toMatList t2 ++ toMatList t3 ++ toMatList t4 ++ toMatList t5 
-
-    toMatrix6 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Tensor8 p1 p2 p3 p4 p5 p6 p7 p8 VarMap -> Tensor8 q1 q2 q3 q4 q5 q6 q7 q8 VarMap -> Mat.MatrixXd 
-    toMatrix6 t1 t2 t3 t4 t5 t6 = toMatrix' l 
-            where
-                l = toMatList t1 ++ toMatList t2 ++ toMatList t3 ++ toMatList t4 ++ toMatList t5 ++ toMatList t6 
-
-    getTensorRank :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Int 
-    getTensorRank t = Sol.rank Sol.FullPivLU $ toMatrix t
-
-    getTensorRank2 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Int 
-    getTensorRank2 t1 t2 = Sol.rank Sol.FullPivLU $ toMatrix2 t1 t2
-
-    getTensorRank3 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Int 
-    getTensorRank3 t1 t2 t3 = Sol.rank Sol.FullPivLU $ toMatrix3 t1 t2 t3
-
-    getTensorRank4 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Int 
-    getTensorRank4 t1 t2 t3 t4 = Sol.rank Sol.FullPivLU $ toMatrix4 t1 t2 t3 t4 
-
-    getTensorRank5 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Tensor8 p1 p2 p3 p4 p5 p6 p7 p8 VarMap -> Int 
-    getTensorRank5 t1 t2 t3 t4 t5 = Sol.rank Sol.FullPivLU $ toMatrix5 t1 t2 t3 t4 t5  
-
-    getTensorRank6 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 m1 m2 m3 m4 m5 m6 m7 m8 VarMap -> Tensor8 r1 r2 r3 r4 r5 r6 r7 r8 VarMap -> Tensor8 s1 s2 s3 s4 s5 s6 s7 s8 VarMap -> Tensor8 p1 p2 p3 p4 p5 p6 p7 p8 VarMap -> Tensor8 q1 q2 q3 q4 q5 q6 q7 q8 VarMap -> Int 
-    getTensorRank6 t1 t2 t3 t4 t5 t6 = Sol.rank Sol.FullPivLU $ toMatrix6 t1 t2 t3 t4 t5 t6   
-
-    toHMatrix :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> HMat.Matrix Double 
-    toHMatrix t = HMat.toDense l' 
-            where 
-                (_,_,l) = toSparseMatRed t
-                l' = map (\((x,y),z) -> ((x,y),fromRational z)) l 
-
-    getTensorRankHMat :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Int 
-    getTensorRankHMat = HLin.rank . toHMatrix   
-
+    --convert several tensor to one matrixList
 
     data TensList where
         EmptyTList :: TensList
@@ -624,29 +539,64 @@ module TensorTreeNumeric4 (
     mapTensList f EmptyTList = [] 
     mapTensList f (AppendTList t l) = (f t) : (mapTensList f l)
 
-    toHMat' :: TensList -> HMat.Matrix Double 
-    toHMat' t = HMat.toDense l'' 
+    toMatListRat :: TensList -> [((Int,Int),Rational)] 
+    toMatListRat t = l'' 
         where
-            matList = concat $ mapTensList toMatList t 
+            matList = concat $ mapTensList toMatList1 t 
+            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
+            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
+            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
+            l'' = map (\((x,y),z) -> ((x,y),z)) l'
+
+
+    toMatList :: TensList -> [((Int,Int),Double)] 
+    toMatList t = l'' 
+        where
+            matList = concat $ mapTensList toMatList1 t 
             l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
             l'' = map (\((x,y),z) -> ((x,y),fromRational z)) l'
 
-    getHRank' :: TensList -> Int 
-    getHRank' = HLin.rank . toHMat' 
+    --convert to hmatrix format 
 
-
-            
-    --compute the sum of the beta numbers for the involutivity check -> does not work yet ! 
-
-    sumBetas :: Mat.MatrixXd -> Int 
-    sumBetas m = sum p 
+    toHMatrix :: TensList -> HMat.Matrix Double 
+    toHMatrix tList =  HMat.toDense l
             where
-                l = length $ head $ Mat.toList m 
-                p' = Sol.pivots Sol.FullPivLU m
-                p = map (\x -> l - x) p' 
+                l = toMatList tList
 
+    --convert to Eigen Matrix format 
+
+    toEMatrix :: TensList -> Sparse.SparseMatrixXd
+    toEMatrix tList = Sparse.fromList n m l'
+            where 
+                l = toMatList tList
+                l' = map (\((a,b),c) -> (a-1, b-1, c)) l
+                m = maximum $ map (fst.fst) l
+                n = maximum $ map (snd.fst) l 
+
+    getHRank' :: TensList -> Int 
+    getHRank' = HLin.rank . toHMatrix
+
+    getHRank :: TensList -> Int 
+    getHRank tList = r
+           where 
+                sp = toEMatrix tList 
+                trans = Sparse.transpose sp
+                rows = Sparse.rows sp
+                cols = Sparse.cols sp
+                sing = if rows < cols then sp * trans else trans * sp
+                l = Sparse.toList sing
+                hmat = HMat.toDense $ map (\(i,j,v) -> ((i,j),v)) l
+                r = HLin.rank hmat
+
+    getHRank1 :: Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Int 
+    getHRank1 t = getHRank $ AppendTList t EmptyTList
+
+
+    ------------------------------------------------------------------------------
+            
+   
     type VarMap = I.IntMap Rational
 
     shiftVarLabels :: Int -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap -> Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap 

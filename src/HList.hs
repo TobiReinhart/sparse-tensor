@@ -17,7 +17,7 @@ class MatrixType a where
     toMat :: a -> [[(Int, Rational)]]
 
 instance MatrixType (Tensor8 n1 n2 n3 n4 n5 n6 n7 n8 VarMap) where
-    toMat = toMatList
+    toMat = toMatList1
 
 data HBox = forall r.MatrixType r => HB r
 

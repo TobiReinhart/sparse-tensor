@@ -48,7 +48,9 @@ extra-deps:
       - packages/tests
 
 # Override default flag values for local packages and extra-deps
-# flags:
+flags:
+  hmatrix:
+    openblas: true
 
 # Extra package databases containing global packages
 # extra-package-dbs: []

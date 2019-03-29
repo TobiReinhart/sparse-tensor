@@ -10,7 +10,9 @@ import qualified Data.Eigen.Matrix as Mat
 import Data.List
 import qualified Data.Eigen.LA as Sol 
 
-import HList
+import qualified Numeric.LinearAlgebra.Data as HMat
+import qualified Numeric.LinearAlgebra as HLin 
+ 
 
 import Data.Ratio
 
@@ -120,7 +122,55 @@ main = do
 
     let eqn3AIGeneric = eqn3AIG 2 3 4 7 11 13 map1Metric map2Metric map1Area map2Area generic12Ansatz  
 
-    print $ rankN [HB eqn1Generic, HB eqn2Generic, HB eqn3Generic,
-                   HB eqn1AGeneric, HB eqn1AaGeneric, HB eqn1AIGeneric,
-                   HB eqn2AGeneric, HB eqn2AaGeneric, HB eqn2AIGeneric,
-                   HB eqn3AGeneric, HB eqn3AaGeneric, HB eqn3AIGeneric]
+    let (n1,_,eqn1GL) = toSparseMatRed eqn1Generic 
+
+    let (n2,_,eqn2GL') = toSparseMatRed eqn2Generic
+    let eqn2GL = map (\((i, j), v) -> ((i + n1, j), v)) eqn2GL'
+    
+    let (n3,_,eqn3GL') = toSparseMatRed eqn3Generic
+    let eqn3GL = map (\((i, j), v) -> ((i + n1 + n2, j), v)) eqn3GL'
+    
+    let (n4,_,eqn1AGL') = toSparseMatRed eqn1AGeneric 
+    let eqn1AGL = map (\((i, j), v) -> ((i + n1 + n2 + n3, j), v)) eqn1AGL'
+ 
+    let (n5,_,eqn1AaGL') = toSparseMatRed eqn1AaGeneric 
+    let eqn1AaGL = map (\((i, j), v) -> ((i + n1 + n2 + n3 + n4, j), v)) eqn1AaGL'
+ 
+    let (n6,_,eqn1AIGL') = toSparseMatRed eqn1AIGeneric 
+    let eqn1AIGL = map (\((i, j), v) -> ((i + n1 + n2 + n3 + n4 + n5, j), v)) eqn1AIGL'
+
+    let (n7,_,eqn2AGL') = toSparseMatRed eqn2AGeneric 
+    let eqn2AGL = map (\((i, j), v) -> ((i + n1 + n2 + n3 + n4 + n5 + n6, j), v)) eqn2AGL'
+
+    let (n8,_,eqn2AaGL') = toSparseMatRed eqn2AaGeneric 
+    let eqn2AaGL = map (\((i, j), v) -> ((i + n1 + n2 + n3 + n4 + n5 + n6 + n7, j), v)) eqn2AaGL'
+
+    let (n9,_,eqn2AIGL') = toSparseMatRed eqn2AIGeneric 
+    let eqn2AIGL = map (\((i, j), v) -> ((i + n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8, j), v)) eqn2AIGL'
+
+    let (n10,_,eqn3AGL') = toSparseMatRed eqn3AGeneric 
+    let eqn3AGL = map (\((i, j), v) -> ((i + n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9, j), v)) eqn3AGL'
+
+    let (n11,_,eqn3AaGL') = toSparseMatRed eqn3AaGeneric 
+    let eqn3AaGL = map (\((i, j), v) -> ((i + n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10, j), v)) eqn3AaGL'
+
+    let (n12,_,eqn3AIGL') = toSparseMatRed eqn3AIGeneric
+    let eqn3AIGL = map (\((i, j), v) -> ((i + n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10 + n11, j), v)) eqn3AIGL'
+    
+    let totalEqnG = eqn1GL ++ eqn2GL ++ eqn3GL ++ eqn1AGL ++ eqn1AaGL ++ eqn1AIGL ++ eqn2AGL ++ eqn2AaGL ++ eqn2AIGL ++ eqn3AGL ++ eqn3AaGL ++eqn3AIGL 
+
+    {-
+    putStr $ unlines $ map (\((i, j), v) -> case denominator v of
+                                                  1 -> show i ++ " " ++ show j ++ " " ++ show (numerator v)
+                                                  _ -> undefined) totalEqnG
+    -}
+
+    let tensL = AppendTList eqn1Generic $ AppendTList eqn2Generic $ AppendTList eqn3Generic $
+                AppendTList eqn1AGeneric $ AppendTList eqn1AaGeneric $ AppendTList eqn1AIGeneric $  
+                AppendTList eqn2AGeneric $ AppendTList eqn2AaGeneric $ AppendTList eqn2AIGeneric $ 
+                AppendTList eqn3AGeneric $ AppendTList eqn3AaGeneric $ AppendTList eqn3AIGeneric EmptyTList 
+
+    let mat = toHMat' tensL
+    
+    print $ HMat.size mat 
+    

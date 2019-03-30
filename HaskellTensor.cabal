@@ -23,5 +23,5 @@ executable HaskellTensor
                        PerturbationTree2, Tensor2, TensorF, TensorInt, TensorTreeNumeric, TensorTreeNumeric2, TensorTreeIntCond, BinaryTree, TensorTreeNumeric3, PerturbationTree3, PerturbationTree4,
                        PerturbationTree5, PerturbationTree2_2, TensorTreeNumeric4, SymbolicTensor,
                        AnsatzMatrices, IntMatrices, DiffeoMatrices, VariousMatrices, Matrices, ScalarMatrices, ScalarEquations,
-                       Intertwiners, IntEquations, AnsatzEquations, DiffeoEquations, HList
+                       Intertwiners, IntEquations, AnsatzEquations, DiffeoEquations, HList, TensorTreeNumeric4_2 
   ghc-options:         -j -O2 -threaded -rtsopts -with-rtsopts=-N -funbox-strict-fields

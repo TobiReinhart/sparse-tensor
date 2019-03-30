@@ -591,7 +591,7 @@ module PerturbationTree2_3 (
                 restEpsL = tail epsL 
                 (finalForest, (_,_,_,finalMat)) = foldr (addOrDiscardEpsilon symL epsM evalM) rDat1 restEpsL 
 
-    --construct a tensor from the evaluated ansatz 
+    --construct a tensor from the evaluated ansatz -> (use sparse vectors ??)
 
 
     --trianglemaps converting from abstract indices to spacetime indices 

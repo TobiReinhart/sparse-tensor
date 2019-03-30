@@ -115,13 +115,13 @@ main = do
 
     let matL = toMatListRat tensL
     
-    print $ getHRank $ AppendTList generic4Ansatz $ AppendTList generic5Ansatz $ AppendTList generic6Ansatz $ AppendTList generic8Ansatz $
+    let ansMat = toMatListRat $ AppendTList generic4Ansatz $ AppendTList generic5Ansatz $ AppendTList generic6Ansatz $ AppendTList generic8Ansatz $
             AppendTList generic9Ansatz $ AppendTList generic10_1Ansatz $ AppendTList generic10_2Ansatz $ AppendTList generic11Ansatz $ AppendTList generic12Ansatz EmptyTList
 
-    {-
+    
     putStr $ unlines $ map (\((i, j), v) -> case denominator v of
                                                   1 -> show i ++ " " ++ show j ++ " " ++ show (numerator v)
-                                                  _ -> undefined) matL 
-    -}
+                                                  _ -> undefined) ansMat 
+    
 
     

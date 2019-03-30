@@ -23,6 +23,8 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 
+{-# LANGUAGE FunctionalDependencies #-}
+
 
 
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver   #-}
@@ -186,7 +188,7 @@ module TensorTreeNumeric4_2 (
         addS :: a -> a -> a 
         subS :: a -> a -> a
         scaleS :: Rational -> a -> a 
-        prodS :: forall a b c. (TScalar b, TScalar c) => a -> b -> c 
+        prodS :: (TScalar b, TScalar c) => a -> b -> c 
 
     class (Eq a, Ord a) => TIndex a where 
         indRange :: a -> Int 
@@ -291,7 +293,7 @@ module TensorTreeNumeric4_2 (
     fromListT [] = ZeroTensor
 
     insertOrAdd :: (TIndex k, TScalar v) => (IndList n k, v) -> Tensor n k v -> Tensor n k v 
-    insertOrAdd (Empty, a) (Scalar b) = Scalar (a &+ b)
+    insertOrAdd (Empty, a) (Scalar b) = Scalar (addS a b)
     insertOrAdd (Append x xs, a) (Tensor m) = Tensor $ M.insertWith (\_ o -> insertOrAdd (xs, a) o) x indTens m 
                 where
                     indTens = mkTens (xs, a)
@@ -310,8 +312,8 @@ module TensorTreeNumeric4_2 (
 
     infix 8 &. 
 
-    (&.) :: (TIndex k, TScalar v, Num s) => s -> Tensor n k v -> Tensor n k v 
-    (&.) scalar t = fmap (*scalar) t 
+    (&.) :: (TIndex k, TScalar v) => Rational -> Tensor n k v -> Tensor n k v 
+    (&.) scalar t = fmap (scaleS scalar) t 
 
     infixl 5 &- 
     
@@ -324,7 +326,7 @@ module TensorTreeNumeric4_2 (
 
     (&*) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor m k v -> Tensor (n+m) k v 
     (&*) (Scalar x) (Scalar y) = Scalar (prodS x y)
-    (&*) (Scalar x) t2 = x &. t2 
+    (&*) (Scalar x) t2 = fmap (prodS x) t2 
     (&*) (Tensor m) t2 = Tensor $ M.map (\t1 -> (&*) t1 t2) m 
     (&*) t1 ZeroTensor = ZeroTensor 
     (&*) ZeroTensor t2 = ZeroTensor 

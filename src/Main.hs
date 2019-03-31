@@ -20,9 +20,9 @@ import Data.Ratio
 
 main = do 
 
-        let evalMaps = map (\(x,y,z) -> x) areaList20Inds
+        let evalMaps = map (\(x,y,z) -> x) areaList14_1Inds
 
-        let (_,testAnsatz) = getEtaForest [1..20] filterList20 symList20 evalMaps  
+        let (_,testAnsatz) = getEtaForest [1..14] filterList14_1 symList14_1 evalMaps  
 
         print $ Sparse.toList testAnsatz 
 

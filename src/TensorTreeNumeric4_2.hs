@@ -39,7 +39,7 @@
 
  
 module TensorTreeNumeric4_2 (
-    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple,
+    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple, AnsVar,
     (&*), (&+), (&-), (&.), contrATens3, tensorTrans6, tensorTrans5,
     fromListT6, singletonInd, (+>), sortInd
     
@@ -1101,88 +1101,88 @@ module TensorTreeNumeric4_2 (
                                               (map fromEnum $ toList i7) ++ (map fromEnum $ toList i8)
 
 
-    --define vars for non numeric tensor computations -> Var represents the variables in the tensor ansätze
+    --define vars for non numeric tensor computations -> AnsVar represents the variables in the tensor ansätze
 
-    type Var = I.IntMap Rational 
+    type AnsVar = I.IntMap Rational 
 
-    instance TScalar Var where 
+    instance TScalar AnsVar where 
         addS = I.unionWith (+)
         subS v1 v2 = I.unionWith (+) v1 $ I.map ((*)(-1)) v2 
         scaleS s = I.map ((*) s) 
 
-    instance TAlgebra Rational Var where 
-        type TAlg Rational Var = Var 
+    instance TAlgebra Rational AnsVar where 
+        type TAlg Rational AnsVar = AnsVar 
         prodA = scaleS  
 
-    instance TAlgebra Var Rational where 
-        type TAlg Var Rational = Var 
+    instance TAlgebra AnsVar Rational where 
+        type TAlg AnsVar Rational = AnsVar 
         prodA = flip scaleS  
 
 
-    toListShowVar1 :: (TIndex k1) => AbsTensor1 n1 k1 Var -> [([Int], [(Int, Rational)])]
+    toListShowVar1 :: (TIndex k1) => AbsTensor1 n1 k1 AnsVar -> [([Int], [(Int, Rational)])]
     toListShowVar1 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
             where
                 l = toListShow1 t 
 
-    toListShowVar2 :: (TIndex k1) => AbsTensor2 n1 n2 k1 Var -> [([Int], [(Int, Rational)])]
+    toListShowVar2 :: (TIndex k1) => AbsTensor2 n1 n2 k1 AnsVar -> [([Int], [(Int, Rational)])]
     toListShowVar2 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
             where
                 l = toListShow2 t 
 
-    toListShowVar3 :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 Var -> [([Int], [(Int, Rational)])]
+    toListShowVar3 :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 AnsVar -> [([Int], [(Int, Rational)])]
     toListShowVar3 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
             where
                 l = toListShow3 t 
 
-    toListShowVar4 :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 Var -> [([Int], [(Int, Rational)])]
+    toListShowVar4 :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 AnsVar -> [([Int], [(Int, Rational)])]
     toListShowVar4 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
             where
                 l = toListShow4 t 
 
-    toListShowVar5 :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 Var -> [([Int], [(Int, Rational)])]
+    toListShowVar5 :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 AnsVar -> [([Int], [(Int, Rational)])]
     toListShowVar5 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
             where
                 l = toListShow5 t 
 
-    toListShowVar6 :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 Var -> [([Int], [(Int, Rational)])]
+    toListShowVar6 :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 AnsVar -> [([Int], [(Int, Rational)])]
     toListShowVar6 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
             where
                 l = toListShow6 t 
 
-    toListShowVar7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 Var -> [([Int], [(Int, Rational)])]
+    toListShowVar7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 AnsVar -> [([Int], [(Int, Rational)])]
     toListShowVar7 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
             where
                 l = toListShow7 t 
 
-    toListShowVar8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 Var -> [([Int], [(Int, Rational)])]
+    toListShowVar8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 AnsVar -> [([Int], [(Int, Rational)])]
     toListShowVar8 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
             where
                 l = toListShow8 t 
 
     --write the tensor dat into a matrix 
 
-    toMatList1' :: (TIndex k1) => AbsTensor1 n1 k1 Var -> [[(Int, Rational)]]
+    toMatList1' :: (TIndex k1) => AbsTensor1 n1 k1 AnsVar -> [[(Int, Rational)]]
     toMatList1' t = map snd $ toListShowVar1 t
 
-    toMatList2' :: (TIndex k1) => AbsTensor2 n1 n2 k1 Var -> [[(Int, Rational)]]
+    toMatList2' :: (TIndex k1) => AbsTensor2 n1 n2 k1 AnsVar -> [[(Int, Rational)]]
     toMatList2' t = map snd $ toListShowVar2 t
 
-    toMatList3' :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 Var -> [[(Int, Rational)]]
+    toMatList3' :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 AnsVar -> [[(Int, Rational)]]
     toMatList3' t = map snd $ toListShowVar3 t
 
-    toMatList4' :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 Var -> [[(Int, Rational)]]
+    toMatList4' :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 AnsVar -> [[(Int, Rational)]]
     toMatList4' t = map snd $ toListShowVar4 t
 
-    toMatList5' :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 Var -> [[(Int, Rational)]]
+    toMatList5' :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 AnsVar -> [[(Int, Rational)]]
     toMatList5' t = map snd $ toListShowVar5 t
 
-    toMatList6' :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 Var -> [[(Int, Rational)]]
+    toMatList6' :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 AnsVar -> [[(Int, Rational)]]
     toMatList6' t = map snd $ toListShowVar6 t
 
-    toMatList7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 Var -> [[(Int, Rational)]]
+    toMatList7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 AnsVar -> [[(Int, Rational)]]
     toMatList7' t = map snd $ toListShowVar7 t
 
-    toMatList8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 Var -> [[(Int, Rational)]]
+    toMatList8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 AnsVar -> [[(Int, Rational)]]
     toMatList8' t = map snd $ toListShowVar8 t
 
     normalize :: [(Int,Rational)] -> ([(Int,Rational)],Rational)
@@ -1255,7 +1255,7 @@ module TensorTreeNumeric4_2 (
     mapTensList8 f EmptyTList8 = [] 
     mapTensList8 f (AppendTList8 t l) = (f t) : (mapTensList8 f l)
 
-    toMatList1 :: (TIndex k1) => TensList1 k1 Var -> [((Int,Int),Rational)] 
+    toMatList1 :: (TIndex k1) => TensList1 k1 AnsVar -> [((Int,Int),Rational)] 
     toMatList1 t = l' 
         where
             matList = concat $ mapTensList1 toMatList1' t 
@@ -1263,7 +1263,7 @@ module TensorTreeNumeric4_2 (
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList2 :: (TIndex k1) => TensList2 k1 Var -> [((Int,Int),Rational)] 
+    toMatList2 :: (TIndex k1) => TensList2 k1 AnsVar -> [((Int,Int),Rational)] 
     toMatList2 t = l'
         where
             matList = concat $ mapTensList2 toMatList2' t 
@@ -1271,7 +1271,7 @@ module TensorTreeNumeric4_2 (
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 Var -> [((Int,Int),Rational)] 
+    toMatList3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 AnsVar -> [((Int,Int),Rational)] 
     toMatList3 t = l'
         where
             matList = concat $ mapTensList3 toMatList3' t 
@@ -1279,7 +1279,7 @@ module TensorTreeNumeric4_2 (
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 Var -> [((Int,Int),Rational)] 
+    toMatList4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 AnsVar -> [((Int,Int),Rational)] 
     toMatList4 t = l'
         where
             matList = concat $ mapTensList4 toMatList4' t 
@@ -1287,7 +1287,7 @@ module TensorTreeNumeric4_2 (
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 Var -> [((Int,Int),Rational)] 
+    toMatList5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 AnsVar -> [((Int,Int),Rational)] 
     toMatList5 t = l' 
         where
             matList = concat $ mapTensList5 toMatList5' t 
@@ -1295,7 +1295,7 @@ module TensorTreeNumeric4_2 (
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 Var -> [((Int,Int),Rational)] 
+    toMatList6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 AnsVar -> [((Int,Int),Rational)] 
     toMatList6 t = l'
         where
             matList = concat $ mapTensList6 toMatList6' t 
@@ -1303,7 +1303,7 @@ module TensorTreeNumeric4_2 (
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 Var -> [((Int,Int),Rational)] 
+    toMatList7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 AnsVar -> [((Int,Int),Rational)] 
     toMatList7 t = l'
         where
             matList = concat $ mapTensList7 toMatList7' t 
@@ -1311,7 +1311,7 @@ module TensorTreeNumeric4_2 (
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 Var -> [((Int,Int),Rational)] 
+    toMatList8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 AnsVar -> [((Int,Int),Rational)] 
     toMatList8 t = l'
         where
             matList = concat $ mapTensList8 toMatList8' t 
@@ -1321,55 +1321,55 @@ module TensorTreeNumeric4_2 (
 
     --convert to hmatrix format 
 
-    toHMatrix1 :: (TIndex k1) => TensList1 k1 Var -> HMat.Matrix Double 
+    toHMatrix1 :: (TIndex k1) => TensList1 k1 AnsVar -> HMat.Matrix Double 
     toHMatrix1 tList =  HMat.toDense l'
             where
                 l = toMatList1 tList
                 l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
 
-    toHMatrix2 :: (TIndex k1) => TensList2 k1 Var -> HMat.Matrix Double 
+    toHMatrix2 :: (TIndex k1) => TensList2 k1 AnsVar -> HMat.Matrix Double 
     toHMatrix2 tList =  HMat.toDense l'
             where
                 l = toMatList2 tList
                 l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
 
-    toHMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 Var -> HMat.Matrix Double 
+    toHMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 AnsVar -> HMat.Matrix Double 
     toHMatrix3 tList =  HMat.toDense l'
             where
                 l = toMatList3 tList
                 l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
             
-    toHMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 Var -> HMat.Matrix Double 
+    toHMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 AnsVar -> HMat.Matrix Double 
     toHMatrix4 tList =  HMat.toDense l'
             where
                 l = toMatList4 tList
                 l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
 
-    toHMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 Var -> HMat.Matrix Double 
+    toHMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 AnsVar -> HMat.Matrix Double 
     toHMatrix5 tList =  HMat.toDense l'
             where
                 l = toMatList5 tList
                 l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
 
-    toHMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 Var -> HMat.Matrix Double 
+    toHMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 AnsVar -> HMat.Matrix Double 
     toHMatrix6 tList =  HMat.toDense l'
             where
                 l = toMatList6 tList
                 l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
 
-    toHMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 Var -> HMat.Matrix Double 
+    toHMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 AnsVar -> HMat.Matrix Double 
     toHMatrix7 tList =  HMat.toDense l'
             where
                 l = toMatList7 tList
                 l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
 
-    toHMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 Var -> HMat.Matrix Double 
+    toHMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 AnsVar -> HMat.Matrix Double 
     toHMatrix8 tList =  HMat.toDense l'
             where
                 l = toMatList8 tList
                 l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
 
-    toEMatrix1 :: (TIndex k1) => TensList1 k1 Var -> Sparse.SparseMatrixXd
+    toEMatrix1 :: (TIndex k1) => TensList1 k1 AnsVar -> Sparse.SparseMatrixXd
     toEMatrix1 tList =  Sparse.fromList n m l'
             where
                 l = toMatList1 tList
@@ -1377,7 +1377,7 @@ module TensorTreeNumeric4_2 (
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix2 :: (TIndex k1) => TensList2 k1 Var -> Sparse.SparseMatrixXd
+    toEMatrix2 :: (TIndex k1) => TensList2 k1 AnsVar -> Sparse.SparseMatrixXd
     toEMatrix2 tList =  Sparse.fromList n m l'
             where
                 l = toMatList2 tList
@@ -1385,7 +1385,7 @@ module TensorTreeNumeric4_2 (
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 Var -> Sparse.SparseMatrixXd
+    toEMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 AnsVar -> Sparse.SparseMatrixXd
     toEMatrix3 tList =  Sparse.fromList n m l'
             where
                 l = toMatList3 tList
@@ -1393,7 +1393,7 @@ module TensorTreeNumeric4_2 (
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
             
-    toEMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 Var -> Sparse.SparseMatrixXd 
+    toEMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 AnsVar -> Sparse.SparseMatrixXd 
     toEMatrix4 tList =  Sparse.fromList n m l'
             where
                 l = toMatList4 tList
@@ -1401,7 +1401,7 @@ module TensorTreeNumeric4_2 (
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 Var -> Sparse.SparseMatrixXd 
+    toEMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 AnsVar -> Sparse.SparseMatrixXd 
     toEMatrix5 tList =  Sparse.fromList n m l'
             where
                 l = toMatList5 tList
@@ -1409,7 +1409,7 @@ module TensorTreeNumeric4_2 (
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 Var -> Sparse.SparseMatrixXd 
+    toEMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 AnsVar -> Sparse.SparseMatrixXd 
     toEMatrix6 tList =  Sparse.fromList n m l'
             where
                 l = toMatList6 tList
@@ -1417,7 +1417,7 @@ module TensorTreeNumeric4_2 (
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 Var -> Sparse.SparseMatrixXd 
+    toEMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 AnsVar -> Sparse.SparseMatrixXd 
     toEMatrix7 tList =  Sparse.fromList n m l'
             where
                 l = toMatList7 tList
@@ -1425,7 +1425,7 @@ module TensorTreeNumeric4_2 (
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 Var -> Sparse.SparseMatrixXd 
+    toEMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 AnsVar -> Sparse.SparseMatrixXd 
     toEMatrix8 tList =  Sparse.fromList n m l'
             where
                 l = toMatList8 tList
@@ -1466,14 +1466,14 @@ module TensorTreeNumeric4_2 (
 
     type IndTuple n1 n2 n3 n4 n5 n6 = (IndList n1 Ind20, IndList n2 Ind20 , IndList n3 Ind9, IndList n4 Ind9, IndList n5 Ind3, IndList n6 Ind3)
 
-    type TList = TensList6 Ind20 Ind9 Ind3 Var 
+    type TList = TensList6 Ind20 Ind9 Ind3 AnsVar 
 
     infixr 5 &>
 
-    (&>) :: ATens n1 n2 n3 n4 n5 n6 Var -> TList -> TList  
+    (&>) :: ATens n1 n2 n3 n4 n5 n6 AnsVar -> TList -> TList  
     (&>) t l = AppendTList6 t l 
 
-    singletonTList :: ATens n1 n2 n3 n4 n5 n6 Var -> TList
+    singletonTList :: ATens n1 n2 n3 n4 n5 n6 AnsVar -> TList
     singletonTList t = t &> EmptyTList6
 
 

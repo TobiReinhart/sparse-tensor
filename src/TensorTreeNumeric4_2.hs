@@ -39,8 +39,9 @@
 
  
 module TensorTreeNumeric4_2 (
-    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens,
-    fromListT6, singletonInd, (+>)
+    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple,
+    (&*), (&+), (&-), (&.), contrATens3, tensorTrans6, tensorTrans5,
+    fromListT6, singletonInd, (+>), sortInd
     
 ) where
 
@@ -516,6 +517,34 @@ module TensorTreeNumeric4_2 (
 
     mapTo8 :: (v1 -> v2) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v1 -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v2 
     mapTo8 f = fmap (fmap (fmap (fmap (fmap (fmap (fmap (fmap f)))))))
+
+    --transpose a general absatract tensor 
+
+    tensorTrans1 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
+    tensorTrans1 = tensorTrans 
+
+    tensorTrans2 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    tensorTrans2 inds = mapTo1 (tensorTrans inds) 
+
+    tensorTrans3 :: (TIndex k1, TIndex k2, TScalar v) => (Int,Int) -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    tensorTrans3 inds = mapTo2 (tensorTrans inds) 
+
+    tensorTrans4 :: (TIndex k1, TIndex k2, TScalar v) => (Int,Int) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    tensorTrans4 inds = mapTo3 (tensorTrans inds) 
+
+    tensorTrans5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    tensorTrans5 inds = mapTo4 (tensorTrans inds)
+    
+    tensorTrans6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    tensorTrans6 inds = mapTo5 (tensorTrans inds)
+
+    tensorTrans7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    tensorTrans7 inds = mapTo6 (tensorTrans inds)
+
+    tensorTrans8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    tensorTrans8 inds = mapTo7 (tensorTrans inds)
+
+
 
 
     --in total these functions allow to build the symmetrizer and contraction functions for generic tensors 

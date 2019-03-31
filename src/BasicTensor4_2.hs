@@ -124,3 +124,70 @@ module BasicTensor4_2 (
             where
                 s = areaSign (Append a (Append b (Append c (Append d Empty))))
                 [[a',b'],[c',d']] = sort $ map sort [[a,b],[c,d]]
+
+    interI2 :: ATens 0 0 1 0 0 2 Rational
+    interI2 = fromListT6 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                trian2 = trianMap2 
+                inds = [ (Empty, Empty, (singletonInd $ Ind9 a), Empty, Empty, (Append (Ind3 b) $ singletonInd $ Ind3 c)) | a <- [0..9], b <- [0..3], c <- [0..3]]
+                f (_, _, ind1, _, _, ind2)
+                    | ind1 == ((M.!) trian2 $ sortInd ind2 ) = 1 
+                    | otherwise = 0 
+
+    interJ2 :: ATens 0 0 0 1 2 0 Rational
+    interJ2 = fromListT6 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                trian2 = trianMap2
+                inds = [ (Empty, Empty, Empty, (singletonInd $ Ind9 a), (Append (Ind3 b) $ singletonInd $ Ind3 c), Empty) | a <- [0..9], b <- [0..3], c <- [0..3]]
+                f (_, _, _, ind1, ind2, _)
+                    | ind1 == ((M.!) trian2 $ sortInd ind2 ) = jMult2 ind2  
+                    | otherwise = 0 
+
+    interIArea :: ATens 1 0 0 0 0 4  Rational
+    interIArea = fromListT6 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                trianArea = trianMapArea
+                inds = [ ((singletonInd $ Ind20 a), Empty, Empty, Empty, Empty, (Append (Ind3 b) $ Append (Ind3 c) $ Append (Ind3 d) $ singletonInd $ Ind3 e)) | a <- [0..20], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], not (b == c || d == e)]
+                f (ind1, _, _, _, _, ind2)
+                    | ind1 == ((M.!) trianArea indArea) = s
+                    | otherwise = 0
+                        where
+                            (indArea, s) = canonicalizeArea ind2 
+
+    interJArea :: ATens 0 1 0 0 4 0 Rational
+    interJArea = fromListT6 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                trianArea = trianMapArea
+                inds = [  (Empty, (singletonInd $ Ind20 a), Empty, Empty, (Append (Ind3 b) $ Append (Ind3 c) $ Append (Ind3 d) $ singletonInd $ Ind3 e), Empty) | a <- [0..20], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], not (b == c || d == e)]
+                f (_, ind1, _, _, ind2, _)
+                    | ind1 == ((M.!) trianArea indArea) = s * (jMultArea indArea)
+                    | otherwise = 0
+                        where
+                            (indArea, s) = canonicalizeArea ind2 
+
+    interMetric :: ATens 0 0 1 1 1 1 Rational
+    interMetric = (-2) &. (contrATens3 (0,0) $ interI2 &* interJ2 )
+
+    interArea :: ATens 1 1 0 0 1 1 Rational
+    interArea = (-4) &. (contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ interIArea &* interJArea)
+
+    interEqn2 :: ATens 1 1 0 0 2 2 Rational
+    interEqn2 = int1 &- int2
+            where
+                int1 = interArea &* delta3
+                int2 = (tensorTrans6 (0,1) $ delta3 &* delta3 ) &* delta20
+
+    interEqn3 :: ATens 1 1 1 1 1 1 Rational
+    interEqn3 = int1 &+ int2 
+            where
+                int1 = interArea &* delta9
+                int2 = interMetric &* delta20
+
+    interEqn4 :: ATens 1 1 0 1 3 1 Rational
+    interEqn4 = block1 &- block2 
+            where
+                block1' = interJ2 &* interArea
+                block1 = block1' &+ (tensorTrans5 (1,2) block1') 
+                block2 = delta20 &* delta3 &* interJ2
+
+

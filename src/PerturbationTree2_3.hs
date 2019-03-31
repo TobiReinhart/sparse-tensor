@@ -21,6 +21,7 @@
 
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
+--slower but hopefully less memory usage than 2_2 version
 
 module PerturbationTree2_3 (
     getEtaForest, getEpsForest, areaList10_1Inds, symList10_1, filterList10_1, areaList14_1Inds, symList14_1, filterList14_1, areaList12Inds, filterList12, symList12, areaList20Inds, symList20, filterList20
@@ -784,7 +785,7 @@ module PerturbationTree2_3 (
     --order 5 
  
     areaList20Inds ::  [(I.IntMap Int, Int, [IndTuple 5 0 0 0 0 0])]
-    areaList20Inds = mkEvalMap 10 list
+    areaList20Inds = mkEvalMap 20 list
           where 
               trian2 = trianMap2
               trianArea = trianMapArea

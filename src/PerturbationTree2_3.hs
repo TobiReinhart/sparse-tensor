@@ -774,6 +774,8 @@ module PerturbationTree2_3 (
                 tens = tensEta &+ tensEps
                 ansEps = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEta)) ansEps'
 
+    --maybe use numeric etas from the very beginning ?? 
+
     -------------------------------------------------------------------------------------------------------
 
     --the second way to evaluate a given Ansatz is by reducing only algebraically an later on reducing th ematrix numerically 

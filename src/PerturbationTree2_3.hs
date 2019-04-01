@@ -568,7 +568,7 @@ module PerturbationTree2_3 (
             
     checkNumericLinDep :: RankData -> Maybe Sparse.SparseMatrixXd -> Maybe RankData 
     checkNumericLinDep (lastMat, lastMatInv, lastFullMat) (Just newVec) 
-                | abs(newDet') < 1*10^(-10) = Nothing
+                | abs(newDet') < 1e-15 = Nothing
                 | otherwise = Just (newMat, newInv, newAnsatzMat)
                  where
                     newVecTrans = Sparse.transpose newVec 
@@ -580,7 +580,7 @@ module PerturbationTree2_3 (
                     newDet = (scalarVal - newDetPart2Val)
                     newDet' = newDet / scalarVal
                     newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar 
-                    newInv = Sparse.pruned (1*10^(-16)) $ Sparse.fromMatrix $ Mat.inverse $ Sparse.toMatrix newMat
+                    newInv = Sparse.pruned 1e-15 $ Sparse.fromMatrix $ Mat.inverse $ Sparse.toMatrix newMat
                     newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
     checkNumericLinDep (lastMat, lastMatInv, lastFullMat) Nothing = Nothing 
 
@@ -633,7 +633,7 @@ module PerturbationTree2_3 (
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
                                             newMat = Sparse.mul newVec' newVecTrans
-                                            newMatInv = Sparse.pruned (1*10^(-16)) $ Sparse.fromMatrix $ Mat.inverse $ Sparse.toMatrix newMat
+                                            newMatInv = Sparse.pruned 1e-15 $ Sparse.fromMatrix $ Mat.inverse $ Sparse.toMatrix newMat
 
 
     mk1stRankDataEpsilon :: Symmetry -> [(Epsilon,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankData,[(Epsilon,[Eta])])
@@ -648,7 +648,7 @@ module PerturbationTree2_3 (
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
                                             newMat = Sparse.mul newVec' newVecTrans
-                                            newMatInv = Sparse.pruned (1*10^(-16)) $ Sparse.fromMatrix $ Mat.inverse $ Sparse.toMatrix newMat
+                                            newMatInv = Sparse.pruned 1e-15 $ Sparse.fromMatrix $ Mat.inverse $ Sparse.toMatrix newMat
 
     --finally reduce the ansatzList 
 

@@ -22,7 +22,7 @@ import Data.Ratio
 
 main = do 
 
-       let (etaAns20, epsAns20, tens) = mkAnsatzTensorFast 20 filterList20 symPairs20 areaBlocks20 symList20 areaList20IndsEta areaList20IndsEps
+       let (etaAns20, epsAns20, tens) = mkAnsatzTensor 20 filterList20 symPairs20 areaBlocks20 symList20 areaList20IndsEta areaList20IndsEps
 
        print $ getForestLabels etaAns20
 

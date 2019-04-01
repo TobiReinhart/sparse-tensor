@@ -580,7 +580,7 @@ module PerturbationTree2_3 (
                     newDet = (scalarVal - newDetPart2Val)
                     newDet' = newDet / scalarVal
                     newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar 
-                    newInv = Mat.inverse  newMat
+                    newInv = Mat.inverse newMat
                     newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
     checkNumericLinDep (lastMat, lastMatInv, lastFullMat) Nothing = Nothing 
 
@@ -588,8 +588,8 @@ module PerturbationTree2_3 (
     concatBlockMat :: Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd 
     concatBlockMat a b c d = newMat 
                 where
-                   newUpper = (Mat.toList a) ++ (Mat.toList b)
-                   newLower = (Mat.toList c) ++ (Mat.toList d)
+                   newUpper = zipWith (++) (Mat.toList a) (Mat.toList b)
+                   newLower = zipWith (++) (Mat.toList c) (Mat.toList d)
                    newMat = Mat.fromList $ newUpper ++ newLower 
 
 

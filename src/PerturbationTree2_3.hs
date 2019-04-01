@@ -561,7 +561,7 @@ module PerturbationTree2_3 (
     
     --function returns: (newMatA, newMatAInv, newfullMat)
 
-    type RankData = (Sparse.SparseMatrixXd, Sparse.SparseMatrixXd, Sparse.SparseMatrixXd)
+    type RankData = (Mat.MatrixXd, Mat.MatrixXd, Sparse.SparseMatrixXd)
 
     getVarNr :: RankData -> Int 
     getVarNr (_,_,ans) = Sparse.rows ans
@@ -572,25 +572,25 @@ module PerturbationTree2_3 (
                 | otherwise = Just (newMat, newInv, newAnsatzMat)
                  where
                     newVecTrans = Sparse.transpose newVec 
-                    scalar = Sparse.mul newVec newVecTrans
-                    scalarVal = (Sparse.!) scalar (0,0)
-                    prodBlock = Sparse.mul lastFullMat newVecTrans
-                    prodBlockTrans = Sparse.transpose prodBlock
-                    newDetPart2Val = (Sparse.!) (Sparse.mul prodBlockTrans $ Sparse.mul lastMatInv prodBlock) (0,0) 
+                    scalar = Sparse.toMatrix $ Sparse.mul newVec newVecTrans
+                    scalarVal = (Mat.!) scalar (0,0)
+                    prodBlock = Sparse.toMatrix $ Sparse.mul lastFullMat newVecTrans
+                    prodBlockTrans = Mat.transpose prodBlock
+                    newDetPart2Val = (Mat.!) (Mat.mul prodBlockTrans $ Mat.mul lastMatInv prodBlock) (0,0) 
                     newDet = (scalarVal - newDetPart2Val)
                     newDet' = newDet / scalarVal
                     newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar 
-                    newInv = Sparse.pruned 1e-15 $ Sparse.fromMatrix $ Mat.inverse $ Sparse.toMatrix newMat
+                    newInv = Mat.inverse  newMat
                     newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
     checkNumericLinDep (lastMat, lastMatInv, lastFullMat) Nothing = Nothing 
 
     
-    concatBlockMat :: Sparse.SparseMatrixXd -> Sparse.SparseMatrixXd -> Sparse.SparseMatrixXd -> Sparse.SparseMatrixXd -> Sparse.SparseMatrixXd 
+    concatBlockMat :: Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd 
     concatBlockMat a b c d = newMat 
                 where
-                    newUpper = Sparse.fromCols $ (Sparse.getCols a) ++ (Sparse.getCols b)
-                    newLower = Sparse.fromCols $ (Sparse.getCols c) ++ (Sparse.getCols d)
-                    newMat = Sparse.fromRows $ (Sparse.getRows newUpper) ++ (Sparse.getRows newLower)
+                   newUpper = (Mat.toList a) ++ (Mat.toList b)
+                   newLower = (Mat.toList c) ++ (Mat.toList d)
+                   newMat = Mat.fromList $ newUpper ++ newLower 
 
 
     addOrDiscardEta :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> [Eta] -> (AnsatzForestEta, RankData) -> (AnsatzForestEta, RankData)
@@ -632,8 +632,8 @@ module PerturbationTree2_3 (
                                     Just newVec'    -> (newAns, (newMat, newMatInv, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
-                                            newMat = Sparse.mul newVec' newVecTrans
-                                            newMatInv = Sparse.pruned 1e-15 $ Sparse.fromMatrix $ Mat.inverse $ Sparse.toMatrix newMat
+                                            newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
+                                            newMatInv = Mat.inverse newMat
 
 
     mk1stRankDataEpsilon :: Symmetry -> [(Epsilon,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankData,[(Epsilon,[Eta])])
@@ -647,8 +647,8 @@ module PerturbationTree2_3 (
                                     Just newVec'    -> (newAns,(newMat, newMatInv, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
-                                            newMat = Sparse.mul newVec' newVecTrans
-                                            newMatInv = Sparse.pruned 1e-15 $ Sparse.fromMatrix $ Mat.inverse $ Sparse.toMatrix newMat
+                                            newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
+                                            newMatInv = Mat.inverse newMat
 
     --finally reduce the ansatzList 
 

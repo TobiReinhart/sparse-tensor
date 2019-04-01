@@ -190,11 +190,11 @@ module PerturbationTree2_3 (
     relabelVar :: (Int -> Int) -> Var -> Var
     relabelVar f (Var i j) = Var i (f j)
 
-    relabelAnsatzForest :: AnsatzForestEta -> AnsatzForestEta
-    relabelAnsatzForest ans = mapVars update ans
+    relabelAnsatzForest :: Int -> AnsatzForestEta -> AnsatzForestEta
+    relabelAnsatzForest i ans = mapVars update ans
             where
                 vars = getForestLabels ans 
-                relabMap = I.fromList $ zip vars [1..]
+                relabMap = I.fromList $ zip vars [i..]
                 update = relabelVar ((I.!) relabMap) 
 
     removeVarsEta :: [Int] -> AnsatzForestEta -> AnsatzForestEta 
@@ -204,11 +204,11 @@ module PerturbationTree2_3 (
     removeVarsEta vars (ForestEta m) = ForestEta $ M.filter (/= EmptyForest) $ M.map (removeVarsEta vars) m  
     removeVarsEta vars EmptyForest = EmptyForest
 
-    relabelAnsatzForestEpsilon :: AnsatzForestEpsilon -> AnsatzForestEpsilon
-    relabelAnsatzForestEpsilon ans =  mapVarsEpsilon update ans
+    relabelAnsatzForestEpsilon :: Int -> AnsatzForestEpsilon -> AnsatzForestEpsilon
+    relabelAnsatzForestEpsilon i ans =  mapVarsEpsilon update ans
             where
                 vars = getForestLabelsEpsilon ans 
-                relabMap = I.fromList $ zip vars [1..]
+                relabMap = I.fromList $ zip vars [i..]
                 update = relabelVar ((I.!) relabMap) 
 
     removeVarsEps :: [Int] -> AnsatzForestEpsilon -> AnsatzForestEpsilon
@@ -568,7 +568,7 @@ module PerturbationTree2_3 (
             
     checkNumericLinDep :: RankData -> Maybe Sparse.SparseMatrixXd -> Maybe RankData 
     checkNumericLinDep (lastMat, lastMatInv, lastFullMat) (Just newVec) 
-                | abs(newDet') < 1e-15 = Nothing
+                | abs(newDet') < 1e-5 = Nothing
                 | otherwise = Just (newMat, newInv, newAnsatzMat)
                  where
                     newVecTrans = Sparse.transpose newVec 
@@ -734,14 +734,14 @@ module PerturbationTree2_3 (
     mkAllVars = map (Var 1) [1..]
 
     getEtaForestFast :: [Int] -> [(Int,Int)] -> Symmetry -> AnsatzForestEta
-    getEtaForestFast inds filters syms = relabelAnsatzForest $ reduceAnsatzEta' syms allForests
+    getEtaForestFast inds filters syms = relabelAnsatzForest 1 $ reduceAnsatzEta' syms allForests
                 where
                     allInds = getEtaInds inds filters
                     allVars = mkAllVars
                     allForests = zipWith mkEtaList' allVars allInds
 
     getEpsForestFast :: [Int] -> [(Int,Int)] -> Symmetry -> AnsatzForestEpsilon
-    getEpsForestFast inds filters syms = relabelAnsatzForestEpsilon $ reduceAnsatzEpsilon' syms allForests
+    getEpsForestFast inds filters syms = relabelAnsatzForestEpsilon 1 $ reduceAnsatzEpsilon' syms allForests
                 where
                     allInds = getEpsilonInds inds filters
                     allVars = mkAllVars
@@ -838,8 +838,8 @@ module PerturbationTree2_3 (
                 allEpsVars = getForestLabelsEpsilon ansEpsilon
                 remVarsEta =  allEtaVars \\ etaVars
                 remVarsEps = allEpsVars \\ epsVars
-                newEtaAns = removeVarsEta remVarsEta ansEta
-                newEpsAns = removeVarsEps remVarsEps ansEpsilon
+                newEtaAns = relabelAnsatzForest 1 $ removeVarsEta remVarsEta ansEta
+                newEpsAns = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels newEtaAns)) $ removeVarsEps remVarsEps ansEpsilon
 
     getTensor :: M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> AnsatzForestEta -> AnsatzForestEpsilon -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
     getTensor epsM evalMs ansEta ansEpsilon = (ansEta', ansEps', fromListT6 tInds) 

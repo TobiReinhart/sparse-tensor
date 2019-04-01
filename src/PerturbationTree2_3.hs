@@ -24,7 +24,7 @@
 --slower but hopefully less memory usage than 2_2 version
 
 module PerturbationTree2_3 (
-    mkAnsatzTensor, mkAnsatzTensorFast, getForestLabels, getForestLabelsEpsilon, getFullForest,
+    mkAnsatzTensor, mkAnsatzTensorFast, getForestLabels, getForestLabelsEpsilon, getFullForest, getEtaInds, getEpsilonInds, getEpsilonIndsRed,
     areaList4Inds, areaList6Inds, areaList8Inds, areaList10_1Inds, areaList10_2Inds, areaList12Inds, areaList12_1Inds, areaList14_1Inds, areaList14_2Inds,
     areaList16_1Inds, areaList16_2Inds, areaList16Inds, areaList18Inds, areaList18_2Inds, areaList18_3Inds, areaList20Inds, 
     symList4, symList6, symList8, symList10_1, symList10_2, symList12, symList12_1, symList14_1, symList14_2, symList16, symList16_1, symList16_2,
@@ -105,17 +105,17 @@ module PerturbationTree2_3 (
 
     --1) symmetric indices (e.g from higher derivatives) cannot constitute epsilon indices 
 
-    isSubList :: [Int] -> [Int] -> Bool 
-    isSubList [] j = True 
-    isSubList (x:xs) j = if elem x j then isSubList xs j else False 
-
     filterSymInds :: [[Int]] -> [[Int]] -> [[Int]]
     filterSymInds symInds l = filter (filterF symInds) l 
             where
                 filterF [] l' = True
-                filterF (x:xs) l' 
-                    | isSubList x l' = False
+                filterF ([x,y]:xs) l' 
+                    | isEpsInd i j = False
                     | otherwise = filterF xs l' 
+                        where 
+                            (i',j') = (fromJust $ elemIndex x l', fromJust $ elemIndex y l')
+                            (i,j) = (min i' j', max i' j') 
+
 
     --2) block sym pairs of are metric symmetry cannot be connected to epsilon in 2 indices and one eta in the other 2 indices
 
@@ -589,7 +589,7 @@ module PerturbationTree2_3 (
                 mkAns (i,j) = let ansVal = eval1AnsatzForestEta epsM j f 
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
-                l = runEval $ parListChunk 250 rdeepseq l'
+                l = runEval $ parListChunk 500 rdeepseq l'
                 n = length evalM  
                 vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n l
                 
@@ -601,7 +601,7 @@ module PerturbationTree2_3 (
                 mkAns (i,j) = let ansVal = eval1AnsatzForestEpsilon epsM j f 
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
-                l = runEval $ parListChunk 250 rdeepseq l'
+                l = runEval $ parListChunk 500 rdeepseq l'
                 n = length evalM  
                 vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n l
                 
@@ -818,13 +818,13 @@ module PerturbationTree2_3 (
     evalAllTensorEta epsM evalMs f = l'
                 where
                     l = map (\(x,y,z) -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
-                    l' = runEval $ parListChunk 250 rdeepseq l
+                    l' = runEval $ parListChunk 500 rdeepseq l
 
     evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Int)],Int,a)]
     evalAllTensorEpsilon epsM evalMs f = l'
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
-                    l' = runEval $ parListChunk 250 rdeepseq l
+                    l' = runEval $ parListChunk 500 rdeepseq l
 
     --remove duplicates of the list
 
@@ -840,7 +840,7 @@ module PerturbationTree2_3 (
     reduceAnsList l =  getUniques n l''
         where
             l' = mapMaybe (scaleEqn . normalizeEqn) l
-            l'' = runEval $ parListChunk 250 rdeepseq l'
+            l'' = runEval $ parListChunk 500 rdeepseq l'
             n = length l' 
 
     normalizeEqn :: ([(Int, Int)], Int, a) -> Maybe ([(Int, Rational)], Rational)
@@ -863,7 +863,7 @@ module PerturbationTree2_3 (
             where
                 s = I.fromList $ zip iDeps [fstVar..]
                 l' = map (rmDepVars s) l
-                l'' = runEval $ parListChunk 250 rdeepseq l'
+                l'' = runEval $ parListChunk 500 rdeepseq l'
                 lRed = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) l''
 
     getPivots :: [[(Int, Int)]] -> [Int]

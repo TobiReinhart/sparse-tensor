@@ -863,7 +863,7 @@ module PerturbationTree2_3 (
             where
                 s = I.fromList $ zip iDeps [fstVar..]
                 l' = map (rmDepVars s) l
-                l'' = runEval $ parListChunk 1000 rdeepseq l'
+                l'' = runEval $ parListChunk 200 rdeepseq l'
                 lRed = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) l''
 
     getPivots :: [[(Int, Int)]] -> [Int]

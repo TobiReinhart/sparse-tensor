@@ -22,7 +22,7 @@ main = do
 
        let evalM14_1 = areaList14_1Inds 
 
-       let (etaAns14_1, epsAns14_1,_) = mkAnsatzTensor 14 filterList14_1 symList14_1 evalM14_1 
+       let (etaAns14_1, epsAns14_1,_) = mkAnsatzTensorFast 14 filterList14_1 symList14_1 evalM14_1 
 
        let etaVars = getForestLabels etaAns14_1 
 

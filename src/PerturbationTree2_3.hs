@@ -539,7 +539,7 @@ module PerturbationTree2_3 (
                 mkAns (i,j) = let ansVal = eval1AnsatzForestEta epsM j f 
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
-                l = runEval $ parListChunk 5000 rdeepseq l'
+                l = runEval $ parListChunk 1000 rdeepseq l'
                 n = length evalM  
                 vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n l
                 
@@ -551,7 +551,7 @@ module PerturbationTree2_3 (
                 mkAns (i,j) = let ansVal = eval1AnsatzForestEpsilon epsM j f 
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
-                l = runEval $ parListChunk 5000 rdeepseq l'
+                l = runEval $ parListChunk 1000 rdeepseq l'
                 n = length evalM  
                 vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n l
                 

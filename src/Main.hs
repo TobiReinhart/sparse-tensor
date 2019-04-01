@@ -20,5 +20,18 @@ import Data.Ratio
 
 main = do 
 
-       print 1
+       let evalM14_1 = areaList14_1Inds 
+
+       let (etaAns14_1, epsAns14_1,_) = mkAnsatzTensor 14 filterList14_1 symList14_1 evalM14_1 
+
+       let etaVars = getForestLabels etaAns14_1 
+
+       let epsVars = getForestLabelsEpsilon epsAns14_1 
+
+       print etaVars
+
+       print epsVars
+
+       print $ (length etaVars, length epsVars)
+
     

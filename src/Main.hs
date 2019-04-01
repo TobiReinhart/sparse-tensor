@@ -13,6 +13,8 @@ import qualified Data.Eigen.SparseMatrix as Sparse
 
 import qualified Numeric.LinearAlgebra.Data as HMat
 import qualified Numeric.LinearAlgebra as HLin 
+
+import qualified Data.IntMap.Strict as I
  
 
 import Data.Ratio
@@ -20,18 +22,16 @@ import Data.Ratio
 
 main = do 
 
-       let evalM14_1 = areaList14_1Inds 
+       let (etaAns14_1, epsAns14_1, tens) = mkAnsatzTensorFast 14 filterList14_1 symPairs14_1 areaBlocks14_1 symList14_1 areaList14_1IndsEta areaList14_1IndsEps
 
-       let (etaAns14_1, epsAns14_1,_) = mkAnsatzTensor 14 filterList14_1 symList14_1 evalM14_1
+       print $ getForestLabels etaAns14_1
 
-       let etaVars = getForestLabels etaAns14_1 
+       print $ getForestLabelsEpsilon epsAns14_1 
 
-       let epsVars = getForestLabelsEpsilon epsAns14_1 
+       
 
-       print etaVars
+      
 
-       print epsVars
 
-       print $ (length etaVars, length epsVars)
 
     

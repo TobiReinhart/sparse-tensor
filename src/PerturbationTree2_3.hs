@@ -589,7 +589,7 @@ module PerturbationTree2_3 (
                 mkAns (i,j) = let ansVal = eval1AnsatzForestEta epsM j f 
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
-                l = runEval $ parListChunk 5000 rdeepseq l'
+                l = runEval $ parListChunk 250 rdeepseq l'
                 n = length evalM  
                 vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n l
                 
@@ -601,7 +601,7 @@ module PerturbationTree2_3 (
                 mkAns (i,j) = let ansVal = eval1AnsatzForestEpsilon epsM j f 
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
-                l = runEval $ parListChunk 5000 rdeepseq l'
+                l = runEval $ parListChunk 250 rdeepseq l'
                 n = length evalM  
                 vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n l
                 
@@ -818,13 +818,13 @@ module PerturbationTree2_3 (
     evalAllTensorEta epsM evalMs f = l'
                 where
                     l = map (\(x,y,z) -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
-                    l' = runEval $ parListChunk 1000 rdeepseq l
+                    l' = runEval $ parListChunk 250 rdeepseq l
 
     evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Int)],Int,a)]
     evalAllTensorEpsilon epsM evalMs f = l'
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
-                    l' = runEval $ parListChunk 1000 rdeepseq l
+                    l' = runEval $ parListChunk 250 rdeepseq l
 
     --remove duplicates of the list
 
@@ -840,7 +840,7 @@ module PerturbationTree2_3 (
     reduceAnsList l =  getUniques n l''
         where
             l' = mapMaybe (scaleEqn . normalizeEqn) l
-            l'' = runEval $ parListChunk 1000 rdeepseq l'
+            l'' = runEval $ parListChunk 250 rdeepseq l'
             n = length l' 
 
     normalizeEqn :: ([(Int, Int)], Int, a) -> Maybe ([(Int, Rational)], Rational)
@@ -863,7 +863,7 @@ module PerturbationTree2_3 (
             where
                 s = I.fromList $ zip iDeps [fstVar..]
                 l' = map (rmDepVars s) l
-                l'' = runEval $ parListChunk 200 rdeepseq l'
+                l'' = runEval $ parListChunk 250 rdeepseq l'
                 lRed = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) l''
 
     getPivots :: [[(Int, Int)]] -> [Int]

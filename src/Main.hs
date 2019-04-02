@@ -28,21 +28,10 @@ main = do
 
        --print $ getForestLabelsEpsilon epsAns20
 
-       let etaL = map (\(x,y,z) -> x) areaList12IndsEta
+       let (a,b,c) = mkAnsatzTensor 14 filterList14_2 symPairs14_2 areaBlocks14_2 symList14_2 areaList14_2IndsEta areaList14_2IndsEps
 
-       let epsL = map (\(x,y,z) -> x) areaList12IndsEps
-
-       let (_, _, etaMat, epsMat) = getFullForest [1..12] filterList12 symPairs12 areaBlocks12 symList12 etaL epsL
-
-       let (_, _, etaMat2, epsMat2) = getFullForestSym [1..12] filterList12 symPairs12 areaBlocks12 symList12 etaL epsL
-
-       print $ Sparse.transpose epsMat
-
-       print $ Sparse.transpose epsMat2
-
-       print $ Sparse.transpose etaMat
-
-       print $ Sparse.transpose etaMat2
+       print $ getForestLabels a
+       print $ getForestLabelsEpsilon b
 
        
        

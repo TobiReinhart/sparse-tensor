@@ -39,7 +39,7 @@ module PerturbationTree2_3 (
     symPairs18, symPairs18_2, symPairs18_3, symPairs20,
     areaBlocks4, areaBlocks6, areaBlocks8, areaBlocks10_1, areaBlocks10_2, areaBlocks12, areaBlocks12_1, areaBlocks14_1, areaBlocks14_2,
     areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20,
-    canonicalizeEvalMaps, getFullForestSym
+    canonicalizeEvalMaps
 
     
 ) where
@@ -591,10 +591,9 @@ module PerturbationTree2_3 (
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
                 l = runEval $ parListChunk 500 rdeepseq l'
-                maxVal = maximum $ map (\(x,y,z) -> z) l  
-                lNormed = map (\(x,y,z) -> (x,y, fromRational $ z/maxVal)) l
-                n = length evalM  
-                vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n lNormed
+                n = length evalM
+                vecList = let vec = Sparse.fromList 1 n l in
+                          if l == [] then Nothing else Just vec
                 
 
     evalAnsatzEpsilonVecList :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe (Sparse.SparseMatrixXd)  
@@ -605,12 +604,29 @@ module PerturbationTree2_3 (
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
                 l = runEval $ parListChunk 500 rdeepseq l'
-                maxVal = maximum $ map (\(x,y,z) -> z) l  
-                lNormed = map (\(x,y,z) -> (x,y, fromRational $ z/maxVal)) l
-                n = length evalM  
-                vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n lNormed
-                
-    --the next step is to check whether a given Ansatz is elemment of the span of the previos ansätze and therefore can be discarded 
+                n = length evalM
+                vecList = let vec = Sparse.fromList 1 n l in
+                                    if l == [] then Nothing else Just vec
+
+    evalAllTensorEta :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> [([(Int,Int)],Int,a)]
+    evalAllTensorEta epsM evalMs f = l'
+                where
+                    l = map (\(x,y,z) -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
+                    l' = runEval $ parListChunk 500 rdeepseq l
+
+    evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Int)],Int,a)]
+    evalAllTensorEpsilon epsM evalMs f = l'
+                where
+                    l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
+                    l' = runEval $ parListChunk 500 rdeepseq l
+
+    --------------------------------------------------------------------------------------------------------------------------------
+
+    --now there are two ways how we can proceed
+
+    --1) the memory optimised way, constructing a lin indep tree from the very beginning
+
+    --the first step is to check whether a given Ansatz is elemment of the span of the previos ansätze and therefore can be discarded 
 
     --function takes as arguments: current determinant of upper left block, current upper left block, the corresponding matrix inverse, current Sparse Ansatz Matrix, new Ansatz rowVector (stored as a sparse matrix)
     
@@ -627,10 +643,10 @@ module PerturbationTree2_3 (
             
     checkNumericLinDep :: RankData -> Maybe Sparse.SparseMatrixXd -> Maybe RankData 
     checkNumericLinDep (lastMat, lastMatInv, lastFullMat) (Just newVec) 
-                | abs(newDet) < (sizeScale^2 * 1e-8) = Nothing
+                | abs(newDet) < (sizeScale * 1e-5) = Nothing
                 | otherwise = Just (newMat, newInv, newAnsatzMat)
                  where
-                    sizeScale = fromIntegral $  Sparse.cols newVec 
+                    sizeScale = fromIntegral $ Sparse.cols newVec 
                     newVecTrans = Sparse.transpose newVec 
                     scalar = Sparse.toMatrix $ Sparse.mul newVec newVecTrans
                     scalarVal = (Mat.!) scalar (0,0)
@@ -722,17 +738,10 @@ module PerturbationTree2_3 (
                                             newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
                                             newMatInv = Mat.inverse newMat
 
-    --finally reduce the ansatzList 
+    --finally reduce the ansatzList  
 
     reduceAnsatzEta :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
-    reduceAnsatzEta symL etaL evalM = (finalForest, finalMat)
-            where
-                epsM = epsMap
-                (ans1,rDat1,restEtaL) = mk1stRankDataEta symL etaL epsM evalM
-                (finalForest, (_,_,finalMat)) = foldr (addOrDiscardEta symL epsM evalM) (ans1,rDat1) restEtaL 
-
-    reduceAnsatzEtaSym :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
-    reduceAnsatzEtaSym symL etaL evalM' = (finalForest, finalMat)
+    reduceAnsatzEta symL etaL evalM' = (finalForest, finalMat)
             where
                 evalM = canonicalizeEvalMaps symL evalM'  
                 epsM = epsMap
@@ -740,14 +749,7 @@ module PerturbationTree2_3 (
                 (finalForest, (_,_,finalMat)) = foldr (addOrDiscardEta symL epsM evalM) (ans1,rDat1) restEtaL 
 
     reduceAnsatzEpsilon :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
-    reduceAnsatzEpsilon symL epsL evalM = (finalForest, finalMat)
-            where
-                epsM = epsMap
-                (ans1,rDat1,restEpsL) = mk1stRankDataEpsilon symL epsL epsM evalM
-                (finalForest, (_,_,finalMat)) = foldr (addOrDiscardEpsilon symL epsM evalM) (ans1,rDat1) restEpsL 
-
-    reduceAnsatzEpsilonSym :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
-    reduceAnsatzEpsilonSym symL epsL evalM' = (finalForest, finalMat)
+    reduceAnsatzEpsilon symL epsL evalM' = (finalForest, finalMat)
             where
                 evalM = canonicalizeEvalMaps symL evalM'
                 epsM = epsMap
@@ -760,20 +762,8 @@ module PerturbationTree2_3 (
                 allInds = getEtaInds inds filters 
                 allEtaLists = map mkEtaList allInds
 
-    getEtaForestSym :: [Int] -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
-    getEtaForestSym inds filters sym evalMs = reduceAnsatzEtaSym sym allEtaLists evalMs
-            where
-                allInds = getEtaInds inds filters 
-                allEtaLists = map mkEtaList allInds
-            
     getEpsForest :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]]  -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     getEpsForest inds filters symPairInds areaBlockInds sym evalMs = reduceAnsatzEpsilon sym allEpsLists evalMs
-            where
-                allInds = getEpsilonIndsRed inds filters symPairInds areaBlockInds 
-                allEpsLists = map mkEpsilonList allInds
-
-    getEpsForestSym :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]]  -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
-    getEpsForestSym inds filters symPairInds areaBlockInds sym evalMs = reduceAnsatzEpsilonSym sym allEpsLists evalMs
             where
                 allInds = getEpsilonIndsRed inds filters symPairInds areaBlockInds 
                 allEpsLists = map mkEpsilonList allInds
@@ -782,29 +772,22 @@ module PerturbationTree2_3 (
     getFullForest inds filters symPairInds areaBlockInds sym evalMEta evalMEps = (etaAns, epsAns, etaMat, epsMat)
             where
                 (etaAns,etaMat) = getEtaForest inds filters sym evalMEta 
-                (epsAns,epsMat) = getEpsForest inds filters symPairInds areaBlockInds sym evalMEps
+                (epsAns',epsMat) = getEpsForest inds filters symPairInds areaBlockInds sym evalMEps
+                epsAns = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels etaAns)) epsAns'
 
-    getFullForestSym :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon, Sparse.SparseMatrixXd, Sparse.SparseMatrixXd)
-    getFullForestSym inds filters symPairInds areaBlockInds sym evalMEta evalMEps = (etaAns, epsAns, etaMat, epsMat)
-            where
-                (etaAns,etaMat) = getEtaForestSym inds filters sym evalMEta 
-                (epsAns,epsMat) = getEpsForestSym inds filters symPairInds areaBlockInds sym evalMEps
 
-    --symmetrized vrsion uses lorentzSymmetry but currently does not compute all values needed for the tensor 
+    --finally we can evaluated the final ansatz trees to the ansatz tensor 
 
-    getVarsfromMat :: Sparse.SparseMatrixXd -> [AnsVar] 
-    getVarsfromMat mat = map mkVar cols
-            where
-                cols = map Sparse.toList $ Sparse.getCols mat
-                mkVar l = I.fromList $ map (\(x,y,z) -> (x+1,toRational z)) l 
-
-    mkTensfromMat :: Sparse.SparseMatrixXd ->  [(Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> ATens n1 n2 n3 n4 n5 n6 AnsVar
-    mkTensfromMat mat indList = fromListT6 assocsList
-            where
-                varList = getVarsfromMat mat 
-                assocsList' = zipWith (\(x,y) z -> (y, I.map ((*) $ fromIntegral x) z)) indList varList 
-                assocsList = concat $ map (\(l,val) -> zip l (repeat val)) assocsList'
-
+    evalToTens ::  M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> AnsatzForestEta -> AnsatzForestEpsilon -> ATens n1 n2 n3 n4 n5 n6 AnsVar 
+    evalToTens epsM evalEta evalEps ansEta ansEps = (fromListT6 etaRmL) &+ (fromListT6 epsRmL)
+                where 
+                    etaL = evalAllTensorEta epsM evalEta ansEta 
+                    epsL = evalAllTensorEpsilon epsM evalEps ansEps 
+                    etaL' = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) etaL
+                    epsL' = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) epsL
+                    etaRmL = filter (\(_,b) -> b /= I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) etaL'
+                    epsRmL = filter (\(_,b) -> b /= I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) epsL'
+    
     mkAnsatzTensor :: Int -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
     mkAnsatzTensor ord filters symPairInds areaBlockInds symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
             where
@@ -813,17 +796,12 @@ module PerturbationTree2_3 (
                 evalMapsEps = map (\(x,y,z) -> x) evalMEps  
                 indListEta = map (\(x,y,z) -> (y,z)) evalMEta
                 indListEps = map (\(x,y,z) -> (y,z)) evalMEps
-                (ansEta, ansEps', ansMatEta, ansMatEps) = getFullForest [1..ord] filters symPairInds areaBlockInds symmetries evalMapsEta evalMapsEps
-                tensEta = mkTensfromMat ansMatEta indListEta 
-                tensEps = mkTensfromMat ansMatEps indListEps
-                tens = tensEta &+ tensEps
-                ansEps = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEta)) ansEps'
-
-    --maybe use numeric etas from the very beginning ?? 
+                (ansEta, ansEps, _, _) = getFullForest [1..ord] filters symPairInds areaBlockInds symmetries evalMapsEta evalMapsEps
+                tens = evalToTens epsM evalMEta evalMEps ansEta ansEps 
 
     -------------------------------------------------------------------------------------------------------
 
-    --the second way to evaluate a given Ansatz is by reducing only algebraically an later on reducing th ematrix numerically 
+    --the second way to evaluate a given Ansatz is by reducing only algebraically and later on reducing the matrix numerically 
 
     mkEtaList' :: Var -> [Int] -> ([Eta],Var)
     mkEtaList' var l = (mkEtaList l, var)
@@ -843,7 +821,6 @@ module PerturbationTree2_3 (
             where
                 addOrRem' = \(x,y,z) f -> if (isElemEpsilon (x,y) f) then f else addForestsEpsilon f (symAnsatzForestEps sym $ mkForestFromAscListEpsilon (x,y,z))
 
-
     mkAllVars :: [Var] 
     mkAllVars = map (Var 1) [1..]
 
@@ -861,19 +838,7 @@ module PerturbationTree2_3 (
                     allVars = mkAllVars
                     allForests = zipWith mkEpsilonList' allVars allInds
 
-    evalAllTensorEta :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> [([(Int,Int)],Int,a)]
-    evalAllTensorEta epsM evalMs f = l'
-                where
-                    l = map (\(x,y,z) -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
-                    l' = runEval $ parListChunk 500 rdeepseq l
-
-    evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Int)],Int,a)]
-    evalAllTensorEpsilon epsM evalMs f = l'
-                where
-                    l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
-                    l' = runEval $ parListChunk 500 rdeepseq l
-
-    --remove duplicates of the list
+    --remove duplicates of evaluated the list
 
     getUniques :: (Eq a, Hashable a) => Int -> [a] -> [a]
     getUniques maxSize elements = runST $
@@ -935,8 +900,8 @@ module PerturbationTree2_3 (
                         l'' = map (\(a,b,c) -> (a-1, b-1, fromIntegral c)) l'
                         m = maximum $ map fst $ concat l 
 
-    getTensorInds :: M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> AnsatzForestEta -> AnsatzForestEpsilon -> (AnsatzForestEta, AnsatzForestEpsilon, [(IndTuple n1 n2 n3 n4 n5 n6, AnsVar)])
-    getTensorInds epsM evalMEta evalMEps ansEta ansEpsilon = (newEtaAns, newEpsAns, filter (\(_,b) -> b /= I.empty) $ zipWith (\(a,b) (c,d) -> ( if a == c then a else undefined, I.unionWith (+) b d)) etaRmL epsRmL)
+    getTensorInds :: M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> AnsatzForestEta -> AnsatzForestEpsilon -> (AnsatzForestEta, AnsatzForestEpsilon, [(IndTuple n1 n2 n3 n4 n5 n6, AnsVar)], [(IndTuple n1 n2 n3 n4 n5 n6, AnsVar)])
+    getTensorInds epsM evalMEta evalMEps ansEta ansEpsilon = (newEtaAns, newEpsAns, etaRmL, epsRmL)
             where
                 etaL = evalAllTensorEta epsM evalMEta ansEta 
                 epsL = evalAllTensorEpsilon epsM evalMEps ansEpsilon
@@ -946,8 +911,8 @@ module PerturbationTree2_3 (
                 epsVars = getPivots epsLRed 
                 etaRmL' = rmDepVarsTensList 1 etaVars etaL 
                 epsRmL' = rmDepVarsTensList (1 + length etaVars) epsVars epsL 
-                etaRmL = concat $ map (\(x,y) -> zip x (repeat y)) etaRmL'
-                epsRmL = concat $ map (\(x,y) -> zip x (repeat y)) epsRmL'
+                etaRmL = filter (\(_,b) -> b /= I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) etaRmL'
+                epsRmL = filter (\(_,b) -> b /= I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) epsRmL'
                 allEtaVars = getForestLabels ansEta
                 allEpsVars = getForestLabelsEpsilon ansEpsilon
                 remVarsEta =  allEtaVars \\ etaVars
@@ -956,9 +921,9 @@ module PerturbationTree2_3 (
                 newEpsAns = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels newEtaAns)) $ removeVarsEps remVarsEps ansEpsilon
 
     getTensor :: M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> AnsatzForestEta -> AnsatzForestEpsilon -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
-    getTensor epsM evalMEta evalMEps ansEta ansEpsilon = (ansEta', ansEps', fromListT6 tInds) 
+    getTensor epsM evalMEta evalMEps ansEta ansEpsilon = (ansEta', ansEps', (fromListT6 tIndsEta) &+ (fromListT6 tIndsEps)) 
                 where
-                    (ansEta', ansEps', tInds) =  getTensorInds epsM evalMEta evalMEps ansEta ansEpsilon 
+                    (ansEta', ansEps', tIndsEta, tIndsEps) =  getTensorInds epsM evalMEta evalMEps ansEta ansEpsilon 
 
 
     mkAnsatzTensorFast :: Int -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
@@ -969,8 +934,9 @@ module PerturbationTree2_3 (
                 ansEpsilon = getEpsForestFast [1..ord] filters symPairInds areaBlocks symmetries  
 
     
-    --construct a tensor from the evaluated ansatz -> (use sparse vectors ??)
+    -----------------------------------------------------------------------------------------------------------------------------------------
 
+    --finally the list for the evaluation 
 
     --trianglemaps converting from abstract indices to spacetime indices 
 
@@ -1600,6 +1566,10 @@ module PerturbationTree2_3 (
     symList20 :: Symmetry  
     symList20 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18),(19,20)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16]),([17,18],[19,20])], [], 
                 [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]])
+
+    --------------------------------------------------------------------------------------------------------------------------------------
+
+    --and the function that reduce the lists by making use of lorentzinvariance
  
     --using lorentz invariance we can actually evaluate much less and still check linear deps 
 

@@ -38,7 +38,8 @@ module PerturbationTree2_3 (
     symPairs4, symPairs6, symPairs8, symPairs10_1, symPairs10_2, symPairs12, symPairs12_1, symPairs14_1, symPairs14_2, symPairs16, symPairs16_1, symPairs16_2,
     symPairs18, symPairs18_2, symPairs18_3, symPairs20,
     areaBlocks4, areaBlocks6, areaBlocks8, areaBlocks10_1, areaBlocks10_2, areaBlocks12, areaBlocks12_1, areaBlocks14_1, areaBlocks14_2,
-    areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20
+    areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20,
+    canonicalizeEvalMaps, getFullForestSym
 
     
 ) where
@@ -590,9 +591,8 @@ module PerturbationTree2_3 (
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
                 l = runEval $ parListChunk 500 rdeepseq l'
-                lVals =  map (\(x,y,z) -> z) l 
-                lNorm = sum $ zipWith (*) lVals lVals 
-                lNormed = map (\(x,y,z) -> (x,y, fromRational $ z%lNorm)) l
+                maxVal = maximum $ map (\(x,y,z) -> z) l  
+                lNormed = map (\(x,y,z) -> (x,y, fromRational $ z/maxVal)) l
                 n = length evalM  
                 vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n lNormed
                 
@@ -605,9 +605,8 @@ module PerturbationTree2_3 (
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
                 l = runEval $ parListChunk 500 rdeepseq l'
-                lVals =  map (\(x,y,z) -> z) l 
-                lNorm = sum $ zipWith (*) lVals lVals 
-                lNormed = map (\(x,y,z) -> (x,y, fromRational $ z%lNorm)) l
+                maxVal = maximum $ map (\(x,y,z) -> z) l  
+                lNormed = map (\(x,y,z) -> (x,y, fromRational $ z/maxVal)) l
                 n = length evalM  
                 vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n lNormed
                 
@@ -628,9 +627,10 @@ module PerturbationTree2_3 (
             
     checkNumericLinDep :: RankData -> Maybe Sparse.SparseMatrixXd -> Maybe RankData 
     checkNumericLinDep (lastMat, lastMatInv, lastFullMat) (Just newVec) 
-                | abs(newDet) < 1e-10 = Nothing
+                | abs(newDet) < (sizeScale^2 * 1e-8) = Nothing
                 | otherwise = Just (newMat, newInv, newAnsatzMat)
                  where
+                    sizeScale = fromIntegral $  Sparse.cols newVec 
                     newVecTrans = Sparse.transpose newVec 
                     scalar = Sparse.toMatrix $ Sparse.mul newVec newVecTrans
                     scalarVal = (Mat.!) scalar (0,0)
@@ -731,6 +731,14 @@ module PerturbationTree2_3 (
                 (ans1,rDat1,restEtaL) = mk1stRankDataEta symL etaL epsM evalM
                 (finalForest, (_,_,finalMat)) = foldr (addOrDiscardEta symL epsM evalM) (ans1,rDat1) restEtaL 
 
+    reduceAnsatzEtaSym :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
+    reduceAnsatzEtaSym symL etaL evalM' = (finalForest, finalMat)
+            where
+                evalM = canonicalizeEvalMaps symL evalM'  
+                epsM = epsMap
+                (ans1,rDat1,restEtaL) = mk1stRankDataEta symL etaL epsM evalM
+                (finalForest, (_,_,finalMat)) = foldr (addOrDiscardEta symL epsM evalM) (ans1,rDat1) restEtaL 
+
     reduceAnsatzEpsilon :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     reduceAnsatzEpsilon symL epsL evalM = (finalForest, finalMat)
             where
@@ -738,8 +746,22 @@ module PerturbationTree2_3 (
                 (ans1,rDat1,restEpsL) = mk1stRankDataEpsilon symL epsL epsM evalM
                 (finalForest, (_,_,finalMat)) = foldr (addOrDiscardEpsilon symL epsM evalM) (ans1,rDat1) restEpsL 
 
+    reduceAnsatzEpsilonSym :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
+    reduceAnsatzEpsilonSym symL epsL evalM' = (finalForest, finalMat)
+            where
+                evalM = canonicalizeEvalMaps symL evalM'
+                epsM = epsMap
+                (ans1,rDat1,restEpsL) = mk1stRankDataEpsilon symL epsL epsM evalM
+                (finalForest, (_,_,finalMat)) = foldr (addOrDiscardEpsilon symL epsM evalM) (ans1,rDat1) restEpsL 
+
     getEtaForest :: [Int] -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
     getEtaForest inds filters sym evalMs = reduceAnsatzEta sym allEtaLists evalMs
+            where
+                allInds = getEtaInds inds filters 
+                allEtaLists = map mkEtaList allInds
+
+    getEtaForestSym :: [Int] -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
+    getEtaForestSym inds filters sym evalMs = reduceAnsatzEtaSym sym allEtaLists evalMs
             where
                 allInds = getEtaInds inds filters 
                 allEtaLists = map mkEtaList allInds
@@ -750,11 +772,25 @@ module PerturbationTree2_3 (
                 allInds = getEpsilonIndsRed inds filters symPairInds areaBlockInds 
                 allEpsLists = map mkEpsilonList allInds
 
+    getEpsForestSym :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]]  -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
+    getEpsForestSym inds filters symPairInds areaBlockInds sym evalMs = reduceAnsatzEpsilonSym sym allEpsLists evalMs
+            where
+                allInds = getEpsilonIndsRed inds filters symPairInds areaBlockInds 
+                allEpsLists = map mkEpsilonList allInds
+
     getFullForest :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon, Sparse.SparseMatrixXd, Sparse.SparseMatrixXd)
     getFullForest inds filters symPairInds areaBlockInds sym evalMEta evalMEps = (etaAns, epsAns, etaMat, epsMat)
             where
                 (etaAns,etaMat) = getEtaForest inds filters sym evalMEta 
                 (epsAns,epsMat) = getEpsForest inds filters symPairInds areaBlockInds sym evalMEps
+
+    getFullForestSym :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon, Sparse.SparseMatrixXd, Sparse.SparseMatrixXd)
+    getFullForestSym inds filters symPairInds areaBlockInds sym evalMEta evalMEps = (etaAns, epsAns, etaMat, epsMat)
+            where
+                (etaAns,etaMat) = getEtaForestSym inds filters sym evalMEta 
+                (epsAns,epsMat) = getEpsForestSym inds filters symPairInds areaBlockInds sym evalMEps
+
+    --symmetrized vrsion uses lorentzSymmetry but currently does not compute all values needed for the tensor 
 
     getVarsfromMat :: Sparse.SparseMatrixXd -> [AnsVar] 
     getVarsfromMat mat = map mkVar cols
@@ -1565,4 +1601,101 @@ module PerturbationTree2_3 (
     symList20 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18),(19,20)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16]),([17,18],[19,20])], [], 
                 [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]])
  
+    --using lorentz invariance we can actually evaluate much less and still check linear deps 
+
+    --due to the lorentz symmetry of the basis tensors we can relabel coordinate axes and end up with the same value 
+
+    --therefore it suffices to evaluate one representative out of every orbit that is generated under coordinate relabeling
+
+    getSyms :: Symmetry -> ([[[Int]]],[[Int]],[[Int]])
+    getSyms (pairs,aPairs,blocks,cs,blockCs) = (b,a,d)
+                where
+                    d = map (\(a,b) -> [a,b]) pairs 
+                    a' = filter (\x -> 2 == (length $ fst x)) blocks 
+                    a = map (\(a,b) -> a ++ b) $ filter (\x -> elem (head $ fst x, (fst x) !! 1) aPairs) a'
+                    block' = map (\(x,y) -> [x,y]) $ blocks \\ a' 
+                    b = block' ++ blockCs
+
+    canonicalizeArea' :: [Int] -> I.IntMap Int -> I.IntMap Int 
+    canonicalizeArea' [a,b,c,d] iMap = foldr (\(x,y) m -> I.adjust (const x) y m) iMap updateList
+            where 
+                [a',b',c',d'] = map ((I.!) iMap) [a,b,c,d] 
+                [[a'',b''],[c'',d'']] = sort $ map sort [[a',b'],[c',d']]
+                updateList = zip [a'',b'',c'',d''] [a,b,c,d]
+
+    canonicalizeArea :: [[Int]] -> I.IntMap Int -> I.IntMap Int 
+    canonicalizeArea inds iMap = foldr canonicalizeArea' iMap inds 
+
+    canonicalizeDer' :: [Int] -> I.IntMap Int -> I.IntMap Int 
+    canonicalizeDer' [p,q] iMap = foldr (\(x,y) m -> I.adjust (const x) y m) iMap updateList
+            where 
+                [p',q'] = map ((I.!) iMap) [p,q] 
+                [p'',q''] = sort [p',q']
+                updateList = zip [p'',q''] [p,q]
+
+    canonicalizeDer :: [[Int]] -> I.IntMap Int -> I.IntMap Int 
+    canonicalizeDer inds iMap = foldr canonicalizeDer' iMap inds 
+
+    canonicalizeBlocks' :: [[Int]] -> I.IntMap Int -> I.IntMap Int 
+    canonicalizeBlocks' blocks iMap = foldr (\(x,y) m -> I.adjust (const x) y m) iMap updateList
+            where  
+                vals = map (map ((I.!) iMap)) blocks  
+                vals' = sort vals 
+                updateList = zip (concat vals') (concat blocks)
+
+    canonicalizeBlocks :: [[[Int]]] -> I.IntMap Int -> I.IntMap Int 
+    canonicalizeBlocks inds iMap = foldr canonicalizeBlocks' iMap inds 
+
+    canonicalizeIndsMap :: [[[Int]]] -> [[Int]] -> [[Int]] -> I.IntMap Int -> I.IntMap Int 
+    canonicalizeIndsMap blocks areaInds derInds iMap = canonicalizeBlocks blocks $ canonicalizeArea areaInds $ canonicalizeDer derInds iMap 
+    
+    canonicalizeInds :: [[[Int]]] -> [[Int]] -> [[Int]] -> [Int] -> [Int]
+    canonicalizeInds blocks areaInds derInds inds = I.elems $ canonicalizeIndsMap blocks areaInds derInds $ I.fromList $ zip [1..length inds] inds
+                
+    --the next step is creating all possible relabelings of coordinate axes 
+
+    getInds :: I.IntMap Int -> [Int]
+    getInds iMap = nub $ I.elems iMap 
+
+    --if an Ansatz eval List has only 2 different indices we can lable them either [0,1] or [1,0], 3 indices are labeled [0,1,2], .. all permutations, and so on 
+    
+    getAllIndListsMap :: I.IntMap Int -> [I.IntMap Int]
+    getAllIndListsMap iMap = map (\x -> I.map ((I.!) x) iMap) allSwaps
+             where 
+                inds = getInds iMap 
+                n = length inds
+                allSwaps = zipWith (\x y -> I.fromList $ zip x y) (repeat inds) $ permutations [0..n-1]
+
+    getAllIndListsList :: [Int] -> [[Int]] 
+    getAllIndListsList l = map I.elems $ getAllIndListsMap $ I.fromList $ zip [1..length l] l 
+
+    filterMins :: [[Int]] -> [[Int]]
+    filterMins l = map fst $ filter (\x -> n == snd x) l' 
+            where
+                l' = zip l $ map sum l 
+                n = minimum $ map snd l' 
+
+    canonicalizeIndList :: [[[Int]]] -> [[Int]] -> [[Int]] -> I.IntMap Int -> I.IntMap Int 
+    canonicalizeIndList blocks areaInds derInds iMap = I.fromList $ zip [1..I.size iMap] canonicL
+            where 
+                iIndsL = map I.elems $ getAllIndListsMap iMap 
+                iIndsL' = filterMins iIndsL 
+                canonicL' = nub $ map (canonicalizeInds blocks areaInds derInds) iIndsL'
+                canonicL = head $ sort canonicL' 
+                
+    canonicalizeIndListL :: [[[Int]]] -> [[Int]] -> [[Int]] -> [Int] -> [Int] 
+    canonicalizeIndListL blocks areaInds derInds iL = canonicL
+            where 
+                iIndsL = getAllIndListsList iL 
+                iIndsL' = filterMins iIndsL 
+                canonicL' = nub $ map (canonicalizeInds blocks areaInds derInds) iIndsL' 
+                canonicL = head $ sort canonicL'
+
+    canonicalizeEvalMaps :: Symmetry -> [I.IntMap Int] -> [I.IntMap Int]
+    canonicalizeEvalMaps sym iMaps = nub $ map (canonicalizeIndList blocks areaInds derInds) iMaps 
+            where 
+                (blocks, areaInds, derInds) = getSyms sym 
+    
+
+
     

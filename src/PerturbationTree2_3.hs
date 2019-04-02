@@ -590,8 +590,11 @@ module PerturbationTree2_3 (
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
                 l = runEval $ parListChunk 500 rdeepseq l'
+                lVals =  map (\(x,y,z) -> z) l 
+                lNorm = sum $ zipWith (*) lVals lVals 
+                lNormed = map (\(x,y,z) -> (x,y, fromRational $ z%lNorm)) l
                 n = length evalM  
-                vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n l
+                vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n lNormed
                 
 
     evalAnsatzEpsilonVecList :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe (Sparse.SparseMatrixXd)  
@@ -602,8 +605,11 @@ module PerturbationTree2_3 (
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
                 l = runEval $ parListChunk 500 rdeepseq l'
+                lVals =  map (\(x,y,z) -> z) l 
+                lNorm = sum $ zipWith (*) lVals lVals 
+                lNormed = map (\(x,y,z) -> (x,y, fromRational $ z%lNorm)) l
                 n = length evalM  
-                vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n l
+                vecList = if l == [] then Nothing else Just $ Sparse.fromList 1 n lNormed
                 
     --the next step is to check whether a given Ansatz is elemment of the span of the previos ansätze and therefore can be discarded 
 
@@ -615,10 +621,14 @@ module PerturbationTree2_3 (
 
     getVarNr :: RankData -> Int 
     getVarNr (_,_,ans) = Sparse.rows ans
+
+    --what is a good numerical zero for the determinant
+
+    --the problem is probably that the matrix grows too fast ? -> normalize matrix w.r.t scalarVal ??
             
     checkNumericLinDep :: RankData -> Maybe Sparse.SparseMatrixXd -> Maybe RankData 
     checkNumericLinDep (lastMat, lastMatInv, lastFullMat) (Just newVec) 
-                | abs(newDet') < 1e-5 = Nothing
+                | abs(newDet) < 1e-16 = Nothing
                 | otherwise = Just (newMat, newInv, newAnsatzMat)
                  where
                     newVecTrans = Sparse.transpose newVec 
@@ -628,7 +638,6 @@ module PerturbationTree2_3 (
                     prodBlockTrans = Mat.transpose prodBlock
                     newDetPart2Val = (Mat.!) (Mat.mul prodBlockTrans $ Mat.mul lastMatInv prodBlock) (0,0) 
                     newDet = (scalarVal - newDetPart2Val)
-                    newDet' = newDet / scalarVal
                     newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar 
                     newInv = specialBlockInverse lastMatInv prodBlock prodBlockTrans (1/newDet)
                     newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]

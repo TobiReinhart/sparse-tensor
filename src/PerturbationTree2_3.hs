@@ -24,7 +24,7 @@
 --slower but hopefully less memory usage than 2_2 version
 
 module PerturbationTree2_3 (
-    mkAnsatzTensor, mkAnsatzTensorDebug, mkAnsatzTensorEigen, mkAnsatzTensorFast, getForestLabels, getForestLabelsEpsilon, getFullForest, getEtaInds, getEpsilonInds, getEpsilonIndsRed,
+    mkAnsatzTensor, mkAnsatzTensorAlg, mkAnsatzTensorDebug, mkAnsatzTensorEigen, mkAnsatzTensorHMat, mkAnsatzTensorFast, getForestLabels, getForestLabelsEpsilon, getFullForest, getEtaInds, getEpsilonInds, getEpsilonIndsRed,
     areaList4Inds, areaList6Inds, areaList8Inds, areaList10_1Inds, areaList10_2Inds, areaList12Inds, areaList12_1Inds, areaList14_1Inds, areaList14_2Inds,
     areaList16_1Inds, areaList16_2Inds, areaList16Inds, areaList18Inds, areaList18_2Inds, areaList18_3Inds, areaList20Inds, 
     symList4, symList6, symList8, symList10_1, symList10_2, symList12, symList12_1, symList14_1, symList14_2, symList16, symList16_1, symList16_2,
@@ -65,6 +65,11 @@ module PerturbationTree2_3 (
 
     import Data.Ratio
 
+    import qualified Numeric.LinearAlgebra.Data as HMat
+    import qualified Numeric.LinearAlgebra as HLin 
+
+    import qualified Numeric.Matrix as BMat 
+ 
 
     getAllIndsEta :: [Int] -> [[Int]]
     getAllIndsEta [a,b] = [[a,b]]
@@ -583,6 +588,13 @@ module PerturbationTree2_3 (
 
     --eval a given ansatz to a sparse Matrix (a row vector) -> Eigen Indices start at 0 !!
 
+    evalAnsatzEtaAlgVecList :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEta ->  BMat.Matrix Rational 
+    evalAnsatzEtaAlgVecList epsM evalM f  = vec
+            where
+                l' = map (\x -> fromIntegral $ eval1AnsatzForestEta epsM x f) evalM
+                l = runEval $ parListChunk 500 rdeepseq l'
+                vec = BMat.fromList [l]
+                
     evalAnsatzEtaVecList :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEta -> Maybe (Sparse.SparseMatrixXd) 
     evalAnsatzEtaVecList epsM evalM f  = vecList
             where
@@ -598,7 +610,13 @@ module PerturbationTree2_3 (
                 n = length evalM
                 vecList = let vec = Sparse.fromList 1 n l in
                           if l == [] then Nothing else Just $ Sparse.scale (1/max) vec
-                
+
+    evalAnsatzEpsAlgVecList :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon ->  BMat.Matrix Rational 
+    evalAnsatzEpsAlgVecList epsM evalM f  = vec
+            where
+                l' = map (\x -> fromIntegral $ eval1AnsatzForestEpsilon epsM x f) evalM
+                l = runEval $ parListChunk 500 rdeepseq l'
+                vec = BMat.fromList [l]
 
     evalAnsatzEpsilonVecList :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe (Sparse.SparseMatrixXd)  
     evalAnsatzEpsilonVecList epsM evalM f  = vecList
@@ -640,9 +658,16 @@ module PerturbationTree2_3 (
     
     --function returns: (Det, newMatA, newMatAInv, newfullMat)
 
+    type RankDataAlg = (Rational, BMat.Matrix Rational, BMat.Matrix Rational, BMat.Matrix Rational)
+
     type RankData = (Double, Mat.MatrixXd, Mat.MatrixXd, Sparse.SparseMatrixXd)
 
     type RankDataEigen = (Mat.MatrixXd, Sparse.SparseMatrixXd)
+
+    type RankDataHMat = (HMat.Matrix Double, Sparse.SparseMatrixXd)
+
+    getVarNrAlg :: RankDataAlg -> Int 
+    getVarNrAlg (_,_,_,ans) = BMat.numRows ans 
 
     getVarNr :: RankData -> Int 
     getVarNr (_,_,_,ans) = Sparse.rows ans
@@ -650,9 +675,35 @@ module PerturbationTree2_3 (
     getVarNrEigen :: RankDataEigen -> Int 
     getVarNrEigen (_,ans) = Sparse.rows ans
 
+    getVarNrHMat :: RankDataHMat -> Int 
+    getVarNrHMat (_,ans) = Sparse.rows ans 
+
+
     --what is a good numerical zero for the determinant
 
     --the problem is probably that the matrix grows too fast ? -> normalize matrix w.r.t scalarVal ??
+
+    --eigen seems to be faster 
+
+    sparseEigentoHMat :: Sparse.SparseMatrixXd -> HMat.Matrix Double
+    sparseEigentoHMat mat = let (i,j) = ((Sparse.rows mat) -1 , (Sparse.cols mat) -1) 
+                            in if (Sparse.!) mat (i,j) == 0 then HMat.toDense $ map (\(x,y,z) -> ((x,y),z)) $ (Sparse.toList mat) ++ [(i,j,0)]
+                                else  HMat.toDense $ map (\(x,y,z) -> ((x,y),z)) $ (Sparse.toList mat)
+
+    checkNumericLinDepHMat :: RankDataHMat -> Maybe Sparse.SparseMatrixXd -> Maybe RankDataHMat 
+    checkNumericLinDepHMat (lastMat, lastFullMat) (Just newVec) 
+                | rank < maxRank = Nothing
+                | otherwise = Just (newMat, newAnsatzMat)
+                 where
+                    newVecTrans = Sparse.transpose newVec 
+                    scalar = sparseEigentoHMat $ Sparse.mul newVec newVecTrans
+                    prodBlock =  sparseEigentoHMat $ Sparse.mul lastFullMat newVecTrans
+                    prodBlockTrans = HMat.tr' prodBlock
+                    newMat = HMat.fromBlocks [[lastMat, prodBlock], [prodBlockTrans, scalar]] 
+                    rank = HLin.rank newMat 
+                    maxRank = max (HMat.cols newMat) (HMat.rows newMat)
+                    newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
+    checkNumericLinDepHMat (lastMat, lastFullMat) Nothing = Nothing 
 
     checkNumericLinDepEigen :: RankDataEigen -> Maybe Sparse.SparseMatrixXd -> Maybe RankDataEigen 
     checkNumericLinDepEigen (lastMat, lastFullMat) (Just newVec) 
@@ -710,6 +761,24 @@ module PerturbationTree2_3 (
     checkNumericLinDepDebug ((lastDet, lastMat, lastMatInv, lastFullMat), nuZeros, numNonZeros) Nothing = (Nothing, nuZeros, numNonZeros)
 
     
+    checkNumericLinDepAlg :: RankDataAlg -> BMat.Matrix Rational -> Maybe RankDataAlg 
+    checkNumericLinDepAlg (lastDet, lastMat, lastMatInv, lastFullMat) newVec 
+                | scalarVal == 0 = Nothing
+                | newDet == 0 = Nothing
+                | otherwise = Just (newDet, newMat, newInv, newAnsatzMat)
+                 where
+                    newVecTrans = BMat.transpose newVec 
+                    scalar = newVec * newVecTrans
+                    scalarVal = (BMat.at) scalar (1,1)
+                    prodBlock = lastFullMat * newVecTrans
+                    prodBlockTrans = BMat.transpose prodBlock
+                    newDetPart2Val = (BMat.at) (prodBlockTrans * lastMatInv * prodBlock) (1,1) 
+                    newDet' = (scalarVal - newDetPart2Val)
+                    newDet = lastDet * newDet'
+                    newMat = (BMat.<->) ((BMat.<|>) lastMat prodBlock) ((BMat.<|>) prodBlockTrans scalar)
+                    newInv = blockInverseAlg lastMatInv prodBlock prodBlockTrans (1/newDet')
+                    newAnsatzMat = (BMat.<->) lastFullMat newVec 
+
     concatBlockMat :: Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd 
     concatBlockMat a b c d = newMat 
                 where
@@ -718,6 +787,15 @@ module PerturbationTree2_3 (
                    newMat = Mat.fromList $ newUpper ++ newLower 
 
     --block inverse formula -> check this (is currently used !!)
+
+    blockInverseAlg :: BMat.Matrix Rational -> BMat.Matrix Rational -> BMat.Matrix Rational -> Rational -> BMat.Matrix Rational
+    blockInverseAlg a b c s = newMat
+        where
+            block1 = a + (BMat.scale (a*b*c) s)
+            block2 = BMat.scale (a*b) (-s)
+            block3 = BMat.scale (c*a) (-s)
+            block4 = BMat.fromList [[s]]
+            newMat = (BMat.<->) ((BMat.<|>) block1 block2) ((BMat.<|>) block3 block4)
 
     specialBlockInverse :: Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Double -> Mat.MatrixXd
     specialBlockInverse invMat blockB blockC factor = newMat
@@ -729,6 +807,32 @@ module PerturbationTree2_3 (
             newUpper = zipWith (++) (Mat.toList block1) (Mat.toList block2)
             newLower = zipWith (++) (Mat.toList block3) block4
             newMat = Mat.fromList $ newUpper ++ newLower 
+
+    addOrDiscardEtaAlg :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> [Eta] -> (AnsatzForestEta, RankDataAlg) -> (AnsatzForestEta, RankDataAlg)
+    addOrDiscardEtaAlg symList epsM evalM etaL (ans,rDat) 
+                | isElem etaL ans = (ans,rDat)
+                | otherwise = case newRDat of 
+                                   Nothing          -> (ans,rDat)
+                                   Just newRDat'    -> (sumAns,newRDat')      
+                 where
+                    numVars = getVarNrAlg rDat
+                    newAns = symAnsatzForestEta symList $ mkForestFromAscList (etaL,Var 1 (numVars+1))
+                    newVec = evalAnsatzEtaAlgVecList epsM evalM newAns
+                    newRDat = checkNumericLinDepAlg rDat newVec
+                    sumAns = addForests ans newAns
+
+    addOrDiscardEtaHMat :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> [Eta] -> (AnsatzForestEta, RankDataHMat) -> (AnsatzForestEta, RankDataHMat)
+    addOrDiscardEtaHMat symList epsM evalM etaL (ans,rDat) 
+                | isElem etaL ans = (ans,rDat)
+                | otherwise = case newRDat of 
+                                   Nothing          -> (ans,rDat)
+                                   Just newRDat'    -> (sumAns,newRDat')      
+                 where
+                    numVars = getVarNrHMat rDat
+                    newAns = symAnsatzForestEta symList $ mkForestFromAscList (etaL,Var 1 (numVars+1))
+                    newVec = evalAnsatzEtaVecList epsM evalM newAns
+                    newRDat = checkNumericLinDepHMat rDat newVec
+                    sumAns = addForests ans newAns
 
     addOrDiscardEtaEigen :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> [Eta] -> (AnsatzForestEta, RankDataEigen) -> (AnsatzForestEta, RankDataEigen)
     addOrDiscardEtaEigen symList epsM evalM etaL (ans,rDat) 
@@ -768,6 +872,32 @@ module PerturbationTree2_3 (
                     newVec = evalAnsatzEtaVecList epsM evalM newAns
                     newRDatDebug = checkNumericLinDepDebug (rDat, numZeros, numNonZeros) newVec
                     sumAns = addForests ans newAns
+
+    addOrDiscardEpsilonAlg :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataAlg) -> (AnsatzForestEpsilon, RankDataAlg)
+    addOrDiscardEpsilonAlg symList epsM evalM (epsL,etaL) (ans,rDat) 
+                | isElemEpsilon (epsL,etaL) ans = (ans,rDat)
+                | otherwise = case newRDat of 
+                                   Nothing          -> (ans,rDat)
+                                   Just newRDat'    -> (sumAns,newRDat')      
+                 where
+                    numVars = getVarNrAlg  rDat
+                    newAns = symAnsatzForestEps symList $ mkForestFromAscListEpsilon (epsL,etaL, Var 1 (numVars+1))
+                    newVec = evalAnsatzEpsAlgVecList epsM evalM newAns
+                    newRDat = checkNumericLinDepAlg rDat newVec
+                    sumAns = addForestsEpsilon ans newAns
+
+    addOrDiscardEpsilonHMat :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataHMat) -> (AnsatzForestEpsilon, RankDataHMat)
+    addOrDiscardEpsilonHMat symList epsM evalM (epsL,etaL) (ans,rDat) 
+                | isElemEpsilon (epsL,etaL) ans = (ans,rDat)
+                | otherwise = case newRDat of 
+                                   Nothing          -> (ans,rDat)
+                                   Just newRDat'    -> (sumAns,newRDat')      
+                 where
+                    numVars = getVarNrHMat  rDat
+                    newAns = symAnsatzForestEps symList $ mkForestFromAscListEpsilon (epsL,etaL, Var 1 (numVars+1))
+                    newVec = evalAnsatzEpsilonVecList epsM evalM newAns
+                    newRDat = checkNumericLinDepHMat rDat newVec
+                    sumAns = addForestsEpsilon ans newAns
 
     addOrDiscardEpsilonEigen :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataEigen) -> (AnsatzForestEpsilon, RankDataEigen)
     addOrDiscardEpsilonEigen symList epsM evalM (epsL,etaL) (ans,rDat) 
@@ -809,6 +939,34 @@ module PerturbationTree2_3 (
                     sumAns = addForestsEpsilon ans newAns
 
     --construct the RankData from the first Ansatz 
+
+    mk1stRankDataEtaAlg :: Symmetry -> [[Eta]] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEta,RankDataAlg,[[Eta]])
+    mk1stRankDataEtaAlg symL etaL epsM evalM = output
+            where
+                newAns = symAnsatzForestEta symL $ mkForestFromAscList (head etaL,Var 1 1)
+                newVec = evalAnsatzEtaAlgVecList epsM evalM newAns
+                restList = tail etaL 
+                output = if BMat.all (==0) newVec then mk1stRankDataEtaAlg symL restList epsM evalM 
+                         else  (newAns, (newDet, newMat, newInv,  newVec), restList)
+                                where 
+                                    newVecTrans = BMat.transpose newVec
+                                    newMat = newVec * newVecTrans
+                                    newDet = (BMat.at) newMat (1,1)
+                                    newInv = BMat.fromList [[1/newDet]]
+
+    mk1stRankDataEtaHMat :: Symmetry -> [[Eta]] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEta,RankDataHMat,[[Eta]])
+    mk1stRankDataEtaHMat symL etaL epsM evalM = output
+            where
+                newAns = symAnsatzForestEta symL $ mkForestFromAscList (head etaL,Var 1 1)
+                newVec = evalAnsatzEtaVecList epsM evalM newAns
+                restList = tail etaL 
+                output = case newVec of
+                                    Nothing         -> mk1stRankDataEtaHMat symL restList epsM evalM 
+                                    Just newVec'    -> (newAns, (newMat, newVec'), restList)
+                                        where 
+                                            newVecTrans = Sparse.transpose newVec'
+                                            newMat = sparseEigentoHMat $ Sparse.mul newVec' newVecTrans
+
 
     mk1stRankDataEtaEigen :: Symmetry -> [[Eta]] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEta,RankDataEigen,[[Eta]])
     mk1stRankDataEtaEigen symL etaL epsM evalM = output
@@ -852,6 +1010,35 @@ module PerturbationTree2_3 (
                                             newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
                                             newMatInv = Mat.inverse newMat
                                             newDet = (Mat.!) newMat (0,0)
+
+
+    mk1stRankDataEpsAlg :: Symmetry -> [(Epsilon,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankDataAlg,[(Epsilon,[Eta])])
+    mk1stRankDataEpsAlg symL epsL epsM evalM = output
+            where
+                newAns = symAnsatzForestEps symL $ mkForestFromAscListEpsilon (fst $ head epsL, snd $ head epsL,Var 1 1)
+                newVec = evalAnsatzEpsAlgVecList epsM evalM newAns
+                restList = tail epsL 
+                output = if BMat.all (==0) newVec then mk1stRankDataEpsAlg symL restList epsM evalM 
+                         else  (newAns, (newDet, newMat, newInv, newVec), restList)
+                                where 
+                                    newVecTrans = BMat.transpose newVec
+                                    newMat = newVec * newVecTrans
+                                    newDet = (BMat.at) newMat (1,1)
+                                    newInv = BMat.fromList [[1/newDet]]
+
+
+    mk1stRankDataEpsilonHMat :: Symmetry -> [(Epsilon,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankDataHMat,[(Epsilon,[Eta])])
+    mk1stRankDataEpsilonHMat symL epsL epsM evalM = output 
+            where
+                newAns = symAnsatzForestEps symL $ mkForestFromAscListEpsilon (fst $ head epsL, snd $ head epsL,Var 1 1)
+                newVec = evalAnsatzEpsilonVecList epsM evalM newAns
+                restList = tail epsL
+                output = case newVec of
+                                    Nothing         -> mk1stRankDataEpsilonHMat symL restList epsM evalM
+                                    Just newVec'    -> (newAns,(newMat, newVec'), restList)
+                                        where 
+                                            newVecTrans = Sparse.transpose newVec'
+                                            newMat = sparseEigentoHMat $ Sparse.mul newVec' newVecTrans
 
     mk1stRankDataEpsilonEigen :: Symmetry -> [(Epsilon,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankDataEigen,[(Epsilon,[Eta])])
     mk1stRankDataEpsilonEigen symL epsL epsM evalM = output 
@@ -901,6 +1088,22 @@ module PerturbationTree2_3 (
 
     --finally reduce the ansatzList  
 
+    reduceAnsatzEtaAlg :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,BMat.Matrix Rational)
+    reduceAnsatzEtaAlg symL etaL evalM' = (finalForest, finalMat)
+            where
+                evalM = canonicalizeEvalMaps symL evalM'  
+                epsM = epsMap
+                (ans1,rDat1,restEtaL) = mk1stRankDataEtaAlg symL etaL epsM evalM
+                (finalForest, (_,_,_,finalMat)) = foldr (addOrDiscardEtaAlg symL epsM evalM) (ans1,rDat1) restEtaL 
+
+    reduceAnsatzEtaHMat :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
+    reduceAnsatzEtaHMat symL etaL evalM' = (finalForest, finalMat)
+            where
+                evalM = canonicalizeEvalMaps symL evalM'  
+                epsM = epsMap
+                (ans1,rDat1,restEtaL) = mk1stRankDataEtaHMat symL etaL epsM evalM
+                (finalForest, (_,finalMat)) = foldr (addOrDiscardEtaHMat symL epsM evalM) (ans1,rDat1) restEtaL 
+
     reduceAnsatzEtaEigen :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
     reduceAnsatzEtaEigen symL etaL evalM' = (finalForest, finalMat)
             where
@@ -924,6 +1127,23 @@ module PerturbationTree2_3 (
                 epsM = epsMap
                 (ans1,rDat1,restEtaL) = mk1stRankDataEtaDebug symL etaL epsM evalM
                 (finalForest, ((_,_,_,finalMat), numZeros, numNonZeros)) = foldr (addOrDiscardEtaDebug symL epsM evalM) (ans1,rDat1) restEtaL 
+
+    reduceAnsatzEpsilonAlg :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,BMat.Matrix Rational)
+    reduceAnsatzEpsilonAlg symL epsL evalM' = (finalForest, finalMat)
+            where
+                evalM = canonicalizeEvalMaps symL evalM'
+                epsM = epsMap
+                (ans1,rDat1,restEpsL) = mk1stRankDataEpsAlg symL epsL epsM evalM
+                (finalForest, (_,_,_,finalMat)) = foldr (addOrDiscardEpsilonAlg symL epsM evalM) (ans1,rDat1) restEpsL 
+
+
+    reduceAnsatzEpsilonHMat :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
+    reduceAnsatzEpsilonHMat symL epsL evalM' = (finalForest, finalMat)
+            where
+                evalM = canonicalizeEvalMaps symL evalM'
+                epsM = epsMap
+                (ans1,rDat1,restEpsL) = mk1stRankDataEpsilonHMat symL epsL epsM evalM
+                (finalForest, (_,finalMat)) = foldr (addOrDiscardEpsilonHMat symL epsM evalM) (ans1,rDat1) restEpsL 
 
     reduceAnsatzEpsilonEigen :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     reduceAnsatzEpsilonEigen symL epsL evalM' = (finalForest, finalMat)
@@ -949,6 +1169,17 @@ module PerturbationTree2_3 (
                 (ans1,rDat1,restEpsL) = mk1stRankDataEpsilonDebug symL epsL epsM evalM
                 (finalForest, ((_,_,_,finalMat), numZeros, numNonZeros)) = foldr (addOrDiscardEpsDebug symL epsM evalM) (ans1,rDat1) restEpsL 
 
+    getEtaForestAlg :: [Int] -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,BMat.Matrix Rational)
+    getEtaForestAlg inds filters sym evalMs = reduceAnsatzEtaAlg sym allEtaLists evalMs
+            where
+                allInds = getEtaInds inds filters 
+                allEtaLists = map mkEtaList allInds
+
+    getEtaForestHMat :: [Int] -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
+    getEtaForestHMat inds filters sym evalMs = reduceAnsatzEtaHMat sym allEtaLists evalMs
+            where
+                allInds = getEtaInds inds filters 
+                allEtaLists = map mkEtaList allInds
 
     getEtaForestEigen :: [Int] -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
     getEtaForestEigen inds filters sym evalMs = reduceAnsatzEtaEigen sym allEtaLists evalMs
@@ -968,6 +1199,19 @@ module PerturbationTree2_3 (
                 allInds = getEtaInds inds filters 
                 allEtaLists = map mkEtaList allInds
 
+    getEpsForestAlg :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]]  -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon,BMat.Matrix Rational)
+    getEpsForestAlg inds filters symPairInds areaBlockInds sym evalMs = reduceAnsatzEpsilonAlg sym allEpsLists evalMs
+            where
+                allInds = getEpsilonIndsRed inds filters symPairInds areaBlockInds 
+                allEpsLists = map mkEpsilonList allInds
+
+    getEpsForestHMat :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]]  -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
+    getEpsForestHMat inds filters symPairInds areaBlockInds sym evalMs = reduceAnsatzEpsilonHMat sym allEpsLists evalMs
+            where
+                allInds = getEpsilonIndsRed inds filters symPairInds areaBlockInds 
+                allEpsLists = map mkEpsilonList allInds
+
+
     getEpsForestEigen :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]]  -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     getEpsForestEigen inds filters symPairInds areaBlockInds sym evalMs = reduceAnsatzEpsilonEigen sym allEpsLists evalMs
             where
@@ -986,6 +1230,19 @@ module PerturbationTree2_3 (
                 allInds = getEpsilonIndsRed inds filters symPairInds areaBlockInds 
                 allEpsLists = map mkEpsilonList allInds
 
+    getFullForestAlg :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon, BMat.Matrix Rational, BMat.Matrix Rational)
+    getFullForestAlg inds filters symPairInds areaBlockInds sym evalMEta evalMEps = (etaAns, epsAns, etaMat, epsMat)
+            where
+                (etaAns,etaMat) = getEtaForestAlg inds filters sym evalMEta 
+                (epsAns',epsMat) = getEpsForestAlg inds filters symPairInds areaBlockInds sym evalMEps
+                epsAns = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels etaAns)) epsAns'
+
+    getFullForestHMat :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon, Sparse.SparseMatrixXd, Sparse.SparseMatrixXd)
+    getFullForestHMat inds filters symPairInds areaBlockInds sym evalMEta evalMEps = (etaAns, epsAns, etaMat, epsMat)
+            where
+                (etaAns,etaMat) = getEtaForestHMat inds filters sym evalMEta 
+                (epsAns',epsMat) = getEpsForestHMat inds filters symPairInds areaBlockInds sym evalMEps
+                epsAns = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels etaAns)) epsAns'
 
     getFullForestEigen :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon, Sparse.SparseMatrixXd, Sparse.SparseMatrixXd)
     getFullForestEigen inds filters symPairInds areaBlockInds sym evalMEta evalMEps = (etaAns, epsAns, etaMat, epsMat)
@@ -1021,6 +1278,28 @@ module PerturbationTree2_3 (
                     etaRmL = filter (\(_,b) -> b /= I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) etaL'
                     epsRmL = filter (\(_,b) -> b /= I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) epsL'
     
+    mkAnsatzTensorAlg :: Int -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
+    mkAnsatzTensorAlg ord filters symPairInds areaBlockInds symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
+            where
+                epsM = epsMap
+                evalMapsEta = map (\(x,y,z) -> x) evalMEta
+                evalMapsEps = map (\(x,y,z) -> x) evalMEps  
+                indListEta = map (\(x,y,z) -> (y,z)) evalMEta
+                indListEps = map (\(x,y,z) -> (y,z)) evalMEps
+                (ansEta, ansEps, _, _) = getFullForestAlg [1..ord] filters symPairInds areaBlockInds symmetries evalMapsEta evalMapsEps
+                tens = evalToTens epsM evalMEta evalMEps ansEta ansEps 
+
+    mkAnsatzTensorHMat :: Int -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
+    mkAnsatzTensorHMat ord filters symPairInds areaBlockInds symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
+            where
+                epsM = epsMap
+                evalMapsEta = map (\(x,y,z) -> x) evalMEta
+                evalMapsEps = map (\(x,y,z) -> x) evalMEps  
+                indListEta = map (\(x,y,z) -> (y,z)) evalMEta
+                indListEps = map (\(x,y,z) -> (y,z)) evalMEps
+                (ansEta, ansEps, _, _) = getFullForestHMat [1..ord] filters symPairInds areaBlockInds symmetries evalMapsEta evalMapsEps
+                tens = evalToTens epsM evalMEta evalMEps ansEta ansEps 
+
     mkAnsatzTensorEigen :: Int -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
     mkAnsatzTensorEigen ord filters symPairInds areaBlockInds symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
             where

@@ -1476,6 +1476,34 @@ module TensorTreeNumeric4_2 (
     singletonTList :: ATens n1 n2 n3 n4 n5 n6 AnsVar -> TList
     singletonTList t = t &> EmptyTList6
 
+    --variable for generic are metrix dofs, i.e parameters that are not obtained by making ansätze for the L derivatives
+
+    newtype AreaVar a = AreaVar (I.IntMap a) deriving (Eq)
+
+    instance (TScalar a) => TScalar (AreaVar a) where 
+        addS (AreaVar varMap1) (AreaVar varMap2) = AreaVar $ I.unionWith (addS) varMap1 varMap2
+        subS (AreaVar varMap1) (AreaVar varMap2) = AreaVar $ I.unionWith (addS) varMap1 $ I.map (scaleS (-1)) varMap2 
+        scaleS s (AreaVar varMap1) = AreaVar $ I.map (scaleS s) varMap1
+
+    instance TAlgebra (AreaVar Rational) AnsVar where 
+        type TAlg (AreaVar Rational) AnsVar = AreaVar (AnsVar) 
+        prodA (AreaVar varMapArea) varMapAns = AreaVar $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
+        
+    instance TAlgebra AnsVar (AreaVar Rational) where 
+        type TAlg AnsVar (AreaVar Rational) = AreaVar (AnsVar) 
+        prodA varMapAns (AreaVar varMapArea) = AreaVar $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
+
+    instance (TScalar a) => TAlgebra (AreaVar a) Rational where 
+        type TAlg (AreaVar a) Rational = AreaVar a
+        prodA = flip scaleS
+
+    instance (TScalar a) => TAlgebra Rational (AreaVar a) where 
+        type TAlg Rational (AreaVar a) = AreaVar a
+        prodA = scaleS 
+
+
+    
+
 
     
     

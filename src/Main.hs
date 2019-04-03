@@ -28,7 +28,7 @@ main = do
 
        --print $ getForestLabelsEpsilon epsAns20
 
-       let (a,b,_) = mkAnsatzTensor 14 filterList14_1 symPairs14_1 areaBlocks14_1 symList14_1 areaList14_1IndsEta areaList14_1IndsEps
+       let (a,b,_) = mkAnsatzTensorAlg 8 filterList8 symPairs8 areaBlocks8 symList8 areaList8IndsEta areaList8IndsEps
 
        print $ length $ getForestLabels a
        print $ length $ getForestLabelsEpsilon b

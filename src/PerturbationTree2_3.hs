@@ -591,9 +591,10 @@ module PerturbationTree2_3 (
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
                 l = runEval $ parListChunk 500 rdeepseq l'
+                max = maximum $ map (\(x,y,z) -> z) l 
                 n = length evalM
                 vecList = let vec = Sparse.fromList 1 n l in
-                          if l == [] then Nothing else Just vec
+                          if l == [] then Nothing else Just $ Sparse.scale (1/max) vec
                 
 
     evalAnsatzEpsilonVecList :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe (Sparse.SparseMatrixXd)  
@@ -604,9 +605,10 @@ module PerturbationTree2_3 (
                               in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)  
                 l' = mapMaybe mkAns dofList
                 l = runEval $ parListChunk 500 rdeepseq l'
+                max = maximum $ map (\(x,y,z) -> z) l 
                 n = length evalM
                 vecList = let vec = Sparse.fromList 1 n l in
-                                    if l == [] then Nothing else Just vec
+                                    if l == [] then Nothing else Just $ Sparse.scale (1/max) vec
 
     evalAllTensorEta :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> [([(Int,Int)],Int,a)]
     evalAllTensorEta epsM evalMs f = l'
@@ -630,34 +632,34 @@ module PerturbationTree2_3 (
 
     --function takes as arguments: current determinant of upper left block, current upper left block, the corresponding matrix inverse, current Sparse Ansatz Matrix, new Ansatz rowVector (stored as a sparse matrix)
     
-    --function returns: (newMatA, newMatAInv, newfullMat)
+    --function returns: (Det, newMatA, newMatAInv, newfullMat)
 
-    type RankData = (Mat.MatrixXd, Mat.MatrixXd, Sparse.SparseMatrixXd)
+    type RankData = (Double, Mat.MatrixXd, Mat.MatrixXd, Sparse.SparseMatrixXd)
 
     getVarNr :: RankData -> Int 
-    getVarNr (_,_,ans) = Sparse.rows ans
+    getVarNr (_,_,_,ans) = Sparse.rows ans
 
     --what is a good numerical zero for the determinant
 
     --the problem is probably that the matrix grows too fast ? -> normalize matrix w.r.t scalarVal ??
             
     checkNumericLinDep :: RankData -> Maybe Sparse.SparseMatrixXd -> Maybe RankData 
-    checkNumericLinDep (lastMat, lastMatInv, lastFullMat) (Just newVec) 
-                | abs(newDet) < (sizeScale * 1e-5) = Nothing
-                | otherwise = Just (newMat, newInv, newAnsatzMat)
+    checkNumericLinDep (lastDet, lastMat, lastMatInv, lastFullMat) (Just newVec) 
+                | abs(newDet') < 1e-7 = Nothing
+                | otherwise = Just (newDet, newMat, newInv, newAnsatzMat)
                  where
-                    sizeScale = fromIntegral $ Sparse.cols newVec 
                     newVecTrans = Sparse.transpose newVec 
                     scalar = Sparse.toMatrix $ Sparse.mul newVec newVecTrans
                     scalarVal = (Mat.!) scalar (0,0)
                     prodBlock = Sparse.toMatrix $ Sparse.mul lastFullMat newVecTrans
                     prodBlockTrans = Mat.transpose prodBlock
                     newDetPart2Val = (Mat.!) (Mat.mul prodBlockTrans $ Mat.mul lastMatInv prodBlock) (0,0) 
-                    newDet = (scalarVal - newDetPart2Val)
+                    newDet' = (scalarVal - newDetPart2Val)
+                    newDet = lastDet * newDet'
                     newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar 
                     newInv = specialBlockInverse lastMatInv prodBlock prodBlockTrans (1/newDet)
                     newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
-    checkNumericLinDep (lastMat, lastMatInv, lastFullMat) Nothing = Nothing 
+    checkNumericLinDep (lastDet, lastMat, lastMatInv, lastFullMat) Nothing = Nothing 
 
     
     concatBlockMat :: Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd 
@@ -717,11 +719,12 @@ module PerturbationTree2_3 (
                 restList = tail etaL 
                 output = case newVec of
                                     Nothing         -> mk1stRankDataEta symL restList epsM evalM 
-                                    Just newVec'    -> (newAns, (newMat, newMatInv, newVec'), restList)
+                                    Just newVec'    -> (newAns, (newDet, newMat, newMatInv, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
                                             newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
                                             newMatInv = Mat.inverse newMat
+                                            newDet = (Mat.!) newMat (0,0)
 
 
     mk1stRankDataEpsilon :: Symmetry -> [(Epsilon,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankData,[(Epsilon,[Eta])])
@@ -732,11 +735,14 @@ module PerturbationTree2_3 (
                 restList = tail epsL
                 output = case newVec of
                                     Nothing         -> mk1stRankDataEpsilon symL restList epsM evalM
-                                    Just newVec'    -> (newAns,(newMat, newMatInv, newVec'), restList)
+                                    Just newVec'    -> (newAns,(newDet, newMat, newMatInv, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
                                             newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
                                             newMatInv = Mat.inverse newMat
+                                            newDet = (Mat.!) newMat (0,0)
+
+
 
     --finally reduce the ansatzList  
 
@@ -746,7 +752,7 @@ module PerturbationTree2_3 (
                 evalM = canonicalizeEvalMaps symL evalM'  
                 epsM = epsMap
                 (ans1,rDat1,restEtaL) = mk1stRankDataEta symL etaL epsM evalM
-                (finalForest, (_,_,finalMat)) = foldr (addOrDiscardEta symL epsM evalM) (ans1,rDat1) restEtaL 
+                (finalForest, (_,_,_,finalMat)) = foldr (addOrDiscardEta symL epsM evalM) (ans1,rDat1) restEtaL 
 
     reduceAnsatzEpsilon :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     reduceAnsatzEpsilon symL epsL evalM' = (finalForest, finalMat)
@@ -754,7 +760,7 @@ module PerturbationTree2_3 (
                 evalM = canonicalizeEvalMaps symL evalM'
                 epsM = epsMap
                 (ans1,rDat1,restEpsL) = mk1stRankDataEpsilon symL epsL epsM evalM
-                (finalForest, (_,_,finalMat)) = foldr (addOrDiscardEpsilon symL epsM evalM) (ans1,rDat1) restEpsL 
+                (finalForest, (_,_,_,finalMat)) = foldr (addOrDiscardEpsilon symL epsM evalM) (ans1,rDat1) restEpsL 
 
     getEtaForest :: [Int] -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
     getEtaForest inds filters sym evalMs = reduceAnsatzEta sym allEtaLists evalMs
@@ -1533,11 +1539,9 @@ module PerturbationTree2_3 (
     areaBlocks18_2 :: [[Int]]
     areaBlocks18_2 = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]
 
-    --there was an error !!!! do the rank computation again, for the 4th order graph one -> the cyclic sym in the area blocks was only applied to the first 3 blocks
-
     symList18_2 :: Symmetry  
     symList18_2 = ([(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16)], [([1,2],[3,4]),([5,6],[7,8]),
-                ([9,10],[11,12]),([13,14],[15,16])], [], [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]])
+                ([9,10],[11,12]),([13,14],[15,16])], [], [[[1,2,3,4],[5,6,7,8],[9,10,11,12]]])
 
     filterList18_3 :: [(Int,Int)]
     filterList18_3 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(9,10),(9,11),(11,12),(9,14),(14,15),(14,16),(16,17)]

@@ -28,7 +28,6 @@ main = do
 
        --print $ getForestLabelsEpsilon epsAns20
 
-       let (a',b',_) = mkAnsatzTensorFast 10 filterList10_1 symPairs10_1 areaBlocks10_1 symList10_1 areaList10_1IndsEta areaList10_1IndsEps
        let (a,b,_) = mkAnsatzTensor 14 filterList14_1 symPairs14_1 areaBlocks14_1 symList14_1 areaList14_1IndsEta areaList14_1IndsEps
 
        print $ length $ getForestLabels a
@@ -36,7 +35,7 @@ main = do
        --print $ length $ getForestLabels a'
        --print $ length $ getForestLabelsEpsilon b'
 
-      
+       
        
        
 

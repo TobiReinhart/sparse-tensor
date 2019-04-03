@@ -657,7 +657,7 @@ module PerturbationTree2_3 (
                     newDet' = (scalarVal - newDetPart2Val)
                     newDet = lastDet * newDet'
                     newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar 
-                    newInv = specialBlockInverse lastMatInv prodBlock prodBlockTrans (1/newDet)
+                    newInv = specialBlockInverse lastMatInv prodBlock prodBlockTrans (1/newDet')
                     newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
     checkNumericLinDep (lastDet, lastMat, lastMatInv, lastFullMat) Nothing = Nothing 
 

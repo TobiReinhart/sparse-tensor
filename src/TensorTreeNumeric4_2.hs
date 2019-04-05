@@ -24,9 +24,16 @@
 
 
  module TensorTreeNumeric4_2 (
-    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple, AnsVar,
-    (&*), (&+), (&-), (&.), contrATens3, tensorTrans6, tensorTrans5,
-    fromListT6, singletonInd, (+>), sortInd
+    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple, AnsVar, AreaVar(..),
+    (&*), (&+), (&-), (&.),
+    fromListT6, singletonInd, (+>), sortInd, toListT6, toListShow6,
+    tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6,
+    symATens1, symATens2, symATens3, symATens4, symATens5, symATens6,
+    aSymATens1, aSymATens2, aSymATens3, aSymATens4, aSymATens5, aSymATens6,
+    cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6,
+    cyclicSymATens1, cyclicSymATens2, cyclicSymATens3, cyclicSymATens4, cyclicSymATens5, cyclicSymATens6,
+    contrATens1, contrATens2, contrATens3
+ 
     
 ) where
 
@@ -196,7 +203,8 @@
         addS :: a -> a -> a 
         subS :: a -> a -> a
         scaleS :: Rational -> a -> a 
-
+        scaleZero :: a 
+       
     class TAlgebra v v' where 
         type TAlg v v' :: * 
         prodA :: v -> v' -> TAlg v v'
@@ -273,6 +281,7 @@
         addS = (&+)
         subS = (&-)
         scaleS = (&.)
+        scaleZero = ZeroTensor
 
     instance (TIndex k, TAlgebra v v') => TAlgebra (Tensor n k v) (Tensor m k v') where 
         type TAlg (Tensor n k v) (Tensor m k v') = Tensor (n+m) k (TAlg v v')
@@ -282,6 +291,7 @@
         addS = (+)
         subS = (-)
         scaleS = (*)
+        scaleZero = 0
 
     instance TAlgebra Rational Rational where 
         type TAlg Rational Rational = Rational
@@ -1122,50 +1132,50 @@
 
     --convert to non type safe assocs list, all indices regardeless of their type are collected in the [Int] list 
 
-    toListShow1 :: (TIndex k1) => AbsTensor1 n1 k1 v -> [([Int],v)]
-    toListShow1 t = map (\(x,y) -> (showInd x, y)) l
+    toListShow1 :: (TIndex k1, TScalar v) => AbsTensor1 n1 k1 v -> [([Int],v)]
+    toListShow1 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT1 t 
                 showInd i1 = (map fromEnum $ toList i1) 
 
-    toListShow2 :: (TIndex k1) => AbsTensor2 n1 n2 k1 v -> [([Int],v)]
-    toListShow2 t = map (\(x,y) -> (showInd x, y)) l
+    toListShow2 :: (TIndex k1, TScalar v) => AbsTensor2 n1 n2 k1 v -> [([Int],v)]
+    toListShow2 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT2 t 
                 showInd (i1,i2) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2)
 
-    toListShow3 :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 v -> [([Int],v)]
-    toListShow3 t = map (\(x,y) -> (showInd x, y)) l
+    toListShow3 :: (TIndex k1, TIndex k2, TScalar v) => AbsTensor3 n1 n2 n3 k1 k2 v -> [([Int],v)]
+    toListShow3 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT3 t 
                 showInd (i1,i2,i3) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
                                      (map fromEnum $ toList i3)
 
-    toListShow4 :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 v -> [([Int],v)]
-    toListShow4 t = map (\(x,y) -> (showInd x, y)) l
+    toListShow4 :: (TIndex k1, TIndex k2, TScalar v) => AbsTensor4 n1 n2 n3 n4 k1 k2 v -> [([Int],v)]
+    toListShow4 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT4 t 
                 showInd (i1,i2,i3,i4) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
                                         (map fromEnum $ toList i3) ++ (map fromEnum $ toList i4)
 
-    toListShow5 :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> [([Int],v)]
-    toListShow5 t = map (\(x,y) -> (showInd x, y)) l
+    toListShow5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> [([Int],v)]
+    toListShow5 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT5 t 
                 showInd (i1,i2,i3,i4,i5) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
                                            (map fromEnum $ toList i3) ++ (map fromEnum $ toList i4) ++ 
                                            (map fromEnum $ toList i5)
                 
-    toListShow6 :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> [([Int],v)]
-    toListShow6 t = map (\(x,y) -> (showInd x, y)) l
+    toListShow6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> [([Int],v)]
+    toListShow6 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT6 t 
                 showInd (i1,i2,i3,i4,i5,i6) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
                                               (map fromEnum $ toList i3) ++ (map fromEnum $ toList i4) ++ 
                                               (map fromEnum $ toList i5) ++ (map fromEnum $ toList i6) 
 
-    toListShow7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> [([Int],v)]
-    toListShow7 t = map (\(x,y) -> (showInd x, y)) l
+    toListShow7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> [([Int],v)]
+    toListShow7 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT7 t 
                 showInd (i1,i2,i3,i4,i5,i6,i7) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
@@ -1173,8 +1183,8 @@
                                               (map fromEnum $ toList i5) ++ (map fromEnum $ toList i6) ++
                                               (map fromEnum $ toList i7)
 
-    toListShow8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> [([Int],v)]
-    toListShow8 t = map (\(x,y) -> (showInd x, y)) l
+    toListShow8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> [([Int],v)]
+    toListShow8 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT8 t 
                 showInd (i1,i2,i3,i4,i5,i6,i7,i8) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
@@ -1191,6 +1201,8 @@
         addS = I.unionWith (+)
         subS v1 v2 = I.unionWith (+) v1 $ I.map ((*)(-1)) v2 
         scaleS s = I.map ((*) s) 
+        scaleZero = I.empty
+        
 
     instance TAlgebra Rational AnsVar where 
         type TAlg Rational AnsVar = AnsVar 
@@ -1208,6 +1220,7 @@
         addS (AreaVar varMap1) (AreaVar varMap2) = AreaVar $ I.unionWith (addS) varMap1 varMap2
         subS (AreaVar varMap1) (AreaVar varMap2) = AreaVar $ I.unionWith (addS) varMap1 $ I.map (scaleS (-1)) varMap2 
         scaleS s (AreaVar varMap1) = AreaVar $ I.map (scaleS s) varMap1
+        scaleZero = AreaVar I.empty 
 
     instance (TScalar a) => TAlgebra (AreaVar a) Rational where 
         type TAlg (AreaVar a) Rational = AreaVar a

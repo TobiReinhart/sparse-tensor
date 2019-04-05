@@ -36,6 +36,7 @@
 
 
 module BasicTensor4_2 (
+    flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2
 
 ) where 
 
@@ -53,14 +54,10 @@ module BasicTensor4_2 (
     import GHC.Generics
     import Control.DeepSeq
 
-    import qualified Numeric.LinearAlgebra.Data as HMat
-    import qualified Numeric.LinearAlgebra as HLin 
- 
-
     import Data.Serialize
+    import Unsafe.Coerce (unsafeCoerce)
 
     import Data.Type.Equality
-
     import Data.Singletons
     import Data.Singletons.Decide
     import Data.Singletons.Prelude.Enum
@@ -70,8 +67,9 @@ module BasicTensor4_2 (
     import qualified Data.Eigen.SparseMatrix as Sparse
     import qualified Data.Eigen.LA as Sol 
 
-    import Unsafe.Coerce (unsafeCoerce)
-
+    import qualified Numeric.LinearAlgebra.Data as HMat
+    import qualified Numeric.LinearAlgebra as HLin 
+ 
     import TensorTreeNumeric4_2 
 
     --start with deltas 
@@ -84,6 +82,34 @@ module BasicTensor4_2 (
 
     delta3 :: ATens 0 0 0 0 1 1 Rational
     delta3 = fromListT6 $ zip [(Empty, Empty, Empty, Empty, singletonInd (Ind3 i),singletonInd (Ind3 i)) | i <- [0..3]] (repeat 1)
+
+    --eta and inverse eta (numerical)
+
+    eta :: ATens 0 0 0 0 0 2 Rational
+    eta =  fromListT6 l 
+                where
+                    l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Empty,Append (Ind3 x) $ Append (Ind3 y) Empty),z)) [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
+
+    invEta :: ATens 0 0 0 0 2 0 Rational 
+    invEta =  fromListT6 l 
+                where
+                    l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Append (Ind3 x) $ Append (Ind3 y) Empty,Empty),z)) [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
+
+    --epsilon and inverse epsilon (numerical)
+
+    epsilon :: ATens 0 0 0 0 0 4 Rational 
+    epsilon = fromListT6 $ map (\([i,j,k,l],v) -> ((Empty, Empty, Empty, Empty, Empty, Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l)),v)) epsL 
+                    where
+                       epsSign [i,j,k,l] = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+                       epsL = map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
+
+    epsilonInv :: ATens 0 0 0 0 4 0 Rational 
+    epsilonInv = fromListT6 $ map (\([i,j,k,l],v) -> ((Empty, Empty, Empty, Empty, Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l), Empty),v)) epsL 
+                    where
+                       epsSign [i,j,k,l] = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+                       epsL = map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
+
+    --now the earea metric tesnors 
 
     trianMap2 :: M.Map (IndList 2 Ind3) (IndList 1 Ind9) 
     trianMap2 = M.fromList $ zip [ Append (Ind3 a) $ singletonInd $ Ind3 b | a <- [0..3], b <- [a..3] ] $ map (singletonInd . Ind9) [0..]
@@ -190,4 +216,159 @@ module BasicTensor4_2 (
                 block1 = block1' &+ (tensorTrans5 (1,2) block1') 
                 block2 = delta20 &* delta3 &* interJ2
 
+    interEqn5 :: ATens 1 1 0 1 3 1 Rational 
+    interEqn5 = cyclicSymATens5 [0,1,2] intA1 
+            where
+                intA1 = interJ2 &* interArea 
 
+   
+    --generic Ansätze up to prolongation order 2
+
+    --A
+    generic4Ansatz :: ATens 1 0 0 0 0 0 AnsVar
+    generic4Ansatz = fromListT6 list 
+         where 
+             list = [ let varMap = I.singleton (dof a) 1
+                      in ((singletonInd (Ind20 $ a-1), Empty, Empty, Empty, Empty, Empty), varMap)
+                      | a <- [1..21] ]
+             dof a = a
+
+    --Aa
+    generic5Ansatz :: ATens 1 0 0 0 1 0 AnsVar
+    generic5Ansatz = fromListT6 list
+          where 
+             list = [ let varMap = I.singleton (dof a p) 1
+                      in ((singletonInd (Ind20 $ a-1), Empty, Empty, Empty, singletonInd (Ind3 $ p-1 ), Empty), varMap)
+                      | a <- [1..21], p <- [1..4] ]
+             dof a p = 1 + 21 + 4*(a-1) + (p-1)
+
+    --AI
+    generic6Ansatz :: ATens 1 0 1 0 0 0 AnsVar
+    generic6Ansatz = fromListT6 list
+         where 
+            list = [ let varMap = I.singleton (dof a i) 1
+                     in ((singletonInd (Ind20 $ a-1), Empty, singletonInd (Ind9 $ i-1), Empty, Empty, Empty), varMap)
+                     | a <- [1..21], i <- [1..10] ]
+            dof a i = 1 + 21 + 84 + 10*(a-1) + (i-1)
+    --AB
+    generic8Ansatz :: ATens 2 0 0 0 0 0 AnsVar
+    generic8Ansatz = fromListT6 list
+         where 
+            list = [ let varMap = I.singleton (dof a b) 1
+                     in ((Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, Empty, Empty), varMap)
+                     | a <- [1..21], b <- [1..21] ]
+            dof a b = let a' = min a b
+                          b' = max a b
+                      in trian M.! [a',b'] + 315
+            trian = M.fromList $ zip j k
+                      where
+                          j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                          k = [1..]
+
+    --ABb 
+    generic9Ansatz :: ATens 2 0 0 0 1 0 AnsVar 
+    generic9Ansatz = fromListT6 list
+        where
+            list = [ let varMap = I.singleton (dof a b p) 1
+                    in ((Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, singletonInd (Ind3 $ p-1), Empty), varMap)
+                    | a <- [1..21], b <- [1..21], p <- [1..4]]
+            dof a b p = trian M.! [a,1 + 21 + 4*(b-1) + (p-1)] + 315
+            trian = M.fromList $ zip j k
+                    where
+                        j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                        k = [1..]
+
+    --AaBb 
+    generic10_1Ansatz :: ATens 2 0 0 0 2 0 AnsVar 
+    generic10_1Ansatz = fromListT6 list
+        where
+            list = [ let varMap = I.singleton (dof a b p q) 1
+                    in ((Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, Append (Ind3 $ p-1) $ singletonInd (Ind3 $ q-1), Empty), varMap)
+                    | a <- [1..21], b <- [1..21], p <- [1..4], q <- [1..4]]
+            dof a b p q = let 
+                    a' = min (1 + 21 + 4*(a-1) + (p-1)) (1 + 21 + 4*(b-1) + (q-1)) 
+                    b' = max (1 + 21 + 4*(a-1) + (p-1)) (1 + 21 + 4*(b-1) + (q-1)) 
+                    in trian M.! [a',b'] + 315
+            trian = M.fromList $ zip j k
+                    where
+                        j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                        k = [1..]
+
+    --ABI 
+    generic10_2Ansatz :: ATens 2 0 1 0 0 0 AnsVar 
+    generic10_2Ansatz = fromListT6 list
+         where
+             list = [ let varMap = I.singleton (dof a b i) 1
+                     in ((Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, singletonInd (Ind9 $ i -1), Empty, Empty, Empty), varMap)
+                     | a <- [1..21], b <- [1..21], i <- [1..10]]
+             dof a b i = trian M.! [a,1 + 105 + 10*(b-1) + (i-1)] + 315
+             trian = M.fromList $ zip j k
+                     where
+                         j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                         k = [1..]
+ 
+    --ApBI 
+    generic11Ansatz :: ATens 2 0 1 0 1 0 AnsVar 
+    generic11Ansatz = fromListT6 list
+         where
+             list = [ let varMap = I.singleton (dof a b i p) 1
+                     in ((Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, singletonInd (Ind9 $ i -1), Empty, singletonInd (Ind3 $ p-1), Empty), varMap)
+                     | a <- [1..21], b <- [1..21], i <- [1..10], p <- [1..4]]
+             dof a b i p = trian M.! [1 + 21 + 4*(a-1) + (p-1),1 + 105 + 10*(b-1) + (i-1)] + 315
+             trian = M.fromList $ zip j k
+                     where
+                         j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                         k = [1..]
+
+    --AIBJ 
+    generic12Ansatz :: ATens 2 0 2 0 0 0 AnsVar 
+    generic12Ansatz = fromListT6 list
+        where
+            list = [ let varMap = I.singleton (dof a b i j) 1
+                    in ((Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Append (Ind9 $ i-1) $ singletonInd (Ind9 $ j -1), Empty, Empty, Empty), varMap)
+                    | a <- [1..21], b <- [1..21], i <- [1..10], j <- [1..10]]
+            dof a b i j = let 
+                    a' =  min (1 + 105 + 10*(a-1) + (i-1)) (1 + 105 + 10*(b-1) + (j-1))
+                    b' =  max (1 + 105 + 10*(a-1) + (i-1)) (1 + 105 + 10*(b-1) + (j-1))
+                    in trian M.! [a',b'] + 315
+            trian = M.fromList $ zip j k
+                    where
+                        j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                        k = [1..]
+
+    flatArea :: ATens 0 1 0 0 0 0 Rational 
+    flatArea = fromListT6 $ map (\(i,v) -> ( (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty), v)) [(0,-1),(5,-1),(6,-1),(9,1),(11,-1),(12,-1),(15,1),(18,1),(20,1)]
+
+    flatInter :: ATens 0 1 0 0 1 1 Rational 
+    flatInter = contrATens1 (0,1) $ interArea &* flatArea
+
+    genericArea :: ATens 0 1 0 0 0 0 (AreaVar Rational) 
+    genericArea = fromListT6 assocs 
+            where 
+                dofs = map (\x -> AreaVar $ I.singleton x 1) [1..21] 
+                inds = map (\i -> (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty)) [0..20]
+                assocs = zip inds dofs
+ 
+    genericAreaFlat :: ATens 0 1 0 0 0 0 (AreaVar Rational)
+    genericAreaFlat = fromListT6 $
+                      map (\(i,v) -> ( (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty), v))
+                                    [(0, AreaVar $ I.singleton 1 (-1)),(5, AreaVar $ I.singleton 4 1),(6, AreaVar $ I.singleton 2 (-1)),(9, AreaVar $ I.singleton 5 (-1)),(11, AreaVar $ I.singleton 3 (-1)),(12, AreaVar $ I.singleton 6 1),(15, AreaVar $ I.singleton 1 1),(18, AreaVar $ I.singleton 2 1),(20, AreaVar $ I.singleton 3 1)]
+
+    genericAreaDerivative1 :: ATens 0 1 0 0 0 1 (AreaVar Rational)
+    genericAreaDerivative1 = fromListT6 assocs
+                where 
+                    dofs = map (\x -> AreaVar $ I.singleton x 1) [22..105]
+                    inds = map (\(a,p) -> (Empty, (singletonInd $ Ind20 a), Empty, Empty, Empty, (singletonInd $ Ind3 p))) $ [ (a,p) | a <- [0..20], p <- [0..3]]
+                    assocs = zip inds dofs 
+
+    genericAreaDerivative2 :: ATens 0 1 0 1 0 0 (AreaVar Rational)
+    genericAreaDerivative2 = fromListT6 assocs
+                where 
+                    dofs = map (\x -> AreaVar $ I.singleton x 1) [106..315]
+                    inds = map (\(a,i) -> (Empty, (singletonInd $ Ind20 a), Empty, (singletonInd $ Ind9 i), Empty, Empty)) $ [ (a,i) | a <- [0..20], i <- [0..9]]
+                    assocs = zip inds dofs 
+
+
+    
+
+    

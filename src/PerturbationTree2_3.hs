@@ -737,7 +737,7 @@ module PerturbationTree2_3 (
                     eigenRank = Sol.rank Sol.FullPivLU newMat 
                     maxRank = min (Mat.cols newMat) (Mat.rows newMat)
                     newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
-    checkNumericLinDepEigen (lastMat, lastFullMat) Nothing = Nothing 
+    checkNumericLinDepEig (lastMat, lastFullMat) Nothing = Nothing 
 
     checkNumericLinDepHMat :: RankDataHMat -> Maybe (HMat.Matrix Double) -> Maybe RankDataHMat 
     checkNumericLinDepHMat (lastMat, lastFullMat) (Just newVec) 
@@ -751,7 +751,7 @@ module PerturbationTree2_3 (
                     newMat = HMat.fromBlocks [[lastMat, prodBlock], [prodBlockTrans, scalar]] 
                     rank = HLin.rank newMat 
                     maxRank = min (HMat.cols newMat) (HMat.rows newMat)
-                    newAnsatzMat = HMat.fromBlocks [[lastFullMat, newVec]]
+                    newAnsatzMat = HMat.fromBlocks [[lastFullMat], [newVec]]
     checkNumericLinDepHMat (lastMat, lastFullMat) Nothing = Nothing 
 
     --concat Matrces to a block Matrix, should already be implemented in eigen ??
@@ -967,9 +967,10 @@ module PerturbationTree2_3 (
    
     --the 2 final functions, constructing the 2 AnsatzForests and the AnsatzTensor
 
-    mkAnsatzTensorEig :: Int -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
-    mkAnsatzTensorEig ord filters symPairInds areaBlockInds symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
+    mkAnsatzTensorEig :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
+    mkAnsatzTensorEig ord filters symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
             where
+                (_,symPairInds,areaBlockInds) = getSyms symmetries
                 epsM = epsMap
                 evalMapsEta = map (\(x,y,z) -> x) evalMEta
                 evalMapsEps = map (\(x,y,z) -> x) evalMEps  
@@ -978,9 +979,10 @@ module PerturbationTree2_3 (
                 (ansEta, ansEps, _, _) = getFullForestEig ord filters symPairInds areaBlockInds symmetries evalMapsEta evalMapsEps
                 tens = evalToTens epsM evalMEta evalMEps ansEta ansEps 
 
-    mkAnsatzTensorHMat :: Int -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
-    mkAnsatzTensorHMat ord filters symPairInds areaBlockInds symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
+    mkAnsatzTensorHMat :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
+    mkAnsatzTensorHMat ord filters symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
             where
+                (_,symPairInds,areaBlockInds) = getSyms symmetries
                 epsM = epsMap
                 evalMapsEta = map (\(x,y,z) -> x) evalMEta
                 evalMapsEps = map (\(x,y,z) -> x) evalMEps  
@@ -997,8 +999,8 @@ module PerturbationTree2_3 (
     assocsToEig l = Sparse.toMatrix $ Sparse.fromList n m l'
         where
             l' = concat $ zipWith (\r z -> map (\(x,y) -> (z-1, x-1, fromIntegral y)) r) l [1..]
-            n = maximum $ map (\(x,_,_) -> x) l'
-            m = maximum $ map (\(_,x,_) -> x) l'
+            n = (maximum $ map (\(x,_,_) -> x) l') + 1
+            m = (maximum $ map (\(_,x,_) -> x) l') + 1
 
     assocsToHMat :: [[(Int,Int)]] -> HMat.Matrix Double 
     assocsToHMat l = HMat.toDense l' 
@@ -1037,12 +1039,13 @@ module PerturbationTree2_3 (
 
     --final function, fast way of constructing the ansatztrees and the 2 tensors
                 
-    mkAnsatzTensorFast :: Int -> [(Int,Int)] -> [[Int]] -> [[Int]] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
-    mkAnsatzTensorFast ord filters symPairInds areaBlocks symmetries evalMEta evalMEps = (ansEtaRed, ansEpsRed, tens) 
+    mkAnsatzTensorFast :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
+    mkAnsatzTensorFast ord filters symmetries evalMEta evalMEps = (ansEtaRed, ansEpsRed, tens) 
             where
+                (_,symPairInds,areaBlockInds) = getSyms symmetries
                 epsM = epsMap
                 ansEta = getEtaForestFast ord filters symmetries 
-                ansEpsilon = getEpsForestFast 1 filters symPairInds areaBlocks symmetries  
+                ansEpsilon = getEpsForestFast ord filters symPairInds areaBlockInds symmetries  
                 ansEtaRed = reduceLinDepsFastEta epsM (map (\(x,_,_) -> x) evalMEta) symmetries ansEta
                 ansEpsRed' = reduceLinDepsFastEps epsM (map (\(x,_,_) -> x) evalMEps) symmetries ansEpsilon
                 ansEpsRed = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEtaRed)) ansEpsRed'

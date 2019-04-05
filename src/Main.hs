@@ -6,7 +6,7 @@ import PerturbationTree2_3
 
 main = do 
 
-    let (a,b,_) = mkAnsatzTensorFast 14 filterList14_2 symList14_2 areaList14_2IndsEta areaList14_2IndsEps 
+    let (a,b,_) = mkAnsatzTensorFast 14 filterList14_1 symList14_1 areaList14_1IndsEta areaList14_1IndsEps 
     
     print $ getForestLabels a 
 

@@ -30,7 +30,7 @@ module PerturbationTree2_3 (
     symPairs18, symPairs18_2, symPairs18_3, symPairs20,
     areaBlocks4, areaBlocks6, areaBlocks8, areaBlocks10_1, areaBlocks10_2, areaBlocks12, areaBlocks12_1, areaBlocks14_1, areaBlocks14_2,
     areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20,
-    canonicalizeEvalMaps
+    canonicalizeEvalMaps, getSyms
 
     
 ) where
@@ -970,7 +970,7 @@ module PerturbationTree2_3 (
     mkAnsatzTensorEig :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
     mkAnsatzTensorEig ord filters symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
             where
-                (_,symPairInds,areaBlockInds) = getSyms symmetries
+                (_,areaBlockInds,symPairInds) = getSyms symmetries
                 epsM = epsMap
                 evalMapsEta = map (\(x,y,z) -> x) evalMEta
                 evalMapsEps = map (\(x,y,z) -> x) evalMEps  
@@ -982,7 +982,7 @@ module PerturbationTree2_3 (
     mkAnsatzTensorHMat :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
     mkAnsatzTensorHMat ord filters symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
             where
-                (_,symPairInds,areaBlockInds) = getSyms symmetries
+                (_,areaBlockInds,symPairInds) = getSyms symmetries
                 epsM = epsMap
                 evalMapsEta = map (\(x,y,z) -> x) evalMEta
                 evalMapsEps = map (\(x,y,z) -> x) evalMEps  
@@ -1042,7 +1042,7 @@ module PerturbationTree2_3 (
     mkAnsatzTensorFast :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
     mkAnsatzTensorFast ord filters symmetries evalMEta evalMEps = (ansEtaRed, ansEpsRed, tens) 
             where
-                (_,symPairInds,areaBlockInds) = getSyms symmetries
+                (_,areaBlockInds,symPairInds) = getSyms symmetries
                 epsM = epsMap
                 ansEta = getEtaForestFast ord filters symmetries 
                 ansEpsilon = getEpsForestFast ord filters symPairInds areaBlockInds symmetries  

@@ -36,7 +36,7 @@
 
 
 module BasicTensor4_2 (
-    flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2
+    flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2, invEta
 
 ) where 
 

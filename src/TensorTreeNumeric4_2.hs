@@ -60,8 +60,6 @@
 
     --for Linear Algebra 
 
-    import qualified Numeric.LinearAlgebra.Data as HMat
-    import qualified Numeric.LinearAlgebra as HLin 
     import qualified Data.Eigen.Matrix as Mat 
     import qualified Data.Eigen.SparseMatrix as Sparse
     import qualified Data.Eigen.LA as Sol
@@ -1481,55 +1479,6 @@
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    --convert to hmatrix format 
-
-    toHMatrix1 :: (TIndex k1) => TensList1 k1 AnsVar -> HMat.Matrix Double 
-    toHMatrix1 tList =  HMat.toDense l'
-            where
-                l = toMatList1 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix2 :: (TIndex k1) => TensList2 k1 AnsVar -> HMat.Matrix Double 
-    toHMatrix2 tList =  HMat.toDense l'
-            where
-                l = toMatList2 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 AnsVar -> HMat.Matrix Double 
-    toHMatrix3 tList =  HMat.toDense l'
-            where
-                l = toMatList3 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-            
-    toHMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 AnsVar -> HMat.Matrix Double 
-    toHMatrix4 tList =  HMat.toDense l'
-            where
-                l = toMatList4 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 AnsVar -> HMat.Matrix Double 
-    toHMatrix5 tList =  HMat.toDense l'
-            where
-                l = toMatList5 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 AnsVar -> HMat.Matrix Double 
-    toHMatrix6 tList =  HMat.toDense l'
-            where
-                l = toMatList6 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 AnsVar -> HMat.Matrix Double 
-    toHMatrix7 tList =  HMat.toDense l'
-            where
-                l = toMatList7 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 AnsVar -> HMat.Matrix Double 
-    toHMatrix8 tList =  HMat.toDense l'
-            where
-                l = toMatList8 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
 
     --convert to Eigen format
 

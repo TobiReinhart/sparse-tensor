@@ -67,9 +67,7 @@ module BasicTensor4_2 (
     import qualified Data.Eigen.SparseMatrix as Sparse
     import qualified Data.Eigen.LA as Sol 
 
-    import qualified Numeric.LinearAlgebra.Data as HMat
-    import qualified Numeric.LinearAlgebra as HLin 
- 
+
     import TensorTreeNumeric4_2 
 
     --start with deltas 

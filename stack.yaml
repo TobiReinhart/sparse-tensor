@@ -52,10 +52,7 @@ extra-deps:
 flags:
   eigen:
     mkl: false
-  hmatrix:
-    openblas: true
-  hmatrix-tests:
-    gsl: false
+  
 
 # Extra package databases containing global packages
 # extra-package-dbs: []

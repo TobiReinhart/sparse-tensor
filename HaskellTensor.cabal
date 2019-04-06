@@ -17,7 +17,7 @@ executable HaskellTensor
   hs-source-dirs:      src
   main-is:             Main.hs
   default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5, containers, tf-random, split, ghc-typelits-natnormalise, ghc-typelits-knownnat, eigen, matrix, vector, hmatrix, parallel, deepseq, hashtables, hashable, cereal, singletons, bytestring, zlib, criterion
-  other-modules:       TensorTreeNumeric4_2, BasicTensor4_2, PerturbationTree2_3, TensorEquations, BenchmarkEigen
+  build-depends:       base >= 4.7 && < 5, containers, tf-random, split, ghc-typelits-natnormalise, ghc-typelits-knownnat, eigen, parallel, deepseq, cereal, singletons, bytestring, zlib, criterion
+  other-modules:       TensorTreeNumeric4_2, BasicTensor4_2, PerturbationTree2_3, TensorEquations
   ghc-options:         -j -O2 -threaded -rtsopts -with-rtsopts=-N -funbox-strict-fields
   

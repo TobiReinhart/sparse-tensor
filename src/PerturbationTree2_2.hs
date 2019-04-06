@@ -24,7 +24,8 @@
 
 
 module PerturbationTree2_2 (
-    getEtaForest, getEpsForest, getForestLabels, getForestLabelsEpsilon, epsMap, evalAnsatzForestEta, evalAnsatzForestEpsilon,
+    AnsatzForestEpsilon(..), AnsatzForestEta(..),
+    getEtaForest, getEpsForest, getForestLabels, getForestLabelsEpsilon, epsMap, evalAnsatzForestEta, evalAnsatzForestEpsilon, flattenForestEpsilon,
     filterList4, symList4, areaEvalMap4,
     filterList6, symList6, areaEvalMap6,
     filterList8, symList8, areaEvalMap8,
@@ -42,7 +43,18 @@ module PerturbationTree2_2 (
      evalAllListEta, evalAllListEpsilon, reduceAnsList, ansatzRank, getRows, getPivots, rmDepVarsAnsList, rmDepVarsTensList,
      getTensor, mkAnsatzTensor,
      areaEvalMap4Inds, areaEvalMap6Inds, areaEvalMap8Inds, areaEvalMap10_1Inds, areaEvalMap10_2Inds, areaEvalMap12Inds, areaEvalMap14_1Inds, areaEvalMap14_2Inds, areaEvalMap12_1Inds,
-     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds, areaEvalMap16_2Inds, areaEvalMap18Inds
+     doubleCheckAnsatzEta, doubleCheckAnsatzEpsilon, areaEvalMap16_1Inds, areaEvalMap16_2Inds, areaEvalMap18Inds, flattenForest,
+     filterList18_2, symList18_2, areaEvalMap18_2, areaEvalMap18_2Inds,
+     filterList18_3, symList18_3, areaEvalMap18_3, areaEvalMap18_3Inds,
+     filterList16, symList16, areaEvalMap16, areaEvalMap16Inds,
+     filterList20, symList20, areaEvalMap20, areaEvalMap20Inds,
+     etaEps4Ansatz, etaEps8Ansatz,
+     generic4Ansatz, generic6Ansatz, redAnsatzForestEta, redAnsatzForestEps, generic8Ansatz, generic5Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz,
+     generic11Ansatz, generic12Ansatz
+
+
+
+
 
 
     
@@ -492,12 +504,26 @@ module PerturbationTree2_2 (
                 relabMap = I.fromList $ zip vars [1..]
                 update = relabelVar ((I.!) relabMap) 
 
+
+    removeVarsEta :: [Int] -> AnsatzForestEta -> AnsatzForestEta 
+    removeVarsEta vars (Leaf (Var i j)) 
+                | elem j vars = EmptyForest 
+                | otherwise = (Leaf (Var i j))
+    removeVarsEta vars (ForestEta m) = ForestEta $ M.filter (/= EmptyForest) $ M.map (removeVarsEta vars) m  
+    removeVarsEta vars EmptyForest = EmptyForest
+
+
+
     relabelAnsatzForestEpsilon :: AnsatzForestEpsilon -> AnsatzForestEpsilon
     relabelAnsatzForestEpsilon ans = multForestEpsilon update ans
             where
                 vars = getForestLabelsEpsilon ans 
                 relabMap = I.fromList $ zip vars [1..]
                 update = relabelVar ((I.!) relabMap) 
+
+    removeVarsEps :: [Int] -> AnsatzForestEpsilon -> AnsatzForestEpsilon
+    removeVarsEps vars m = M.filter (/= EmptyForest) $ M.map (removeVarsEta vars) m  
+
 
    
     --the next step is evaluating the tree 
@@ -514,6 +540,8 @@ module PerturbationTree2_2 (
                  where
                     l = [(I.!) iMap w, (I.!) iMap x, (I.!) iMap y, (I.!) iMap z]               
 
+    --check consistency with tensorTree epsilon function in flat Area 
+
     epsMap :: M.Map [Int] Rational 
     epsMap = M.fromList $ map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
                 where
@@ -528,6 +556,7 @@ module PerturbationTree2_2 (
                     foldF k a b = let nodeVal = evalNodeEta epsM evalM k 
                                   in if nodeVal == Nothing then b 
                                      else I.unionWith (+) (I.map ((*) (fromJust nodeVal)) (evalAnsatzForestEta epsM evalM a)) b
+    evalAnsatzForestEta epsM evalM EmptyForest = I.empty
 
     evalAnsatzForestEpsilon :: M.Map [Int] Rational -> I.IntMap Int -> AnsatzForestEpsilon -> I.IntMap Rational
     evalAnsatzForestEpsilon epsM evalM m = M.foldrWithKey foldF I.empty m 
@@ -644,6 +673,29 @@ module PerturbationTree2_2 (
 
     ---------------------------------------------------------------------------------------------------------------------------
 
+    --reduce the ansatzForest 
+
+    redAnsatzForestEta :: Int -> [(Int,Int)] -> Symmetry -> M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEta  
+    redAnsatzForestEta ord filters symmetries epsM evalMs = removeVarsEta remVars ansEta
+            where
+                ansEta = getEtaForest [1..ord] filters symmetries 
+                ansL = evalAllListEta epsM evalMs ansEta
+                redL = reduceAnsList ansL 
+                ansVars = getPivots redL 
+                allVars = getForestLabels ansEta 
+                remVars = allVars \\ ansVars
+
+    redAnsatzForestEps :: Int -> [(Int,Int)] -> Symmetry -> M.Map [Int] Rational -> [(I.IntMap Int, Int, Int)] -> AnsatzForestEpsilon  
+    redAnsatzForestEps ord filters symmetries epsM evalMs = removeVarsEps remVars ansEps
+            where
+                ansEps = getEpsForest [1..ord] filters symmetries 
+                ansL = evalAllListEpsilon epsM evalMs ansEps
+                redL = reduceAnsList ansL  
+                ansVars = getPivots redL 
+                allVars = getForestLabelsEpsilon ansEps
+                remVars = allVars \\ ansVars
+
+
     getTensorInds :: Int -> M.Map [Int] Rational -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6 n7 n8])] -> AnsatzForestEta -> AnsatzForestEpsilon -> [(IndTuple n1 n2 n3 n4 n5 n6 n7 n8, VarMap)]
     getTensorInds fstVar epsM evalMs ansEta ansEpsilon = filter (\(_,b) -> b /= I.empty) $ zipWith (\(a,b) (c,d) -> ( if a == c then a else undefined, I.unionWith (+) b d)) etaRmL epsRmL 
             where
@@ -711,7 +763,7 @@ module PerturbationTree2_2 (
             where
                 mat = evalAllMatrix l 
                 p = Sol.pivots Sol.FullPivLU mat
-                
+
 
     --coloumns (down) form basis of nullspace
     ansatzKernel :: [[(Int, Rational)]] -> Mat.MatrixXd 
@@ -739,6 +791,12 @@ module PerturbationTree2_2 (
     triangleMap3P = M.fromList $ zip j k
                     where
                         j = [ [a,b,c] | a <- [1..315], b <- [a..315], c <- [b..315] ]
+                        k = [1..]
+
+    triangleMap4P ::  M.Map [Int] Int
+    triangleMap4P = M.fromList $ zip j k
+                    where
+                        j = [ [a,b,c,d] | a <- [1..315], b <- [a..315], c <- [b..315], d <- [c..315] ]
                         k = [1..]
 
     ind1Div :: Int -> Int -> Int 
@@ -822,6 +880,37 @@ module PerturbationTree2_2 (
         where 
             list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), (M.!) triangle [ind2Div a i, ind2Div b j, ind2Div c k] ) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
    
+    --now order 4 
+
+    --A:B:C:D
+    areaList16 ::  I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
+    areaList16 trianArea trian2 triangle = list
+        where 
+            list = [ let (a',b',c',d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c' ++ d', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), (M.!) triangle [a,b,c,d]) | a <- [1..21], b <- [a..21], c <- [b..21], d <- [c..21] ]
+
+
+    --A:B:C:DI
+    areaList18_2 ::  I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
+    areaList18_2 trianArea trian2 triangle = list
+        where 
+            list = [ let (a',b',c',d',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trian2 i) in  (a' ++ b' ++ c'++d'++i', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (iMult2 i'), (M.!) triangle [a,b,c,d,i]) | a <- [1..21], b <- [a..21], c <- [b..21], d <- [1..21], i <- [1..10] ]
+
+    --A:B:Cp:Dq
+    areaList18_3 ::  I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
+    areaList18_3 trianArea trian2 triangle = list
+        where 
+            list = [ let (a',b',c',d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c'++ p : d'++[q], (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), (M.!) triangle [a,b,c,p,d,q]) | a <- [1..21], b <- [a..21], c <- [1..21], d <- [c..21], p <- [0..3], q <- [0..3] , not (c == d && p > q) ]
+
+
+    --order 5 
+
+    areaList20 ::  I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [([Int], Int, Int)]
+    areaList20 trianArea trian2 triangle = list
+        where 
+            list = [ let (a',b',c',d',e') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trianArea e) in  (a' ++ b' ++ c' ++ d', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (areaMult e'), (M.!) triangle [a,b,c,d,e]) | a <- [1..21], b <- [a..21], c <- [b..21], d <- [c..21], e <- [d..21] ]
+
+
+
     --A
     areaList4Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 1 0 0 0 0 0 0 0])]
     areaList4Inds trianArea trian2 = list
@@ -832,7 +921,8 @@ module PerturbationTree2_2 (
     areaList6Inds trianArea trian2 = list
          where 
              list = [ let (a',i') = ((I.!) trianArea a, (I.!) trian2 i) in  (a' ++ i', (areaMult a') * (iMult2 i'), [(singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty)]) | a <- [1..21], i <- [1..10]]
- 
+
+
     --A:B
     areaList8Inds :: I.IntMap [Int] -> I.IntMap [Int]  -> [([Int], Int, [IndTuple 2 0 0 0 0 0 0 0])]
     areaList8Inds trianArea trian2 = list
@@ -895,7 +985,36 @@ module PerturbationTree2_2 (
          where 
              list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), map (\[[a,i],[b,j],[c,k]] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ singletonInd (Uind20 $ c-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ Append (Uind9 $ j-1) $ singletonInd (Uind9 $ k-1), Empty, Empty, Empty) ) $ nub $ permutations [[a,i],[b,j],[c,k]]) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
     
+
+    --order 4 
+
+    --A:B:C_D
+    areaList16Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 4 0 0 0 0 0 0 0])]
+    areaList16Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c', d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c' ++ d', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), map (\[a,b,c,d] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) $ singletonInd (Uind20 $ d-1), Empty, Empty, Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c,d] )| a <- [1..21], b <- [a..21], c <- [b..21], d <- [c..21] ]
  
+
+    --A:B:C:DI
+    areaList18_2Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 4 0 0 0 1 0 0 0])]
+    areaList18_2Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c',d',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trian2 i) in  (a' ++ b' ++ c'++d'++i', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (iMult2 i'), map (\[a,b,c] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) (singletonInd (Uind20 $ d-1)), Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty) ) $ nub $ permutations [a,b,c] ) | a <- [1..21], b <- [a..21], c <- [b..21], d <- [1..21], i <- [1..10] ]
+ 
+    --A:B:Cp:Dq
+    areaList18_3Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 4 0 0 0 0 0 2 0])]
+    areaList18_3Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c',d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c'++ p : d'++[q], (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), map ( \(a,b,c,p,d,q) -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) (singletonInd (Uind20 $ d-1)), Empty, Empty, Empty, Empty, Empty, Append (Uind3 p) (singletonInd (Uind3 q)), Empty) ) $ nub [(a,b,c,p,d,q),(b,a,c,p,d,q),(a,b,d,q,c,p),(b,a,d,q,c,p)] ) | a <- [1..21], b <- [a..21], c <- [1..21], d <- [c..21], p <- [0..3], q <- [0..3] , not (c == d && p > q) ]
+ 
+    --order 5 
+
+    areaList20Inds ::  I.IntMap [Int] -> I.IntMap [Int] -> [([Int], Int, [IndTuple 5 0 0 0 0 0 0 0])]
+    areaList20Inds trianArea trian2 = list
+         where 
+             list = [ let (a',b',c', d', e') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trianArea e) in  (a' ++ b' ++ c' ++ d' ++ e', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (areaMult e'), map (\[a,b,c,d,e] -> (Append (Uind20 $ a-1) $ Append (Uind20 $ b-1) $ Append (Uind20 $ c-1) $ Append (Uind20 $ d-1) $ singletonInd (Uind20 $ e-1), Empty, Empty, Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c,d,e] )| a <- [1..21], b <- [a..21], c <- [b..21], d <- [c..21], e <- [d..21] ]
+ 
+
 
     isAreaSorted :: Int -> Int -> Int -> Int -> Bool
     isAreaSorted a b c d 
@@ -984,6 +1103,36 @@ module PerturbationTree2_2 (
             area18 = areaList18 trianArea trian2 triangle
             l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
 
+    --order 4
+
+    areaEvalMap16 :: I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [(I.IntMap Int, Int, Int)]
+    areaEvalMap16 trianArea trian2 triangle = l
+        where 
+            area16 = areaList16 trianArea trian2 triangle
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..16] x, y,z)) area16
+
+
+    areaEvalMap18_2 :: I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [(I.IntMap Int, Int, Int)]
+    areaEvalMap18_2 trianArea trian2 triangle = l
+        where 
+            area18 = areaList18_2 trianArea trian2 triangle
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+    areaEvalMap18_3 :: I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [(I.IntMap Int, Int, Int)]
+    areaEvalMap18_3 trianArea trian2 triangle = l
+        where 
+            area18 = areaList18_3 trianArea trian2 triangle
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+    --order 5
+
+    areaEvalMap20 :: I.IntMap [Int] -> I.IntMap [Int] -> M.Map [Int] Int -> [(I.IntMap Int, Int, Int)]
+    areaEvalMap20 trianArea trian2 triangle = l
+        where 
+            area20 = areaList20 trianArea trian2 triangle
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..20] x, y,z)) area20
+
+
     --lists store (indexCombinationMap, Multiplicity, AbstractIndices)
 
     areaEvalMap4Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 1 0 0 0 0 0 0 0])]
@@ -1057,6 +1206,37 @@ module PerturbationTree2_2 (
         where 
             area18 = areaList18Inds trianArea trian2
             l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+    --order 4
+
+    areaEvalMap16Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 4 0 0 0 0 0 0 0])]
+    areaEvalMap16Inds trianArea trian2 = l
+        where 
+            area16 = areaList16Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..16] x, y,z)) area16
+
+
+    areaEvalMap18_2Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 4 0 0 0 1 0 0 0])]
+    areaEvalMap18_2Inds trianArea trian2 = l
+        where 
+            area18 = areaList18_2Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+    areaEvalMap18_3Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 4 0 0 0 0 0 2 0])]
+    areaEvalMap18_3Inds trianArea trian2 = l
+        where 
+            area18 = areaList18_3Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..18] x,y,z)) area18
+
+    --order 5
+
+    areaEvalMap20Inds :: I.IntMap [Int] -> I.IntMap [Int] -> [(I.IntMap Int, Int, [IndTuple 5 0 0 0 0 0 0 0])]
+    areaEvalMap20Inds trianArea trian2 = l
+        where 
+            area20 = areaList20Inds trianArea trian2
+            l = map (\(x,y,z) -> (I.fromList $ zip [1..20] x, y,z)) area20
+
+
 
 
 
@@ -1138,4 +1318,161 @@ module PerturbationTree2_2 (
     symList18 = ([(5,6),(11,12),(17,18)], [(1,2),(3,4),(7,8),(9,10),(13,14),(15,16)], [([1,2],[3,4]),([7,8],[9,10]),
                 ([13,14],[15,16])], [], [[[1,2,3,4,5,6],[7,8,9,10,11,12],[13,14,15,16,17,18]]])
 
+    --order 4
+
+    filterList16 :: [(Int,Int)]
+    filterList16 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(5,9),(9,10),(9,11),(11,12),(9,13),(13,14),(13,15),(15,16)]
+
+    symList16 :: Symmetry  
+    symList16 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16])], [], 
+                [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]])
+
+
+    filterList18_2 :: [(Int,Int)]
+    filterList18_2 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(5,9),(9,10),(9,11),(11,12),(13,14),(13,15),(15,16),(17,18)]
+
+    symList18_2 :: Symmetry  
+    symList18_2 = ([(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16)], [([1,2],[3,4]),([5,6],[7,8]),
+                ([9,10],[11,12]),([13,14],[15,16])], [], [[[1,2,3,4],[5,6,7,8],[9,10,11,12]]])
+
+    filterList18_3 :: [(Int,Int)]
+    filterList18_3 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(9,10),(9,11),(11,12),(9,14),(14,15),(14,16),(16,17)]
+
+    symList18_3 :: Symmetry  
+    symList18_3 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(14,15),(16,17)], [([1,2],[3,4]),([5,6],[7,8]),
+                ([9,10],[11,12]),([14,15],[16,17]),([1,2,3,4],[5,6,7,8]),([9,10,11,12,13],[14,15,16,17,18])], [], [])
+
+    --order 5
+
+    filterList20 :: [(Int,Int)]
+    filterList20 = [(1,2),(1,3),(3,4),(1,5),(5,6),(5,7),(7,8),(5,9),(9,10),(9,11),(11,12),(9,13),(13,14),(13,15),(15,16),(13,17),(17,18),(17,19),(19,20)]
+
+    symList20 :: Symmetry  
+    symList20 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18),(19,20)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16]),([17,18],[19,20])], [], 
+                [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]])
+
+    --generate generic ansatz tensors 
+
+    etaEps4Ansatz :: Tensor8 1 0 0 0 0 0 0 0 VarMap
+    etaEps4Ansatz = mkAnsatzTensor 4 filterList4 symList4 1 epsMap evalMap
+        where
+            evalMap = areaEvalMap4Inds trianMapArea trianMapDerivative
+
+    etaEps8Ansatz :: Tensor8 2 0 0 0 0 0 0 0 VarMap
+    etaEps8Ansatz = mkAnsatzTensor 8 filterList8 symList8 1 epsMap evalMap
+        where
+            evalMap = areaEvalMap8Inds trianMapArea trianMapDerivative
+
+    --A
+    generic4Ansatz :: Tensor8 1 0 0 0 0 0 0 0 VarMap
+    generic4Ansatz = fromListTWith8 (addVarsMap) list 
+         where 
+             list = [ let varMap = I.singleton (dof a) 1
+                      in ((singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, Empty, Empty, Empty, Empty), varMap)
+                      | a <- [1..21] ]
+             dof a = a
+
+    --Aa
+    generic5Ansatz :: Tensor8 1 0 0 0 0 0 1 0 VarMap
+    generic5Ansatz = fromListTWith8 (addVarsMap) list
+          where 
+             list = [ let varMap = I.singleton (dof a p) 1
+                      in ((singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, Empty, Empty, singletonInd (Uind3 $ p-1 ), Empty), varMap)
+                      | a <- [1..21], p <- [1..4] ]
+             dof a p = 1 + 21 + 4*(a-1) + (p-1)
+
+    --AI
+    generic6Ansatz :: Tensor8 1 0 0 0 1 0 0 0 VarMap
+    generic6Ansatz = fromListTWith8 (addVarsMap) list
+         where 
+            list = [ let varMap = I.singleton (dof a i) 1
+                     in ((singletonInd (Uind20 $ a-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i-1), Empty, Empty, Empty), varMap)
+                     | a <- [1..21], i <- [1..10] ]
+            dof a i = 1 + 21 + 84 + 10*(a-1) + (i-1)
+    --AB
+    generic8Ansatz :: Tensor8 2 0 0 0 0 0 0 0 VarMap
+    generic8Ansatz = fromListTWith8 (addVarsMap) list
+         where 
+            list = [ let varMap = I.singleton (dof a b) 1
+                     in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, Empty, Empty), varMap)
+                     | a <- [1..21], b <- [1..21] ]
+            dof a b = let a' = min a b
+                          b' = max a b
+                      in trian M.! [a',b'] + 315
+            trian = M.fromList $ zip j k
+                      where
+                          j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                          k = [1..]
+
+    --ABb 
+    generic9Ansatz :: Tensor8 2 0 0 0 0 0 1 0 VarMap 
+    generic9Ansatz = fromListTWith8 (addVarsMap) list
+        where
+            list = [ let varMap = I.singleton (dof a b p) 1
+                    in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, singletonInd (Uind3 $ p-1), Empty), varMap)
+                    | a <- [1..21], b <- [1..21], p <- [1..4]]
+            dof a b p = trian M.! [a,1 + 21 + 4*(b-1) + (p-1)] + 315
+            trian = M.fromList $ zip j k
+                    where
+                        j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                        k = [1..]
+
+    --AaBb 
+    generic10_1Ansatz :: Tensor8 2 0 0 0 0 0 2 0 VarMap 
+    generic10_1Ansatz = fromListTWith8 (addVarsMap) list
+        where
+            list = [ let varMap = I.singleton (dof a b p q) 1
+                    in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Empty, Empty, Append (Uind3 $ p-1) $ singletonInd (Uind3 $ q-1), Empty), varMap)
+                    | a <- [1..21], b <- [1..21], p <- [1..4], q <- [1..4]]
+            dof a b p q = let 
+                    a' = min (1 + 21 + 4*(a-1) + (p-1)) (1 + 21 + 4*(b-1) + (q-1)) 
+                    b' = max (1 + 21 + 4*(a-1) + (p-1)) (1 + 21 + 4*(b-1) + (q-1)) 
+                    in trian M.! [a',b'] + 315
+            trian = M.fromList $ zip j k
+                    where
+                        j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                        k = [1..]
+
+    --ABI 
+    generic10_2Ansatz :: Tensor8 2 0 0 0 1 0 0 0 VarMap 
+    generic10_2Ansatz = fromListTWith8 (addVarsMap) list
+         where
+             list = [ let varMap = I.singleton (dof a b i) 1
+                     in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i -1), Empty, Empty, Empty), varMap)
+                     | a <- [1..21], b <- [1..21], i <- [1..10]]
+             dof a b i = trian M.! [a,1 + 105 + 10*(b-1) + (i-1)] + 315
+             trian = M.fromList $ zip j k
+                     where
+                         j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                         k = [1..]
+ 
+    --ApBI 
+    generic11Ansatz :: Tensor8 2 0 0 0 1 0 1 0 VarMap 
+    generic11Ansatz = fromListTWith8 (addVarsMap) list
+         where
+             list = [ let varMap = I.singleton (dof a b i p) 1
+                     in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, singletonInd (Uind9 $ i -1), Empty, singletonInd (Uind3 $ p-1), Empty), varMap)
+                     | a <- [1..21], b <- [1..21], i <- [1..10], p <- [1..4]]
+             dof a b i p = trian M.! [1 + 21 + 4*(a-1) + (p-1),1 + 105 + 10*(b-1) + (i-1)] + 315
+             trian = M.fromList $ zip j k
+                     where
+                         j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                         k = [1..]
+
+    --AIBJ 
+    generic12Ansatz :: Tensor8 2 0 0 0 2 0 0 0 VarMap 
+    generic12Ansatz = fromListTWith8 (addVarsMap) list
+        where
+            list = [ let varMap = I.singleton (dof a b i j) 1
+                    in ((Append (Uind20 $ a-1) $ singletonInd (Uind20 $ b-1) , Empty, Empty, Empty, Append (Uind9 $ i-1) $ singletonInd (Uind9 $ j -1), Empty, Empty, Empty), varMap)
+                    | a <- [1..21], b <- [1..21], i <- [1..10], j <- [1..10]]
+            dof a b i j = let 
+                    a' =  min (1 + 105 + 10*(a-1) + (i-1)) (1 + 105 + 10*(b-1) + (j-1))
+                    b' =  max (1 + 105 + 10*(a-1) + (i-1)) (1 + 105 + 10*(b-1) + (j-1))
+                    in trian M.! [a',b'] + 315
+            trian = M.fromList $ zip j k
+                    where
+                        j = [ [a,b] | a <- [1..315], b <- [a..315] ]
+                        k = [1..]
+ 
 

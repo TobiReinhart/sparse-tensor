@@ -32,7 +32,10 @@
     aSymATens1, aSymATens2, aSymATens3, aSymATens4, aSymATens5, aSymATens6,
     cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6,
     cyclicSymATens1, cyclicSymATens2, cyclicSymATens3, cyclicSymATens4, cyclicSymATens5, cyclicSymATens6,
-    contrATens1, contrATens2, contrATens3
+    contrATens1, contrATens2, contrATens3,
+    decodeTensor, encodeTensor, ansVarToAreaVar, 
+    mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
+    sumBetas
  
     
 ) where
@@ -57,6 +60,11 @@
     import Data.Singletons.Prelude.Enum
     import Data.Singletons.TypeLits
     import Unsafe.Coerce (unsafeCoerce)
+    import qualified Data.ByteString.Lazy as BS
+    import Codec.Compression.GZip
+    import Data.Either
+
+
 
     --for Linear Algebra 
 
@@ -467,6 +475,14 @@
             tensList = map (\(x,y) -> (x, fromListT y)) l3
     tensorContr (i,j) (Tensor m) = Tensor $ M.map (tensorContr (i-1,j)) m
     tensorContr inds ZeroTensor = ZeroTensor    
+
+    --encode and decode tensors as bytestrings 
+
+    encodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => Tensor n k v -> BS.ByteString 
+    encodeTensor = compress . encodeLazy 
+
+    decodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => BS.ByteString -> Tensor n k v 
+    decodeTensor bs = (fromRight undefined $ decodeLazy $ decompress bs)
 
     --now a generic abstract Tensor "consists of several" Tensor2s 
 
@@ -1212,13 +1228,13 @@
 
     --variable for generic are metric dofs, i.e parameters that are not obtained by making ansätze for the L derivatives
 
-    newtype AreaVar a = AreaVar (I.IntMap a) deriving (Eq)
+    data AreaVar a = AreaVar a (I.IntMap a) deriving (Eq)
 
     instance (TScalar a) => TScalar (AreaVar a) where 
-        addS (AreaVar varMap1) (AreaVar varMap2) = AreaVar $ I.unionWith (addS) varMap1 varMap2
-        subS (AreaVar varMap1) (AreaVar varMap2) = AreaVar $ I.unionWith (addS) varMap1 $ I.map (scaleS (-1)) varMap2 
-        scaleS s (AreaVar varMap1) = AreaVar $ I.map (scaleS s) varMap1
-        scaleZero = AreaVar I.empty 
+        addS (AreaVar s1 varMap1) (AreaVar s2 varMap2) = AreaVar (addS s1 s2) $ I.unionWith (addS) varMap1 varMap2
+        subS (AreaVar s1 varMap1) (AreaVar s2 varMap2) = AreaVar (subS s1 s2) $ I.unionWith (addS) varMap1 $ I.map (scaleS (-1)) varMap2 
+        scaleS s (AreaVar s1 varMap1) = AreaVar (scaleS s s1) $ I.map (scaleS s) varMap1
+        scaleZero = AreaVar scaleZero I.empty 
 
     instance (TScalar a) => TAlgebra (AreaVar a) Rational where 
         type TAlg (AreaVar a) Rational = AreaVar a
@@ -1232,16 +1248,19 @@
 
     instance TAlgebra (AreaVar Rational) AnsVar where 
         type TAlg (AreaVar Rational) AnsVar = AreaVar (AnsVar) 
-        prodA (AreaVar varMapArea) varMapAns = AreaVar $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
+        prodA (AreaVar s1 varMapArea) varMapAns = AreaVar (scaleS s1 varMapAns) $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
         
     instance TAlgebra AnsVar (AreaVar Rational) where 
         type TAlg AnsVar (AreaVar Rational) = AreaVar (AnsVar) 
-        prodA varMapAns (AreaVar varMapArea) = AreaVar $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
+        prodA varMapAns (AreaVar s1 varMapArea) = AreaVar (scaleS s1 varMapAns) $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
 
     --tensors containing parameters in the derivatives must usually be evaluated before we can compute ranks, etc.
 
+    ansVarToAreaVar :: AnsVar -> AreaVar AnsVar 
+    ansVarToAreaVar ansV = AreaVar ansV I.empty 
+
     evalAreaVar :: (TScalar a) => I.IntMap Rational -> AreaVar a -> a 
-    evalAreaVar iMap (AreaVar areaMap) = foldr addS fst rest 
+    evalAreaVar iMap (AreaVar s1 areaMap) = addS s1 (foldr addS fst rest) 
                 where 
                     assocs = I.assocs areaMap 
                     newList = map (\(x,y) -> scaleS ((I.!) iMap x) y) assocs
@@ -1546,6 +1565,15 @@
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
+    --rank of the equations can be computed with rank Sol.FullPivLU or Sol.JakobySVD
+
+    --compute the sum of betas (not clear if it really works !)
+
+    sumBetas :: I.IntMap Int -> Mat.MatrixXd -> Int 
+    sumBetas classMap mat = sum $ map ((I.!) classMap) pivs  
+            where 
+                pivs = map (1+) $ Sol.pivots Sol.FullPivLU mat  
+
     ------------------------------------------------------------------------------------------------------------------------------------
     --for our concrete purpose we need 3 types of indices 
 
@@ -1591,31 +1619,3 @@
     singletonTList t = t &> EmptyTList6
 
     
-
-
-    
-
-
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-    
-    
-
-
-    
-    
-    
-
-
-

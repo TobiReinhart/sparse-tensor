@@ -9,6 +9,8 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
 
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
@@ -30,7 +32,8 @@ module PerturbationTree2_3 (
     symPairs18, symPairs18_2, symPairs18_3, symPairs20,
     areaBlocks4, areaBlocks6, areaBlocks8, areaBlocks10_1, areaBlocks10_2, areaBlocks12, areaBlocks12_1, areaBlocks14_1, areaBlocks14_2,
     areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20,
-    canonicalizeEvalMaps, getSyms
+    canonicalizeEvalMaps, getSyms,
+    decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta
 
     
 ) where
@@ -42,6 +45,11 @@ module PerturbationTree2_3 (
     import Control.Parallel.Strategies
     import Control.Monad.ST (runST)
     import Data.Ratio
+    import Data.Serialize
+    import GHC.Generics
+    import qualified Data.ByteString.Lazy as BS
+    import Codec.Compression.GZip
+    import Data.Either
 
     --LinearAlgebra
 
@@ -137,11 +145,11 @@ module PerturbationTree2_3 (
                 
     --eta and epsilon types for the tree representing a sum of products of these tensors
 
-    data Epsilon = Epsilon {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord)
+    data Epsilon = Epsilon {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord, Generic, Serialize)
 
-    data Eta = Eta {-# UNPACK #-} !Int {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord)
+    data Eta = Eta {-# UNPACK #-} !Int {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord, Generic, Serialize)
 
-    data Var = Var {-# UNPACK #-} !Int {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord)
+    data Var = Var {-# UNPACK #-} !Int {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord, Generic, Serialize)
     
     sortList :: Ord a => [a] -> [a]
     sortList [] = [] 
@@ -172,9 +180,23 @@ module PerturbationTree2_3 (
     isZeroVar (Var x _) = x==0
     {-# INLINEABLE isZeroVar #-}
    
-    data AnsatzForestEta = ForestEta (M.Map Eta AnsatzForestEta)| Leaf !Var | EmptyForest  deriving (Show, Read, Eq)
+    data AnsatzForestEta = ForestEta (M.Map Eta AnsatzForestEta)| Leaf !Var | EmptyForest  deriving (Show, Read, Eq, Generic, Serialize)
 
     type AnsatzForestEpsilon = M.Map Epsilon AnsatzForestEta
+
+    --save forests as bytestrings 
+
+    encodeAnsatzForestEta :: AnsatzForestEta -> BS.ByteString 
+    encodeAnsatzForestEta = compress . encodeLazy 
+
+    encodeAnsatzForestEpsilon :: AnsatzForestEpsilon -> BS.ByteString
+    encodeAnsatzForestEpsilon = compress . encodeLazy
+
+    decodeAnsatzForestEta :: BS.ByteString -> AnsatzForestEta 
+    decodeAnsatzForestEta bs = (fromRight undefined $ decodeLazy $ decompress bs)
+
+    decodeAnsatzForestEpsilon :: BS.ByteString -> AnsatzForestEpsilon 
+    decodeAnsatzForestEpsilon bs = (fromRight undefined $ decodeLazy $ decompress bs)
 
     forestMap :: AnsatzForestEta -> M.Map Eta AnsatzForestEta
     forestMap (ForestEta m) = m
@@ -1629,6 +1651,8 @@ module PerturbationTree2_3 (
     canonicalizeEvalMaps sym iMaps = nub $ map (canonicalizeIndList blocks areaInds derInds) iMaps 
             where 
                 (blocks, areaInds, derInds) = getSyms sym 
+
+    
     
 
 

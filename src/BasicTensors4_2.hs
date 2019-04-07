@@ -35,8 +35,9 @@
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
 
-module BasicTensor4_2 (
-    flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2, invEta
+module BasicTensors4_2 (
+    flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2, invEta,
+    genericArea, genericAreaDerivative1, genericAreaDerivative2
 
 ) where 
 
@@ -343,26 +344,26 @@ module BasicTensor4_2 (
     genericArea :: ATens 0 1 0 0 0 0 (AreaVar Rational) 
     genericArea = fromListT6 assocs 
             where 
-                dofs = map (\x -> AreaVar $ I.singleton x 1) [1..21] 
+                dofs = map (\x -> AreaVar 0 $ I.singleton x 1) [1..21] 
                 inds = map (\i -> (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty)) [0..20]
                 assocs = zip inds dofs
  
     genericAreaFlat :: ATens 0 1 0 0 0 0 (AreaVar Rational)
     genericAreaFlat = fromListT6 $
                       map (\(i,v) -> ( (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty), v))
-                                    [(0, AreaVar $ I.singleton 1 (-1)),(5, AreaVar $ I.singleton 4 1),(6, AreaVar $ I.singleton 2 (-1)),(9, AreaVar $ I.singleton 5 (-1)),(11, AreaVar $ I.singleton 3 (-1)),(12, AreaVar $ I.singleton 6 1),(15, AreaVar $ I.singleton 1 1),(18, AreaVar $ I.singleton 2 1),(20, AreaVar $ I.singleton 3 1)]
+                                    [(0, AreaVar 0 $ I.singleton 1 (-1)),(5, AreaVar 0 $ I.singleton 4 1),(6, AreaVar 0 $ I.singleton 2 (-1)),(9, AreaVar 0 $ I.singleton 5 (-1)),(11, AreaVar 0 $ I.singleton 3 (-1)),(12, AreaVar 0 $ I.singleton 6 1),(15, AreaVar 0 $ I.singleton 1 1),(18, AreaVar 0 $ I.singleton 2 1),(20, AreaVar 0 $ I.singleton 3 1)]
 
     genericAreaDerivative1 :: ATens 0 1 0 0 0 1 (AreaVar Rational)
     genericAreaDerivative1 = fromListT6 assocs
                 where 
-                    dofs = map (\x -> AreaVar $ I.singleton x 1) [22..105]
+                    dofs = map (\x -> AreaVar 0 $ I.singleton x 1) [22..105]
                     inds = map (\(a,p) -> (Empty, (singletonInd $ Ind20 a), Empty, Empty, Empty, (singletonInd $ Ind3 p))) $ [ (a,p) | a <- [0..20], p <- [0..3]]
                     assocs = zip inds dofs 
 
     genericAreaDerivative2 :: ATens 0 1 0 1 0 0 (AreaVar Rational)
     genericAreaDerivative2 = fromListT6 assocs
                 where 
-                    dofs = map (\x -> AreaVar $ I.singleton x 1) [106..315]
+                    dofs = map (\x -> AreaVar 0 $ I.singleton x 1) [106..315]
                     inds = map (\(a,i) -> (Empty, (singletonInd $ Ind20 a), Empty, (singletonInd $ Ind9 i), Empty, Empty)) $ [ (a,i) | a <- [0..20], i <- [0..9]]
                     assocs = zip inds dofs 
 

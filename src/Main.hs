@@ -28,7 +28,7 @@ main = do
     let bsTens14_2 = encodeTensor tens14_2 
 
 
-    let (eta16_1,eps16_1,tens16_1) = mkAnsatzTensorEig 14 filterList16_1 symList16_1 areaList16_1IndsEta areaList16_1IndsEps 
+    let (eta16_1,eps16_1,tens16_1) = mkAnsatzTensorEig 16 filterList16_1 symList16_1 areaList16_1IndsEta areaList16_1IndsEps 
 
     let bsEta16_1 = encodeAnsatzForestEta eta16_1 
 
@@ -37,7 +37,7 @@ main = do
     let bsTens16_1 = encodeTensor tens16_1 
 
 
-    let (eta16_2,eps16_2,tens16_2) = mkAnsatzTensorEig 14 filterList16_2 symList16_2 areaList16_2IndsEta areaList16_2IndsEps 
+    let (eta16_2,eps16_2,tens16_2) = mkAnsatzTensorEig 16 filterList16_2 symList16_2 areaList16_2IndsEta areaList16_2IndsEps 
 
     let bsEta16_2 = encodeAnsatzForestEta eta16_2 
 
@@ -46,6 +46,7 @@ main = do
     let bsTens16_2 = encodeTensor tens16_2 
 
 
+    
     BS.writeFile "/cip/austausch/cgg/7.4.eta14_1" bsEta14_1
 
     BS.writeFile "/cip/austausch/cgg/7.4.eps14_1" bsEps14_1
@@ -85,7 +86,7 @@ main = do
     BS.writeFile "/cip/austausch/cgg/7.4.tens16_2" bsTens16_2
 
     print "16_2 done !"
-
+    
 
 
 

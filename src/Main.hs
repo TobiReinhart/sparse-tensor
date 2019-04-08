@@ -37,7 +37,8 @@ import qualified Data.ByteString.Lazy as BS
 
 main = do 
 
-    let (eta,eps,_) = mkAnsatzTensorEig 10 filterList10_1 symList10_1 areaList10_1IndsEta areaList10_1IndsEps
+    let (eta,eps,_) = mkAnsatzTensorFast 16 filterList16_2 symList16_2 areaList16_2IndsEta areaList16_2IndsEps
 
-    print $ length $ map (take 4) $ getEpsilonInds [1..14] filterList14_1 symList14_1
+    print $ getForestLabels eta 
 
+    print $ getForestLabelsEpsilon eps 

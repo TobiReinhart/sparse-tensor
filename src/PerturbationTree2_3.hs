@@ -33,7 +33,7 @@ module PerturbationTree2_3 (
     areaBlocks4, areaBlocks6, areaBlocks8, areaBlocks10_1, areaBlocks10_2, areaBlocks12, areaBlocks12_1, areaBlocks14_1, areaBlocks14_2,
     areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20,
     canonicalizeEvalMaps, getSyms, epsMap,
-    decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta, flattenForestEpsilon
+    decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta, flattenForestEpsilon, getIndSyms
 
     
 ) where
@@ -104,10 +104,11 @@ module PerturbationTree2_3 (
         as we want to contstruct a basis it suffices to pick representatives of the different symmetry orbits module anti-sym in (>4) indices
             1) whenever 3 indices of one are metric are contracted against an epsilon we can actually express the tensor as one with 4 area indices contracted against epsilon
             2) all tensors with 2 area indices contracted against one epsilon can be expressed as tensors with the first 2 area indices contracted against epsilon 
+            3) tensors with a maximum of 1 epsilon contraction per area metric can be exprerssed by those with at least one 2 area contraction 
     -}
 
     getIndsEpsilon :: Int -> [[Int]] -> [[Int]] -> [[Int]]
-    getIndsEpsilon i syms areaBlocks = [ [a,b,c,d] | a <- [1..i-3], b <- [a+1..i-2], c <- [b+1..i-1], d <- [c+1..i], (not $ isSym syms [a,b,c,d]) && (not $ is3Area areaBlocks [a,b,c,d]) && (isValid2Area areaBlocks [a,b,c,d]) ]
+    getIndsEpsilon i syms areaBlocks = [ [a,b,c,d] | a <- [1..i-3], b <- [a+1..i-2], c <- [b+1..i-1], d <- [c+1..i], (not $ isSym syms [a,b,c,d]) && (not $ is3Area areaBlocks [a,b,c,d]) && (isValid2Area areaBlocks [a,b,c,d]) && (not $ is1Area areaBlocks [a,b,c,d]) ]
                     where 
                         isSym [] x = False
                         isSym [[a,b]] [i,j,k,l] = length (intersect [a,b] [i,j,k,l]) == 2
@@ -126,6 +127,7 @@ module PerturbationTree2_3 (
                         isValid2Area (x:xs) [i,j,k,l] 
                             | isValid2Area [x] [i,j,k,l] = isValid2Area xs [i,j,k,l]
                             | otherwise = False 
+                        is1Area list [i,j,k,l] = (maximum $ map (\x -> length $ intersect [i,j,k,l] x) list) == 1 
                                 
                         
     getAllIndsEpsilon :: [Int] -> [[Int]] -> [[Int]] -> [[Int]] -> [[Int]]

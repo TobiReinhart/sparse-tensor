@@ -37,7 +37,13 @@ import qualified Data.ByteString.Lazy as BS
 
 main = do 
 
-    let (eta,eps,_) = mkAnsatzTensorFast 16 filterList16_2 symList16_2 areaList16_2IndsEta areaList16_2IndsEps
+    eta' <- BS.readFile "/cip/austausch/cgg/7.4.eta16_2"
+
+    eps' <- BS.readFile "/cip/austausch/cgg/7.4.eps16_2"
+
+    let eta = decodeAnsatzForestEta eta' 
+
+    let eps = decodeAnsatzForestEpsilon eps'
 
     print $ getForestLabels eta 
 

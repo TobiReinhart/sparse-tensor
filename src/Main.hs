@@ -36,21 +36,6 @@ import qualified Data.ByteString.Lazy as BS
 
 main = do 
 
-    tens16_1' <- BS.readFile "/cip/austausch/cgg/7.4.tens16_1"
+    let (eta,eps,_) = mkAnsatzTensorEig 14 filterList14_2 symList14_2 areaList14_2IndsEta areaList14_2IndsEps
 
-    tens16_2' <- BS.readFile "/cip/austausch/cgg/7.4.tens16_2"
-
-    let tens16_1 = decodeTensor tens16_1' :: ATens 3 0 1 0 2 0 AnsVar
-
-    let tens16_2 = decodeTensor tens16_2' :: ATens 3 0 2 0 0 0 AnsVar
-
-    let l1 = toListShowVar6 $ ansatzAaBbCI tens16_1 
-
-    let l2 = toListShowVar6 $ ansatzABICJ tens16_2 
-
-    print $ l1 == [] 
-
-    print $ l2 == [] 
-
-
-    
+    print $ length $ getEpsilonInds [1..12] filterList12 symList12

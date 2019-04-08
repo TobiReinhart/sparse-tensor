@@ -228,14 +228,14 @@ module FlatTensorEquations (
         where 
             block1 = aSymATens5 (1,3) $ contrATens1 (0,0) $ contrATens3 (0,0) $ contrATens3 (4,0) $ ans16_1 &* interEqn2 &* invEta 
             block2 = tensorTrans1 (0,2) $ tensorTrans5 (0,2) block1
-            block3 = tensorTrans5 (1,2) $ tensorTrans1 (1,2) $ aSymATens5 (1,3) $ contrATens2 (0,0) $ contrATens1 (2,0) $ contrATens3 (4,0) $ ans16_1 &* interEqn3 &* invEta 
+            block3 = tensorTrans5 (1,2) $ tensorTrans1 (1,2) $ aSymATens5 (2,3) $ contrATens2 (0,0) $ contrATens1 (2,0) $ contrATens3 (4,0) $ ans16_1 &* interEqn3 &* invEta 
 
     ansatzABICJ :: ATens 3 0 2 0 0 0 AnsVar -> ATens 3 0 2 0 2 0 AnsVar 
     ansatzABICJ ans16_2 = block1 &+ block2 &+ block3 
         where 
             block1 = aSymATens5 (0,1) $ contrATens1 (1,0) $ contrATens2 (0,0) $ contrATens3 (1,0) $ ans16_2 &* interEqn3 &* invEta 
             block2 = tensorTrans1 (1,2) $ tensorTrans3 (0,1) block1 
-            block3 = resortTens1 [2,0,1] $ aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (1,0) $ ans16_2 &* interArea &* invEta 
+            block3 = tensorTrans3 (0,1) $ tensorTrans1 (0,2) $ aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (1,0) $ ans16_2 &* interArea &* invEta 
 
     ansatzAIBJCK :: ATens 3 0 3 0 0 0 AnsVar -> ATens 3 0 3 0 2 0 AnsVar 
     ansatzAIBJCK ans18 = block1 &+ block2 &+ block3

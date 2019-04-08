@@ -36,9 +36,9 @@ import qualified Data.ByteString.Lazy as BS
 
 main = do 
 
-    tens16_1' <- BS.readFile "cip/austausch/cgg/tens16_1"
+    tens16_1' <- BS.readFile "/cip/austausch/cgg/7.4.tens16_1"
 
-    tens16_2' <- BS.readFile "cip/austausch/cgg/tens16_2"
+    tens16_2' <- BS.readFile "/cip/austausch/cgg/7.4.tens16_2"
 
     let tens16_1 = decodeTensor tens16_1' :: ATens 3 0 1 0 2 0 AnsVar
 

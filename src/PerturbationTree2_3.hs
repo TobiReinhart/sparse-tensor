@@ -17,7 +17,7 @@
 
 
 module PerturbationTree2_3 (
-    mkAnsatzTensorEig, mkAnsatzTensorFast, getForestLabels, getForestLabelsEpsilon, getEtaInds, getEpsilonInds,
+    mkAnsatzTensorEig, mkAnsatzTensorFast, getForestLabels, getForestLabelsEpsilon, getEtaInds, getEpsilonInds, getEpsForestEig, evalAllTensorEpsilon,
     areaList4Inds, areaList6Inds, areaList8Inds, areaList10_1Inds, areaList10_2Inds, areaList12Inds, areaList12_1Inds, areaList14_1Inds, areaList14_2Inds,
     areaList16_1Inds, areaList16_2Inds, areaList16Inds, areaList18Inds, areaList18_2Inds, areaList18_3Inds, areaList20Inds, 
     symList4, symList6, symList8, symList10_1, symList10_2, symList12, symList12_1, symList14_1, symList14_2, symList16, symList16_1, symList16_2,
@@ -32,7 +32,7 @@ module PerturbationTree2_3 (
     symPairs18, symPairs18_2, symPairs18_3, symPairs20,
     areaBlocks4, areaBlocks6, areaBlocks8, areaBlocks10_1, areaBlocks10_2, areaBlocks12, areaBlocks12_1, areaBlocks14_1, areaBlocks14_2,
     areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20,
-    canonicalizeEvalMaps, getSyms,
+    canonicalizeEvalMaps, getSyms, epsMap,
     decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta, flattenForestEpsilon
 
     
@@ -100,8 +100,14 @@ module PerturbationTree2_3 (
     getAllIndsEta [] aSyms areaBlocks = [[]]
     getAllInds x aSmys areaBlocks = error "wrong list length"
 
+    {-we can use the following observations :
+        as we want to contstruct a basis it suffices to pick representatives of the different symmetry orbits module anti-sym in (>4) indices
+            1) whenever 3 indices of one are metric are contracted against an epsilon we can actually express the tensor as one with 4 area indices contracted against epsilon
+            2) all tensors with 2 area indices contracted against one epsilon can be expressed as tensors with the first 2 area indices contracted against epsilon 
+    -}
+
     getIndsEpsilon :: Int -> [[Int]] -> [[Int]] -> [[Int]]
-    getIndsEpsilon i syms areaBlocks = [ [a,b,c,d] | a <- [1..i-3], b <- [a+1..i-2], c <- [b+1..i-1], d <- [c+1..i], (not $ isSym syms [a,b,c,d]) && (not $ is3Area areaBlocks [a,b,c,d]) ]
+    getIndsEpsilon i syms areaBlocks = [ [a,b,c,d] | a <- [1..i-3], b <- [a+1..i-2], c <- [b+1..i-1], d <- [c+1..i], (not $ isSym syms [a,b,c,d]) && (not $ is3Area areaBlocks [a,b,c,d]) && (isValid2Area areaBlocks [a,b,c,d]) ]
                     where 
                         isSym [] x = False
                         isSym [[a,b]] [i,j,k,l] = length (intersect [a,b] [i,j,k,l]) == 2
@@ -112,8 +118,16 @@ module PerturbationTree2_3 (
                         is3Area (x:xs) [i,j,k,l]
                             | is3Area [x] [i,j,k,l] = True 
                             | otherwise = is3Area xs [i,j,k,l]
+                        isValid2Area [[a,b,c,d]] [i,j,k,l] 
+                            | length inter == 2 = inter == [a,b]
+                            | otherwise = True 
+                             where
+                                inter = intersect [a,b,c,d] [i,j,k,l]
+                        isValid2Area (x:xs) [i,j,k,l] 
+                            | isValid2Area [x] [i,j,k,l] = isValid2Area xs [i,j,k,l]
+                            | otherwise = False 
+                                
                         
-
     getAllIndsEpsilon :: [Int] -> [[Int]] -> [[Int]] -> [[Int]] -> [[Int]]
     getAllIndsEpsilon l syms aSyms areaBlocks = l3
             where

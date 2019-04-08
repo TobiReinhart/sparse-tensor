@@ -30,12 +30,14 @@ module Main (
 import PerturbationTree2_3
 import TensorTreeNumeric4_2
 import FlatTensorEquations
+import Data.List
 
 import qualified Data.ByteString.Lazy as BS
 
 
 main = do 
 
-    let (eta,eps,_) = mkAnsatzTensorEig 14 filterList14_2 symList14_2 areaList14_2IndsEta areaList14_2IndsEps
+    let (eta,eps,_) = mkAnsatzTensorEig 10 filterList10_1 symList10_1 areaList10_1IndsEta areaList10_1IndsEps
 
-    print $ length $ getEpsilonInds [1..12] filterList12 symList12
+    print $ length $ map (take 4) $ getEpsilonInds [1..14] filterList14_1 symList14_1
+

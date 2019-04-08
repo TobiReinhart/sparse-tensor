@@ -26,7 +26,7 @@
  module TensorTreeNumeric4_2 (
     Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple, AnsVar, AreaVar(..),
     (&*), (&+), (&-), (&.),
-    fromListT6, singletonInd, (+>), sortInd, toListT6, toListShow6,
+    fromListT6, singletonInd, (+>), sortInd, toListT6, toListShow6, toListShowVar6,
     tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6,
     symATens1, symATens2, symATens3, symATens4, symATens5, symATens6,
     aSymATens1, aSymATens2, aSymATens3, aSymATens4, aSymATens5, aSymATens6,
@@ -35,7 +35,7 @@
     contrATens1, contrATens2, contrATens3,
     decodeTensor, encodeTensor, ansVarToAreaVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
-    sumBetas
+    sumBetas, resortTens1
  
     
 ) where
@@ -192,11 +192,12 @@
 
     --resort inds in INdList accroding to the permutation given by [Int], length of [Int] must be n
 
-    resortInd :: (SingI n) => [Int] -> IndList n a -> IndList n a
+    resortInd :: (SingI n, Ord a) => [Int] -> IndList n a -> IndList n a
     resortInd perm indList = newindList
             where 
-                l = zip [0..] $ toList indList 
-                lReSorted = sortOn fst l 
+                l' = toList indList
+                l'' = if length l' == length perm then zip perm l' else error "permutation has wrong length"  
+                lReSorted = sortOn fst l'' 
                 newindList = fromList' $ map snd lReSorted
  
     -------------------------------------------------------------------------------------------------------------------------------------

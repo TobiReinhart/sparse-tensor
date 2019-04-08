@@ -35,6 +35,7 @@
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
 module FlatTensorEquations (
+    ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ
 
 ) where
 
@@ -194,7 +195,7 @@ module FlatTensorEquations (
     ansatzABI ans10_2 = block1 &+ block2 
         where 
             block1 = aSymATens5 (0,1) $ contrATens1 (1,0) $ contrATens2 (0,0) $ contrATens3 (1,0) $ ans10_2 &* interEqn3 &* invEta 
-            block2 = aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (1,0) $ ans10_2 &* interArea &* invEta 
+            block2 = tensorTrans1 (0,1) $ aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (1,0) $ ans10_2 &* interArea &* invEta 
 
     ansatzAIBJ :: ATens 2 0 2 0 0 0 AnsVar -> ATens 2 0 2 0 2 0 AnsVar 
     ansatzAIBJ ans12_1 = block1 &+ block2 
@@ -213,28 +214,28 @@ module FlatTensorEquations (
     ansatzABbCc ans14_1 = block1 &+ block2 &+ block3
         where 
             block1 = aSymATens5 (1,3) $ contrATens1 (1,0) $ contrATens3 (0,0) $ contrATens3 (4,0) $ ans14_1 &* interEqn2 &* invEta
-            block2 = tensorTrans1 (1,2) $ tensorTrans5 (0,2) $ block1 
-            block3 = aSymATens5 (2,3) $ contrATens1 (0,0) $ contrATens3 (4,0) $ ans14_1 &* interArea &* invEta
+            block2 = tensorTrans1 (1,2) $ tensorTrans5 (0,2) block1 
+            block3 = tensorTrans5 (1,2) $ tensorTrans1 (0,1) $ tensorTrans1 (1,2) $ aSymATens5 (2,3) $ contrATens1 (0,0) $ contrATens3 (3,0) $ ans14_1 &* interArea &* invEta
 
     ansatzABCI :: ATens 3 0 1 0 0 0 AnsVar -> ATens 3 0 1 0 2 0 AnsVar 
     ansatzABCI ans14_2 = block1 &+ block2 
         where
             block1 = symATens1 (0,2) $ aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (1,0) $ ans14_2 &* interArea &* invEta
-            block2 = symATens5 (0,1) $ contrATens2 (0,0) $ contrATens1 (2,0) $ contrATens3 (1,0) $ ans14_2 &* interEqn3 &* invEta 
+            block2 = tensorTrans1 (1,2) $ aSymATens5 (0,1) $ contrATens2 (0,0) $ contrATens1 (2,0) $ contrATens3 (1,0) $ ans14_2 &* interEqn3 &* invEta 
 
     ansatzAaBbCI :: ATens 3 0 1 0 2 0 AnsVar -> ATens 3 0 1 0 4 0 AnsVar 
     ansatzAaBbCI ans16_1 = block1 &+ block2 &+ block3
         where 
             block1 = aSymATens5 (1,3) $ contrATens1 (0,0) $ contrATens3 (0,0) $ contrATens3 (4,0) $ ans16_1 &* interEqn2 &* invEta 
             block2 = tensorTrans1 (0,2) $ tensorTrans5 (0,2) block1
-            block3 = aSymATens5 (1,3) $ contrATens2 (0,0) $ contrATens1 (2,0) $ contrATens3 (4,0) $ ans16_1 &* interEqn3 &* invEta 
+            block3 = tensorTrans5 (1,2) $ tensorTrans1 (1,2) $ aSymATens5 (1,3) $ contrATens2 (0,0) $ contrATens1 (2,0) $ contrATens3 (4,0) $ ans16_1 &* interEqn3 &* invEta 
 
     ansatzABICJ :: ATens 3 0 2 0 0 0 AnsVar -> ATens 3 0 2 0 2 0 AnsVar 
     ansatzABICJ ans16_2 = block1 &+ block2 &+ block3 
         where 
             block1 = aSymATens5 (0,1) $ contrATens1 (1,0) $ contrATens2 (0,0) $ contrATens3 (1,0) $ ans16_2 &* interEqn3 &* invEta 
             block2 = tensorTrans1 (1,2) $ tensorTrans3 (0,1) block1 
-            block3 = aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (1,0) $ ans16_2 &* interArea &* invEta 
+            block3 = resortTens1 [2,0,1] $ aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (1,0) $ ans16_2 &* interArea &* invEta 
 
     ansatzAIBJCK :: ATens 3 0 3 0 0 0 AnsVar -> ATens 3 0 3 0 2 0 AnsVar 
     ansatzAIBJCK ans18 = block1 &+ block2 &+ block3

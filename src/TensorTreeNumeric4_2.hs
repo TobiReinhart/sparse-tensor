@@ -36,7 +36,7 @@
     decodeTensor, encodeTensor, ansVarToAreaVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
     resortTens1,
-    (&>), singletonTList, toEMatrix6, resortCols 
+    (&>), singletonTList, toEMatrix6 
  
     
 ) where

@@ -35,7 +35,8 @@
     contrATens1, contrATens2, contrATens3,
     decodeTensor, encodeTensor, ansVarToAreaVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
-    sumBetas, resortTens1
+    sumBetas, resortTens1,
+    (&>), singletonTList, toEMatrix6, resortPivots
  
     
 ) where
@@ -1503,7 +1504,7 @@
     --convert to Eigen format
 
     toEMatrix1 :: (TIndex k1) => TensList1 k1 AnsVar -> Sparse.SparseMatrixXd
-    toEMatrix1 tList =  Sparse.fromList n m l'
+    toEMatrix1 tList =  Sparse.fromList m n l'
             where
                 l = toMatList1 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
@@ -1511,7 +1512,7 @@
                 n = maximum $ map (snd.fst) l 
 
     toEMatrix2 :: (TIndex k1) => TensList2 k1 AnsVar -> Sparse.SparseMatrixXd
-    toEMatrix2 tList =  Sparse.fromList n m l'
+    toEMatrix2 tList =  Sparse.fromList m n l'
             where
                 l = toMatList2 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
@@ -1519,7 +1520,7 @@
                 n = maximum $ map (snd.fst) l 
 
     toEMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 AnsVar -> Sparse.SparseMatrixXd
-    toEMatrix3 tList =  Sparse.fromList n m l'
+    toEMatrix3 tList =  Sparse.fromList m n l'
             where
                 l = toMatList3 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
@@ -1527,7 +1528,7 @@
                 n = maximum $ map (snd.fst) l 
             
     toEMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix4 tList =  Sparse.fromList n m l'
+    toEMatrix4 tList =  Sparse.fromList m n l'
             where
                 l = toMatList4 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
@@ -1535,7 +1536,7 @@
                 n = maximum $ map (snd.fst) l 
 
     toEMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix5 tList =  Sparse.fromList n m l'
+    toEMatrix5 tList =  Sparse.fromList m n l'
             where
                 l = toMatList5 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
@@ -1543,7 +1544,7 @@
                 n = maximum $ map (snd.fst) l 
 
     toEMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix6 tList =  Sparse.fromList n m l'
+    toEMatrix6 tList =  Sparse.fromList m n l'
             where
                 l = toMatList6 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
@@ -1551,7 +1552,7 @@
                 n = maximum $ map (snd.fst) l 
 
     toEMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix7 tList =  Sparse.fromList n m l'
+    toEMatrix7 tList =  Sparse.fromList m n l'
             where
                 l = toMatList7 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
@@ -1559,7 +1560,7 @@
                 n = maximum $ map (snd.fst) l 
 
     toEMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix8 tList =  Sparse.fromList n m l'
+    toEMatrix8 tList =  Sparse.fromList m n l'
             where
                 l = toMatList8 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
@@ -1568,13 +1569,22 @@
 
     --rank of the equations can be computed with rank Sol.FullPivLU or Sol.JakobySVD
 
-    --compute the sum of betas (not clear if it really works !)
+    --compute the sum of betas (not clear if it really works !, at the moment no) -> does not work at the moment !
 
-    sumBetas :: I.IntMap Int -> Mat.MatrixXd -> Int 
-    sumBetas classMap mat = sum $ map ((I.!) classMap) pivs  
+    resortPivots :: Sparse.SparseMatrixXd -> Sparse.SparseMatrixXd
+    resortPivots mat = newMat  
             where 
-                pivs = map (1+) $ Sol.pivots Sol.FullPivLU mat  
+                pivs = Sol.pivots Sol.FullPivLU $ Sparse.toMatrix mat
+                cols = Sparse.getCols mat 
+                nonPivs = [0..(length cols)-1] \\ pivs 
+                newOrd = map snd $ sortOn fst $ zip (nonPivs ++ pivs) [0..(length cols)-1]
+                newMat = Sparse.fromCols $ map ((!!) cols) newOrd 
 
+    sumBetas :: I.IntMap Int -> Sparse.SparseMatrixXd -> Int 
+    sumBetas classMat mat = sum $ map ((I.!) classMat) pivs 
+        where 
+            pivs = map ((+) 1) $ Sol.pivots Sol.FullPivLU $ Sparse.toMatrix mat  
+                
     ------------------------------------------------------------------------------------------------------------------------------------
     --for our concrete purpose we need 3 types of indices 
 

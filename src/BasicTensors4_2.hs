@@ -37,7 +37,7 @@
 
 module BasicTensors4_2 (
     flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2, invEta,
-    genericArea, genericAreaDerivative1, genericAreaDerivative2
+    genericArea, genericAreaDerivative1, genericAreaDerivative2, generic4Ansatz
 
 ) where 
 

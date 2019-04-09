@@ -1569,19 +1569,6 @@
 
     --rank of the equations can be computed with rank Sol.FullPivLU or Sol.JakobySVD
 
-    --do we actually need this as for 1st order only equns the rank seems to determine the sum of betas
-
-    resortCols :: Sparse.SparseMatrixXd -> (Mat.MatrixXd, Mat.MatrixXd) 
-    resortCols mat = (newMat, invMat)
-            where 
-                linDeps = Sol.kernel Sol.FullPivLU $ Sparse.toMatrix mat 
-                reducedMatRows = let linDepLR = map Sparse.toList $ Sparse.getRows $ Sparse.fromMatrix linDeps in filter (\x -> not $ elem (Sparse.toList x) linDepLR) $ Sparse.getRows mat
-                reducedMat = Sparse.fromRows reducedMatRows
-                block1Cols = Sparse.getCols $ Sparse.fromMatrix $ Sol.image Sol.FullPivLU $ Sparse.toMatrix reducedMat 
-                block2Cols = let linDepLC = map Sparse.toList block1Cols in filter (\x -> not $ elem (Sparse.toList x) linDepLC) $ Sparse.getCols reducedMat  
-                newMat = Sparse.toMatrix $ Sparse.fromCols $ block1Cols ++ block2Cols
-                invMat = Mat.filter (\x -> abs(x) > 1e-15) $ Mat.inverse $ Sparse.toMatrix $ Sparse.fromCols block1Cols
-
     ------------------------------------------------------------------------------------------------------------------------------------
     --for our concrete purpose we need 3 types of indices 
 

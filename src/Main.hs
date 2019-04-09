@@ -46,28 +46,12 @@ import qualified Data.IntMap as I
 
 main = do 
 
-    area <- randArea 
+    let (eta20,eps20,tens20) = mkAnsatzTensorFast 20 filterList20 symList20 areaList20IndsEta areaList20IndsEps
 
-    area_p <- randAreaDerivative1 
-
-    area_I <- randAreaDerivative2
-
-    let eqn1Tens = eqn1Generic' generic4Ansatz generic5Ansatz generic6Ansatz area area_p area_I 
-
-    let eqn2Tens = eqn2Generic' generic5Ansatz generic6Ansatz area area_p 
-
-    let eqn3Tens = eqn3Generic' generic6Ansatz area 
-
-    let eqn1ATens = eqn1AGeneric' generic4Ansatz generic8Ansatz generic9Ansatz generic10_2Ansatz area area_p area_I 
-
-    let eqn1AaTens = eqn1AaGeneric' generic5Ansatz generic9Ansatz generic10_1Ansatz generic11Ansatz area area_p area_I 
-
-    let eqn1AITens = eqn1AIGeneric' generic6Ansatz generic10_2Ansatz generic11Ansatz generic12_1Ansatz area area_p area_I
-
-    let eqnList = eqn1Tens &> eqn1ATens &> eqn1AaTens &> (singletonTList eqn1AITens) 
-
-    let eqnMat = toEMatrix6 eqnList 
-
-    print $ Sol.rank Sol.JacobiSVD $ Sparse.toMatrix eqnMat  
-
-    
+    BS.writeFile "/cip/austausch/cgg/7.4.eta20" $ encodeAnsatzForestEta eta20 
+	
+	BS.writeFile "/cip/austausch/cgg/7.4.eps20" $ encodeAnsatzForestEpsilon eps20 
+	
+	BS.writeFile "/cip/austausch/cgg/7.4.tens20" $ encodeTensor tens20 
+	
+	print "ansatz 20 done"

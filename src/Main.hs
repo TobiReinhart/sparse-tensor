@@ -46,12 +46,12 @@ import qualified Data.IntMap as I
 
 main = do 
 
-    let (eta20,eps20,tens20) = mkAnsatzTensorFast 20 filterList20 symList20 areaList20IndsEta areaList20IndsEps
+    let (eta20,eps20,tens20) = mkAnsatzTensorEig 20 filterList20 symList20 areaList20IndsEta areaList20IndsEps
 
-    BS.writeFile "/cip/austausch/cgg/7.4.eta20" $ encodeAnsatzForestEta eta20 
+    BS.writeFile "/cip/austausch/cgg/7.4.eta20Eig" $ encodeAnsatzForestEta eta20 
 	
-	BS.writeFile "/cip/austausch/cgg/7.4.eps20" $ encodeAnsatzForestEpsilon eps20 
+	BS.writeFile "/cip/austausch/cgg/7.4.eps20Eig" $ encodeAnsatzForestEpsilon eps20 
 	
-	BS.writeFile "/cip/austausch/cgg/7.4.tens20" $ encodeTensor tens20 
+	BS.writeFile "/cip/austausch/cgg/7.4.tens20Eig" $ encodeTensor tens20 
 	
 	print "ansatz 20 done"

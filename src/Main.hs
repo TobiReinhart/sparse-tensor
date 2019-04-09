@@ -50,8 +50,8 @@ main = do
 
     BS.writeFile "/cip/austausch/cgg/7.4.eta20Eig" $ encodeAnsatzForestEta eta20 
 	
-	BS.writeFile "/cip/austausch/cgg/7.4.eps20Eig" $ encodeAnsatzForestEpsilon eps20 
+    BS.writeFile "/cip/austausch/cgg/7.4.eps20Eig" $ encodeAnsatzForestEpsilon eps20 
 	
-	BS.writeFile "/cip/austausch/cgg/7.4.tens20Eig" $ encodeTensor tens20 
-	
-	print "ansatz 20 done"
+    BS.writeFile "/cip/austausch/cgg/7.4.tens20Eig" $ encodeTensor tens20 
+    
+    print "ansatz 20 done"

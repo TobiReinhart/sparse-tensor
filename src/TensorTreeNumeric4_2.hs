@@ -35,8 +35,8 @@
     contrATens1, contrATens2, contrATens3,
     decodeTensor, encodeTensor, ansVarToAreaVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
-    sumBetas, resortTens1,
-    (&>), singletonTList, toEMatrix6, resortPivots
+    resortTens1,
+    (&>), singletonTList, toEMatrix6, resortCols 
  
     
 ) where
@@ -1569,22 +1569,19 @@
 
     --rank of the equations can be computed with rank Sol.FullPivLU or Sol.JakobySVD
 
-    --compute the sum of betas (not clear if it really works !, at the moment no) -> does not work at the moment !
+    --do we actually need this as for 1st order only equns the rank seems to determine the sum of betas
 
-    resortPivots :: Sparse.SparseMatrixXd -> Sparse.SparseMatrixXd
-    resortPivots mat = newMat  
+    resortCols :: Sparse.SparseMatrixXd -> (Mat.MatrixXd, Mat.MatrixXd) 
+    resortCols mat = (newMat, invMat)
             where 
-                pivs = Sol.pivots Sol.FullPivLU $ Sparse.toMatrix mat
-                cols = Sparse.getCols mat 
-                nonPivs = [0..(length cols)-1] \\ pivs 
-                newOrd = map snd $ sortOn fst $ zip (nonPivs ++ pivs) [0..(length cols)-1]
-                newMat = Sparse.fromCols $ map ((!!) cols) newOrd 
+                linDeps = Sol.kernel Sol.FullPivLU $ Sparse.toMatrix mat 
+                reducedMatRows = let linDepLR = map Sparse.toList $ Sparse.getRows $ Sparse.fromMatrix linDeps in filter (\x -> not $ elem (Sparse.toList x) linDepLR) $ Sparse.getRows mat
+                reducedMat = Sparse.fromRows reducedMatRows
+                block1Cols = Sparse.getCols $ Sparse.fromMatrix $ Sol.image Sol.FullPivLU $ Sparse.toMatrix reducedMat 
+                block2Cols = let linDepLC = map Sparse.toList block1Cols in filter (\x -> not $ elem (Sparse.toList x) linDepLC) $ Sparse.getCols reducedMat  
+                newMat = Sparse.toMatrix $ Sparse.fromCols $ block1Cols ++ block2Cols
+                invMat = Mat.filter (\x -> abs(x) > 1e-15) $ Mat.inverse $ Sparse.toMatrix $ Sparse.fromCols block1Cols
 
-    sumBetas :: I.IntMap Int -> Sparse.SparseMatrixXd -> Int 
-    sumBetas classMat mat = sum $ map ((I.!) classMat) pivs 
-        where 
-            pivs = map ((+) 1) $ Sol.pivots Sol.FullPivLU $ Sparse.toMatrix mat  
-                
     ------------------------------------------------------------------------------------------------------------------------------------
     --for our concrete purpose we need 3 types of indices 
 

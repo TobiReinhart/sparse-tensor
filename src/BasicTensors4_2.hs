@@ -37,7 +37,9 @@
 
 module BasicTensors4_2 (
     flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2, invEta,
-    genericArea, genericAreaDerivative1, genericAreaDerivative2, generic4Ansatz
+    genericArea, genericAreaDerivative1, genericAreaDerivative2, generic4Ansatz, generic5Ansatz, generic6Ansatz,
+    generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
+    randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2
 
 ) where 
 
@@ -68,6 +70,8 @@ module BasicTensors4_2 (
     import qualified Data.Eigen.SparseMatrix as Sparse
     import qualified Data.Eigen.LA as Sol 
 
+    import System.Random.TF.Instances 
+    import System.Random.TF.Init
 
     import TensorTreeNumeric4_2 
 
@@ -320,8 +324,8 @@ module BasicTensors4_2 (
                          k = [1..]
 
     --AIBJ 
-    generic12Ansatz :: ATens 2 0 2 0 0 0 AnsVar 
-    generic12Ansatz = fromListT6 list
+    generic12_1Ansatz :: ATens 2 0 2 0 0 0 AnsVar 
+    generic12_1Ansatz = fromListT6 list
         where
             list = [ let varMap = I.singleton (dof a b i j) 1
                     in ((Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Append (Ind9 $ i-1) $ singletonInd (Ind9 $ j -1), Empty, Empty, Empty), varMap)
@@ -353,12 +357,39 @@ module BasicTensors4_2 (
                       map (\(i,v) -> ( (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty), v))
                                     [(0, AreaVar 0 $ I.singleton 1 (-1)),(5, AreaVar 0 $ I.singleton 4 1),(6, AreaVar 0 $ I.singleton 2 (-1)),(9, AreaVar 0 $ I.singleton 5 (-1)),(11, AreaVar 0 $ I.singleton 3 (-1)),(12, AreaVar 0 $ I.singleton 6 1),(15, AreaVar 0 $ I.singleton 1 1),(18, AreaVar 0 $ I.singleton 2 1),(20, AreaVar 0 $ I.singleton 3 1)]
 
+    randArea :: IO (ATens 0 1 0 0 0 0 Rational)
+    randArea = do gen <- newTFGen 
+                  let randList' = randomRs (-10000,10000) gen :: [Int]
+                  let randList = map fromIntegral $ randList' 
+                  let inds = map (\i -> (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty)) [0..20]
+                  let assocs = zip inds randList
+                  let tens = fromListT6 assocs 
+                  return tens 
+
+    randFlatArea :: IO (ATens 0 1 0 0 0 0 Rational)
+    randFlatArea = do gen <- newTFGen 
+                      let randList' = randomRs (-10000,10000) gen :: [Int]
+                      let randList = map fromIntegral $ randList' 
+                      let assocs = map (\(i,v) -> ( (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty), v))
+                             [(0, -1 * (randList !! 0)),(5, randList !! 3),(6, -1 * (randList !! 1)),(9, -1 * (randList !! 4)),(11, -1 * (randList !! 2)),(12, randList !! 5),(15, randList !! 0),(18, randList !! 1),(20, randList !! 2)] 
+                      let tens = fromListT6 assocs 
+                      return tens 
+
     genericAreaDerivative1 :: ATens 0 1 0 0 0 1 (AreaVar Rational)
     genericAreaDerivative1 = fromListT6 assocs
                 where 
                     dofs = map (\x -> AreaVar 0 $ I.singleton x 1) [22..105]
                     inds = map (\(a,p) -> (Empty, (singletonInd $ Ind20 a), Empty, Empty, Empty, (singletonInd $ Ind3 p))) $ [ (a,p) | a <- [0..20], p <- [0..3]]
                     assocs = zip inds dofs 
+
+    randAreaDerivative1 :: IO (ATens 0 1 0 0 0 1 Rational)
+    randAreaDerivative1 = do gen <- newTFGen 
+                             let randList' = randomRs (-10000,10000) gen :: [Int]
+                             let randList = map fromIntegral $ randList' 
+                             let inds = map (\(a,p) -> (Empty, (singletonInd $ Ind20 a), Empty, Empty, Empty, (singletonInd $ Ind3 p))) $ [ (a,p) | a <- [0..20], p <- [0..3]]
+                             let assocs = zip inds randList
+                             let tens = fromListT6 assocs 
+                             return tens 
 
     genericAreaDerivative2 :: ATens 0 1 0 1 0 0 (AreaVar Rational)
     genericAreaDerivative2 = fromListT6 assocs
@@ -367,6 +398,14 @@ module BasicTensors4_2 (
                     inds = map (\(a,i) -> (Empty, (singletonInd $ Ind20 a), Empty, (singletonInd $ Ind9 i), Empty, Empty)) $ [ (a,i) | a <- [0..20], i <- [0..9]]
                     assocs = zip inds dofs 
 
+    randAreaDerivative2 :: IO (ATens 0 1 0 1 0 0 Rational)
+    randAreaDerivative2 = do gen <- newTFGen 
+                             let randList' = randomRs (-10000,10000) gen :: [Int]
+                             let randList = map fromIntegral $ randList' 
+                             let inds = map (\(a,i) -> (Empty, (singletonInd $ Ind20 a), Empty, (singletonInd $ Ind9 i), Empty, Empty)) $ [ (a,i) | a <- [0..20], i <- [0..9]]
+                             let assocs = zip inds randList
+                             let tens = fromListT6 assocs 
+                             return tens 
 
     
 

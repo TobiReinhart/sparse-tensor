@@ -36,7 +36,7 @@
 
 module FlatTensorEquations (
     ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
-    eqn1
+    eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd
 
 ) where
 

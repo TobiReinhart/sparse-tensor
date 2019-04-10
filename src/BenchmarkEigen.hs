@@ -12,7 +12,7 @@ import qualified Data.Eigen.Matrix as Mat
 import qualified Data.Eigen.LA as LA
 
 randMat :: Int -> Int -> IO (Mat.MatrixXd)
-randMat = Mat.rand
+randMat = Mat.random
 
 rank :: Mat.MatrixXd -> Int
 rank = LA.rank LA.JacobiSVD

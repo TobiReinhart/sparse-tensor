@@ -348,7 +348,7 @@
 
     (&+) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor n k v -> Tensor n k v 
     (&+) (Scalar a) (Scalar b) = let sum = addS a b in if sum == scaleZero then ZeroTensor else Scalar sum
-    (&+) (Tensor m1) (Tensor m2) = Tensor $ M.filter (/= scaleZero) $ M.unionWith (&+) m1 m2
+    (&+) (Tensor m1) (Tensor m2) = let newMap = M.filter (/= scaleZero) $ M.unionWith (&+) m1 m2 in if M.empty newMap then ZeroTensor else Tensor newMap 
     (&+) t1 ZeroTensor = t1
     (&+) ZeroTensor t2 = t2
 
@@ -366,7 +366,7 @@
 
     infixr 7 &*
 
-    (&*) :: (TIndex k, TAlgebra v v) => Tensor n k v -> Tensor m k v' -> Tensor (n+m) k (TAlg v v') 
+    (&*) :: (TIndex k, TAlgebra v v') => Tensor n k v -> Tensor m k v' -> Tensor (n+m) k (TAlg v v') 
     (&*) (Scalar x) (Scalar y) = Scalar (prodA x y)
     (&*) (Scalar x) t2 = fmap (prodA x) t2 
     (&*) (Tensor m) t2 = Tensor $ M.map (\t1 -> (&*) t1 t2) m 

@@ -35,7 +35,7 @@
     contrATens1, contrATens2, contrATens3,
     decodeTensor, encodeTensor, ansVarToAreaVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
-    resortTens1,
+    resortTens1, resortTens5,
     (&>), singletonTList, toEMatrix6 
  
     

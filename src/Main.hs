@@ -36,10 +36,14 @@ import GenericTensorEquations
 import Data.List
 
 import qualified Data.ByteString.Lazy as BS
+import Codec.Compression.GZip
+import Data.Serialize
+
 
 import qualified Data.Eigen.Matrix as Mat 
 import qualified Data.Eigen.SparseMatrix as Sparse
 import qualified Data.Eigen.LA as Sol
+import Data.Either
 
 import qualified Data.IntMap as I 
 
@@ -50,7 +54,7 @@ main = do
 
     ansatz18' <- BS.readFile "/cip/austausch/cgg/7.4.tens18"
     
-    let ansatz18 = decodeTensor ansatz18' :: ATens 3 0 3 0 0 0 AnsVar
+    --let ansatz18 = decodeTensor ansatz18' :: ATens 3 0 3 0 0 0 AnsVar
 
     --ansatz18_2' <- BS.readFile "/cip/austausch/cgg/7.4.tens18_2" 
     
@@ -66,10 +70,14 @@ main = do
 
     --let ans18_3 = ansatzABCcDd ansatz18_3 
 
-    print $ toListT6 ansatz18 
+    --print $ toListT6 ansatz18 
     
     --print $ toListShowVar6 ans18_2 
 
     --print $ toListShowVar6 ans18_3
+
+    let ansatz18 = (fromRight undefined $ decodeLazy $ decompress ansatz18') :: ATens 3 0 3 0 0 0 AnsVar 
+
+    print $ toListT6 ansatz18 
 
     

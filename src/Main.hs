@@ -60,13 +60,13 @@ main = do
     
     --let ansatz18_3 = decodeTensor ansatz18_3' :: ATens 4 0 0 0 2 0 AnsVar
 
-    let ans18 = ansatzAIBJCK ansatz18 
+    --let ans18 = ansatzAIBJCK ansatz18 
 
     --let ans18_2 = ansatzABCDJ ansatz18_2 
 
     --let ans18_3 = ansatzABCcDd ansatz18_3 
 
-    print $ toListT6 ans18
+    print $ toListT6 ansatz18 
     
     --print $ toListShowVar6 ans18_2 
 

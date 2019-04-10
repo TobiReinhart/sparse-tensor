@@ -476,7 +476,8 @@
             l3 = filter (\(_,y) -> length y >= 1) l2 
             tensList = map (\(x,y) -> (x, fromListT y)) l3
     tensorContr (i,j) (Tensor m) = Tensor $ M.map (tensorContr (i-1,j)) m
-    tensorContr inds ZeroTensor = ZeroTensor    
+    tensorContr inds ZeroTensor = ZeroTensor 
+    tensorContr inds (Scalar s) = error "cannot contract scalar!"   
 
     --encode and decode tensors as bytestrings 
 

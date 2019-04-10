@@ -56,9 +56,9 @@ main = do
     
     --let ansatz18 = decodeTensor ansatz18' :: ATens 3 0 3 0 0 0 AnsVar
 
-    ansatz18_2' <- BS.readFile "/cip/austausch/cgg/7.4.tens18_2" 
+    --ansatz18_2' <- BS.readFile "/cip/austausch/cgg/7.4.tens18_2" 
     
-    let ansatz18_2 = decodeTensor ansatz18_2' :: ATens 4 0 1 0 0 0 AnsVar
+    --let ansatz18_2 = decodeTensor ansatz18_2' :: ATens 4 0 1 0 0 0 AnsVar
 
     ansatz18_3' <- BS.readFile "/cip/austausch/cgg/7.4.tens18_3" 
     
@@ -66,14 +66,52 @@ main = do
 
     --let ans18 = ansatzAIBJCK ansatz18 
 
-    let ans18_2 = ansatzABCDJ ansatz18_2 
+    --let ans18_2 = ansatzABCDJ ansatz18_2 
 
     let ans18_3 = ansatzABCcDd ansatz18_3 
 
     --print $ toListT6 ans18 
     
-    print $ toListShowVar6 ans18_2 
+    --print $ toListShowVar6 ans18_2 
 
     print $ toListShowVar6 ans18_3
 
+    {-
+
+    let (_,_,ans4) = mkAnsatzTensorFast 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps 
+
+    let (_,_,ans6) = mkAnsatzTensorFast 6 filterList6 symList6 areaList6IndsEta areaList6IndsEps 
+
+    let (_,_,ans8) = mkAnsatzTensorFast 8 filterList8 symList8 areaList8IndsEta areaList8IndsEps
+
+    let (_,_,ans10_1) = mkAnsatzTensorFast 10 filterList10_1 symList10_1 areaList10_1IndsEta areaList10_1IndsEps
+
+    let (_,_,ans10_2) = mkAnsatzTensorFast 10 filterList10_2 symList10_2 areaList10_2IndsEta areaList10_2IndsEps
+
+    let (_,_,ans12_1) = mkAnsatzTensorFast 12 filterList12_1 symList12_1 areaList12_1IndsEta areaList12_1IndsEps 
+
+    let eqn1T = eqn1 ans4 
+
+    let eqn3T = eqn3 ans6 
+
+    let eqn1AT = eqn1A ZeroTensor ans8 
+
+    let eqn1AIT = eqn1AI ZeroTensor ans10_2 
+
+    let eqn2AaT = eqn2Aa ZeroTensor ans10_1 
+
+    let eqn3AT = eqn3A ans6 ans10_2
+
+    let eqn3AIT = eqn3AI ans12_1
+
+    let ord1 = eqn1T &> (singletonTList eqn3T)
+
+    let ord2 = eqn1AT &> eqn1AIT &> eqn2AaT &> eqn3AT &> (singletonTList eqn3AIT)
     
+    let sym1 = toEMatrix6 ord1 
+
+    let sym2 = toEMatrix6 ord2 
+
+    print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix sym1 
+
+    -}

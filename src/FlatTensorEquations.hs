@@ -36,7 +36,7 @@
 
 module FlatTensorEquations (
     ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
-    eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd
+    eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd, eqn3, eqn3AI, eqn1A, eqn1AI, eqn2Aa, eqn3A
 
 ) where
 
@@ -99,6 +99,12 @@ module FlatTensorEquations (
                     block1 = symATens6 (0,2) $ contrATens1 (0,0) $ ans10_1 &* flatInter 
                     block2' = tensorTrans5 (0,1) $ contrATens2 (0,0) $ contrATens1 (0,0) $ ans6 &* interEqn4 
                     block2 = symATens5 (0,2) block2'
+
+    eqn3A :: ATens 1 0 1 0 0 0 AnsVar -> ATens  2 0 1 0 0 0 AnsVar -> ATens 1 0 0 0 3 1 AnsVar 
+    eqn3A ans6 ans10_2 = block1 &+ block2 
+            where 
+                block1 = contrATens1 (0,0) $ contrATens2 (0,0) $ ans6 &* interEqn5 
+                block2 = contrATens2 (0,0) $ contrATens1 (1,0) $ contrATens1 (2,1) $ ans10_2 &* interEqn5 &* flatArea   
 
     --order 2
 
@@ -245,6 +251,7 @@ module FlatTensorEquations (
             block2 = tensorTrans1 (0,2) $ tensorTrans3 (0,2) block1 
             block3 = tensorTrans1 (1,2) $ tensorTrans3 (1,2) block1
 
+    --needs to be checked
     ansatzABCD :: ATens 4 0 0 0 0 0 AnsVar -> ATens 4 0 0 0 2 0 AnsVar 
     ansatzABCD ans16 = block1 &+ block2 &+ block3 &+ block4 
         where 

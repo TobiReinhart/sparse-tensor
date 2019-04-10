@@ -1613,4 +1613,12 @@
     singletonTList :: ATens n1 n2 n3 n4 n5 n6 a -> TList a
     singletonTList t = t &> EmptyTList6
 
+    infixr 6 &++
+
+    (&++) :: TList a -> TList a -> TList a 
+    (&++) EmptyTList6 t1 = t1 
+    (&++) t1 EmptyTList6 = t1
+    (&++) (AppendTList6 t1 EmptyTList6) t2 = AppendTList6 t1 t2 
+    (&++) (AppendTList6 t1 t1') t2 = AppendTList6 t1 (t1' &++ t2)
+
     

@@ -33,7 +33,8 @@ module PerturbationTree2_3 (
     areaBlocks4, areaBlocks6, areaBlocks8, areaBlocks10_1, areaBlocks10_2, areaBlocks12, areaBlocks12_1, areaBlocks14_1, areaBlocks14_2,
     areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20,
     canonicalizeEvalMaps, getSyms, epsMap,
-    decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta, flattenForestEpsilon, getIndSyms
+    decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta, flattenForestEpsilon, getIndSyms,
+    getEpsForestFast
 
     
 ) where

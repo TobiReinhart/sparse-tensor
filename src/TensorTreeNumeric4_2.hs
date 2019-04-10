@@ -347,8 +347,8 @@
     infixr 6 &+
 
     (&+) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor n k v -> Tensor n k v 
-    (&+) (Scalar a) (Scalar b) = let sum = addS a b in if sum == scaleZero then ZeroTensor else Scalar sum
-    (&+) (Tensor m1) (Tensor m2) = let newMap = M.filter (/= scaleZero) $ M.unionWith (&+) m1 m2 in if M.empty newMap then ZeroTensor else Tensor newMap 
+    (&+) (Scalar a) (Scalar b) = Scalar (addS a b) 
+    (&+) (Tensor m1) (Tensor m2) = Tensor $ M.unionWith (&+) m1 m2  
     (&+) t1 ZeroTensor = t1
     (&+) ZeroTensor t2 = t2
 

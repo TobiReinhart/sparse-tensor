@@ -221,8 +221,8 @@ module FlatTensorEquations (
     ansatzABCI :: ATens 3 0 1 0 0 0 AnsVar -> ATens 3 0 1 0 2 0 AnsVar 
     ansatzABCI ans14_2 = block1 &+ block2 
         where
-            block1 = symATens1 (0,2) $ aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (1,0) $ ans14_2 &* interArea &* invEta
-            block2 = tensorTrans1 (1,2) $ aSymATens5 (0,1) $ contrATens2 (0,0) $ contrATens1 (2,0) $ contrATens3 (1,0) $ ans14_2 &* interEqn3 &* invEta 
+            block1 = symATens1 (0,2) $ contrATens1 (0,0) $ ans14_2 &* (aSymATens5 (0,1) $ contrATens3 (1,0) $ interArea &* invEta)
+            block2 = tensorTrans1 (1,2) $ contrATens2 (0,0) $ contrATens1 (2,0) $ ans14_2 &* (aSymATens5 (0,1) $ contrATens3 (1,0) $ interEqn3 &* invEta) 
 
     ansatzAaBbCI :: ATens 3 0 1 0 2 0 AnsVar -> ATens 3 0 1 0 4 0 AnsVar 
     ansatzAaBbCI ans16_1 = block1 &+ block2 &+ block3
@@ -241,7 +241,7 @@ module FlatTensorEquations (
     ansatzAIBJCK :: ATens 3 0 3 0 0 0 AnsVar -> ATens 3 0 3 0 2 0 AnsVar 
     ansatzAIBJCK ans18 = block1 &+ block2 &+ block3
         where 
-            block1 = aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens2 (0,0) $ contrATens3 (1,0) $ ans18 &* interEqn3 &* invEta 
+            block1 = contrATens1 (0,0) $ contrATens2 (0,0) $ ans18 &* (aSymATens5 (0,1) $ contrATens3 (1,0) $ interEqn3 &* invEta) 
             block2 = tensorTrans1 (0,2) $ tensorTrans3 (0,2) block1 
             block3 = tensorTrans1 (1,2) $ tensorTrans3 (1,2) block1
 

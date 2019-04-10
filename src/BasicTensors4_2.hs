@@ -39,7 +39,7 @@ module BasicTensors4_2 (
     flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2, invEta,
     genericArea, genericAreaDerivative1, genericAreaDerivative2, generic4Ansatz, generic5Ansatz, generic6Ansatz,
     generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
-    randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2
+    randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta3, delta9
 
 ) where 
 

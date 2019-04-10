@@ -344,7 +344,7 @@
     
     --addition for tensors
 
-    infixl 6 &+
+    infixr 6 &+
 
     (&+) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor n k v -> Tensor n k v 
     (&+) (Scalar a) (Scalar b) = Scalar (addS a b)
@@ -357,7 +357,7 @@
     (&.) :: (TIndex k, TScalar v) => Rational -> Tensor n k v -> Tensor n k v 
     (&.) scalar t = fmap (scaleS scalar) t 
 
-    infixl 5 &- 
+    infix 5 &- 
     
     (&-) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor n k v -> Tensor n k v
     (&-) t1 t2 = t1 &+ (-1) &. t2 

@@ -65,8 +65,8 @@ main = do
 
     let ans18_3 = ansatzABCcDd ansatz18_3 
 
-    print $ (toListShowVar6 ans18) == []
+    print $ toListShowVar6 ans18
+    
+    print $ toListShowVar6 ans18_2 
 
-    print $ (toListShowVar6 ans18_2) == []
-
-    print $ (toListShowVar6 ans18_3) == []
+    print $ toListShowVar6 ans18_3

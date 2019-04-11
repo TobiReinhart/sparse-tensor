@@ -271,9 +271,9 @@ module FlatTensorEquations (
     ansatzABCcDd :: ATens 4 0 0 0 2 0 AnsVar -> ATens 4 0 0 0 4 0 AnsVar 
     ansatzABCcDd ans18_3 = block1 &+ block2 &+ block3 &+ block4 
         where 
-            block1 = aSymATens5 (2,3) $ contrATens1 (0,0) $ contrATens3 (3,0) $ ans18_3 &* interArea &* invEta
+            block1 = contrATens1 (0,0) $ ans18_3 &* (aSymATens5 (0,1) $ contrATens3 (1,0) $ interArea &* invEta)
             block2 = tensorTrans1 (0,3) block1 
-            block3' = aSymATens5 (1,3) $ contrATens3 (0,0) $ contrATens1 (2,0) $ contrATens3 (4,0) $ ans18_3 &* interEqn2 &* invEta
+            block3' = contrATens3 (0,0) $ contrATens1 (2,0) $ ans18_3 &* (aSymATens5 (0,2) $ contrATens3 (2,0) $ interEqn2 &* invEta)
             block3 = resortTens1 [3,0,2,1] $ resortTens5 [1,2,0,3] block3' 
             block4 = tensorTrans1 (1,2) $ tensorTrans5 (0,1) block3
 

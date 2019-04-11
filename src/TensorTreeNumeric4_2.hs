@@ -36,7 +36,7 @@
     decodeTensor, encodeTensor, ansVarToAreaVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
     resortTens1, resortTens5,
-    (&>), singletonTList, toEMatrix6 
+    (&>), singletonTList, toEMatrix6, shiftLabels6, tensorRank
  
     
 ) where
@@ -1214,6 +1214,33 @@
 
     type AnsVar = I.IntMap Rational 
 
+    shiftVarLabels :: Int -> AnsVar -> AnsVar 
+    shiftVarLabels s v =  I.mapKeys ((+) s) v
+
+    shiftLabels1 :: Int -> AbsTensor1 n1 k1 AnsVar -> AbsTensor1 n1 k1 AnsVar 
+    shiftLabels1 s = mapTo1 (shiftVarLabels s)
+
+    shiftLabels2 :: Int -> AbsTensor2 n1 n2 k1 AnsVar -> AbsTensor2 n1 n2 k1 AnsVar 
+    shiftLabels2 s = mapTo2 (shiftVarLabels s)
+
+    shiftLabels3 :: Int -> AbsTensor3 n1 n2 n3 k1 k2 AnsVar -> AbsTensor3 n1 n2 n3 k1 k2 AnsVar 
+    shiftLabels3 s = mapTo3 (shiftVarLabels s)
+
+    shiftLabels4 :: Int -> AbsTensor4 n1 n2 n3 n4 k1 k2 AnsVar -> AbsTensor4 n1 n2 n3 n4 k1 k2 AnsVar 
+    shiftLabels4 s = mapTo4 (shiftVarLabels s)
+
+    shiftLabels5 :: Int -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 AnsVar -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 AnsVar 
+    shiftLabels5 s = mapTo5 (shiftVarLabels s)
+
+    shiftLabels6 :: Int -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 AnsVar -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 AnsVar 
+    shiftLabels6 s = mapTo6 (shiftVarLabels s)
+
+    shiftLabels7 :: Int -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 AnsVar -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 AnsVar 
+    shiftLabels7 s = mapTo7 (shiftVarLabels s)
+
+    shiftLabels8 :: Int -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 AnsVar -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 AnsVar 
+    shiftLabels8 s = mapTo8 (shiftVarLabels s)
+
     instance TScalar AnsVar where 
         addS = I.unionWith (+)
         subS v1 v2 = I.unionWith (+) v1 $ I.map ((*)(-1)) v2 
@@ -1622,4 +1649,6 @@
     (&++) (AppendTList6 t1 EmptyTList6) t2 = AppendTList6 t1 t2 
     (&++) (AppendTList6 t1 t1') t2 = AppendTList6 t1 (t1' &++ t2)
 
-    
+    tensorRank :: ATens n1 n2 n3 n4 n5 n6 AnsVar -> Int 
+    tensorRank t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix6 (singletonTList t)
+ 

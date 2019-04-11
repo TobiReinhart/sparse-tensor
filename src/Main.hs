@@ -60,23 +60,23 @@ main = do
     
     --let ansatz18_2 = decodeTensor ansatz18_2' :: ATens 4 0 1 0 0 0 AnsVar
 
-    ansatz18_3' <- BS.readFile "/cip/austausch/cgg/7.4.tens18_3" 
+    --ansatz18_3' <- BS.readFile "/cip/austausch/cgg/7.4.tens18_3" 
     
-    let ansatz18_3 = decodeTensor ansatz18_3' :: ATens 4 0 0 0 2 0 AnsVar
+    --let ansatz18_3 = decodeTensor ansatz18_3' :: ATens 4 0 0 0 2 0 AnsVar
 
     --let ans18 = ansatzAIBJCK ansatz18 
 
     --let ans18_2 = ansatzABCDJ ansatz18_2 
 
-    let ans18_3 = ansatzABCcDd ansatz18_3 
+    --let ans18_3 = ansatzABCcDd ansatz18_3 
 
     --print $ toListT6 ans18 
     
     --print $ toListShowVar6 ans18_2 
 
-    print $ toListShowVar6 ans18_3
+    --print $ toListShowVar6 ans18_3
 
-    {-
+    
 
     let (_,_,ans4') = mkAnsatzTensorFast 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps 
 
@@ -96,13 +96,13 @@ main = do
 
     let ans10_2 = shiftLabels6 r6 ans10_2' 
 
-    let ans10_1 = shiftLabels6 (r6+r5) ans10_1 
+    let ans10_1 = shiftLabels6 (r6+r5) ans10_1'
 
-    let ans8 = shiftLabels6 (r6+r5+r4) ans8 
+    let ans8 = shiftLabels6 (r6+r5+r4) ans8' 
 
     let ans6 = shiftLabels6 (r6+r5+r4+r3) ans6' 
 
-    let ans4 = shiftLabels6 (r6+r5+r4+r3+r2) ans4 
+    let ans4 = shiftLabels6 (r6+r5+r4+r3+r2) ans4'
 
     let eqn1T = eqn1 ans4 
 
@@ -114,19 +114,28 @@ main = do
 
     let eqn2AaT = eqn2Aa ZeroTensor ans10_1 
 
-    let eqn3AT = eqn3A ans6 ans10_2
+    let eqn3AT = eqn3A ZeroTensor ans10_2
 
     let eqn3AIT = eqn3AI ans12_1
 
     let ord1 = eqn1T &> (singletonTList eqn3T)
 
     let ord2 = eqn1AT &> eqn1AIT &> eqn2AaT &> eqn3AT &> (singletonTList eqn3AIT)
+
+    let total = ord1 &++ ord2 
     
     let sym1 = toEMatrix6 ord1 
 
     let sym2 = toEMatrix6 ord2 
 
-    print $ (r1,r2,r3,r4,r5,r6)
+    let total2 = toEMatrix6 total
+
+    --print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix sym1
+
+    --print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix sym2
+
+    print $ symATens5 (0,1) $ aSymATens6 (0,1) $ delta3 &* delta3  
 
 
-    -}
+
+    

@@ -60,23 +60,23 @@ main = do
     
     --let ansatz18_2 = decodeTensor ansatz18_2' :: ATens 4 0 1 0 0 0 AnsVar
 
-    --ansatz18_3' <- BS.readFile "/cip/austausch/cgg/7.4.tens18_3" 
+    ansatz18_3' <- BS.readFile "/cip/austausch/cgg/7.4.tens18_3" 
     
-    --let ansatz18_3 = decodeTensor ansatz18_3' :: ATens 4 0 0 0 2 0 AnsVar
+    let ansatz18_3 = decodeTensor ansatz18_3' :: ATens 4 0 0 0 2 0 AnsVar
 
     --let ans18 = ansatzAIBJCK ansatz18 
 
     --let ans18_2 = ansatzABCDJ ansatz18_2 
 
-    --let ans18_3 = ansatzABCcDd ansatz18_3 
+    let ans18_3 = ansatzABCcDd ansatz18_3 
 
     --print $ toListT6 ans18 
     
     --print $ toListShowVar6 ans18_2 
 
-    --print $ toListShowVar6 ans18_3
+    print $ toListShowVar6 ans18_3
 
-    
+    {-
 
     let (_,_,ans4') = mkAnsatzTensorFast 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps 
 
@@ -129,4 +129,4 @@ main = do
     print $ (r1,r2,r3,r4,r5,r6)
 
 
-    
+    -}

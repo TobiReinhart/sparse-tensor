@@ -37,7 +37,7 @@
     decodeTensor, encodeTensor, ansVarToAreaVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
     resortTens1, resortTens5,
-    (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6
+    (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6, removeZeros 
  
     
 ) where
@@ -142,13 +142,6 @@
         fmap f (Empty) = Empty 
         fmap f (Append x xs) = Append (f x) (fmap f xs)
 
-    --remove possible zero values in a given Tensor  
-
-    removeZeros :: (TScalar v, TIndex k) => Tensor n k v -> Tensor n k v
-    removeZeros (Scalar x) = if x == scaleZero then ZeroTensor else Scalar x 
-    removeZeros (Tensor m) = let newMap = M.filter (/=ZeroTensor) m in if M.null newMap then ZeroTensor else Tensor newMap
-    removeZeros ZeroTensor = ZeroTensor
-
     instance Foldable (IndList n) where
         foldr f y (Empty) = y
         foldr f y (Append x xs) = f x (foldr f y xs) 
@@ -232,6 +225,13 @@
         Scalar :: v -> Tensor 0 k v 
         Tensor :: M.Map k (Tensor n k v) -> Tensor (n+1) k v
         ZeroTensor :: Tensor n k v
+
+    --remove possible zero values in a given Tensor  
+
+    removeZeros :: (TScalar v, TIndex k) => Tensor n k v -> Tensor n k v
+    removeZeros (Scalar x) = if x == scaleZero then ZeroTensor else Scalar x 
+    removeZeros (Tensor m) = let newMap = M.filter (/=ZeroTensor) $ M.map removeZeros m in if M.null newMap then ZeroTensor else Tensor newMap
+    removeZeros ZeroTensor = ZeroTensor 
 
     --for converting tensors to bytestrings we need a non typesafe data type as intermediate type
 
@@ -358,7 +358,7 @@
     infixr 6 &+
 
     (&+) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor n k v -> Tensor n k v 
-    (&+) (Scalar a) (Scalar b) = let sum = addS a b in if sum == scaleZero then ZeroTensor else Scalar sum 
+    (&+) (Scalar a) (Scalar b) = Scalar $ addS a b 
     (&+) (Tensor m1) (Tensor m2) = Tensor $ M.unionWith (&+) m1 m2     
     (&+) t1 ZeroTensor = t1
     (&+) ZeroTensor t2 = t2

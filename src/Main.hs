@@ -76,7 +76,6 @@ main = do
 
     --print $ toListShowVar6 ans18_3
 
-    
 
     let (_,_,ans4') = mkAnsatzTensorFast 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps 
 
@@ -134,11 +133,9 @@ main = do
 
     --print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix sym2
 
-    print $ symATens5 (0,1) $ aSymATens6 (0,1) $ delta3 &* delta3 
+    let t = aSymATens5 (0,1) $ contrATens3 (1,0) $ interArea &* invEta 
 
-    print $ removeZeros6 $ symATens5 (0,1) $ aSymATens6 (0,1) $ delta3 &* delta3 
-
-
+    print $ removeZeros6 t
     
 
 

@@ -52,7 +52,7 @@ import Data.Ratio
 
 main = do 
 
-    area <- randFlatArea 
+    let area = flatArea  
 
     let area_p = ZeroTensor 
 
@@ -112,6 +112,7 @@ main = do
 
     let sym2 = toEMatrix6 ord2 
 
-    print $ Sol.rank Sol.JacobiSVD $ Sparse.toMatrix sym2 
+    print $ Sol.rank Sol.JacobiSVD $ Sparse.toMatrix sym2
+
 
     

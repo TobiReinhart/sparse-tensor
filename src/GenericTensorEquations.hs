@@ -35,7 +35,7 @@
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
 module GenericTensorEquations (
-    eqn1Generic', eqn2Generic', eqn3Generic', eqn1AGeneric', eqn1AaGeneric', eqn1AIGeneric'
+    eqn1Generic', eqn2Generic', eqn3Generic', eqn1AGeneric', eqn1AaGeneric', eqn1AIGeneric', eqn2AGeneric', eqn2AaGeneric', eqn2AIGeneric', eqn3AGeneric', eqn3AaGeneric', eqn3AIGeneric'
 
 ) where
 

@@ -47,14 +47,16 @@ import Data.Either
 
 import qualified Data.IntMap as I 
 
+import Data.Ratio
+
 
 main = do 
 
-    area <- randArea 
+    area <- randFlatArea 
 
-    area_p <- randAreaDerivative1 
+    let area_p = ZeroTensor 
 
-    area_I <- randAreaDerivative2 
+    let area_I = ZeroTensor 
 
     let ans4 = generic4Ansatz 
 
@@ -111,3 +113,5 @@ main = do
     let sym2 = toEMatrix6 ord2 
 
     print $ Sol.rank Sol.JacobiSVD $ Sparse.toMatrix sym2 
+
+    

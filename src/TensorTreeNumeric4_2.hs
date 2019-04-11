@@ -37,7 +37,7 @@
     decodeTensor, encodeTensor, ansVarToAreaVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
     resortTens1, resortTens5,
-    (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank
+    (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6
  
     
 ) where
@@ -142,12 +142,12 @@
         fmap f (Empty) = Empty 
         fmap f (Append x xs) = Append (f x) (fmap f xs)
 
-    --version of fmup that filters all zeros that might be generated during the map
+    --remove possible zero values in a given Tensor  
 
-    fmap' :: (TScalar v1, TScalar v2, TIndex k) => (v1 -> v2) -> Tensor n k v1 -> Tensor n k v2  
-    fmap' f (Scalar x) = let newVal = f x in if newVal == scaleZero then ZeroTensor else Scalar newVal
-    fmap' f (Tensor m) = let newMap = M.filter (/=ZeroTensor) $ M.map (fmap' f) m in if M.null newMap then ZeroTensor else Tensor newMap
-    fmap' f (ZeroTensor) = ZeroTensor
+    removeZeros :: (TScalar v, TIndex k) => Tensor n k v -> Tensor n k v
+    removeZeros (Scalar x) = if x == scaleZero then ZeroTensor else Scalar x 
+    removeZeros (Tensor m) = let newMap = M.filter (/=ZeroTensor) m in if M.null newMap then ZeroTensor else Tensor newMap
+    removeZeros ZeroTensor = ZeroTensor
 
     instance Foldable (IndList n) where
         foldr f y (Empty) = y
@@ -271,6 +271,11 @@
                              Nothing -> undefined
 
     --instances
+
+    instance (NFData k, NFData v) => NFData (Tensor n k v) where
+        rnf ZeroTensor = ()
+        rnf (Scalar v) = v `seq` rnf v
+        rnf (Tensor m) = m `seq` rnf m
     
     instance KnownNat n => Generic (Tensor n k v) where
         type Rep (Tensor n k v) = Rep (TensorRep k v)
@@ -354,14 +359,14 @@
 
     (&+) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor n k v -> Tensor n k v 
     (&+) (Scalar a) (Scalar b) = let sum = addS a b in if sum == scaleZero then ZeroTensor else Scalar sum 
-    (&+) (Tensor m1) (Tensor m2) = let newMap = M.filter (/=ZeroTensor) $ M.unionWith (&+) m1 m2 in if M.null newMap then ZeroTensor else Tensor newMap      
+    (&+) (Tensor m1) (Tensor m2) = Tensor $ M.unionWith (&+) m1 m2     
     (&+) t1 ZeroTensor = t1
     (&+) ZeroTensor t2 = t2
 
     infix 8 &. 
 
     (&.) :: (TIndex k, TScalar v) => Rational -> Tensor n k v -> Tensor n k v 
-    (&.) scalar t = fmap' (scaleS scalar) t 
+    (&.) scalar t = fmap (scaleS scalar) t 
 
     infix 5 &- 
     
@@ -374,8 +379,8 @@
 
     (&*) :: (TIndex k, TAlgebra v v', TScalar v, TScalar v', TScalar (TAlg v v')) => Tensor n k v -> Tensor m k v' -> Tensor (n+m) k (TAlg v v') 
     (&*) (Scalar x) (Scalar y) = let newVal = prodA x y in if newVal == scaleZero then ZeroTensor else Scalar newVal 
-    (&*) (Scalar x) t2 = fmap' (prodA x) t2 
-    (&*) (Tensor m) t2 = let newMap = M.filter (/=ZeroTensor) $ M.map (\t1 -> (&*) t1 t2) m in if M.null newMap then ZeroTensor else Tensor newMap 
+    (&*) (Scalar x) t2 = fmap (prodA x) t2 
+    (&*) (Tensor m) t2 = Tensor $ M.map (\t1 -> (&*) t1 t2) m 
     (&*) t1 ZeroTensor = ZeroTensor 
     (&*) ZeroTensor t2 = ZeroTensor 
 
@@ -520,28 +525,54 @@
     --fmap takes us 1 level deeper 
 
     mapTo1 :: (TScalar v1, TScalar v2, TIndex k) => (v1 -> v2) -> Tensor n1 k v1 -> Tensor n1 k v2 
-    mapTo1 = fmap' 
+    mapTo1 = fmap 
 
     mapTo2 :: (TScalar v1, TScalar v2, TIndex k) => (v1 -> v2) -> Tensor2 n1 n2 k v1 -> Tensor2 n1 n2 k v2 
-    mapTo2 f = fmap' (fmap' f)
+    mapTo2 f = fmap (fmap f)
 
     mapTo3 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2) => (v1 -> v2) -> AbsTensor3 n1 n2 n3 k1 k2 v1 -> AbsTensor3 n1 n2 n3 k1 k2 v2 
-    mapTo3 f = fmap' (fmap' (fmap' f))
+    mapTo3 f = fmap (fmap (fmap f))
 
     mapTo4 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2) => (v1 -> v2) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v1 -> AbsTensor4 n1 n2 n3 n4 k1 k2 v2 
-    mapTo4 f = fmap' (fmap' (fmap' (fmap' f)))
+    mapTo4 f = fmap (fmap (fmap (fmap f)))
 
     mapTo5 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2, TIndex k3) => (v1 -> v2) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v1 -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v2 
-    mapTo5 f = fmap' (fmap' (fmap' (fmap' (fmap' f))))
+    mapTo5 f = fmap (fmap (fmap (fmap (fmap f))))
 
     mapTo6 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2, TIndex k3) => (v1 -> v2) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v1 -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v2 
-    mapTo6 f = fmap' (fmap' (fmap' (fmap' (fmap' (fmap' f)))))
+    mapTo6 f = fmap (fmap (fmap (fmap (fmap (fmap f)))))
 
     mapTo7 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => (v1 -> v2) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v1 -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v2 
-    mapTo7 f = fmap' (fmap' (fmap' (fmap' (fmap' (fmap' (fmap' f))))))
+    mapTo7 f = fmap (fmap (fmap (fmap (fmap (fmap (fmap f))))))
 
     mapTo8 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => (v1 -> v2) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v1 -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v2 
-    mapTo8 f = fmap' (fmap' (fmap' (fmap' (fmap' (fmap' (fmap' (fmap' f)))))))
+    mapTo8 f = fmap (fmap (fmap (fmap (fmap (fmap (fmap (fmap f)))))))
+
+    --remove Zero Values at every level of Abstact Tensor 
+
+    removeZeros1 :: (TScalar v, TIndex k) => AbsTensor1 n1 k v -> AbsTensor1 n1 k v 
+    removeZeros1 = removeZeros 
+
+    removeZeros2 :: (TScalar v, TIndex k) => AbsTensor2 n1 n2 k v -> AbsTensor2 n1 n2 k v 
+    removeZeros2 = removeZeros . (mapTo1 removeZeros) 
+
+    removeZeros3 :: (TScalar v, TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v 
+    removeZeros3 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros)
+
+    removeZeros4 :: (TScalar v, TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v 
+    removeZeros4 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros)
+
+    removeZeros5 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v 
+    removeZeros5 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros)
+
+    removeZeros6 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v 
+    removeZeros6 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros) . (mapTo5 removeZeros)
+
+    removeZeros7 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v 
+    removeZeros7 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros) . (mapTo5 removeZeros) . (mapTo6 removeZeros)
+
+    removeZeros8 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v 
+    removeZeros8 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros) . (mapTo5 removeZeros) . (mapTo6 removeZeros) . (mapTo7 removeZeros)
 
     --transpose a general absatract tensor 
 

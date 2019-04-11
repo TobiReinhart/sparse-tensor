@@ -134,7 +134,13 @@ main = do
 
     --print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix sym2
 
-    print $ symATens5 (0,1) $ aSymATens6 (0,1) $ delta3 &* delta3  
+    print $ symATens5 (0,1) $ aSymATens6 (0,1) $ delta3 &* delta3 
+
+    print $ removeZeros6 $ symATens5 (0,1) $ aSymATens6 (0,1) $ delta3 &* delta3 
+
+
+    
+
 
 
 

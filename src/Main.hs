@@ -52,6 +52,8 @@ import Data.Ratio
 
 main = do 
 
+    {-
+
     --first subgraph
 
    let (_,_,ans6') = mkAnsatzTensorFast 6 filterList6 symList6 areaList6IndsEta areaList6IndsEps 
@@ -197,16 +199,12 @@ main = do
    let (m3,s3) = (Sol.rank Sol.JacobiSVD $ Sparse.toMatrix mat3, Sol.rank Sol.JacobiSVD $ Sparse.toMatrix sym3)
 
 
-   print (m0,s0)
-
-   print (m1,s1)
-
-   print (m2,s2)
-
-   print (m3,s3)
+   -}
 
 
+   let (_,eps14,_) = mkAnsatzTensorEig 16 filterList16_2 symList16_2 areaList16_2IndsEta areaList16_2IndsEps
 
+   print $ getForestLabelsEpsilon eps14
 
 
 

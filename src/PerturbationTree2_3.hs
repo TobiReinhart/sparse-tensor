@@ -131,27 +131,29 @@ module PerturbationTree2_3 (
                         is1Area list [i,j,k,l] = (maximum $ map (\x -> length $ intersect [i,j,k,l] x) list) == 1 
                                 
                         
-    getAllIndsEpsilon :: [Int] -> [[Int]] -> [[Int]] -> [[Int]] -> [[Int]]
-    getAllIndsEpsilon l syms aSyms areaBlocks = l3
+    getAllIndsEpsilon :: [Int] ->[(Int,Int)] -> Symmetry -> [[Int]]
+    getAllIndsEpsilon l filters symL = l3
             where
+                (syms, aSyms, areaBlocks) = getIndSyms symL
                 s = length l
-                l2 = getIndsEpsilon s syms areaBlocks
+                l2 = filter (\x -> filterSym x filters) $ getIndsEpsilon s syms areaBlocks
                 l3 = concat $ map res l2
                     where 
                         res [a,b,c,d] = case aBlock of 
-                                        Just a'    ->  (++) [a,b,c,d] <$> (getAllIndsEta (l \\ [a,b,c,d]) (a' : aSyms) areaBlocks )
-                                        Nothing   ->  (++) [a,b,c,d] <$> (getAllIndsEta (l \\ [a,b,c,d]) aSyms areaBlocks )
+                                        Just a'    ->  (++) [a,b,c,d] <$> (let newFList = remFiltersEps filters [a,b,c,d] in filter (\x -> filterSym x newFList) $ getAllIndsEta (l \\ [a,b,c,d]) (a' : aSyms) areaBlocks )
+                                        Nothing   ->  (++) [a,b,c,d] <$> (let newFList = remFiltersEps filters [a,b,c,d] in filter (\x -> filterSym x newFList) $ getAllIndsEta (l \\ [a,b,c,d]) aSyms areaBlocks )
                             where 
                                 aBlock = get2ndAreaBlock [a,b,c,d] areaBlocks
+                                remFiltersEps fList epsInds = filter (\(a,b) -> not (elem a epsInds || elem b epsInds)) fList 
 
     --filter 1 representative out of every orbit under the area metric symmetries
 
     filter1Sym :: [Int] -> (Int,Int) -> Bool 
-    filter1Sym l (i,j)   
-            | first == i = True
-            | otherwise = False  
+    filter1Sym l (i,j) = case first of  
+                            Just l'   ->  if l' == i then True else False
+                            Nothing   -> True  
              where
-               first = fromJust $ find (\x -> x == i || x == j) l
+               first = find (\x -> x == i || x == j) l
 
     filterSym :: [Int] -> [(Int,Int)] -> Bool
     filterSym l inds = and boolList 
@@ -174,9 +176,9 @@ module PerturbationTree2_3 (
                         (_,aP,aB) = getIndSyms symList
     
     getEpsilonInds :: [Int] -> [(Int,Int)] -> Symmetry -> [[Int]]
-    getEpsilonInds l sym symL  = filter (\x -> filterSym x sym) $ getAllIndsEpsilon l p aP aB 
-                    where 
-                        (p,aP,aB) = getIndSyms symL
+    getEpsilonInds l sym symL = filter (\x -> filterSym x sym) $ getAllIndsEpsilon l sym symL
+                     
+                        
 
 
     --eta and epsilon types for the tree representing a sum of products of these tensors

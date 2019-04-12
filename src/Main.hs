@@ -86,19 +86,19 @@ main = do
 
 
 
-    let eqn1AT = eqn1AGeneric' ZeroTensor ans8 ans9 ans10_2 area area_p area_I 
+    let eqn1AT = eqn1AGeneric' ans4 ans8 ans9 ans10_2 area area_p area_I 
     
-    let eqn1AaT = eqn1AaGeneric' ZeroTensor ans9 ans10_1 ans11 area area_p area_I 
+    let eqn1AaT = eqn1AaGeneric' ans5 ans9 ans10_1 ans11 area area_p area_I 
 
-    let eqn1AIT = eqn1AIGeneric' ZeroTensor ans10_2 ans11 ans12_1 area area_p area_I 
+    let eqn1AIT = eqn1AIGeneric' ans6 ans10_2 ans11 ans12_1 area area_p area_I 
 
-    let eqn2AT = eqn2AGeneric' ZeroTensor ans9 ans10_2 area area_p 
+    let eqn2AT = eqn2AGeneric' ans5 ans9 ans10_2 area area_p 
 
-    let eqn2AaT = eqn2AaGeneric' ZeroTensor ans10_1 ans11 area area_p 
+    let eqn2AaT = eqn2AaGeneric' ans6 ans10_1 ans11 area area_p 
 
     let eqn2AIT = eqn2AIGeneric' ans11 ans12_1 area area_p 
 
-    let eqn3AT = eqn3AGeneric' ZeroTensor ans10_2 area 
+    let eqn3AT = eqn3AGeneric' ans6 ans10_2 area 
 
     let eqn3AaT = eqn3AaGeneric' ans11 area 
 
@@ -112,7 +112,9 @@ main = do
 
     let sym2 = toEMatrix6 ord2 
 
-    print $ Sol.rank Sol.JacobiSVD $ Sparse.toMatrix sym2
+    let total = toEMatrix6 $ ord1 &++ ord2 
+
+    print $ Sol.rank Sol.JacobiSVD $ Sparse.toMatrix total 
 
 
     

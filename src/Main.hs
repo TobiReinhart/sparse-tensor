@@ -172,7 +172,7 @@ main = do
 
    let sym1ABCIT = eqn1ABCI ZeroTensor ans18_2 
  
-   let sym2ABCcT = eqn2ABCc ZeroTensor ans14_2 ans18_3 
+   let sym2ABCcT = eqn2ABCc ZeroTensor ZeroTensor ans18_3 
  
    let sym3ABCT = eqn3ABC ZeroTensor ans18_2
  

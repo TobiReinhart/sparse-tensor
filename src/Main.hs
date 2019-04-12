@@ -52,7 +52,7 @@ import Data.Ratio
 
 main = do 
 
-    let area = flatArea  
+    area <- randFlatArea  
 
     let area_p = ZeroTensor 
 

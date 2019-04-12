@@ -64,17 +64,29 @@ main = do
 
    let (_,_,ans14_2') = mkAnsatzTensorFast 14 filterList14_2 symList14_2 areaList14_2IndsEta areaList14_2IndsEps 
 
-   let (r6,r10_1,r10_2,r14_1,r14_2) = (tensorRank ans6', tensorRank ans10_1', tensorRank ans10_2', tensorRank ans14_1', tensorRank ans14_2')
+   ans18_2BS <- BS.readFile "/cip/austausch/cgg/7.4.tens18_2" 
 
-   let ans14_2 = ans14_2'
+   ans18_3BS <- BS.readFile "/cip/austausch/cgg/7.4.tens18_3" 
 
-   let ans14_1 = shiftLabels6 r14_2 ans14_1'
+   let ans18_2' = decodeTensor ans18_2BS :: ATens 4 0 1 0 0 0 AnsVar 
 
-   let ans10_2 = shiftLabels6 (r14_2 + r14_1) ans10_2' 
+   let ans18_3' = decodeTensor ans18_3BS :: ATens 4 0 0 0 2 0 AnsVar 
 
-   let ans10_1 = shiftLabels6 (r14_2 + r14_1 + r10_2) ans10_1' 
+   let (r6,r10_1,r10_2,r14_1,r14_2,r18_2,r18_3) = (tensorRank ans6', tensorRank ans10_1', tensorRank ans10_2', tensorRank ans14_1', tensorRank ans14_2', tensorRank ans18_2', tensorRank ans18_3')
 
-   let ans6 = shiftLabels6 (r14_2 + r14_1 + r10_2 + r10_1) ans6'
+   let ans18_3 = ans18_3' 
+
+   let ans18_2 = shiftLabels6 r18_3 ans18_2'
+
+   let ans14_2 = shiftLabels6 (r18_3 + r18_2) ans14_2'
+
+   let ans14_1 = shiftLabels6 (r18_3 + r18_2 + r14_2) ans14_1'
+
+   let ans10_2 = shiftLabels6 (r18_3 + r18_2 + r14_2 + r14_1) ans10_2' 
+
+   let ans10_1 = shiftLabels6 (r18_3 + r18_2 + r14_2 + r14_1 + r10_2) ans10_1' 
+
+   let ans6 = shiftLabels6 (r18_3 + r18_2 + r14_2 + r14_1 + r10_2 + r10_1) ans6'
 
    --theEquations
 
@@ -104,11 +116,27 @@ main = do
 
    let eqnOrd2 = eqn1ABIT &> eqn1AaBbT &> eqn2ABbT &> (singletonTList eqn3ABT)
 
+   --ord 3
+   
+   let eqn1ABbCcT = eqn1ABbCc ans14_1 ans18_3 
+
+   let eqn1ABCIT = eqn1ABCI ans14_2 ans18_2 
+
+   let eqn2ABCcT = eqn2ABCc ans14_1 ans14_2 ans18_3 
+
+   let eqn3ABCT = eqn3ABC ans14_2 ans18_2
+
+   let eqnOrd3 = eqn1ABbCcT &> eqn1ABCIT &> eqn2ABCcT &> (singletonTList eqn3ABCT)
+
+   -------------------------------------------------------------
+   
    let mat0 = toEMatrix6 eqnOrd0 
 
    let mat1 = toEMatrix6 (eqnOrd0 &++ eqnOrd1)
 
    let mat2 = toEMatrix6 (eqnOrd0 &++ eqnOrd1 &++ eqnOrd2)
+
+   let mat3 = toEMatrix6 (eqnOrd0 &++ eqnOrd1 &++ eqnOrd2 &++ eqnOrd3)
 
    --the symbols 
 
@@ -138,11 +166,27 @@ main = do
 
    let symOrd2 = sym1ABIT &> sym1AaBbT &> sym2ABbT &> (singletonTList sym3ABT)
 
+   --ord 3
+   
+   let sym1ABbCcT = eqn1ABbCc ZeroTensor ans18_3 
+
+   let sym1ABCIT = eqn1ABCI ZeroTensor ans18_2 
+ 
+   let sym2ABCcT = eqn2ABCc ZeroTensor ans14_2 ans18_3 
+ 
+   let sym3ABCT = eqn3ABC ZeroTensor ans18_2
+ 
+   let symOrd3 = sym1ABbCcT &> sym1ABCIT &> sym2ABCcT &> (singletonTList sym3ABCT)
+ 
+   -------------------------------------------------------------
+
    let sym0 = toEMatrix6 symOrd0 
 
    let sym1 = toEMatrix6 symOrd1
 
    let sym2 = toEMatrix6 symOrd2
+
+   let sym3 = toEMatrix6 symOrd3
 
    let (m0,s0) = (Sol.rank Sol.FullPivLU $ Sparse.toMatrix mat0, Sol.rank Sol.FullPivLU $ Sparse.toMatrix sym0)
 
@@ -150,11 +194,16 @@ main = do
 
    let (m2,s2) = (Sol.rank Sol.JacobiSVD $ Sparse.toMatrix mat2, Sol.rank Sol.JacobiSVD $ Sparse.toMatrix sym2)
 
+   let (m3,s3) = (Sol.rank Sol.JacobiSVD $ Sparse.toMatrix mat3, Sol.rank Sol.JacobiSVD $ Sparse.toMatrix sym3)
+
+
    print (m0,s0)
 
    print (m1,s1)
 
    print (m2,s2)
+
+   print (m3,s3)
 
 
 

@@ -52,69 +52,113 @@ import Data.Ratio
 
 main = do 
 
-    area <- randFlatArea  
+    --first subgraph
 
-    let area_p = ZeroTensor 
+   let (_,_,ans6') = mkAnsatzTensorFast 6 filterList6 symList6 areaList6IndsEta areaList6IndsEps 
 
-    let area_I = ZeroTensor 
+   let (_,_,ans10_1') = mkAnsatzTensorFast 10 filterList10_1 symList10_1 areaList10_1IndsEta areaList10_1IndsEps 
 
-    let ans4 = generic4Ansatz 
+   let (_,_,ans10_2') = mkAnsatzTensorFast 10 filterList10_2 symList10_2 areaList10_2IndsEta areaList10_2IndsEps 
 
-    let ans5 = generic5Ansatz 
+   let (_,_,ans14_1') = mkAnsatzTensorFast 14 filterList14_1 symList14_1 areaList14_1IndsEta areaList14_1IndsEps 
 
-    let ans6 = generic6Ansatz 
+   let (_,_,ans14_2') = mkAnsatzTensorFast 14 filterList14_2 symList14_2 areaList14_2IndsEta areaList14_2IndsEps 
 
-    let ans8 = generic8Ansatz 
+   let (r6,r10_1,r10_2,r14_1,r14_2) = (tensorRank ans6', tensorRank ans10_1', tensorRank ans10_2', tensorRank ans14_1', tensorRank ans14_2')
 
-    let ans9 = generic9Ansatz 
+   let ans14_2 = ans14_2'
 
-    let ans10_1 = generic10_1Ansatz 
+   let ans14_1 = shiftLabels6 r14_2 ans14_1'
 
-    let ans10_2 = generic10_2Ansatz
-    
-    let ans11 = generic11Ansatz
-    
-    let ans12_1 = generic12_1Ansatz 
+   let ans10_2 = shiftLabels6 (r14_2 + r14_1) ans10_2' 
+
+   let ans10_1 = shiftLabels6 (r14_2 + r14_1 + r10_2) ans10_1' 
+
+   let ans6 = shiftLabels6 (r14_2 + r14_1 + r10_2 + r10_1) ans6'
+
+   --theEquations
+
+   --ord 0
+   
+   let eqnOrd0 = singletonTList $ eqn3 ans6 
+
+   --ord 1
+
+   let eqn1AIT = eqn1AI ans6 ans10_2 
+
+   let eqn2AaT = eqn2Aa ans6 ans10_1 
+
+   let eqn3AT = eqn3A ans6 ans10_2
+
+   let eqnOrd1 = eqn1AIT &> eqn2AaT &> (singletonTList eqn3AT)
+
+   --ord 2 
+
+   let eqn1ABIT = eqn1ABI ans10_2 ans14_2
+
+   let eqn3ABT = eqn3AB ans10_2 ans14_2 
+
+   let eqn2ABbT = eqn2ABb ans10_1 ans10_2 ans14_1 
+   
+   let eqn1AaBbT = eqn1AaBb ans10_1 ans14_1 
+
+   let eqnOrd2 = eqn1ABIT &> eqn1AaBbT &> eqn2ABbT &> (singletonTList eqn3ABT)
+
+   let mat0 = toEMatrix6 eqnOrd0 
+
+   let mat1 = toEMatrix6 (eqnOrd0 &++ eqnOrd1)
+
+   let mat2 = toEMatrix6 (eqnOrd0 &++ eqnOrd1 &++ eqnOrd2)
+
+   --the symbols 
+
+   --ord 0
+   
+   let symOrd0 = singletonTList $ eqn3 ans6 
+
+   --ord 1
+
+   let sym1AIT = eqn1AI ZeroTensor ans10_2 
+
+   let sym2AaT = eqn2Aa ZeroTensor ans10_1 
+
+   let sym3AT = eqn3A ZeroTensor ans10_2
+
+   let symOrd1 = sym1AIT &> sym2AaT &> (singletonTList sym3AT)
+
+   --ord 2 
+
+   let sym1ABIT = eqn1ABI ZeroTensor ans14_2
+
+   let sym3ABT = eqn3AB ZeroTensor ans14_2 
+
+   let sym2ABbT = eqn2ABb ZeroTensor ZeroTensor ans14_1 
+   
+   let sym1AaBbT = eqn1AaBb ZeroTensor ans14_1 
+
+   let symOrd2 = sym1ABIT &> sym1AaBbT &> sym2ABbT &> (singletonTList sym3ABT)
+
+   let sym0 = toEMatrix6 symOrd0 
+
+   let sym1 = toEMatrix6 symOrd1
+
+   let sym2 = toEMatrix6 symOrd2
+
+   let (m0,s0) = (Sol.rank Sol.FullPivLU $ Sparse.toMatrix mat0, Sol.rank Sol.FullPivLU $ Sparse.toMatrix sym0)
+
+   let (m1,s1) = (Sol.rank Sol.JacobiSVD $ Sparse.toMatrix mat1, Sol.rank Sol.JacobiSVD $ Sparse.toMatrix sym1)
+
+   let (m2,s2) = (Sol.rank Sol.JacobiSVD $ Sparse.toMatrix mat2, Sol.rank Sol.JacobiSVD $ Sparse.toMatrix sym2)
+
+   print (m0,s0)
+
+   print (m1,s1)
+
+   print (m2,s2)
 
 
 
-    let eqn1T = eqn1Generic' ans4 ans5 ans6 area area_p area_I 
 
-    let eqn2T = eqn2Generic' ans5 ans6 area area_p 
-
-    let eqn3T = eqn3Generic' ans6 area 
-
-
-
-    let eqn1AT = eqn1AGeneric' ans4 ans8 ans9 ans10_2 area area_p area_I 
-    
-    let eqn1AaT = eqn1AaGeneric' ans5 ans9 ans10_1 ans11 area area_p area_I 
-
-    let eqn1AIT = eqn1AIGeneric' ans6 ans10_2 ans11 ans12_1 area area_p area_I 
-
-    let eqn2AT = eqn2AGeneric' ans5 ans9 ans10_2 area area_p 
-
-    let eqn2AaT = eqn2AaGeneric' ans6 ans10_1 ans11 area area_p 
-
-    let eqn2AIT = eqn2AIGeneric' ans11 ans12_1 area area_p 
-
-    let eqn3AT = eqn3AGeneric' ans6 ans10_2 area 
-
-    let eqn3AaT = eqn3AaGeneric' ans11 area 
-
-    let eqn3AIT = eqn3AIGeneric' ans12_1 area 
-
-    let ord1 = eqn1T &> eqn2T &> (singletonTList eqn3T)
-
-    let sym1 = toEMatrix6 ord1 
-
-    let ord2 = eqn1AT &> eqn1AaT &> eqn1AIT &> eqn2AT &> eqn2AaT &> eqn2AIT &> eqn3AT &> eqn3AaT &> (singletonTList eqn3AIT)
-
-    let sym2 = toEMatrix6 ord2 
-
-    let total = toEMatrix6 $ ord1 &++ ord2 
-
-    print $ Sol.rank Sol.JacobiSVD $ Sparse.toMatrix total 
 
 
     

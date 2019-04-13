@@ -84,10 +84,10 @@ module PerturbationTree2_3 (
 
     getAllIndsEta :: [Int] -> [[Int]] -> [[Int]]
     getAllIndsEta [a,b] aSyms = [[a,b]]
-    getAllIndsEta (x:xs) aSyms = concat $ map res l'
+    getAllIndsEta [a,b,c,d] aSyms = filter (\[a',b',c',d'] -> (not $ elem [a',b'] aSyms) && (not $ elem [c',d'] aSyms)) [[a,b,c,d],[a,c,b,d],[a,d,b,c]]
+    getAllIndsEta (x:xs) aSyms = concat $ map res l
             where
-                l = filter (\(p,_) -> not $ elem p aSyms) $ map (\y -> ([x,y],delete y xs)) xs 
-                l' = if length xs == 3 then filter (\(_,p) -> not $ elem p aSyms) l else l  
+                l = mapMaybe (\y -> if not $ elem [x,y] aSyms then Just ([x,y],delete y xs) else Nothing) xs 
                 res (a,b) = (++) a <$> (getAllIndsEta b aSyms)
     getAllIndsEta [] aSyms = [[]]
     getAllInds x aSmys = error "wrong list length"
@@ -95,7 +95,7 @@ module PerturbationTree2_3 (
     --a symmetric or antisymmetric pair contracted against 2 etas yields another symmetric or antisymmetric pair 
 
     findExtraSym :: [[Int]] -> [Int] -> Maybe [Int]
-    findExtraSym inds [a,b] = if a == b then Nothing else Just $ sort [head newSymInd1, head newSymInd2]
+    findExtraSym inds [a,b] = Just $ sort [head newSymInd1, head newSymInd2]
             where 
                 newSymInd1 = head (filter (\x -> elem a x) inds) \\ [a] 
                 newSymInd2 = head (filter (\x -> elem b x) inds) \\ [b]  
@@ -113,18 +113,18 @@ module PerturbationTree2_3 (
 
     getExtraEtaSyms :: [Int] -> [[Int]] -> [[Int]] -> [[Int]] -> Maybe ([[Int]], [[Int]])
     getExtraEtaSyms inds syms aSyms areaBlocks
-                | length inds > 9 && maxCycleNr (aSyms'++aSyms) > 4 = Nothing
+               -- | length inds > 9 && maxCycleNr (aSyms'++aSyms) > 4 = Nothing
                 | intersect (syms'++syms) (aSyms'++aSyms) /= [] = Nothing
                 | otherwise = Just (syms', aSyms')
                  where 
                     etaL [a,b] = [[a,b]]
                     etaL x = take 2 x : (etaL $ drop 2 x)
                     etaL' = etaL inds
-                    newAreaSyms = sort $ mapMaybe (\x -> get2ndAreaBlock x areaBlocks) etaL'
-                    newSyms = sort $ mapMaybe (findExtraSym etaL') syms 
-                    newASyms = sort $ mapMaybe (findExtraSym etaL') aSyms 
-                    syms' = map sort $ newAreaSyms ++ newSyms
-                    aSyms' = map sort newASyms
+                    newAreaSyms = mapMaybe (\x -> get2ndAreaBlock x areaBlocks) etaL'
+                    newSyms = mapMaybe (findExtraSym etaL') syms 
+                    newASyms = mapMaybe (findExtraSym etaL') aSyms 
+                    syms' = newAreaSyms ++ newSyms
+                    aSyms' = newASyms
 
     --filter 1 representative out of every orbit under the area metric symmetries
 

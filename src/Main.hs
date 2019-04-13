@@ -215,6 +215,8 @@ main = do
 
    let t = invEta &* invEta &* invEta &* invEta &* invEta 
 
-   let t' = aSymATens5 (1,2) $ aSymATens5 (3,4) $ aSymATens5 (5,6) $ aSymATens5 (7,8) t
+   let t' = aSymATens5 (1,2) $ aSymATens5 (3,4) $ aSymATens5 (5,6) $ aSymATens5 (7,8) $ aSymATens5 (0,9) t
 
-   print $ toListShow6 $ removeZeros6 t' 
+   print $ length $ getEtaInds [1..16] filterList16_1 symList16_1 
+   
+   print $ length $ getEpsilonInds [1..16] filterList16_1 symList16_1

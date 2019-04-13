@@ -39,6 +39,8 @@ import qualified Data.ByteString.Lazy as BS
 import Codec.Compression.GZip
 import Data.Serialize
 
+import Data.Maybe
+
 
 import qualified Data.Eigen.Matrix as Mat 
 import qualified Data.Eigen.SparseMatrix as Sparse
@@ -202,10 +204,17 @@ main = do
    -}
 
 
-   let (_,eps14,_) = mkAnsatzTensorEig 16 filterList16_2 symList16_2 areaList16_2IndsEta areaList16_2IndsEps
+   let (ans,_,_) = mkAnsatzTensorEig 10 filterList10_1 symList10_1 areaList10_1IndsEta areaList10_1IndsEps
 
-   print $ getForestLabelsEpsilon eps14
+   
+   let inds = [[1,3],[2,5],[4,6],[7,8],[9,10]]
 
+   let syms = [[1,2],[3,4],[6,7],[8,9]]
 
+   let newSyms = sort $ mapMaybe (findExtraSym inds) syms 
 
-    
+   let t = invEta &* invEta &* invEta &* invEta &* invEta 
+
+   let t' = aSymATens5 (1,2) $ aSymATens5 (3,4) $ aSymATens5 (5,6) $ aSymATens5 (7,8) t
+
+   print $ toListShow6 $ removeZeros6 t' 

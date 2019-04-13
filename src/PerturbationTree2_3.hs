@@ -34,7 +34,7 @@ module PerturbationTree2_3 (
     areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20,
     canonicalizeEvalMaps, getSyms, epsMap,
     decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta, flattenForestEpsilon, getIndSyms,
-    getEpsForestFast
+    getEpsForestFast, flattenForest, getAllIndsEta, getExtraEtaSyms, maxCycleNr, findExtraSym, Var(..)
 
     
 ) where
@@ -63,43 +63,89 @@ module PerturbationTree2_3 (
 
     import TensorTreeNumeric4_2
 
-    --construct the list of all possible different products of etas and epsilons
+    --construct the list of all possible different products of etas and epsilons -> use symmetries 
+
+    --one 1,3 area pair contracted against epsilon yields an antisymmetry in 2,4 contracted against eta yields another symmetry
 
     get2ndAreaBlock :: [Int] -> [[Int]] -> Maybe [Int]
-    get2ndAreaBlock [a,b] [[i,j,k,l]]
-        | [a,b] == [i,j] = Just [k,l]
-        | [a,b] == [k,l] = Just [i,j]
-        | otherwise = Nothing
-    get2ndAreaBlock [a,b] (x:xs) = case fstBlock of 
-                                Just x   -> Just x 
-                                Nothing  -> get2ndAreaBlock [a,b] xs
-            where 
-                fstBlock = get2ndAreaBlock [a,b] [x]  
-    get2ndAreaBlock [a,b,c,d] [[i,j,k,l]] 
-        | length i' == 2 = Just i' 
-        | otherwise = Nothing
-         where 
-                i' = intersect [a,b,c,d] [i,j,k,l]
-    get2ndAreaBlock [a,b,c,d] (x:xs) = case fstBlock of 
-                                Just x   -> Just x 
-                                Nothing  -> get2ndAreaBlock [a,b,c,d] xs
-            where 
-                fstBlock = get2ndAreaBlock [a,b,c,d] [x]  
-    get2ndAreaBlock x y = Nothing
+    get2ndAreaBlock [a,b] areaBlocks = case block of 
+                                        Just block'      -> Just $ block' \\ [a,b]
+                                        Nothing          -> Nothing 
+        where 
+            block = find (\x -> (length $ intersect [a,b] x) == 2) areaBlocks 
+    get2ndAreaBlock [a,b,c,d] areaBlocks = case block of 
+                                        Just block'         -> Just $ block' \\ [a,b,c,d]
+                                        Nothing             -> Nothing
+        where 
+            block = find (\x -> (length $ intersect [a,b,c,d] x) == 2) areaBlocks 
 
-    getAllIndsEta :: [Int] -> [[Int]] -> [[Int]] -> [[Int]]
-    getAllIndsEta [a,b] aSyms areaBlocks = [[a,b]]
-    getAllIndsEta (x:xs) aSyms areaBlocks = concat $ map res l'
+
+    --etas must not be contracted against antisymmetric indices
+
+    getAllIndsEta :: [Int] -> [[Int]] -> [[Int]]
+    getAllIndsEta [a,b] aSyms = [[a,b]]
+    getAllIndsEta (x:xs) aSyms = concat $ map res l'
             where
                 l = filter (\(p,_) -> not $ elem p aSyms) $ map (\y -> ([x,y],delete y xs)) xs 
                 l' = if length xs == 3 then filter (\(_,p) -> not $ elem p aSyms) l else l  
-                res (a,b) = case aBlock of 
-                            Just x'    -> (++) a <$> (getAllIndsEta b (x' : aSyms) areaBlocks)
-                            Nothing   -> (++) a <$> (getAllIndsEta b aSyms areaBlocks) 
-                  where 
-                    aBlock = get2ndAreaBlock a areaBlocks
-    getAllIndsEta [] aSyms areaBlocks = [[]]
-    getAllInds x aSmys areaBlocks = error "wrong list length"
+                res (a,b) = (++) a <$> (getAllIndsEta b aSyms)
+    getAllIndsEta [] aSyms = [[]]
+    getAllInds x aSmys = error "wrong list length"
+
+    --a symmetric or antisymmetric pair contracted against 2 etas yields another symmetric or antisymmetric pair 
+
+    findExtraSym :: [[Int]] -> [Int] -> Maybe [Int]
+    findExtraSym inds [a,b] = if a == b then Nothing else Just $ sort [head newSymInd1, head newSymInd2]
+            where 
+                newSymInd1 = head (filter (\x -> elem a x) inds) \\ [a] 
+                newSymInd2 = head (filter (\x -> elem b x) inds) \\ [b]  
+
+    --only problem remaining is to filter numerical lin deps frommthe eta ansätze, i.e. no 5 cycles -> does not work at the moment!!
+
+    maxCycleNr :: [[Int]] -> Int 
+    maxCycleNr l = maximum $ map length cycles 
+            where 
+                insertAt [a,b] [] = [[a,b]]
+                insertAt [a,b] (l:ls) = if elem a l || elem b l then (nub $ [a,b]++l) : ls else l : (insertAt [a,b] ls) 
+                mkCycles [[a,b]] = [[a,b]]
+                mkCycles ([a,b]:xs) = insertAt [a,b] $ mkCycles xs
+                cycles = mkCycles $ sort l  
+
+    getExtraEtaSyms :: [Int] -> [[Int]] -> [[Int]] -> [[Int]] -> Maybe ([[Int]], [[Int]])
+    getExtraEtaSyms inds syms aSyms areaBlocks
+                | length inds > 9 && maxCycleNr (aSyms'++aSyms) > 4 = Nothing
+                | intersect (syms'++syms) (aSyms'++aSyms) /= [] = Nothing
+                | otherwise = Just (syms', aSyms')
+                 where 
+                    etaL [a,b] = [[a,b]]
+                    etaL x = take 2 x : (etaL $ drop 2 x)
+                    etaL' = etaL inds
+                    newAreaSyms = sort $ mapMaybe (\x -> get2ndAreaBlock x areaBlocks) etaL'
+                    newSyms = sort $ mapMaybe (findExtraSym etaL') syms 
+                    newASyms = sort $ mapMaybe (findExtraSym etaL') aSyms 
+                    syms' = map sort $ newAreaSyms ++ newSyms
+                    aSyms' = map sort newASyms
+
+    --filter 1 representative out of every orbit under the area metric symmetries
+
+    filter1Sym :: [Int] -> (Int,Int) -> Bool 
+    filter1Sym l (i,j) = case first of  
+                            Just l'   ->  if l' == i then True else False
+                            Nothing   -> True  
+             where
+               first = find (\x -> x == i || x == j) l
+
+    filterSym :: [Int] -> [(Int,Int)] -> Bool
+    filterSym l inds = and boolList 
+            where
+               boolList = map (filter1Sym l) inds 
+
+    filterSymEta :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]] -> [[Int]] -> Bool 
+    filterSymEta inds filters syms aSyms areaBlocks = case extra of 
+                                                        Nothing              -> False 
+                                                        Just (syms', aSyms') -> filterSym inds (filters ++ (map (\[x,y] -> (x,y)) $ syms' ++ aSyms'))
+            where 
+                extra = getExtraEtaSyms inds syms aSyms areaBlocks
 
     {-we can use the following observations :
         as we want to contstruct a basis it suffices to pick representatives of the different symmetry orbits module anti-sym in (>4) indices
@@ -130,36 +176,6 @@ module PerturbationTree2_3 (
                             | otherwise = False 
                         is1Area list [i,j,k,l] = (maximum $ map (\x -> length $ intersect [i,j,k,l] x) list) == 1 
                                 
-                        
-    getAllIndsEpsilon :: [Int] ->[(Int,Int)] -> Symmetry -> [[Int]]
-    getAllIndsEpsilon l filters symL = l3
-            where
-                (syms, aSyms, areaBlocks) = getIndSyms symL
-                s = length l
-                l2 = filter (\x -> filterSym x filters) $ getIndsEpsilon s syms areaBlocks
-                l3 = concat $ map res l2
-                    where 
-                        res [a,b,c,d] = case aBlock of 
-                                        Just a'    ->  (++) [a,b,c,d] <$> (let newFList = remFiltersEps filters [a,b,c,d] in filter (\x -> filterSym x newFList) $ getAllIndsEta (l \\ [a,b,c,d]) (a' : aSyms) areaBlocks )
-                                        Nothing   ->  (++) [a,b,c,d] <$> (let newFList = remFiltersEps filters [a,b,c,d] in filter (\x -> filterSym x newFList) $ getAllIndsEta (l \\ [a,b,c,d]) aSyms areaBlocks )
-                            where 
-                                aBlock = get2ndAreaBlock [a,b,c,d] areaBlocks
-                                remFiltersEps fList epsInds = filter (\(a,b) -> not (elem a epsInds || elem b epsInds)) fList 
-
-    --filter 1 representative out of every orbit under the area metric symmetries
-
-    filter1Sym :: [Int] -> (Int,Int) -> Bool 
-    filter1Sym l (i,j) = case first of  
-                            Just l'   ->  if l' == i then True else False
-                            Nothing   -> True  
-             where
-               first = find (\x -> x == i || x == j) l
-
-    filterSym :: [Int] -> [(Int,Int)] -> Bool
-    filterSym l inds = and boolList 
-            where
-               boolList = map (filter1Sym l) inds 
-
     --convert symmetry list in appropriate form 
 
     getIndSyms :: Symmetry -> ([[Int]],[[Int]],[[Int]])
@@ -169,16 +185,41 @@ module PerturbationTree2_3 (
                     aPairs' = map (\(a,b) -> [a,b]) aPairs
                     areaBs'' = filter (\x -> 2 == (length $ fst x)) blocks 
                     areaBs' = map (\(a,b) -> a ++ b) $ filter (\x -> elem (head $ fst x, (fst x) !! 1) aPairs) areaBs''
+
                     
     getEtaInds :: [Int] -> [(Int,Int)] -> Symmetry -> [[Int]]
-    getEtaInds l sym symList = filter (\x -> filterSym x sym) $ getAllIndsEta l aP aB
+    getEtaInds l sym symList = filter (\x -> filterSymEta x sym p aP aB) $ getAllIndsEta l aP
                     where 
-                        (_,aP,aB) = getIndSyms symList
+                        (p,aP,aB) = getIndSyms symList
     
-    getEpsilonInds :: [Int] -> [(Int,Int)] -> Symmetry -> [[Int]]
-    getEpsilonInds l sym symL = filter (\x -> filterSym x sym) $ getAllIndsEpsilon l sym symL
-                     
-                        
+                         
+    getEpsilonInds :: [Int] ->[(Int,Int)] -> Symmetry -> [[Int]]
+    getEpsilonInds l filters symL = l3
+            where
+                (syms, aSyms, areaBlocks) = getIndSyms symL
+                s = length l
+                l2 = filter (\x -> filterSym x filters) $ getIndsEpsilon s syms areaBlocks
+                l3 = concat $ map res l2
+                    where 
+                        res [a,b,c,d] = case aBlock of 
+                                        Just a'    ->  (++) [a,b,c,d] <$> (let newFList = remFiltersEps filters [a,b,c,d]
+                                                                               newSymList = remSymsEps syms [a,b,c,d]
+                                                                               newASymList = remASymsEps aSyms [a,b,c,d]
+                                                                               newAreaBlocks = remAreaBlocksEps areaBlocks [a,b,c,d]
+                                                                                    in filter (\x -> filterSymEta x newFList newSymList (a' : newASymList) newAreaBlocks) $ getAllIndsEta (l \\ [a,b,c,d]) (a' : newASymList))
+                                        Nothing   ->  (++) [a,b,c,d] <$> (let newFList = remFiltersEps filters [a,b,c,d]
+                                                                              newSymList = remSymsEps syms [a,b,c,d]
+                                                                              newASymList = remASymsEps aSyms [a,b,c,d]
+                                                                              newAreaBlocks = remAreaBlocksEps areaBlocks [a,b,c,d]
+                                                                                    in filter (\x -> filterSymEta x newFList newSymList newASymList newAreaBlocks) $ getAllIndsEta (l \\ [a,b,c,d]) newASymList)
+                            where 
+                                aBlock = get2ndAreaBlock [a,b,c,d] areaBlocks
+                                remFiltersEps fList epsInds = filter (\(a,b) -> not (elem a epsInds || elem b epsInds)) fList 
+                                remSymsEps symL epsInds = filter (\x -> intersect x epsInds == []) symL 
+                                remASymsEps aSymL epsInds = filter (\x -> intersect x epsInds == []) aSymL
+                                remAreaBlocksEps areaBlocks epsInds = filter (\x -> intersect x epsInds == []) areaBlocks
+
+
 
 
     --eta and epsilon types for the tree representing a sum of products of these tensors
@@ -388,12 +429,12 @@ module PerturbationTree2_3 (
     --sort a given AnsatzForest, i.e. bring the products of eta and epsilon to canonical order once the individual tensors are ordered canonically
     
     sortForest :: AnsatzForestEta -> AnsatzForestEta
-    sortForest f = foldr (flip addList2Forest) EmptyForest fList 
+    sortForest f = foldl' addList2Forest EmptyForest fList 
                 where
                     fList = flattenForest f
 
     sortForestEpsilon :: AnsatzForestEpsilon -> AnsatzForestEpsilon 
-    sortForestEpsilon f = foldr (flip addList2ForestEpsilon) M.empty fList 
+    sortForestEpsilon f = foldl' addList2ForestEpsilon M.empty fList 
                  where
                     fList = flattenForestEpsilon f
 
@@ -582,14 +623,14 @@ module PerturbationTree2_3 (
     --reduce a list of possible ansätze w.r.t the present symmetries, no numerical evaluation
 
     reduceAnsatzEta' :: Symmetry -> [([Eta],Var)] -> AnsatzForestEta
-    reduceAnsatzEta' sym l = foldr addOrRem' EmptyForest l
+    reduceAnsatzEta' sym l = foldl' addOrRem' EmptyForest l
             where
-                addOrRem' = \ans f -> if (isElem (fst ans) f) then f else addForests f (symAnsatzForestEta sym $ mkForestFromAscList ans)
+                addOrRem' = \f ans -> if (isElem (fst ans) f) then f else addForests f (symAnsatzForestEta sym $ mkForestFromAscList ans)
 
     reduceAnsatzEpsilon' :: Symmetry -> [(Epsilon, [Eta], Var)] -> AnsatzForestEpsilon
-    reduceAnsatzEpsilon' sym l = foldr addOrRem' M.empty l
+    reduceAnsatzEpsilon' sym l = foldl' addOrRem' M.empty l
             where
-                addOrRem' = \(x,y,z) f -> if (isElemEpsilon (x,y) f) then f else addForestsEpsilon f (symAnsatzForestEps sym $ mkForestFromAscListEpsilon (x,y,z))
+                addOrRem' = \f (x,y,z) -> if (isElemEpsilon (x,y) f) then f else addForestsEpsilon f (symAnsatzForestEps sym $ mkForestFromAscListEpsilon (x,y,z))
 
     mkAllVars :: [Var] 
     mkAllVars = map (Var 1) [1..]
@@ -640,17 +681,17 @@ module PerturbationTree2_3 (
 
     evalAnsatzForestEta :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEta -> I.IntMap Int
     evalAnsatzForestEta epsM evalM (Leaf (Var x y)) = I.singleton y x
-    evalAnsatzForestEta epsM evalM (ForestEta m) = M.foldrWithKey foldF I.empty m 
+    evalAnsatzForestEta epsM evalM (ForestEta m) = M.foldlWithKey' foldF I.empty m 
                 where
-                    foldF k a b = let nodeVal = evalNodeEta epsM evalM k 
+                    foldF b k a = let nodeVal = evalNodeEta epsM evalM k 
                                   in if nodeVal == Nothing then b 
                                      else I.unionWith (+) (I.map ((*) (fromJust nodeVal)) (evalAnsatzForestEta epsM evalM a)) b
     evalAnsatzForestEta epsM evalM EmptyForest = I.empty
 
     evalAnsatzForestEpsilon :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEpsilon -> I.IntMap Int
-    evalAnsatzForestEpsilon epsM evalM m = M.foldrWithKey foldF I.empty m 
+    evalAnsatzForestEpsilon epsM evalM m = M.foldlWithKey' foldF I.empty m 
                 where
-                    foldF k a b = let nodeVal = evalNodeEpsilon epsM evalM k 
+                    foldF b k a = let nodeVal = evalNodeEpsilon epsM evalM k 
                                   in if nodeVal == Nothing then b 
                                      else I.unionWith (+) (I.map ((*) (fromJust nodeVal)) (evalAnsatzForestEta epsM evalM a)) b
 
@@ -658,17 +699,17 @@ module PerturbationTree2_3 (
 
     eval1AnsatzForestEta :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEta -> Int
     eval1AnsatzForestEta epsM evalM (Leaf (Var x _)) = x
-    eval1AnsatzForestEta epsM evalM (ForestEta m) = M.foldrWithKey foldF 0 m
+    eval1AnsatzForestEta epsM evalM (ForestEta m) = M.foldlWithKey' foldF 0 m
                 where
-                    foldF k a b = let nodeVal = evalNodeEta epsM evalM k 
+                    foldF b k a = let nodeVal = evalNodeEta epsM evalM k 
                                   in if nodeVal == Nothing then b 
                                      else  b + ((fromJust nodeVal) * (eval1AnsatzForestEta epsM evalM a))
     eval1AnsatzForestEta epsM evalM EmptyForest = 0
 
     eval1AnsatzForestEpsilon :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEpsilon -> Int
-    eval1AnsatzForestEpsilon epsM evalM m = M.foldrWithKey foldF 0 m
+    eval1AnsatzForestEpsilon epsM evalM m = M.foldlWithKey' foldF 0 m
                 where
-                    foldF k a b = let nodeVal = evalNodeEpsilon epsM evalM k 
+                    foldF b k a = let nodeVal = evalNodeEpsilon epsM evalM k 
                                   in if nodeVal == Nothing then b 
                                     else  b + ((fromJust nodeVal) * (eval1AnsatzForestEta epsM evalM a))
 
@@ -778,8 +819,8 @@ module PerturbationTree2_3 (
 
     --in each step add the new AnsatzVector to the forest iff it is lin indep of the previous vectors
 
-    addOrDiscardEtaEig :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> [Eta] -> (AnsatzForestEta, RankDataEig) -> (AnsatzForestEta, RankDataEig)
-    addOrDiscardEtaEig symList epsM evalM etaL (ans,rDat) 
+    addOrDiscardEtaEig :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEta, RankDataEig) -> [Eta] -> (AnsatzForestEta, RankDataEig)
+    addOrDiscardEtaEig symList epsM evalM (ans,rDat) etaL 
                 | isElem etaL ans = (ans,rDat)
                 | otherwise = case newRDat of 
                                    Nothing          -> (ans,rDat)
@@ -792,8 +833,8 @@ module PerturbationTree2_3 (
                     sumAns = addForests ans newAns
 
 
-    addOrDiscardEpsilonEig :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataEig) -> (AnsatzForestEpsilon, RankDataEig)
-    addOrDiscardEpsilonEig symList epsM evalM (epsL,etaL) (ans,rDat) 
+    addOrDiscardEpsilonEig :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataEig) -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataEig)
+    addOrDiscardEpsilonEig symList epsM evalM (ans,rDat) (epsL,etaL) 
                 | isElemEpsilon (epsL,etaL) ans = (ans,rDat)
                 | otherwise = case newRDat of 
                                    Nothing          -> (ans,rDat)
@@ -844,7 +885,7 @@ module PerturbationTree2_3 (
                 evalM = canonicalizeEvalMaps symL evalM'  
                 epsM = epsMap
                 (ans1,rDat1,restEtaL) = mk1stRankDataEtaEig symL etaL epsM evalM
-                (finalForest, (_,finalMat)) = foldr (addOrDiscardEtaEig symL epsM evalM) (ans1,rDat1) restEtaL 
+                (finalForest, (_,finalMat)) = foldl' (addOrDiscardEtaEig symL epsM evalM) (ans1,rDat1) restEtaL 
 
     reduceAnsatzEpsilonEig :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     reduceAnsatzEpsilonEig symL epsL evalM' = (finalForest, finalMat)
@@ -852,7 +893,7 @@ module PerturbationTree2_3 (
                 evalM = canonicalizeEvalMaps symL evalM'
                 epsM = epsMap
                 (ans1,rDat1,restEpsL) = mk1stRankDataEpsilonEig symL epsL epsM evalM
-                (finalForest, (_,finalMat)) = foldr (addOrDiscardEpsilonEig symL epsM evalM) (ans1,rDat1) restEpsL 
+                (finalForest, (_,finalMat)) = foldl' (addOrDiscardEpsilonEig symL epsM evalM) (ans1,rDat1) restEpsL 
 
     --construct a basis ansatz forest 
 

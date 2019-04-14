@@ -204,19 +204,8 @@ main = do
    -}
 
 
-   let (ans,_,_) = mkAnsatzTensorEig 10 filterList10_1 symList10_1 areaList10_1IndsEta areaList10_1IndsEps
+   ansBS <- BS.readFile "/cip/austausch/cgg/7.4.eta16_1"
 
-   
-   let inds = [[1,3],[2,5],[4,6],[7,8],[9,10]]
+   let ans = decodeAnsatzForestEpsilon ansBS 
 
-   let syms = [[1,2],[3,4],[6,7],[8,9]]
-
-   let newSyms = sort $ mapMaybe (findExtraSym inds) syms 
-
-   let t = invEta &* invEta &* invEta &* invEta &* invEta 
-
-   let t' = aSymATens5 (1,2) $ aSymATens5 (3,4) $ aSymATens5 (5,6) $ aSymATens5 (7,8) $ aSymATens5 (0,9) t
-
-   print $ length $ getEtaInds [1..16] filterList16_1 symList16_1 
-   
-   print $ length $ getEpsilonInds [1..16] filterList16_1 symList16_1
+   print $ getForestLabelsEpsilon ans 

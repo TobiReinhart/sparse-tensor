@@ -105,15 +105,15 @@ module PerturbationTree2_3 (
     maxCycleNr :: [[Int]] -> Int 
     maxCycleNr l = maximum $ map length cycles 
             where 
-                insertAt [a,b] [] = [[a,b]]
-                insertAt [a,b] (l:ls) = if elem a l || elem b l then (nub $ [a,b]++l) : ls else l : (insertAt [a,b] ls) 
-                mkCycles [[a,b]] = [[a,b]]
+                insertAt [a,b] [] = [[[a,b]]]
+                insertAt [a,b] (l:ls) = if (and $ map (elem a) l) || (and $ map (elem b) l) then (nub $ [a,b] : l) : ls else l : (insertAt [a,b] ls) 
+                mkCycles [[a,b]] = [[[a,b]]]
                 mkCycles ([a,b]:xs) = insertAt [a,b] $ mkCycles xs
-                cycles = mkCycles $ sort l  
+                cycles = mkCycles l  
 
     getExtraEtaSyms :: [Int] -> [[Int]] -> [[Int]] -> [[Int]] -> Maybe ([[Int]], [[Int]])
     getExtraEtaSyms inds syms aSyms areaBlocks
-               -- | length inds > 9 && maxCycleNr (aSyms'++aSyms) > 4 = Nothing
+                -- | length inds > 9 && maxCycleNr (aSyms'++aSyms) > 9 = Nothing
                 | intersect (syms'++syms) (aSyms'++aSyms) /= [] = Nothing
                 | otherwise = Just (syms', aSyms')
                  where 
@@ -188,13 +188,13 @@ module PerturbationTree2_3 (
 
                     
     getEtaInds :: [Int] -> [(Int,Int)] -> Symmetry -> [[Int]]
-    getEtaInds l sym symList = filter (\x -> filterSymEta x sym p aP aB) $ getAllIndsEta l aP
+    getEtaInds l sym symList = filter (\x -> filterSymEta x sym p aP aB) $ filter (\x -> filterSym x sym) $ getAllIndsEta l aP
                     where 
                         (p,aP,aB) = getIndSyms symList
     
                          
     getEpsilonInds :: [Int] ->[(Int,Int)] -> Symmetry -> [[Int]]
-    getEpsilonInds l filters symL = l3
+    getEpsilonInds l filters symL = filter (\x -> filterSym x filters) $ l3
             where
                 (syms, aSyms, areaBlocks) = getIndSyms symL
                 s = length l

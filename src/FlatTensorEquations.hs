@@ -247,7 +247,7 @@ module FlatTensorEquations (
     ansatzAIBJCK :: ATens 3 0 3 0 0 0 AnsVar -> ATens 3 0 3 0 2 0 AnsVar 
     ansatzAIBJCK ans18 = block1 &+ block2 &+ block3
         where 
-            block1 = contrATens1 (0,0) $ contrATens2 (0,0) $ ans18 &* (aSymATens5 (0,1) $ contrATens3 (1,0) $ interEqn3 &* invEta) 
+            block1 = contrATens1 (0,0) $ contrATens2 (0,0) $ ans18 &* (removeZeros6 $ aSymATens5 (0,1) $ contrATens3 (1,0) $ interEqn3 &* invEta) 
             block2 = tensorTrans1 (0,2) $ tensorTrans3 (0,2) block1 
             block3 = tensorTrans1 (1,2) $ tensorTrans3 (1,2) block1
 

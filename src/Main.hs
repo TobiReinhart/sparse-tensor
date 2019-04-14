@@ -203,9 +203,11 @@ main = do
 
    -}
 
+   tens' <- BS.readFile "/cip/austausch/cgg/7.4.tens18"
 
-   ansBS <- BS.readFile "/cip/austausch/cgg/7.4.eta16_1"
+   let tens = decodeTensor tens' :: ATens 3 0 3 0 0 0 AnsVar 
 
-   let ans = decodeAnsatzForestEpsilon ansBS 
+   let ans = ansatzAIBJCK tens 
 
-   print $ getForestLabelsEpsilon ans 
+   print $ removeZeros6 ans 
+   

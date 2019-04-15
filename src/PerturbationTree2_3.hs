@@ -140,7 +140,8 @@ module PerturbationTree2_3 (
             where
                boolList = map (filter1Sym l) inds 
 
-    filterSymEta :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]] -> [[Int]] -> Bool 
+    filterSymEta :: [Int] -> [(Int,Int)] -> [[Int]] -> [[Int]] -> [[Int]] -> Bool
+    filterSymEta [] filters syms aSyms areaBlocks = True  
     filterSymEta inds filters syms aSyms areaBlocks = case extra of 
                                                         Nothing              -> False 
                                                         Just (syms', aSyms') -> filterSym inds (filters ++ (map (\[x,y] -> (x,y)) $ syms' ++ aSyms'))

@@ -203,11 +203,37 @@ main = do
 
    -}
 
-   tens' <- BS.readFile "/cip/austausch/cgg/7.4.tens18"
+   let ans = generic4Ansatz 
 
-   let tens = decodeTensor tens' :: ATens 3 0 3 0 0 0 AnsVar 
+   let eqn1 = contrATens1 (0,0) $ ans &* flatInter
 
-   let ans = ansatzAIBJCK tens 
+   let eqn2 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzJ1 
 
-   print $ removeZeros6 ans 
-   
+   let eqn3 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzJ2 
+
+   let eqn4 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzJ3 
+
+   let eqn5 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzK1 
+
+   let eqn6 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzK2 
+
+   let eqn7 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzK3 
+
+   let ansA = ansatzA ans 
+
+   print $ tensorRank eqn1 
+
+   let totalInts = toEMatrix6 $ eqn2 &> eqn3 &> eqn4 &> eqn5 &> eqn6 &> (singletonTList eqn7)
+
+   print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix totalInts 
+
+   let total = toEMatrix6 $ eqn1 &> eqn2 &> eqn3 &> eqn4 &> eqn5 &> eqn6 &> (singletonTList eqn7)
+
+   print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix total
+
+   print $ tensorRank ansA 
+
+   let total' = toEMatrix6 $ ansA &> (singletonTList eqn1)
+
+   print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix total
+

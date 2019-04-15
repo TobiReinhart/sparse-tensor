@@ -47,7 +47,6 @@
     import Data.List 
     import Control.Applicative
     import Data.Maybe
-    import qualified Data.Map.Strict as M
     import qualified Data.IntMap.Strict as I
     import Numeric.Natural
     import GHC.TypeLits
@@ -221,21 +220,49 @@
     class (Eq a, Ord a, Enum a) => TIndex a where 
         indRange :: Int 
 
+    --instead of maps use orderd lists 
+
+    type TMap k v = [(k,v)]
+
+    isValidTMap :: (Ord k, Eq v) => TMap k v -> Bool 
+    isValidTMap l = l == (sortOn fst l)
+
+    insertWithTMap :: (Ord k) => (v -> v -> v) -> k -> v -> TMap k v -> TMap k v
+    insertWithTMap f key val [] = [(key,val)]
+    insertWithTMap f key val ((k1,v1):xs) 
+            | key < k1 = (key,val) : ((k1,v1):xs)
+            | key == k1 = (k1,f val v1) : xs 
+            | otherwise = (k1,v1) : (insertWithTMap f key val xs)
+
+    addTMaps :: (Ord k) => (v -> v -> v) -> TMap k v -> TMap k v -> TMap k v 
+    addTMaps f m1 [] = m1 
+    addTMaps f [] m2 = m2 
+    addTMaps f ((k1,v1):xs) ((k2,v2):ys) 
+            | k1 < k2 = (k1,v1) : (addTMaps f xs ((k2,v2):ys))
+            | k2 < k1 = (k2,v2) : (addTMaps f ((k1,v1):xs) ys)
+            | k1 == k2 = (k1, f v1 v2) : (addTMaps f xs ys)
+
+    mapTMap :: (v -> v') -> TMap k v -> TMap k v' 
+    mapTMap f m = map (\(k,v) -> (k,f v)) m  
+
+    filterTMap :: (v -> Bool) -> TMap k v -> TMap k v 
+    filterTMap f m = filter (\(_,v) -> f v) m 
+
     data Tensor n k v where 
         Scalar :: v -> Tensor 0 k v 
-        Tensor :: M.Map k (Tensor n k v) -> Tensor (n+1) k v
+        Tensor :: TMap k (Tensor n k v) -> Tensor (n+1) k v
         ZeroTensor :: Tensor n k v
 
     --remove possible zero values in a given Tensor  
 
     removeZeros :: (TScalar v, TIndex k) => Tensor n k v -> Tensor n k v
     removeZeros (Scalar x) = if x == scaleZero then ZeroTensor else Scalar x 
-    removeZeros (Tensor m) = let newMap = M.filter (/=ZeroTensor) $ M.map removeZeros m in if M.null newMap then ZeroTensor else Tensor newMap
+    removeZeros (Tensor m) = let newMap = filterTMap (/=ZeroTensor) $ mapTMap removeZeros m in if newMap == [] then ZeroTensor else Tensor newMap
     removeZeros ZeroTensor = ZeroTensor 
 
     --for converting tensors to bytestrings we need a non typesafe data type as intermediate type
 
-    data TensorRep k v = ScalarR v | TensorR Natural (M.Map k (TensorRep k v)) | ZeroR Natural deriving (Show, Generic, Serialize)
+    data TensorRep k v = ScalarR v | TensorR Natural (TMap k (TensorRep k v)) | ZeroR Natural deriving (Show, Generic, Serialize)
 
     --convert betweeen typesafe and non typesafe tensors
 
@@ -250,7 +277,7 @@
                             case lemma @n Refl
                              of Refl ->
                                    let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
-                                   in TensorR r $ fmap (\(t :: Tensor (n-1) k v) -> toRep t) m
+                                   in TensorR r $ mapTMap (\(t :: Tensor (n-1) k v) -> toRep t) m
     toRep ZeroTensor = let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
                        in ZeroR r
 
@@ -263,7 +290,7 @@
                                               of SomeNat (_ :: Proxy x) -> case isZero (SNat @x)
                                                                              of NonZero -> case sameNat (Proxy @x) (Proxy @n)
                                                                                              of Nothing   -> undefined
-                                                                                                Just Refl -> Tensor (fmap (\t -> (fromRep t) :: Tensor (x-1) k v) m)
+                                                                                                Just Refl -> Tensor (mapTMap (\t -> (fromRep t) :: Tensor (x-1) k v) m)
                                                                                 Zero    -> undefined
                                  Nothing -> undefined
     fromRep (ZeroR r) = case someNatVal (fromIntegral r)
@@ -287,7 +314,7 @@
 
     instance Functor (Tensor n k) where 
         fmap f (Scalar x) = Scalar (f x)
-        fmap f (Tensor m) = Tensor (M.map (fmap f) m)
+        fmap f (Tensor m) = Tensor (mapTMap (fmap f) m)
         fmap f (ZeroTensor) = ZeroTensor
 
     deriving instance (Show a, Show k) => Show (Tensor n k a)
@@ -318,19 +345,19 @@
         type TAlg Rational Rational = Rational
         prodA = (*)
 
-    getTensorMap :: Tensor (n+1) k v -> M.Map k (Tensor n k v)
+    getTensorMap :: Tensor (n+1) k v -> TMap k (Tensor n k v)
     getTensorMap (Tensor m) = m 
 
     toListT :: Tensor n k v -> [(IndList n k, v)]
     toListT (Scalar x) = [(Empty, x)]
-    toListT (Tensor m) =  concat $ map (\(i,t) -> appendF i $ toListT t) $ M.assocs m
+    toListT (Tensor m) =  concat $ map (\(i,t) -> appendF i $ toListT t) m
             where
                 appendF = \i l2 -> map (\(l,val) -> (Append i l ,val)) l2
     toListT ZeroTensor = []
     
     mkTens :: (IndList n k, v) -> Tensor n k v
     mkTens (Empty, a) = Scalar a
-    mkTens (Append x xs, a) = Tensor $ M.singleton x $ mkTens (xs, a)
+    mkTens (Append x xs, a) = Tensor  [(x, mkTens (xs, a))]
 
     --construct from typed list
 
@@ -348,7 +375,7 @@
 
     insertOrAdd :: (TIndex k, TScalar v) => (IndList n k, v) -> Tensor n k v -> Tensor n k v 
     insertOrAdd (Empty, a) (Scalar b) = Scalar (addS a b)
-    insertOrAdd (Append x xs, a) (Tensor m) = Tensor $ M.insertWith (\_ o -> insertOrAdd (xs, a) o) x indTens m 
+    insertOrAdd (Append x xs, a) (Tensor m) = Tensor $ insertWithTMap (\_ o -> insertOrAdd (xs, a) o) x indTens m 
                 where
                     indTens = mkTens (xs, a)
     insertOrAdd inds ZeroTensor = mkTens inds
@@ -359,7 +386,7 @@
 
     (&+) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor n k v -> Tensor n k v 
     (&+) (Scalar a) (Scalar b) = Scalar $ addS a b 
-    (&+) (Tensor m1) (Tensor m2) = Tensor $ M.unionWith (&+) m1 m2     
+    (&+) (Tensor m1) (Tensor m2) = Tensor $ addTMaps (&+) m1 m2     
     (&+) t1 ZeroTensor = t1
     (&+) ZeroTensor t2 = t2
 
@@ -380,7 +407,7 @@
     (&*) :: (TIndex k, TAlgebra v v', TScalar v, TScalar v', TScalar (TAlg v v')) => Tensor n k v -> Tensor m k v' -> Tensor (n+m) k (TAlg v v') 
     (&*) (Scalar x) (Scalar y) = let newVal = prodA x y in if newVal == scaleZero then ZeroTensor else Scalar newVal 
     (&*) (Scalar x) t2 = fmap (prodA x) t2 
-    (&*) (Tensor m) t2 = Tensor $ M.map (\t1 -> (&*) t1 t2) m 
+    (&*) (Tensor m) t2 = Tensor $ mapTMap (\t1 -> (&*) t1 t2) m 
     (&*) t1 ZeroTensor = ZeroTensor 
     (&*) ZeroTensor t2 = ZeroTensor 
 
@@ -390,7 +417,7 @@
     tensorTrans (0, j) t = fromListT l
                     where 
                         l = (map (\(x,y) -> (swapHead j x, y)) $ toListT t)
-    tensorTrans (i, j) (Tensor m) = Tensor $ M.map (tensorTrans (i-1, j-1)) m 
+    tensorTrans (i, j) (Tensor m) = Tensor $ mapTMap (tensorTrans (i-1, j-1)) m 
     tensorTrans (i ,j) ZeroTensor = ZeroTensor
 
     --transpose a given Tensor in several of its indices (does not work i the same index occurs several times)
@@ -487,7 +514,7 @@
             l2 = map (\(x,y) -> (tailInd x,(mapMaybe (removeContractionInd j (headInd x)) y))) l
             l3 = filter (\(_,y) -> length y >= 1) l2 
             tensList = map (\(x,y) -> (x, fromListT y)) l3
-    tensorContr (i,j) (Tensor m) = Tensor $ M.map (tensorContr (i-1,j)) m
+    tensorContr (i,j) (Tensor m) = Tensor $ mapTMap (tensorContr (i-1,j)) m
     tensorContr inds ZeroTensor = ZeroTensor 
     tensorContr inds (Scalar s) = error "cannot contract scalar!"   
 

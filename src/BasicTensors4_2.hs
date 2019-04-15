@@ -39,7 +39,8 @@ module BasicTensors4_2 (
     flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2, invEta,
     genericArea, genericAreaDerivative1, genericAreaDerivative2, generic4Ansatz, generic5Ansatz, generic6Ansatz,
     generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
-    randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta9, delta3 
+    randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta9, delta3,
+    lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3
 
 ) where 
 
@@ -407,6 +408,48 @@ module BasicTensors4_2 (
                              let tens = fromListT6 assocs 
                              return tens 
 
+
+    --generators of the Lorentz group lie algebra 
+
+    lorentzJ1 :: ATens 0 0 0 0 1 1 Rational 
+    lorentzJ1 = fromListT6 l 
+            where
+                l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,singletonInd $ Ind3 x,singletonInd $ Ind3 y),z)) [(3,2,1),(2,3,-1)]
+
+    lorentzJ2 :: ATens 0 0 0 0 1 1 Rational 
+    lorentzJ2 = fromListT6 l 
+            where
+                l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,singletonInd $ Ind3 x,singletonInd $ Ind3 y),z)) [(3,1,-1),(1,3,1)]
+
+    lorentzJ3 :: ATens 0 0 0 0 1 1 Rational 
+    lorentzJ3 = fromListT6 l 
+            where
+                l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,singletonInd $ Ind3 x,singletonInd $ Ind3 y),z)) [(2,1,1),(1,2,-1)]
+
+    lorentzK1 :: ATens 0 0 0 0 1 1 Rational 
+    lorentzK1 = fromListT6 l 
+            where
+                l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,singletonInd $ Ind3 x,singletonInd $ Ind3 y),z)) [(0,1,1),(1,0,1)]
+
+    lorentzK2 :: ATens 0 0 0 0 1 1 Rational 
+    lorentzK2 = fromListT6 l 
+            where
+                l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,singletonInd $ Ind3 x,singletonInd $ Ind3 y),z)) [(0,2,1),(2,0,1)]
+
+    lorentzK3 :: ATens 0 0 0 0 1 1 Rational 
+    lorentzK3 = fromListT6 l 
+            where
+                l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,singletonInd $ Ind3 x,singletonInd $ Ind3 y),z)) [(0,3,1),(3,0,1)]
+
+
+
+
+
+
     
+
+
+    
+
 
     

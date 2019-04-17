@@ -203,37 +203,31 @@ main = do
 
    -}
 
-   let ans = generic4Ansatz 
+   --area <- randArea 
 
-   let eqn1 = contrATens1 (0,0) $ ans &* flatInter
+   let area = flatArea 
 
-   let eqn2 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzJ1 
 
-   let eqn3 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzJ2 
+   let flatInter' = contrATens1 (0,1) $ interArea &* area
 
-   let eqn4 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzJ3 
+   let testTens' = contrATens1 (0,0) $ flatInter' &* interArea 
 
-   let eqn5 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzK1 
+   let testTens = contrATens1 (0,0) $ (testTens' &- (tensorTrans5 (0,1) $ tensorTrans6 (0,1) testTens')) &* generic4Ansatz
 
-   let eqn6 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzK2 
+   let eqn1Test = contrATens1 (0,0) $ flatInter' &* generic4Ansatz 
 
-   let eqn7 = contrATens1 (0,0)  $ contrATens3 (0,0) $ contrATens3 (0,1) $ ans &* interArea &* lorentzK3 
+   --print $ tensorRank testTens
 
-   let ansA = ansatzA ans 
+   --print $ tensorRank eqn1Test
 
-   print $ tensorRank eqn1 
+   let total = toEMatrix6 $ testTens &> (singletonTList eqn1Test) 
 
-   let totalInts = toEMatrix6 $ eqn2 &> eqn3 &> eqn4 &> eqn5 &> eqn6 &> (singletonTList eqn7)
+   --print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix total 
 
-   print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix totalInts 
+   let (_,_,ans) = mkAnsatzTensorFast 16 filterList16_1 symList16_1 areaList16_1IndsEta areaList16_1IndsEps 
 
-   let total = toEMatrix6 $ eqn1 &> eqn2 &> eqn3 &> eqn4 &> eqn5 &> eqn6 &> (singletonTList eqn7)
+   print $ tensorRank ans 
 
-   print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix total
+   let eqn16 = ansatzAaBbCI ans 
 
-   print $ tensorRank ansA 
-
-   let total' = toEMatrix6 $ ansA &> (singletonTList eqn1)
-
-   print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix total
-
+   print $ toListShowVar6 eqn16 

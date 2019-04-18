@@ -808,7 +808,7 @@ module PerturbationTree2_3 (
                     prodBlock = Sparse.toMatrix $ Sparse.mul lastFullMat newVecTrans
                     prodBlockTrans = Mat.transpose prodBlock
                     newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar 
-                    eigenRank = Sol.rank Sol.FullPivLU newMat 
+                    eigenRank = Sol.rank Sol.JacobiSVD newMat 
                     maxRank = min (Mat.cols newMat) (Mat.rows newMat)
                     newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
     checkNumericLinDepEig (lastMat, lastFullMat) Nothing = Nothing 
@@ -825,10 +825,27 @@ module PerturbationTree2_3 (
     --in each step add the new AnsatzVector to the forest iff it is lin indep of the previous vectors
 
     addOrDiscardEtaEigIO :: Symmetry -> Int -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEta, RankDataEig) -> (Int, [Eta]) -> IO (AnsatzForestEta, RankDataEig)
-    addOrDiscardEtaEigIO symList len epsM evalM (ans,rDat) (num, etaL) =
-        do
-            putStrLn $ show num ++ " of " ++ show len
-            return $ addOrDiscardEtaEig symList epsM evalM (ans,rDat) etaL
+    addOrDiscardEtaEigIO symList len epsM evalM (ans,rDat) (num, etaL)
+                | isElem etaL ans = do
+                                        let r = getVarNrEig rDat
+                                        putStrLn $ showStr ++ " : " ++ "already present, not added, ansatz rank is " ++ show r
+                                        return (ans,rDat)
+                | otherwise = case newRDat of 
+                                   Nothing          -> do
+                                                        let r = getVarNrEig rDat
+                                                        putStrLn $ showStr ++ " : " ++ "not present, linearly dependent, not added, ansatz rank is " ++ show r
+                                                        return (ans,rDat)
+                                   Just newRDat'    -> do
+                                                        let r = getVarNrEig newRDat'
+                                                        putStrLn $ showStr ++ " : " ++ "not present, linearly independent, added, ansatz rank is " ++ show r
+                                                        return (sumAns,newRDat')      
+                 where
+                    numVars = getVarNrEig rDat
+                    newAns = symAnsatzForestEta symList $ mkForestFromAscList (etaL,Var 1 (numVars+1))
+                    newVec = evalAnsatzEtaVecListEig epsM evalM newAns
+                    newRDat = checkNumericLinDepEig rDat newVec
+                    sumAns = addForests ans newAns
+                    showStr = show num ++ " of " ++ show len
 
     addOrDiscardEtaEig :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEta, RankDataEig) -> [Eta] -> (AnsatzForestEta, RankDataEig)
     addOrDiscardEtaEig symList epsM evalM (ans,rDat) etaL 
@@ -845,10 +862,27 @@ module PerturbationTree2_3 (
 
 
     addOrDiscardEpsilonEigIO :: Symmetry -> Int -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataEig) -> (Int,(Epsilon,[Eta])) -> IO (AnsatzForestEpsilon, RankDataEig)
-    addOrDiscardEpsilonEigIO symList len epsM evalM (ans,rDat) (num,(epsL,etaL)) =
-        do
-            putStrLn $ show num ++ " of " ++ show len
-            return $ addOrDiscardEpsilonEig symList epsM evalM (ans,rDat) (epsL,etaL)
+    addOrDiscardEpsilonEigIO symList len epsM evalM (ans,rDat) (num,(epsL,etaL))
+                | isElemEpsilon (epsL,etaL) ans = do
+                                        let r = getVarNrEig rDat
+                                        putStrLn $ showStr ++ " : " ++ "already present, not added, ansatz rank is " ++ show r
+                                        return (ans,rDat)
+                | otherwise = case newRDat of 
+                                   Nothing          -> do
+                                                        let r = getVarNrEig rDat
+                                                        putStrLn $ showStr ++ " : " ++ "not present, linearly dependent, not added, ansatz rank is " ++ show r
+                                                        return (ans,rDat)
+                                   Just newRDat'    -> do
+                                                        let r = getVarNrEig newRDat'
+                                                        putStrLn $ showStr ++ " : " ++ "not present, linearly independent, added, ansatz rank is " ++ show r
+                                                        return (sumAns,newRDat')      
+                 where
+                    numVars = getVarNrEig rDat
+                    newAns = symAnsatzForestEps symList $ mkForestFromAscListEpsilon (epsL,etaL, Var 1 (numVars+1))
+                    newVec = evalAnsatzEpsilonVecListEig epsM evalM newAns
+                    newRDat = checkNumericLinDepEig rDat newVec
+                    sumAns = addForestsEpsilon ans newAns
+                    showStr = show num ++ " of " ++ show len
 
     addOrDiscardEpsilonEig :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataEig) -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataEig)
     addOrDiscardEpsilonEig symList epsM evalM (ans,rDat) (epsL,etaL) 

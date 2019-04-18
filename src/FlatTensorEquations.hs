@@ -37,7 +37,7 @@
 module FlatTensorEquations (
     ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
     eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd, eqn3, eqn3AI, eqn1A, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
-    eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC 
+    eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC, eqn1ABCD 
 
 ) where
 
@@ -78,6 +78,15 @@ module FlatTensorEquations (
                 block2 = tensorTrans1 (0,2) block1 
                 block3 = tensorTrans1 (1,2) block1 
                 block4 = contrATens1 (0,0) $ ans16 &* flatInter
+
+    eqn1ABCD :: ATens 4 0 0 0 0 0 AnsVar -> ATens 5 0 0 0 0 0 AnsVar -> ATens 4 0 0 0 1 1 AnsVar
+    eqn1ABCD ans16 ans20 = block1 &+ block2 &+ block3 &+ block4 &+ block5
+            where
+                block1 = contrATens1 (0,0) $ ans16 &* interArea
+                block2 = tensorTrans1 (0,3) block1
+                block3 = tensorTrans1 (1,3) block1
+                block4 = tensorTrans1 (2,3) block1
+                block5 = contrATens1 (0,0) $ ans20 &* flatInter
 
     --the subgraph with 2 total derivative 
 

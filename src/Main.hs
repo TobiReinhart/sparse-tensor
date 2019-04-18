@@ -224,10 +224,21 @@ main = do
 
    --print $ Sol.rank Sol.FullPivLU $ Sparse.toMatrix total 
 
-   let (_,_,ans) = mkAnsatzTensorFast 16 filterList16_1 symList16_1 areaList16_1IndsEta areaList16_1IndsEps 
+   let (_,_,ans) = mkAnsatzTensorEig 8 filterList8 symList8 areaList8IndsEta areaList8IndsEps 
+ 
+   let matList = toListShow6 ans 
 
-   print $ tensorRank ans 
+   let matList' i = mapMaybe (\(a,b) -> let b' = I.lookup i b 
+                                         in case b' of 
+                                              Just c  -> Just (a,c) 
+                                              Nothing -> Nothing)  matList
+   let (_,_,ans4) = mkAnsatzTensorEig 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps 
 
-   let eqn16 = ansatzAaBbCI ans 
+   let ans8' = prolongAll4LorentzA ans4 
 
-   print $ toListShowVar6 eqn16 
+   let eq8 = ansatzAB ans8'
+
+   print $ tensorRank ans8' 
+
+   print $ tensorRank eq8 
+

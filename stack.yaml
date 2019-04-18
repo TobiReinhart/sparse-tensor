@@ -51,7 +51,7 @@ extra-deps:
 # Override default flag values for local packages and extra-deps
 flags:
   eigen:
-    mkl: false
+    mkl: true
   
 
 # Extra package databases containing global packages

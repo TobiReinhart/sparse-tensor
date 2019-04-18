@@ -37,7 +37,8 @@
     decodeTensor, encodeTensor, ansVarToAreaVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
     resortTens1, resortTens5, fromListT6',
-    (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6, removeZeros, toMatList6, toMatList6', mapTensList6
+    (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6, removeZeros, toMatList6, toMatList6', mapTensList6, 
+    splitAnsTens, prolongAll4LorentzA
  
     
 ) where
@@ -48,6 +49,7 @@
     import Control.Applicative
     import Data.Maybe
     import qualified Data.IntMap.Strict as I
+    import qualified Data.Map.Strict as M
     import Numeric.Natural
     import GHC.TypeLits
     import Data.Proxy
@@ -1278,6 +1280,34 @@
     --define vars for non numeric tensor computations -> AnsVar represents the variables in the tensor ansätze
 
     type AnsVar = I.IntMap Rational 
+
+    --split the ansatz tensor into the subtensors containing the different vars 
+
+    splitAnsTens :: ATens n1 n2 n3 n4 n5 n6 AnsVar -> [ATens n1 n2 n3 n4 n5 n6 Rational]
+    splitAnsTens t = map selectTens [1..r]
+            where 
+                r = tensorRank t 
+                selectTens i = removeZeros6 $ mapTo6 (\m -> fromMaybe 0 $ I.lookup i m) t
+
+    --prolong an order1 ansatz tensor (specific for are metric)
+
+    prolong4A :: Int -> ATens 1 0 0 0 0 0 Rational -> ATens 2 0 0 0 0 0 Rational
+    prolong4A ind t = fromListT6 $ map (\((x1,x2,x3,x4,x5,x6),v) -> ((Append ind' x1,x2,x3,x4,x5,x6),v)) tList 
+            where 
+                tList = toListT6 t 
+                ind' = Ind20 ind 
+
+    prolongAll4A :: [Int] -> ATens 1 0 0 0 0 0 Rational -> [ATens 2 0 0 0 0 0 Rational]
+    prolongAll4A range t = map (\x -> prolong4A x t) range
+
+    prolongAll4LorentzA :: ATens 1 0 0 0 0 0 AnsVar -> ATens 2 0 0 0 0 0 AnsVar 
+    prolongAll4LorentzA t = foldr (&+) ZeroTensor tensVarList
+            where 
+                tList = splitAnsTens t 
+                newtList = concat $ zipWith prolongAll4A [[i..20] | i <- [0..19]] tList 
+                newVarNr = length newtList
+                tensVarList = zipWith (\tens n -> mapTo6 (\r -> I.fromList [(n,r)]) tens) newtList [1..newVarNr]
+       
 
     shiftVarLabels :: Int -> AnsVar -> AnsVar 
     shiftVarLabels s v =  I.mapKeys ((+) s) v

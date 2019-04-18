@@ -808,7 +808,7 @@ module PerturbationTree2_3 (
                     prodBlock = Sparse.toMatrix $ Sparse.mul lastFullMat newVecTrans
                     prodBlockTrans = Mat.transpose prodBlock
                     newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar 
-                    eigenRank = Sol.rank Sol.JacobiSVD newMat 
+                    eigenRank = Sol.rank Sol.FullPivLU newMat 
                     maxRank = min (Mat.cols newMat) (Mat.rows newMat)
                     newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
     checkNumericLinDepEig (lastMat, lastFullMat) Nothing = Nothing 

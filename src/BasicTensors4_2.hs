@@ -40,7 +40,7 @@ module BasicTensors4_2 (
     genericArea, genericAreaDerivative1, genericAreaDerivative2, generic4Ansatz, generic5Ansatz, generic6Ansatz,
     generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
     randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta9, delta3,
-    lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3
+    lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3, interMetricArea, etaA, randMetric
 
 ) where 
 
@@ -99,6 +99,11 @@ module BasicTensors4_2 (
                 where
                     l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Append (Ind3 x) $ Append (Ind3 y) Empty,Empty),z)) [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
 
+    etaA :: ATens 0 0 0 1 0 0 Rational 
+    etaA = fromListT6 l 
+                where 
+                    l = map (\(x,y) -> ((Empty, Empty, Empty, singletonInd $ Ind9 x, Empty, Empty),y)) [(0,-1),(4,1),(7,1),(9,1)]
+            
     --epsilon and inverse epsilon (numerical)
 
     epsilon :: ATens 0 0 0 0 0 4 Rational 
@@ -409,7 +414,7 @@ module BasicTensors4_2 (
                              return tens 
 
 
-    --generators of the Lorentz group lie algebra 
+    --generators of the Lorentz group lie algebra (for flat metric eta)
 
     lorentzJ1 :: ATens 0 0 0 0 1 1 Rational 
     lorentzJ1 = fromListT6 l 
@@ -441,7 +446,28 @@ module BasicTensors4_2 (
             where
                 l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,singletonInd $ Ind3 x,singletonInd $ Ind3 y),z)) [(0,3,1),(3,0,1)]
 
+    --intertwiner for area-metric generated metric (factors!!)
 
+    interMetricArea :: ATens 0 1 2 0 0 0 Rational
+    interMetricArea = symATens3 (0,1) tens 
+            where 
+                l = [([0,0,4],1),([0,1,1],-1),([1,0,5],1),([1,1,1],-1),([2,0,6],1),([2,1,3],-1),([3,1,5],1),([3,2,4],-1),([4,1,6],1),([4,3,4],-1),
+                    ([5,2,6],1),([5,3,5],-1),([6,0,7],1),([6,2,2],-1),([7,0,8],1),([7,2,3],-1),([8,1,7],1),([8,2,5],-1),([9,1,8],1),([9,3,5],-1),
+                    ([10,2,8],1),([10,3,7],-1),([11,0,9],1),([11,3,3],-1),([12,1,8],1),([12,2,6],-1),([13,1,9],1),([13,3,6],-1),([14,2,9],1),([14,3,8],-1),
+                    ([15,4,7],1),([15,5,5],-1),([16,4,8],1),([16,5,6],-1),([17,5,8],1),([17,6,7],-1),([18,4,9],1),([18,6,6],-1),([19,5,9],1),([19,6,8],-1),
+                    ([20,7,9],1),([20,8,8],-1)]
+                l' = map (\([x,y,z],v) -> ((Empty, singletonInd $ Ind20 x, Append (Ind9 y) $ singletonInd $ Ind9 z, Empty, Empty, Empty),v)) l
+                tens = fromListT6 l'
+
+    randMetric :: IO (ATens 0 0 0 1 0 0 Rational)
+    randMetric = do gen <- newTFGen 
+                    let randList' = randomRs (-10000,10000) gen :: [Int]
+                    let randList = map fromIntegral $ randList' 
+                    let inds = map (\i -> (Empty, Empty, Empty, singletonInd $ Ind9 i, Empty, Empty)) [0..20]
+                    let assocs = zip inds randList
+                    let tens = fromListT6 assocs 
+                    return tens 
+    
 
 
 

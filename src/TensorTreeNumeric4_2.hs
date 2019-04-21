@@ -1308,7 +1308,6 @@
                 newVarNr = length newtList
                 tensVarList = zipWith (\tens n -> mapTo6 (\r -> I.fromList [(n,r)]) tens) newtList [1..newVarNr]
        
-
     shiftVarLabels :: Int -> AnsVar -> AnsVar 
     shiftVarLabels s v =  I.mapKeys ((+) s) v
 

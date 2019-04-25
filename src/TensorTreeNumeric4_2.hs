@@ -343,8 +343,18 @@
         scaleS = (*)
         scaleZero = 0
 
+    instance TScalar Double where 
+        addS = (+)
+        subS = (-)
+        scaleS r b = (fromRational r) * b  
+        scaleZero = 0
+
     instance TAlgebra Rational Rational where 
         type TAlg Rational Rational = Rational
+        prodA = (*)
+
+    instance TAlgebra Double Double where 
+        type TAlg Double Double = Double
         prodA = (*)
 
     getTensorMap :: Tensor (n+1) k v -> TMap k (Tensor n k v)

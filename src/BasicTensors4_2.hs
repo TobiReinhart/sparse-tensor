@@ -40,7 +40,7 @@ module BasicTensors4_2 (
     genericArea, genericAreaDerivative1, genericAreaDerivative2, generic4Ansatz, generic5Ansatz, generic6Ansatz,
     generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
     randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta9, delta3,
-    lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3, interMetricArea, etaA, randMetric
+    lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3, interMetricArea, etaA, randMetric, metricDerArea, metricDerArea', interMetric, interI2
 
 ) where 
 
@@ -451,7 +451,7 @@ module BasicTensors4_2 (
     interMetricArea :: ATens 0 1 2 0 0 0 Rational
     interMetricArea = symATens3 (0,1) tens 
             where 
-                l = [([0,0,4],1),([0,1,1],-1),([1,0,5],1),([1,1,1],-1),([2,0,6],1),([2,1,3],-1),([3,1,5],1),([3,2,4],-1),([4,1,6],1),([4,3,4],-1),
+                l = [([0,0,4],1),([0,1,1],-1),([1,0,5],1),([1,1,2],-1),([2,0,6],1),([2,1,3],-1),([3,1,5],1),([3,2,4],-1),([4,1,6],1),([4,3,4],-1),
                     ([5,2,6],1),([5,3,5],-1),([6,0,7],1),([6,2,2],-1),([7,0,8],1),([7,2,3],-1),([8,1,7],1),([8,2,5],-1),([9,1,8],1),([9,3,5],-1),
                     ([10,2,8],1),([10,3,7],-1),([11,0,9],1),([11,3,3],-1),([12,1,8],1),([12,2,6],-1),([13,1,9],1),([13,3,6],-1),([14,2,9],1),([14,3,8],-1),
                     ([15,4,7],1),([15,5,5],-1),([16,4,8],1),([16,5,6],-1),([17,5,8],1),([17,6,7],-1),([18,4,9],1),([18,6,6],-1),([19,5,9],1),([19,6,8],-1),
@@ -467,7 +467,23 @@ module BasicTensors4_2 (
                     let assocs = zip inds randList
                     let tens = fromListT6 assocs 
                     return tens 
-    
+
+    --leads to double values stored in tensor !!
+
+    metricDerArea' :: ATens 0 0 0 1 0 0 Rational -> ATens 0 1 0 1 0 0 Double 
+    metricDerArea' met = fromListT6 tensList
+            where
+                deltaList = map (\x -> Sparse.toMatrix $ Sparse.fromList 21 1 [(x,0,1)]) [0..20]
+                aTens = contrATens2 (0,0) $ interMetricArea &* met 
+                aMatList = toListShow6 aTens 
+                aMat = Sparse.toMatrix $ Sparse.fromList 21 10 $ map (\([x,y],val) -> (x,y,fromRational val :: Double)) aMatList
+                solList = map (Sol.solve Sol.FullPivLU aMat) deltaList 
+                tensList = map (\(a,b,c) -> ((Empty,singletonInd $ Ind20 b, Empty, singletonInd $ Ind9 a, Empty, Empty), c)) $ Sparse.toList $ Sparse.fromCols $ map (Sparse.fromMatrix) solList  
+
+    --convert to rational numbers
+
+    metricDerArea :: ATens 0 0 0 1 0 0 Rational -> ATens 0 1 0 1 0 0 Rational 
+    metricDerArea met = mapTo6 realToFrac $ metricDerArea' met 
 
 
 

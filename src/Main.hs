@@ -17,6 +17,7 @@ import Codec.Compression.GZip
 import Data.Serialize
 
 import Data.Maybe
+import Data.List
 
 
 import qualified Data.Eigen.Matrix as Mat 
@@ -31,14 +32,8 @@ import Data.Ratio
 
 main = do 
 
-    met <- randMetric 
+    let t1 = symATens3 (1,2) $ aSymATens6 (0,1) $ contrATens3 (0,2) $ contrATens1 (0,1) $ interArea &* interMetricArea &* interI2 
 
-    let intProd = contrATens2 (0,0) $ interMetricArea &* met
+    let t2 = aSymATens6 (0,1) $ contrATens3 (0,2) $ contrATens1 (0,1) $ interArea &* interI2 &* interMetricArea
 
-    let l = toListShow6 intProd 
-
-    let l' = map (\([a,b],v) -> (a,b,fromRational v)) l :: [(Int,Int,Double)]
-
-    let m = Sparse.toMatrix $ Sparse.fromList 21 10 l'
-
-    print $ Sol.rank Sol.FullPivLU m 
+    print $ removeZeros6 $ t1 &+ t2 

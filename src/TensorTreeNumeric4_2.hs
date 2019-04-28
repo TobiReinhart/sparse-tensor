@@ -25,7 +25,7 @@
 
 
  module TensorTreeNumeric4_2 (
-    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple, AnsVar, AreaVar(..),
+    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple, AnsVar, LinearVar(..),
     (&*), (&+), (&-), (&.),
     fromListT6, singletonInd, (+>), sortInd, toListT6, toListShow6, toListShowVar6,
     tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6,
@@ -34,11 +34,11 @@
     cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6,
     cyclicSymATens1, cyclicSymATens2, cyclicSymATens3, cyclicSymATens4, cyclicSymATens5, cyclicSymATens6,
     contrATens1, contrATens2, contrATens3,
-    decodeTensor, encodeTensor, ansVarToAreaVar, 
+    decodeTensor, encodeTensor, ansVarToLinearVar, 
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
     resortTens1, resortTens5, fromListT6',
     (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6, removeZeros, toMatList6, toMatList6', mapTensList6, 
-    splitAnsTens, prolongAll4LorentzA
+    splitAnsTens, prolongAll4LorentzA, tensorRank'
  
     
 ) where
@@ -1296,7 +1296,7 @@
     splitAnsTens :: ATens n1 n2 n3 n4 n5 n6 AnsVar -> [ATens n1 n2 n3 n4 n5 n6 Rational]
     splitAnsTens t = map selectTens [1..r]
             where 
-                r = tensorRank t 
+                r = tensorRank' t 
                 selectTens i = removeZeros6 $ mapTo6 (\m -> fromMaybe 0 $ I.lookup i m) t
 
     --prolong an order1 ansatz tensor (specific for are metric)
@@ -1349,8 +1349,7 @@
         addS = I.unionWith (+)
         subS v1 v2 = I.unionWith (+) v1 $ I.map ((*)(-1)) v2 
         scaleS s = I.map ((*) s) 
-        scaleZero = I.empty
-        
+        scaleZero = I.empty 
 
     instance TAlgebra Rational AnsVar where 
         type TAlg Rational AnsVar = AnsVar 
@@ -1360,69 +1359,120 @@
         type TAlg AnsVar Rational = AnsVar 
         prodA = flip scaleS  
 
-    --variable for generic are metric dofs, i.e parameters that are not obtained by making ansätze for the L derivatives
+    --variable for generic are metric dofs, i.e parameters that are not obtained by making ansätze for the L derivatives (only linear and quadratic)
 
-    data AreaVar a = AreaVar a (I.IntMap a) deriving (Eq)
+    data LinearVar a = LinearVar a (I.IntMap a) deriving (Eq)
 
-    instance (TScalar a) => TScalar (AreaVar a) where 
-        addS (AreaVar s1 varMap1) (AreaVar s2 varMap2) = AreaVar (addS s1 s2) $ I.unionWith (addS) varMap1 varMap2
-        subS (AreaVar s1 varMap1) (AreaVar s2 varMap2) = AreaVar (subS s1 s2) $ I.unionWith (addS) varMap1 $ I.map (scaleS (-1)) varMap2 
-        scaleS s (AreaVar s1 varMap1) = AreaVar (scaleS s s1) $ I.map (scaleS s) varMap1
-        scaleZero = AreaVar scaleZero I.empty 
+    instance (TScalar a) => TScalar (LinearVar a) where 
+        addS (LinearVar s1 varMap1) (LinearVar s2 varMap2) = LinearVar (addS s1 s2) $ I.unionWith (addS) varMap1 varMap2
+        subS (LinearVar s1 varMap1) (LinearVar s2 varMap2) = LinearVar (subS s1 s2) $ I.unionWith (addS) varMap1 $ I.map (scaleS (-1)) varMap2 
+        scaleS s (LinearVar s1 varMap1) = LinearVar (scaleS s s1) $ I.map (scaleS s) varMap1
+        scaleZero = LinearVar scaleZero I.empty 
 
-    instance (TScalar a) => TAlgebra (AreaVar a) Rational where 
-        type TAlg (AreaVar a) Rational = AreaVar a
+    instance (TScalar a) => TAlgebra (LinearVar a) Rational where 
+        type TAlg (LinearVar a) Rational = LinearVar a
         prodA = flip scaleS
 
-    instance (TScalar a) => TAlgebra Rational (AreaVar a) where 
-        type TAlg Rational (AreaVar a) = AreaVar a
+    instance (TScalar a) => TAlgebra Rational (LinearVar a) where 
+        type TAlg Rational (LinearVar a) = LinearVar a
         prodA = scaleS 
 
-    --up to now the same as AnsVar, but if both the ansätze and the dofVars contain parameters always order the ansatzVars to the deeper levels in the extpresion tree
+    --product of to LinearVars (quadratic Variables)
 
-    instance TAlgebra (AreaVar Rational) AnsVar where 
-        type TAlg (AreaVar Rational) AnsVar = AreaVar (AnsVar) 
-        prodA (AreaVar s1 varMapArea) varMapAns = AreaVar (scaleS s1 varMapAns) $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
+    data QuadraticVar a = QuadraticVar a (I.IntMap a) (I.IntMap (I.IntMap a)) deriving (Eq)
+
+    linearVarToQuadraticVar :: LinearVar a -> QuadraticVar a 
+    linearVarToQuadraticVar (LinearVar s linMap) = QuadraticVar s linMap I.empty
+
+    prodLinearVar :: LinearVar Rational -> LinearVar Rational -> QuadraticVar Rational
+    prodLinearVar (LinearVar a map1) (LinearVar b map2) = QuadraticVar newScalar newLinear newQuadratic
+            where 
+                newScalar = a * b 
+                newLinear = I.unionWith (+) (I.map (* a) map2) (I.map (* b) map1)
+                assocs1 = I.assocs map1 
+                assocs2 = I.assocs map2 
+                combineF (k1,v1) (k2,v2)
+                    | k1 < k2 = (k1, I.fromList [(k2, v1 * v2)])
+                    | otherwise = (k2, I.fromList [(k1, v1 * v2)])
+                newAssocs = liftA2 combineF assocs1 assocs2 
+                newQuadratic = I.unions $ map (\(x,y) -> I.singleton x y) newAssocs
+
+    instance (TScalar a) => TScalar (QuadraticVar a) where 
+        addS (QuadraticVar s1 lin1 quad1) (QuadraticVar s2 lin2 quad2) = QuadraticVar (addS s1 s2) (I.unionWith (addS) lin1 lin2) (I.unionWith (I.unionWith addS) quad1 quad2)
+        subS (QuadraticVar s1 lin1 quad1) (QuadraticVar s2 lin2 quad2) = QuadraticVar (subS s1 s2) (I.unionWith (addS) lin1 (I.map (scaleS (-1)) lin2)) (I.unionWith (I.unionWith addS) quad1 $ I.map (I.map (scaleS (-1))) quad2)
+        scaleS s (QuadraticVar x lin1 quad1) = QuadraticVar (scaleS s x) (I.map (scaleS s) lin1) (I.map (I.map (scaleS s)) quad1)
+        scaleZero = QuadraticVar scaleZero I.empty I.empty 
+
+    instance (TScalar a) => TAlgebra (QuadraticVar a) Rational where 
+        type TAlg (QuadraticVar a) Rational = QuadraticVar a
+        prodA = flip scaleS
+    
+    instance (TScalar a) => TAlgebra Rational (QuadraticVar a) where 
+        type TAlg Rational (QuadraticVar a) = QuadraticVar a
+        prodA = scaleS 
+
+    --requires sorting of the expression trees    
+    instance TAlgebra (LinearVar Rational) (LinearVar Rational) where
+        type TAlg (LinearVar Rational) (LinearVar Rational) = QuadraticVar Rational 
+        prodA = prodLinearVar
+
+    --up to now the Vars are same as AnsVar, but if both the ansätze and the dofVars contain parameters always order the ansatzVars to the deeper levels in the expression tree
+
+    instance TAlgebra (LinearVar Rational) AnsVar where 
+        type TAlg (LinearVar Rational) AnsVar = LinearVar (AnsVar) 
+        prodA (LinearVar s1 varMapArea) varMapAns = LinearVar (scaleS s1 varMapAns) $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
         
-    instance TAlgebra AnsVar (AreaVar Rational) where 
-        type TAlg AnsVar (AreaVar Rational) = AreaVar (AnsVar) 
-        prodA varMapAns (AreaVar s1 varMapArea) = AreaVar (scaleS s1 varMapAns) $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
+    instance TAlgebra AnsVar (LinearVar Rational) where 
+        type TAlg AnsVar (LinearVar Rational) = LinearVar (AnsVar) 
+        prodA varMapAns (LinearVar s1 varMapArea) = LinearVar (scaleS s1 varMapAns) $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
+
+    instance TAlgebra (QuadraticVar Rational) AnsVar where 
+        type TAlg (QuadraticVar Rational) AnsVar = QuadraticVar (AnsVar) 
+        prodA (QuadraticVar s1 linMap quadMap) varMapAns = QuadraticVar (scaleS s1 varMapAns) (I.map (\x -> I.map ((*)x) varMapAns) linMap) (I.map (I.map (\x -> I.map ((*)x) varMapAns)) quadMap)  
+        
+    instance TAlgebra AnsVar (QuadraticVar Rational) where 
+        type TAlg AnsVar (QuadraticVar Rational) = QuadraticVar (AnsVar) 
+        prodA varMapAns (QuadraticVar s1 linMap quadMap) = QuadraticVar (scaleS s1 varMapAns) (I.map (\x -> I.map ((*)x) varMapAns) linMap) (I.map (I.map (\x -> I.map ((*)x) varMapAns)) quadMap)  
+
 
     --tensors containing parameters in the derivatives must usually be evaluated before we can compute ranks, etc.
 
-    ansVarToAreaVar :: AnsVar -> AreaVar AnsVar 
-    ansVarToAreaVar ansV = AreaVar ansV I.empty 
+    ansVarToLinearVar :: AnsVar -> LinearVar AnsVar 
+    ansVarToLinearVar ansV = LinearVar ansV I.empty 
 
-    evalAreaVar :: (TScalar a) => I.IntMap Rational -> AreaVar a -> a 
-    evalAreaVar iMap (AreaVar s1 areaMap) = addS s1 (foldr addS fst rest) 
+    ansVarToQuadraticVar :: AnsVar -> QuadraticVar AnsVar 
+    ansVarToQuadraticVar ansV = QuadraticVar ansV I.empty I.empty 
+
+    evalLinearVar :: (TScalar a) => I.IntMap Rational -> LinearVar a -> a 
+    evalLinearVar iMap (LinearVar s1 areaMap) = addS s1 (foldr addS fst rest) 
                 where 
                     assocs = I.assocs areaMap 
                     newList = map (\(x,y) -> scaleS ((I.!) iMap x) y) assocs
                     ([fst],rest) = splitAt 1 newList 
                     
-    evalTensorAreaVar1 :: (TScalar a, TIndex k1) => I.IntMap Rational -> AbsTensor1 n1 k1 (AreaVar a) -> AbsTensor1 n1 k1 a  
-    evalTensorAreaVar1 evalMap tens = mapTo1 (evalAreaVar evalMap) tens 
+    evalTensorLinearVar1 :: (TScalar a, TIndex k1) => I.IntMap Rational -> AbsTensor1 n1 k1 (LinearVar a) -> AbsTensor1 n1 k1 a  
+    evalTensorLinearVar1 evalMap tens = mapTo1 (evalLinearVar evalMap) tens 
 
-    evalTensorAreaVar2 :: (TScalar a, TIndex k1) => I.IntMap Rational -> AbsTensor2 n1 n2 k1 (AreaVar a) -> AbsTensor2 n1 n2 k1 a  
-    evalTensorAreaVar2 evalMap tens = mapTo2 (evalAreaVar evalMap) tens 
+    evalTensorLinearVar2 :: (TScalar a, TIndex k1) => I.IntMap Rational -> AbsTensor2 n1 n2 k1 (LinearVar a) -> AbsTensor2 n1 n2 k1 a  
+    evalTensorLinearVar2 evalMap tens = mapTo2 (evalLinearVar evalMap) tens 
 
-    evalTensorAreaVar3 :: (TScalar a, TIndex k1, TIndex k2) => I.IntMap Rational -> AbsTensor3 n1 n2 n3 k1 k2 (AreaVar a) -> AbsTensor3 n1 n2 n3 k1 k2 a  
-    evalTensorAreaVar3 evalMap tens = mapTo3 (evalAreaVar evalMap) tens 
+    evalTensorLinearVar3 :: (TScalar a, TIndex k1, TIndex k2) => I.IntMap Rational -> AbsTensor3 n1 n2 n3 k1 k2 (LinearVar a) -> AbsTensor3 n1 n2 n3 k1 k2 a  
+    evalTensorLinearVar3 evalMap tens = mapTo3 (evalLinearVar evalMap) tens 
 
-    evalTensorAreaVar4 :: (TScalar a, TIndex k1, TIndex k2) => I.IntMap Rational -> AbsTensor4 n1 n2 n3 n4 k1 k2 (AreaVar a) -> AbsTensor4 n1 n2 n3 n4 k1 k2 a  
-    evalTensorAreaVar4 evalMap tens = mapTo4 (evalAreaVar evalMap) tens 
+    evalTensorLinearVar4 :: (TScalar a, TIndex k1, TIndex k2) => I.IntMap Rational -> AbsTensor4 n1 n2 n3 n4 k1 k2 (LinearVar a) -> AbsTensor4 n1 n2 n3 n4 k1 k2 a  
+    evalTensorLinearVar4 evalMap tens = mapTo4 (evalLinearVar evalMap) tens 
 
-    evalTensorAreaVar5 :: (TScalar a, TIndex k1, TIndex k2, TIndex k3) => I.IntMap Rational -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AreaVar a) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 a  
-    evalTensorAreaVar5 evalMap tens = mapTo5 (evalAreaVar evalMap) tens 
+    evalTensorLinearVar5 :: (TScalar a, TIndex k1, TIndex k2, TIndex k3) => I.IntMap Rational -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (LinearVar a) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 a  
+    evalTensorLinearVar5 evalMap tens = mapTo5 (evalLinearVar evalMap) tens 
 
-    evalTensorAreaVar6 :: (TScalar a, TIndex k1, TIndex k2, TIndex k3) => I.IntMap Rational -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AreaVar a) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 a  
-    evalTensorAreaVar6 evalMap tens = mapTo6 (evalAreaVar evalMap) tens 
+    evalTensorLinearVar6 :: (TScalar a, TIndex k1, TIndex k2, TIndex k3) => I.IntMap Rational -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (LinearVar a) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 a  
+    evalTensorLinearVar6 evalMap tens = mapTo6 (evalLinearVar evalMap) tens 
 
-    evalTensorAreaVar7 :: (TScalar a, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => I.IntMap Rational -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AreaVar a) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 a  
-    evalTensorAreaVar7 evalMap tens = mapTo7 (evalAreaVar evalMap) tens 
+    evalTensorLinearVar7 :: (TScalar a, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => I.IntMap Rational -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (LinearVar a) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 a  
+    evalTensorLinearVar7 evalMap tens = mapTo7 (evalLinearVar evalMap) tens 
 
-    evalTensorAreaVar8 :: (TScalar a, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => I.IntMap Rational -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AreaVar a) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 a  
-    evalTensorAreaVar8 evalMap tens = mapTo8 (evalAreaVar evalMap) tens 
+    evalTensorLinearVar8 :: (TScalar a, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => I.IntMap Rational -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (LinearVar a) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 a  
+    evalTensorLinearVar8 evalMap tens = mapTo8 (evalLinearVar evalMap) tens 
                      
     --flatten tensor with ansVar values to assocs list 
     
@@ -1753,6 +1803,12 @@
     (&++) (AppendTList6 t1 EmptyTList6) t2 = AppendTList6 t1 t2 
     (&++) (AppendTList6 t1 t1') t2 = AppendTList6 t1 (t1' &++ t2)
 
-    tensorRank :: ATens n1 n2 n3 n4 n5 n6 AnsVar -> Int 
-    tensorRank t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix6 (singletonTList t)
+    tensorRank' :: ATens n1 n2 n3 n4 n5 n6 AnsVar -> Int 
+    tensorRank' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix6 (singletonTList t)
+
+    tensorRank :: TList AnsVar -> Int 
+    tensorRank t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix6 t
+
+    
+    
  

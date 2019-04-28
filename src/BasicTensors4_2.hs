@@ -40,7 +40,7 @@ module BasicTensors4_2 (
     genericArea, genericAreaDerivative1, genericAreaDerivative2, generic4Ansatz, generic5Ansatz, generic6Ansatz,
     generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
     randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta9, delta3,
-    lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3, interMetricArea, etaA, randMetric, metricDerArea, metricDerArea', interMetric, interI2
+    lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3, interMetricArea, etaA, randMetric, genericMetric, metricDerArea, metricDerArea', interMetric, interI2, randAxon
 
 ) where 
 
@@ -351,17 +351,36 @@ module BasicTensors4_2 (
     flatInter :: ATens 0 1 0 0 1 1 Rational 
     flatInter = contrATens1 (0,1) $ interArea &* flatArea
 
-    genericArea :: ATens 0 1 0 0 0 0 (AreaVar Rational) 
+    genericMetric :: ATens 0 0 0 1 0 0 (LinearVar Rational)
+    genericMetric = fromListT6 assocs
+            where 
+                dofs = map (\x -> LinearVar 0 $ I.singleton x 1) [1..10] 
+                inds = map (\i -> (Empty, Empty, Empty, (singletonInd $ Ind9 i), Empty, Empty)) [0..20]
+                assocs = zip inds dofs
+
+    showGenericMetric :: LinearVar Rational -> String 
+    showGenericMetric (LinearVar x aMap) = if x == 0 then unlines l else show x ++ unlines l  
+            where 
+                assocs = filter (\(x,_) -> x /=0) $ I.assocs aMap 
+                l = tail $ map (\(a,b) -> show (numerator b) ++ "/" ++ show (denominator b) ++ "*" ++ "g" ++ show a ++ "+") assocs
+
+    genericArea :: ATens 0 1 0 0 0 0 (LinearVar Rational) 
     genericArea = fromListT6 assocs 
             where 
-                dofs = map (\x -> AreaVar 0 $ I.singleton x 1) [1..21] 
+                dofs = map (\x -> LinearVar 0 $ I.singleton x 1) [1..21] 
                 inds = map (\i -> (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty)) [0..20]
                 assocs = zip inds dofs
+
+    showGenericArea :: LinearVar Rational -> String 
+    showGenericArea (LinearVar x aMap) = if x == 0 then unlines l else show x ++ unlines l  
+            where 
+                assocs = filter (\(x,_) -> x /=0) $ I.assocs aMap 
+                l = tail $ map (\(a,b) -> show a ++ "*" ++ "v" ++ show b ++ "+") assocs
  
-    genericAreaFlat :: ATens 0 1 0 0 0 0 (AreaVar Rational)
+    genericAreaFlat :: ATens 0 1 0 0 0 0 (LinearVar Rational)
     genericAreaFlat = fromListT6 $
                       map (\(i,v) -> ( (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty), v))
-                                    [(0, AreaVar 0 $ I.singleton 1 (-1)),(5, AreaVar 0 $ I.singleton 4 1),(6, AreaVar 0 $ I.singleton 2 (-1)),(9, AreaVar 0 $ I.singleton 5 (-1)),(11, AreaVar 0 $ I.singleton 3 (-1)),(12, AreaVar 0 $ I.singleton 6 1),(15, AreaVar 0 $ I.singleton 1 1),(18, AreaVar 0 $ I.singleton 2 1),(20, AreaVar 0 $ I.singleton 3 1)]
+                                    [(0, LinearVar 0 $ I.singleton 1 (-1)),(5, LinearVar 0 $ I.singleton 4 1),(6, LinearVar 0 $ I.singleton 2 (-1)),(9, LinearVar 0 $ I.singleton 5 (-1)),(11, LinearVar 0 $ I.singleton 3 (-1)),(12, LinearVar 0 $ I.singleton 6 1),(15, LinearVar 0 $ I.singleton 1 1),(18, LinearVar 0 $ I.singleton 2 1),(20, LinearVar 0 $ I.singleton 3 1)]
 
     randArea :: IO (ATens 0 1 0 0 0 0 Rational)
     randArea = do gen <- newTFGen 
@@ -369,6 +388,16 @@ module BasicTensors4_2 (
                   let randList = map fromIntegral $ randList' 
                   let inds = map (\i -> (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty)) [0..20]
                   let assocs = zip inds randList
+                  let tens = fromListT6 assocs 
+                  return tens 
+
+    randAxon :: IO (ATens 0 1 0 0 0 0 Rational)
+    randAxon = do gen <- newTFGen
+                  let randList' = randomRs (-10000,10000) gen :: [Int]
+                  let randList = map fromIntegral $ randList' 
+                  let inds = map (\i -> (Empty, (singletonInd $ Ind20 i), Empty, Empty, Empty, Empty)) [5,9,12]
+                  let randInd = head randList
+                  let assocs = zip inds [-randInd, randInd, -randInd]
                   let tens = fromListT6 assocs 
                   return tens 
 
@@ -381,10 +410,10 @@ module BasicTensors4_2 (
                       let tens = fromListT6 assocs 
                       return tens 
 
-    genericAreaDerivative1 :: ATens 0 1 0 0 0 1 (AreaVar Rational)
+    genericAreaDerivative1 :: ATens 0 1 0 0 0 1 (LinearVar Rational)
     genericAreaDerivative1 = fromListT6 assocs
                 where 
-                    dofs = map (\x -> AreaVar 0 $ I.singleton x 1) [22..105]
+                    dofs = map (\x -> LinearVar 0 $ I.singleton x 1) [22..105]
                     inds = map (\(a,p) -> (Empty, (singletonInd $ Ind20 a), Empty, Empty, Empty, (singletonInd $ Ind3 p))) $ [ (a,p) | a <- [0..20], p <- [0..3]]
                     assocs = zip inds dofs 
 
@@ -397,10 +426,10 @@ module BasicTensors4_2 (
                              let tens = fromListT6 assocs 
                              return tens 
 
-    genericAreaDerivative2 :: ATens 0 1 0 1 0 0 (AreaVar Rational)
+    genericAreaDerivative2 :: ATens 0 1 0 1 0 0 (LinearVar Rational)
     genericAreaDerivative2 = fromListT6 assocs
                 where 
-                    dofs = map (\x -> AreaVar 0 $ I.singleton x 1) [106..315]
+                    dofs = map (\x -> LinearVar 0 $ I.singleton x 1) [106..315]
                     inds = map (\(a,i) -> (Empty, (singletonInd $ Ind20 a), Empty, (singletonInd $ Ind9 i), Empty, Empty)) $ [ (a,i) | a <- [0..20], i <- [0..9]]
                     assocs = zip inds dofs 
 

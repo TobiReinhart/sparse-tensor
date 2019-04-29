@@ -1050,20 +1050,20 @@ module PerturbationTree2_3 (
 
     --finally we can evaluated the final ansatz trees to the ansatz tensor 
 
-    evalToTens ::  M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> AnsatzForestEta -> AnsatzForestEpsilon -> ATens n1 n2 n3 n4 n5 n6 AnsVar 
+    evalToTens ::  M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> AnsatzForestEta -> AnsatzForestEpsilon -> ATens n1 n2 n3 n4 n5 n6 (AnsVar Rational) 
     evalToTens epsM evalEta evalEps ansEta ansEps = (fromListT6 etaRmL) &+ (fromListT6 epsRmL)
                 where 
                     etaL = evalAllTensorEta epsM evalEta ansEta 
                     epsL = evalAllTensorEpsilon epsM evalEps ansEps 
-                    etaL' = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) etaL
-                    epsL' = map (\(x,mult,indTuple) -> (indTuple, I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) epsL
-                    etaRmL = filter (\(_,b) -> b /= I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) etaL'
-                    epsRmL = filter (\(_,b) -> b /= I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) epsL'
+                    etaL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) etaL
+                    epsL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) epsL
+                    etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) etaL'
+                    epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) epsL'
     
    
     --the 2 final functions, constructing the 2 AnsatzForests and the AnsatzTensor
 
-    mkAnsatzTensorEigIO :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> IO (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
+    mkAnsatzTensorEigIO :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> IO (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 (AnsVar Rational)) 
     mkAnsatzTensorEigIO ord filters symmetries evalMEta evalMEps =
               do
                 let epsM = epsMap
@@ -1075,7 +1075,7 @@ module PerturbationTree2_3 (
                 let tens = evalToTens epsM evalMEta evalMEps ansEta ansEps 
                 return (ansEta, ansEps, tens)
 
-    mkAnsatzTensorEig :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
+    mkAnsatzTensorEig :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 (AnsVar Rational)) 
     mkAnsatzTensorEig ord filters symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
             where
                 epsM = epsMap
@@ -1129,7 +1129,7 @@ module PerturbationTree2_3 (
 
     --final function, fast way of constructing the ansatztrees and the 2 tensors
                 
-    mkAnsatzTensorFast :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 AnsVar) 
+    mkAnsatzTensorFast :: Int -> [(Int,Int)] -> Symmetry -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> [(I.IntMap Int, Int, [IndTuple n1 n2 n3 n4 n5 n6])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 n2 n3 n4 n5 n6 (AnsVar Rational)) 
     mkAnsatzTensorFast ord filters symmetries evalMEta evalMEps = (ansEtaRed, ansEpsRed, tens) 
             where
                 epsM = epsMap

@@ -32,37 +32,21 @@ import Data.Ratio
 
 main = do 
 
-    met <- randMetric
+    let met = genericMetric
 
-    axon <- randAxon 
+    let axon = genericAxon 
 
-    let metG = genericMetric  
-
-    let area' = (contrATens2 (0,0) $ contrATens2 (1,1) $ interMetricArea &* met &* met) &+ axon
-
-    let areaG = (contrATens2 (0,0) $ contrATens2 (1,1) $ interMetricArea &* metG &* metG) 
+    let area = (contrATens2 (0,0) $ contrATens2 (1,1) $ interMetricArea &* met &* met) &+ axon
     
     let ans4 = generic4Ansatz 
 
-    let ans8 = generic8Ansatz
-    
-    let eqn1 = contrATens1 (0,0) $ contrATens1 (1,1) $ ans4 &* interArea &* area' 
+    let eqn1 = contrATens1 (0,0) $ contrATens1 (1,1) $ ans4 &* interArea &* area 
 
     let intCond1 = aSymATens6 (0,1) $ contrATens1 (0,0) $ contrATens3 (0,2) $ contrATens2 (0,0) $ ans4 &* interArea &* interI2 &* met 
 
-    let intCond1Test = aSymATens6 (0,1) $ contrATens3 (0,2) $ contrATens2 (0,0) $ contrATens1 (0,1) $ interArea &* area' &* interI2 &* met
 
-    let total1 = eqn1 &> (singletonTList intCond1)
+    print 1
 
-    let l1 = map (map truncate) $ Mat.toList $ Sparse.toMatrix $ toEMatrix6 (singletonTList eqn1)
-    
-    print l1
-
-    print " "
-
-    let l2 = map (map truncate) $ Mat.toList $ Sparse.toMatrix $ toEMatrix6 (singletonTList intCond1)
-    
-    print l2
-
+   
 
     

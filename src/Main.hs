@@ -31,22 +31,22 @@ import Data.Ratio
 
 
 main = do 
-
-    let met = genericMetric
-
-    let axon = genericAxon 
-
-    let area = (contrATens2 (0,0) $ contrATens2 (1,1) $ interMetricArea &* met &* met) &+ axon
     
-    let ans4 = generic4Ansatz 
+    let (_,_,ans4) = mkAnsatzTensorEig 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps 
 
-    let eqn1 = contrATens1 (0,0) $ contrATens1 (1,1) $ ans4 &* interArea &* area 
+    let (_,_,ans8) = mkAnsatzTensorEig 8 filterList8 symList8 areaList8IndsEta areaList8IndsEps 
 
-    let intCond1 = aSymATens6 (0,1) $ contrATens1 (0,0) $ contrATens3 (0,2) $ contrATens2 (0,0) $ ans4 &* interArea &* interI2 &* met 
+    let (_,_,ans16) = mkAnsatzTensorFast 16 filterList16 symList16 areaList16IndsEta areaList16IndsEps 
 
 
-    print 1
+    let eq = contrATens1 (0,0) $ ans4 &* flatInter
 
-   
+    let interASym = aSymATens6 (0,1) $ contrATens3 (0,1)  $ interArea &* eta 
 
-    
+    let test = aSymATens1 (0,1) $ contrATens1 (0,0) $ ans8 &* interASym
+
+    let eqn = contrATens1 (0,0) $ ans8 &* flatInter
+
+    let ans16Test = ansatzABCD ans16
+
+    print $ toListShowVar6 ans16Test 

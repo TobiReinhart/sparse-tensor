@@ -41,7 +41,7 @@ module BasicTensors4_2 (
     generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
     randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta9, delta3,
     lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3, interMetricArea, etaA, randMetric, genericMetric,
-    interMetric, interI2, randAxon, genericAxon
+    interMetric, interI2, randAxon, genericAxon, eta
 
 ) where 
 

@@ -220,7 +220,7 @@ module BasicTensors4_2 (
                 int2 = interMetric &* delta20
 
     interEqn4 :: ATens 1 1 0 1 3 1 Rational
-    interEqn4 = block1 &- block2 
+    Eqn4 = block1 &- block2 
             where
                 block1' = interJ2 &* interArea
                 block1 = block1' &+ (tensorTrans5 (1,2) block1') 

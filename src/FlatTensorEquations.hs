@@ -37,7 +37,8 @@
 module FlatTensorEquations (
     ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
     eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd, eqn3, eqn3AI, eqn1A, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
-    eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC, ansatzABCD 
+    eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC, ansatzABCD,
+    eomAB, eomABC, eomABI, eomABCI, eomABpCq, linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass
 
 ) where
 
@@ -277,12 +278,68 @@ module FlatTensorEquations (
             block3 = resortTens1 [3,0,2,1] $ resortTens5 [1,2,0,3] block3' 
             block4 = tensorTrans1 (1,2) $ tensorTrans5 (0,1) block3
 
+    --tensor trafo equations for rom calculations (use density or scalar) 
+    --ansätze must be computed from lagrangian ansätze
+
+    --linear order 
+
+    linMass :: ATens 2 0 0 0 0 0 (AnsVar Rational) -> ATens 1 0 0 0 1 1 (AnsVar Rational)
+    linMass ans8 = tens1 
+        where 
+            tens1 = contrATens1 (0,0) $ contrATens1 (2,1) $ ans8 &* interArea &* flatArea
+
+    linKin :: ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 1 0 0 0 3 1 (AnsVar Rational)
+    linKin ans10 = tens1 
+        where 
+            tens1 = contrATens2 (0,0) $ contrATens1 (1,0) $ contrATens1 (2,1) $ ans10 &* interEqn5 &* flatArea
     
-    
+    --quadratic order
 
+    quadMass :: ATens 3 0 0 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 1 1 (AnsVar Rational)
+    quadMass ans12 ans8 = tens1 &+ tens2 
+        where 
+            --dens = ans8 &* delta3
+            tens1 = contrATens1 (2,0) $ contrATens1 (3,1) $ ans12 &* interArea &* flatArea
+            tens2 = symATens1 (0,1) $ contrATens1 (1,0) $ ans8 &* interArea
 
-    
+    quadKin1 :: ATens 3 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 1 0 1 1 (AnsVar Rational)
+    quadKin1 ans14 ans10 = tens1 &+ tens2 &+ tens3 
+        where 
+            --dens = ans10 &* delta3 
+            tens1 = contrATens1 (1,0) $ contrATens1 (3,1) $ ans14 &* interArea &* flatArea
+            tens2 = contrATens2 (0,0) $ contrATens1 (1,0) $ ans10 &* interEqn3 
+            tens3 = tensorTrans1 (0,1) $ contrATens1 (0,0) $ ans10 &* interArea
 
+    quadKin2 :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
+    quadKin2 ans14 ans10 = tens1 &+ tens2
+        where 
+            tens1 = symATens5 (1,2) $ contrATens1 (2,0) $ contrATens1 (3,1) $ ans14 &* interArea &* flatArea
+            tens2 = symATens5 (1,2) $ contrATens2 (0,0) $ contrATens1 (1,0) $ ans10 &* interEqn4 
 
+    quadKin3 :: ATens 3 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
+    quadKin3 ans14 ans10 = tens1 &+ tens2 
+        where 
+            tens1 = contrATens1 (2,0) $ contrATens1 (3,1) $ contrATens2 (0,0) $ ans14 &* interEqn5 &* flatArea
+            tens2 = contrATens1 (1,0) $ contrATens2 (0,0) $ ans10 &* interEqn5
 
+    --converting the lagrangian ansätze into the eom ansätze 
 
+    eomAB :: ATens 2 0 0 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 0 0 (AnsVar Rational)
+    eomAB ans8 = 2 &. ans8 
+
+    eomABC :: ATens 3 0 0 0 0 0 (AnsVar Rational) -> ATens 3 0 0 0 0 0 (AnsVar Rational)
+    eomABC ans12 = 3 &. ans12 
+
+    eomABI :: ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational)
+    eomABI ans10 = (-2) &. (contrATens3 (0,0) $ contrATens3 (1,1) $ ans10 &* interI2)
+
+    eomABpCq :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 3 0 0 0 2 0 (AnsVar Rational)
+    eomABpCq ans14 = (1/2) &. (tens &+ tensTrans) 
+        where 
+            tens = ans14 &- (2 &. (tensorTrans1 (0,1) ans14)) 
+            tensTrans = tensorTrans1 (1,2) $ tensorTrans5 (0,1) tens
+
+        
+    eomABCI :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 3 0 1 0 0 0 (AnsVar Rational)
+    eomABCI ans14 = (-1) &. (contrATens3 (0,0) $ contrATens3 (1,1) $ symATens5 (0,1) $ (tensorTrans1 (0,1) ans14) &* interI2)
+        

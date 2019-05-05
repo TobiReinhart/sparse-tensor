@@ -31,22 +31,67 @@ import Data.Ratio
 
 
 main = do 
+
+    --mass term ansätze
     
-    let (_,_,ans4) = mkAnsatzTensorEig 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps 
+    let (_,_,ans8') = mkAnsatzTensorEig 8 filterList8 symList8 areaList8IndsEta areaList8IndsEps 
 
-    let (_,_,ans8) = mkAnsatzTensorEig 8 filterList8 symList8 areaList8IndsEta areaList8IndsEps 
+    let (_,_,ans12') = mkAnsatzTensorFast 12 filterList12 symList12 areaList12IndsEta areaList12IndsEps 
 
-    let (_,_,ans16) = mkAnsatzTensorFast 16 filterList16 symList16 areaList16IndsEta areaList16IndsEps 
+    --kinetic term ansätze 
 
+    let (_,_,ans10') = mkAnsatzTensorEig 10 filterList10Rom symList10Rom areaList10IndsEtaRom areaList10IndsEpsRom 
 
-    let eq = contrATens1 (0,0) $ ans4 &* flatInter
+    let (_,_,ans14') = mkAnsatzTensorFast 14 filterList14Rom symList14Rom areaList14IndsEtaRom areaList14IndsEpsRom
+    
+    let r8 = tensorRank' ans8' 
 
-    let interASym = aSymATens6 (0,1) $ contrATens3 (0,1)  $ interArea &* eta 
+    let r10 = tensorRank' ans10'
 
-    let test = aSymATens1 (0,1) $ contrATens1 (0,0) $ ans8 &* interASym
+    let r12 = tensorRank' ans12'
 
-    let eqn = contrATens1 (0,0) $ ans8 &* flatInter
+    let r14 = tensorRank' ans14'
+    
+    let ans14 = ans14' 
 
-    let ans16Test = ansatzABCD ans16
+    let ans12 = ans12' 
 
-    print $ toListShowVar6 ans16Test 
+    let ans10 = shiftLabels6 r14 ans10' 
+
+    let ans8 = shiftLabels6 r12 ans8' 
+
+    let eomAnsAB = eomAB ans8 
+
+    let eomAnsABC = eomABC ans12 
+
+    let eomAnsABI = eomABI ans10 
+
+    let eomAnsABpCq = eomABpCq ans14 
+
+    let eomAnsABCI = eomABCI ans14 
+    
+    let linMassEqn = linMass eomAnsAB 
+    
+    let linKinEqn = linKin eomAnsABI
+
+    let quadMassEqn = quadMass eomAnsABC eomAnsAB 
+    
+    let quadKinEqn1 = quadKin1 eomAnsABCI eomAnsABI 
+    
+    let quadKinEqn2 = quadKin2 eomAnsABpCq eomAnsABI
+
+    let quadKinEqn3 = quadKin3 eomAnsABCI eomAnsABI 
+
+    let totalLinMass = singletonTList linMassEqn 
+
+    let totalQuadMass = linMassEqn &> (singletonTList quadMassEqn)
+
+    let totalLinKin = singletonTList linKinEqn 
+
+    let totalQuadKin = linKinEqn &> quadKinEqn1 &> quadKinEqn2 &> (singletonTList quadKinEqn3)
+    
+    let mat2 = toEMatrix6 totalQuadKin
+
+    print $ Sparse.rows mat2 
+
+    print $ Sparse.cols mat2

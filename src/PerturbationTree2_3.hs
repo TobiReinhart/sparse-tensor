@@ -34,7 +34,8 @@ module PerturbationTree2_3 (
     areaBlocks16, areaBlocks16_1, areaBlocks16_2, areaBlocks18, areaBlocks18_2, areaBlocks18_3, areaBlocks20,
     canonicalizeEvalMaps, getSyms, epsMap,
     decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta, flattenForestEpsilon, getIndSyms,
-    getEpsForestFast, flattenForest, getAllIndsEta, getExtraEtaSyms, maxCycleNr, findExtraSym, Var(..)
+    getEpsForestFast, flattenForest, getAllIndsEta, getExtraEtaSyms, maxCycleNr, findExtraSym, Var(..),
+    areaList10IndsEtaRom, areaList10IndsEpsRom, areaList14IndsEtaRom, areaList14IndsEpsRom, filterList10Rom, symList10Rom, filterList14Rom, symList14Rom
 
     
 ) where
@@ -1564,6 +1565,41 @@ module PerturbationTree2_3 (
               list = [ let (a',b',c', d', e') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trianArea e) in  (a' ++ b' ++ c' ++ d' ++ e', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (areaMult e'), map (\[a,b,c,d,e] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ Append (Ind20 $ c-1) $ Append (Ind20 $ d-1) $ singletonInd (Ind20 $ e-1), Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c,d,e] )| a <- [1..21], b <- [a..21], c <- [b..21], d <- [c..21], e <- [d..21] ]
   
 
+    --for the kinetic Anssätze for the Rom calculations -> extra symmetry
+
+    --Ap:Bq
+    areaList10IndsRom :: [(I.IntMap Int, Int, [IndTuple 2 0 0 0 2 0])]
+    areaList10IndsRom = mkEvalMap 10 list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ p : b' ++ [q], (areaMult a') * (areaMult b'), map (\[a,p,b,q] -> (Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ [[a,p,b,q], [a,q,b,p], [b,p,a,q], [b,q,a,p]]) | a <- [1..21], b <- [a..21], p <- [0..3], q <- [p..3]]
+  
+    areaList10IndsEtaRom :: [(I.IntMap Int, Int, [IndTuple 2 0 0 0 2 0])]
+    areaList10IndsEtaRom = mkEvalMapEta 10 list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ p : b' ++ [q], (areaMult a') * (areaMult b'), map (\[a,p,b,q] -> (Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub [[a,p,b,q], [a,q,b,p], [b,p,a,q], [b,q,a,p]]) | a <- [1..21], b <- [a..21], p <- [0..3], q <- [p..3]]
+  
+    areaList10IndsEpsRom :: [(I.IntMap Int, Int, [IndTuple 2 0 0 0 2 0])]
+    areaList10IndsEpsRom = mkEvalMapEps 10 list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ p : b' ++ [q], (areaMult a') * (areaMult b'), map (\[a,p,b,q] -> (Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ [[a,p,b,q], [a,q,b,p], [b,p,a,q], [b,q,a,p]]) | a <- [1..21], b <- [a..21], p <- [0..3], q <- [p..3]]
+  
+    --A:Bp:Cq
+
+    areaList14IndsRom :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 2 0])]
+    areaList14IndsRom = areaList14_1Inds
+
+    areaList14IndsEtaRom :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 2 0])]
+    areaList14IndsEtaRom = areaList14_1IndsEta
+
+    areaList14IndsEpsRom :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 2 0])]
+    areaList14IndsEpsRom = areaList14_1IndsEps
+
     --now the symmetry and filter lists 
 
     filterList4 :: [(Int,Int)]
@@ -1771,6 +1807,21 @@ module PerturbationTree2_3 (
     symList20 :: Symmetry  
     symList20 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18),(19,20)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16]),([17,18],[19,20])], [], 
                 [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]])
+
+    --lists for rom ansätze 
+
+    filterList10Rom :: [(Int,Int)]
+    filterList10Rom = [(1,2),(1,3),(3,4),(1,6),(6,7),(6,8),(8,9),(5,10)]
+
+    symList10Rom :: Symmetry  
+    symList10Rom = ([(5,10)], [(1,2),(3,4),(6,7),(8,9)], [([1,2],[3,4]),([6,7],[8,9]),([1,2,3,4],[6,7,8,9])], [], [])
+
+    filterList14Rom :: [(Int,Int)]
+    filterList14Rom = filterList14_1 
+
+    symList14Rom :: Symmetry 
+    symList14Rom = symList14_1
+
 
     --------------------------------------------------------------------------------------------------------------------------------------
 

@@ -38,7 +38,7 @@
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
     resortTens1, resortTens5, fromListT6',
     (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6, removeZeros, toMatList6, toMatList6', mapTensList6, 
-    splitAnsTens, tensorRank', toMatList6Lin, toMatList6Quad
+    splitAnsTens, tensorRank', toMatList6Lin, toMatList6Quad, showAnsVar
  
     
 ) where
@@ -1424,6 +1424,15 @@
     ansVarToQuadraticVar :: AnsVar a -> AnsVar (QuadraticVar a)
     ansVarToQuadraticVar (AnsVar mapA) = AnsVar $ I.map (\x -> QuadraticVar x I.empty I.empty) mapA
 
+    showAnsVar :: AnsVar Rational -> String 
+    showAnsVar (AnsVar linMap)
+        | assocs == [] = " "
+        | otherwise = tail assocs
+            where 
+                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ "x" ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
+                showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
+
     showLinearVar :: LinearVar Rational -> String 
     showLinearVar (LinearVar s linMap)
         | assocs == [] = showFrac s
@@ -1880,5 +1889,3 @@
     tensorRank t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix6 t
 
     
-    
- 

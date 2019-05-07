@@ -56,7 +56,7 @@ main = do
 
     let ans12 = ans12' 
 
-    let ans10 = shiftLabels6 r14 ans10' 
+    let ans10 = shiftLabels6 r14 ans10'
 
     let ans8 = shiftLabels6 r12 ans8' 
 
@@ -64,7 +64,7 @@ main = do
 
     let eomAnsABC = eomABC ans12 
 
-    let eomAnsABI = eomABI ans10 
+    let eomAnsABI = eomABI ans10' 
 
     let eomAnsABpCq = eomABpCq ans14 
 
@@ -90,8 +90,13 @@ main = do
 
     let totalQuadKin = linKinEqn &> quadKinEqn1 &> quadKinEqn2 &> (singletonTList quadKinEqn3)
     
-    let mat2 = toEMatrix6 totalQuadKin
+    let matLinKin = toMatList6 totalLinKin 
 
-    print $ Sparse.rows mat2 
+    let symbolLin = linSymbol eomAnsABI
 
-    print $ Sparse.cols mat2
+    let mapleMatLin = map (\((a,b),val) -> let val' = if denominator val == 1 then show (numerator val) else show (numerator val) ++ "/" ++ show (denominator val) 
+                                           in  show (a,b) ++ "=" ++ val' ++ "," ) matLinKin 
+
+    let mapleLinSym = map (\(x,val) -> show x ++ "=" ++ val ++ ",") symbolLin
+    
+    putStr $ unlines mapleLinSym

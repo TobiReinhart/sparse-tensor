@@ -38,12 +38,16 @@ module FlatTensorEquations (
     ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
     eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd, eqn3, eqn3AI, eqn1A, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
     eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC, ansatzABCD,
-    eomAB, eomABC, eomABI, eomABCI, eomABpCq, linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass
+    eomAB, eomABC, eomABI, eomABCI, eomABpCq, linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass,
+    linSymbol
 
 ) where
 
     import TensorTreeNumeric4_2 
     import BasicTensors4_2
+
+    import qualified Data.Map.Strict as M 
+    import Data.List
 
     --first the flat equations 
 
@@ -342,4 +346,18 @@ module FlatTensorEquations (
         
     eomABCI :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 3 0 1 0 0 0 (AnsVar Rational)
     eomABCI ans14 = (-1) &. (contrATens3 (0,0) $ contrATens3 (1,1) $ symATens5 (0,1) $ (tensorTrans1 (0,1) ans14) &* interI2)
-        
+
+    linSymbol :: ATens 2 0 1 0 0 0 (AnsVar Rational) -> [((Int,Int),String)] 
+    linSymbol ans10 = tensList 
+        where 
+            kList = ["k__0*k__0", "k__0*k__1", "k__0*k__2", "k__0*k__3", "k__1*k__1", "k__1*k__2", "k__1*k__3", "k__2*k__2", "k__2*k__3", "k__3*k__3"]
+            tensList' = map (\([a,b,c],y) -> ((a+1,b+1), kList !! c ++ "*" ++ "(" ++ showAnsVar y ++ ")")) $ toListShow6 ans10
+            tensList = M.assocs $ M.fromListWith (\x y -> x ++ "+" ++ y) tensList'
+
+    --for the quadratic symbol we get multiple matrices 
+    quadSymbol :: ATens 3 0 1 0 0 0 (AnsVar Rational) -> [[((Int,Int),String)]]
+    quadSymbol ans14 = tensList 
+        where 
+            kList = ["k__0*k__0", "k__0*k__1", "k__0*k__2", "k__0*k__3", "k__1*k__1", "k__1*k__2", "k__1*k__3", "k__2*k__2", "k__2*k__3", "k__3*k__3"]
+            tensList' = map (map (\([a,b,c,d],y) -> ((b+1,c+1), kList !! d ++ "*" ++ "(" ++ showAnsVar y ++ ")"))) $ groupBy (\(a:as,val1) (b:bs,val2) -> a == b) $ sortOn (\(x:xs,_) -> x) $ toListShow6 ans14
+            tensList = map (\x -> M.assocs $ M.fromListWith (\a b -> a ++ "+" ++ b) x) tensList'

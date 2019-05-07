@@ -16,7 +16,7 @@ evalRand := proc(M::Matrix)
 randSubMatrix := proc(M::Matrix)
     n := RowDimension(M);
     rowList := [seq(1..n)];
-    M2 := SubMatrix(M,randcomb(nowList,n-4),randcomb(rowList,n-4));
+    M2 := SubMatrix(M,randcomb(rowList,n-4),randcomb(rowList,n-4));
     if Rank(M2) = n-4 then M2; else randSubMatrix(M); end if;
     end proc;
 

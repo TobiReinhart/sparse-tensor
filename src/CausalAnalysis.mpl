@@ -3,6 +3,7 @@
 with(LinearAlgebra);
 with(combinat);
 with(Threads);
+with(ListTools);
 
 #evaluate all constants randomly
 evalRand := proc(M::Matrix)
@@ -12,8 +13,32 @@ evalRand := proc(M::Matrix)
     (simplify(subs(evalL,M)), evalL);
     end proc;
 
+evalRandQuad := proc(Lin::Matrix, Quad::list)
+    varsLin := indets(Lin) minus {k__0,k__1,k__2,k__3};
+    varsQuad := map(x -> indets(x) minus {k__0,k__1,k__2,k__3}, Quad);
+    vars := convert( `union`(varsLin,op(varsQuad)) ,list);
+    fRand := rand(-1000..1000);
+    evalL := zip((a,b) -> a = b, vars, [seq(fRand(), i = 1..nops(vars))]);
+    QuadL := map(x -> simplify(subs(evalL,Quad)), evalL);
+    LinM := simplify(subs(evalL, Lin)); 
+    (LinM, QuadL);
+    end proc;
+
 #construct a random SubMatrix 
-randSubMatrix := proc(M::Matrix)
+randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
+    n := RowDimension(Lin);
+    rowList := [seq(1..n)];
+    QuadL := map(x -> SubMatrix(x,randcomb(rowList,n-4),randcomb(rowList,n-4)), Quad);
+    LinM := SubMatrix(Lin,randcomb(rowList,n-4),randcomb(rowList,n-4));
+    if  Rank(LinM) < n-4 then randSubMatrixQuad(Lin,Quad) else 
+        zeroList := Map(Rank(),QuadL);
+        Q3 := zip((x,y) -> [x,y], QuadL, zeroList);
+        Q4 := remove(x -> x[2] < n-4, Q3); 
+        if nops(Q4) = 0 then randSubMatrixQuad(M); else (LinM, Q4) ; end if;  
+    end if;
+    end proc;
+
+randSubMatrix := proc(M::list)
     n := RowDimension(M);
     rowList := [seq(1..n)];
     M2 := SubMatrix(M,randcomb(rowList,n-4),randcomb(rowList,n-4));
@@ -43,6 +68,27 @@ linPolyParallel := proc(M::Matrix,i::integer)
 linPoly := proc(M::Matrix, i::integer)
     Map(x -> linPoly2(M), [seq(1..i)]);
     end proc;
+
+
+#construct the n^2 quadratic matrices from the linear matrix and the n (factors in front of HA) quadratic matrices 
+mkQuadMatrices := proc(Lin::Matrix, Quad::list)
+    n := RowDimension(Lin); 
+    LinCols := [Column(Lin,[seq(1..n)])];
+    QuadCols := map(x -> [Column(x,[seq(1..n)])],Quad);
+    MatList := map(x -> zip((y,z) -> Matrix(subs(y = z, LinCols)), LinCols, x), QuadCols); 
+    end proc;
+
+eval1MinorL := proc(Lin::Matrix, Quad::list)
+    matList := mkQuadMatrices(Lin,Quad);
+    (matListRand, evalL) := evalRandQuad(matList);
+    (subMatLin, subMatList) := randSubMatrixQuad(matListRand);
+    PolyLin := factor(Determinant(Lin, method=multivar));
+    PolyQuad := Map(x -> factor(add(Determinant(i, method=multivar)), i in x), subMatList);
+    (PolyLin,PolyQuad);
+    end proc; 
+
+#how can we compute the gcd perturbatively ?
+
 
 
 

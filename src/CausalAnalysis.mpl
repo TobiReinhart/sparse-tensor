@@ -35,7 +35,7 @@ linPolyParallel := proc(M::Matrix,i::integer)
     (MRand, evalL) := evalRand(M);
     SubMList := map(x -> randSubMatrix(MRand), [seq(1..i)]);
     PolyList := Map(x -> factor(Determinant(x, method=multivar)), SubMList);
-    Poly := foldr(gcd,0,PolyList);
+    Poly := foldr(gcd,0,op(PolyList));
     (Poly,evalL);
     end proc;
 

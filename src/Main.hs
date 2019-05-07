@@ -90,13 +90,17 @@ main = do
 
     let totalQuadKin = linKinEqn &> quadKinEqn1 &> quadKinEqn2 &> (singletonTList quadKinEqn3)
     
-    let matLinKin = toMatList6 totalLinKin 
+    let matLinKin = toMatList6 totalLinKin
+    
+    let matQuadKin = toMatList6 totalQuadKin
 
     let symbolLin = linSymbol eomAnsABI
 
-    let mapleMatLin = map (\((a,b),val) -> let val' = if denominator val == 1 then show (numerator val) else show (numerator val) ++ "/" ++ show (denominator val) 
-                                           in  show (a,b) ++ "=" ++ val' ++ "," ) matLinKin 
+    let symbolQuad = quadSymbol eomAnsABCI
 
-    let mapleLinSym = map (\(x,val) -> show x ++ "=" ++ val ++ ",") symbolLin
+    let mapleMatQuad = map (\((a,b),val) -> let val' = if denominator val == 1 then show (numerator val) else show (numerator val) ++ "/" ++ show (denominator val) 
+                                           in  show (a,b) ++ "=" ++ val' ++ "," ) matQuadKin 
+
+    let mapleQuadSym = map (\x' -> unlines $ map (\(x,val) -> show x ++ "=" ++ val ++ ",") x') symbolQuad
     
-    putStr $ unlines mapleLinSym
+    putStr $ unlines mapleQuadSym

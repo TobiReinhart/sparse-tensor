@@ -39,7 +39,7 @@ module FlatTensorEquations (
     eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd, eqn3, eqn3AI, eqn1A, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
     eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC, ansatzABCD,
     eomAB, eomABC, eomABI, eomABCI, eomABpCq, linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass,
-    linSymbol
+    linSymbol, quadSymbol
 
 ) where
 

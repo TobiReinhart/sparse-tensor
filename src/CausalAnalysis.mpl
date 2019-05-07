@@ -30,7 +30,7 @@ linPoly2 := proc(M::Matrix)
     end proc;
 
 #parallel implementation for fixed number of random submatrices
-linPolyParallel := proc(M::Matrix,i::Int)
+linPolyParallel := proc(M::Matrix,i::integer)
     n := RowDimension(M);
     (MRand, evalL) := evalRand(M);
     SubMList := map(x -> randSubMatrix(MRand), [seq(1..i)]);
@@ -40,7 +40,7 @@ linPolyParallel := proc(M::Matrix,i::Int)
     end proc;
 
 #now the parallel implementation for a fixed number of evaluation points
-linPoly := proc(M::Matrix, i::Int)
+linPoly := proc(M::Matrix, i::integer)
     Map(x -> linPoly2(M), [seq(1..i)]);
     end proc;
 

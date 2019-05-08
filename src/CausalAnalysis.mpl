@@ -19,7 +19,7 @@ evalRand := proc(M::Matrix)
     end proc;
 
 #construct a random SubMatrix 
-randSubMatrix := proc(M::list)
+randSubMatrix := proc(M::Matrix)
     n := RowDimension(M);
     rowList := [seq(1..n)];
     M2 := SubMatrix(M,randcomb(rowList,n-4),randcomb(rowList,n-4));

@@ -1,9 +1,16 @@
 #function to compute the symbol of a rank deficient matrix 
+CausalAnalysis := module()
 
-with(LinearAlgebra);
-with(combinat);
-with(Threads);
-with(ListTools);
+export ModuleLoad, evalRand, randSubMatrix, linPoly, linPoly2, linPolyParallel, mkQuadMatrices, randSubMatrixQuad, evalRandQuad, eval1MinorL;
+
+option package;
+
+ModuleLoad := proc()
+    with(LinearAlgebra);
+    with(combinat);
+    with(Threads);
+    with(ListTools);
+    end proc;
 
 #evaluate all constants randomly
 evalRand := proc(M::Matrix)
@@ -13,31 +20,7 @@ evalRand := proc(M::Matrix)
     (simplify(subs(evalL,M)), evalL);
     end proc;
 
-evalRandQuad := proc(Lin::Matrix, Quad::list)
-    varsLin := indets(Lin) minus {k__0,k__1,k__2,k__3};
-    varsQuad := map(x -> indets(x) minus {k__0,k__1,k__2,k__3}, Quad);
-    vars := convert( `union`(varsLin,op(varsQuad)) ,list);
-    fRand := rand(-1000..1000);
-    evalL := zip((a,b) -> a = b, vars, [seq(fRand(), i = 1..nops(vars))]);
-    QuadL := map(x -> simplify(subs(evalL,Quad)), evalL);
-    LinM := simplify(subs(evalL, Lin)); 
-    (LinM, QuadL);
-    end proc;
-
 #construct a random SubMatrix 
-randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
-    n := RowDimension(Lin);
-    rowList := [seq(1..n)];
-    QuadL := map(x -> SubMatrix(x,randcomb(rowList,n-4),randcomb(rowList,n-4)), Quad);
-    LinM := SubMatrix(Lin,randcomb(rowList,n-4),randcomb(rowList,n-4));
-    if  Rank(LinM) < n-4 then randSubMatrixQuad(Lin,Quad) else 
-        zeroList := Map(Rank(),QuadL);
-        Q3 := zip((x,y) -> [x,y], QuadL, zeroList);
-        Q4 := remove(x -> x[2] < n-4, Q3); 
-        if nops(Q4) = 0 then randSubMatrixQuad(M); else (LinM, Q4) ; end if;  
-    end if;
-    end proc;
-
 randSubMatrix := proc(M::list)
     n := RowDimension(M);
     rowList := [seq(1..n)];
@@ -78,10 +61,32 @@ mkQuadMatrices := proc(Lin::Matrix, Quad::list)
     MatList := map(x -> zip((y,z) -> Matrix(subs(y = z, LinCols)), LinCols, x), QuadCols); 
     end proc;
 
+randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
+    n := RowDimension(Lin);
+    rowList := [seq(1..n)];
+    QuadL := map(x -> SubMatrix(x,randcomb(rowList,n-4),randcomb(rowList,n-4)), Quad);
+    LinM := SubMatrix(Lin,randcomb(rowList,n-4),randcomb(rowList,n-4));
+    if  Rank(LinM) < n-4 then 
+        randSubMatrixQuad(Lin,Quad); 
+        else (LinM, QuadL); 
+    end if;
+    end proc;
+
+evalRandQuad := proc(Lin::Matrix, Quad::list)
+    varsLin := indets(Lin) minus {k__0,k__1,k__2,k__3};
+    varsQuad := map(x -> indets(x) minus {k__0,k__1,k__2,k__3}, Quad);
+    vars := convert( `union`(varsLin,op(varsQuad)) ,list);
+    fRand := rand(-1000..1000);
+    evalL := zip((a,b) -> a = b, vars, [seq(fRand(), i = 1..nops(vars))]);
+    QuadL := map(x -> simplify(subs(evalL,Quad)), evalL);
+    LinM := simplify(subs(evalL, Lin)); 
+    (LinM, QuadL);
+    end proc;
+
 eval1MinorL := proc(Lin::Matrix, Quad::list)
-    matList := mkQuadMatrices(Lin,Quad);
     (matListRand, evalL) := evalRandQuad(matList);
-    (subMatLin, subMatList) := randSubMatrixQuad(matListRand);
+    (subMatLin, subMatList) := randSubMatrixQuad(matListRand, evalL);
+    matList := mkQuadMatrices(subMatLin,subMatList);
     PolyLin := factor(Determinant(Lin, method=multivar));
     PolyQuad := Map(x -> factor(add(Determinant(i, method=multivar)), i in x), subMatList);
     (PolyLin,PolyQuad);

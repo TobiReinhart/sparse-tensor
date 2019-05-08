@@ -1,16 +1,14 @@
 #function to compute the symbol of a rank deficient matrix 
 CausalAnalysis := module()
 
-export ModuleLoad, evalRand, randSubMatrix, linPoly, linPoly2, linPolyParallel, mkQuadMatrices, randSubMatrixQuad, evalRandQuad, eval1MinorL;
+export evalRand, randSubMatrix, linPoly, linPoly2, linPolyParallel, mkQuadMatrices, randSubMatrixQuad, evalRandQuad, eval1MinorL;
 
 option package;
 
-ModuleLoad := proc()
-    with(LinearAlgebra);
-    with(combinat);
-    with(Threads);
-    with(ListTools);
-    end proc;
+with(LinearAlgebra);
+with(combinat);
+with(Threads);
+with(ListTools);
 
 #evaluate all constants randomly
 evalRand := proc(M::Matrix)
@@ -93,6 +91,8 @@ eval1MinorL := proc(Lin::Matrix, Quad::list)
     end proc; 
 
 #how can we compute the gcd perturbatively ?
+
+end module;
 
 
 

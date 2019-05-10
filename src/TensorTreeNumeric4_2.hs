@@ -1450,10 +1450,11 @@
 
     showAnsVarLinVar :: AnsVar (LinearVar Rational) -> Char -> Char -> String 
     showAnsVarLinVar (AnsVar linMap) varLabelAns varLabelLin
-        | assocs == [] = " "
+        | assocs' == [] = " "
         | otherwise = tail assocs
             where 
-                assocs = concat $ map (\(x,y) -> "+" ++ showLinearVar y varLabelLin ++ "*" ++ [varLabelAns] ++ show x) $ filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap     
+                assocs' = filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap
+                assocs = concat $ map (\(x,y) -> "+" ++ showLinearVar y varLabelLin ++ "*" ++ [varLabelAns] ++ show x) assocs'     
 
     showQuadraticVar :: QuadraticVar Rational -> Char -> String 
     showQuadraticVar (QuadraticVar s linMap quadMap) varLabel
@@ -1468,11 +1469,11 @@
    
     showAnsVarQuadVar :: AnsVar (QuadraticVar Rational) -> Char -> Char -> String 
     showAnsVarQuadVar (AnsVar linMap) varLabelAns varLabelQuad
-        | assocs == [] = " "
+        | assocs' == [] = " "
         | otherwise = tail assocs
             where 
-                assocs = concat $ map (\(x,y) -> "+" ++ showQuadraticVar y varLabelQuad ++ "*" ++ [varLabelAns] ++ show x) $ filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap 
-
+                assocs' = filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap
+                assocs = concat $ map (\(x,y) -> "+" ++ showQuadraticVar y varLabelQuad ++ "*" ++ [varLabelAns] ++ show x) assocs'
 
     --flatten tensor with ansVar values to assocs list 
     

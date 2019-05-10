@@ -38,9 +38,8 @@ module FlatTensorEquations (
     ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
     eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd, eqn3, eqn3AI, eqn1A, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
     eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC, ansatzABCD,
-    eomAB, eomABC, eomABI, eomABCI, eomABpCq, linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass,
-    linSymbol, quadSymbol
-
+    linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass, linSymbol, quadSymbol
+   
 ) where
 
     import TensorTreeNumeric4_2 
@@ -48,6 +47,7 @@ module FlatTensorEquations (
 
     import qualified Data.Map.Strict as M 
     import Data.List
+    import qualified Data.IntMap.Strict as I
 
     --first the flat equations 
 
@@ -290,74 +290,72 @@ module FlatTensorEquations (
     linMass :: ATens 2 0 0 0 0 0 (AnsVar Rational) -> ATens 1 0 0 0 1 1 (AnsVar Rational)
     linMass ans8 = tens1 
         where 
-            tens1 = contrATens1 (0,0) $ contrATens1 (2,1) $ ans8 &* interArea &* flatArea
+            tens1 = contrATens1 (1,0) $ ans8 &* flatInter
 
-    linKin :: ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 1 0 0 0 3 1 (AnsVar Rational)
+    linKin :: ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 1 0 0 0 3 1 (AnsVar Rational)
     linKin ans10 = tens1 
         where 
-            tens1 = contrATens2 (0,0) $ contrATens1 (1,0) $ contrATens1 (2,1) $ ans10 &* interEqn5 &* flatArea
+            tens1 = cyclicSymATens5 [0,1,2] $ contrATens1 (1,0) $ ans10 &* flatInter
     
     --quadratic order
 
     quadMass :: ATens 3 0 0 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 1 1 (AnsVar Rational)
-    quadMass ans12 ans8 = tens1 &+ tens2 
+    quadMass ans12 ans8 = tens1 &+ tens2 &+ tens3 &+ dens
         where 
-            --dens = ans8 &* delta3
-            tens1 = contrATens1 (2,0) $ contrATens1 (3,1) $ ans12 &* interArea &* flatArea
-            tens2 = symATens1 (0,1) $ contrATens1 (1,0) $ ans8 &* interArea
+            dens = (2 &.) $ ans8 &* delta3
+            tens1 = (6 &.) $ contrATens1 (1,0) $ ans12 &* flatInter
+            tens2 = (2 &.) $ contrATens1 (1,0) $ ans8 &* interArea
+            tens3 = (2 &.) $ tensorTrans1 (0,1) $ contrATens1 (0,0) $ ans8 &* interArea
 
-    quadKin1 :: ATens 3 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 1 0 1 1 (AnsVar Rational)
-    quadKin1 ans14 ans10 = tens1 &+ tens2 &+ tens3 
+    quadKin1 :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
+    quadKin1 ans14 ans10 = tens1 &+ tens2 &+ tens3 &+ dens &- (tens4_1 &+ tens4_2)
         where 
-            --dens = ans10 &* delta3 
-            tens1 = contrATens1 (1,0) $ contrATens1 (3,1) $ ans14 &* interArea &* flatArea
-            tens2 = contrATens2 (0,0) $ contrATens1 (1,0) $ ans10 &* interEqn3 
+            dens = ans10 &* delta3   
+            tens1 = ((1/2) &.) $ symATens5 (0,1) $ contrATens1 (2,0) $ ans14 &* flatInter
+            tens2 = contrATens1 (1,0) $ ans10 &* interArea 
             tens3 = tensorTrans1 (0,1) $ contrATens1 (0,0) $ ans10 &* interArea
+            tens4_1 = tensorTrans5 (1,2) $ ans10 &* delta3
+            tens4_2 = resortTens5 [1,2,0] $ ans10 &* delta3
 
-    quadKin2 :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
-    quadKin2 ans14 ans10 = tens1 &+ tens2
-        where 
-            tens1 = symATens5 (1,2) $ contrATens1 (2,0) $ contrATens1 (3,1) $ ans14 &* interArea &* flatArea
-            tens2 = symATens5 (1,2) $ contrATens2 (0,0) $ contrATens1 (1,0) $ ans10 &* interEqn4 
 
-    quadKin3 :: ATens 3 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
-    quadKin3 ans14 ans10 = tens1 &+ tens2 
+    quadKin2 :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
+    quadKin2 ans14 ans10 = symATens5 (0,2) $ tens0 &+ tens2 &- (tens1 &+ tens3 &+ tens4)
         where 
-            tens1 = contrATens1 (2,0) $ contrATens1 (3,1) $ contrATens2 (0,0) $ ans14 &* interEqn5 &* flatArea
-            tens2 = contrATens1 (1,0) $ contrATens2 (0,0) $ ans10 &* interEqn5
+            tens0 = tensorTrans5 (1,2) $ ans10 &* delta3 
+            tens1 = (2 &.) $ contrATens1 (1,0) $ ans10 &* interArea 
+            tens2 = tensorTrans1 (0,1) $ contrATens1 (0,0) $ ans14 &* flatInter  
+            tens3 = contrATens1 (2,0) $ ans14 &* flatInter  
+            tens4 = contrATens1 (0,0) $ ans14 &* flatInter  
+
+
+    quadKin3 :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
+    quadKin3 ans14 ans10 = cyclicSymATens5 [0,1,2] $ (tens1 &+ tens2) 
+        where 
+            tens1 = contrATens1 (1,0) $ ans10 &* interArea
+            tens2 = contrATens1 (1,0) $ ans14 &* flatInter
 
     --converting the lagrangian ansätze into the eom ansätze 
-
-    eomAB :: ATens 2 0 0 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 0 0 (AnsVar Rational)
-    eomAB ans8 = 2 &. ans8 
-
-    eomABC :: ATens 3 0 0 0 0 0 (AnsVar Rational) -> ATens 3 0 0 0 0 0 (AnsVar Rational)
-    eomABC ans12 = 3 &. ans12 
-
-    eomABI :: ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational)
-    eomABI ans10 = (-2) &. (contrATens3 (0,0) $ contrATens3 (1,1) $ ans10 &* interI2)
-
-    eomABpCq :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 3 0 0 0 2 0 (AnsVar Rational)
-    eomABpCq ans14 = (1/2) &. (tens &+ tensTrans) 
+    
+    linSymbol :: ATens 2 0 0 0 2 0 (AnsVar Rational) -> [(Int,Int,String)] 
+    linSymbol ans10 = tList 
         where 
-            tens = ans14 &- (2 &. (tensorTrans1 (0,1) ans14)) 
-            tensTrans = tensorTrans1 (1,2) $ tensorTrans5 (0,1) tens
-
-        
-    eomABCI :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 3 0 1 0 0 0 (AnsVar Rational)
-    eomABCI ans14 = (-1) &. (contrATens3 (0,0) $ contrATens3 (1,1) $ symATens5 (0,1) $ (tensorTrans1 (0,1) ans14) &* interI2)
-
-    linSymbol :: ATens 2 0 1 0 0 0 (AnsVar Rational) -> [((Int,Int),String)] 
-    linSymbol ans10 = tensList 
-        where 
-            kList = ["k__0*k__0", "k__0*k__1", "k__0*k__2", "k__0*k__3", "k__1*k__1", "k__1*k__2", "k__1*k__3", "k__2*k__2", "k__2*k__3", "k__3*k__3"]
-            tensList' = map (\([a,b,c],y) -> ((a+1,b+1), kList !! c ++ "*" ++ "(" ++ showAnsVar y ++ ")")) $ toListShow6 ans10
-            tensList = M.assocs $ M.fromListWith (\x y -> x ++ "+" ++ y) tensList'
+            kTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0,1,2,3]
+            kTens = fromListT6 $ zipWith (\i j -> ((Empty,Empty,Empty,Empty,Empty,singletonInd $ Ind3 i),j)) [0..] kTensList :: ATens 0 0 0 0 0 1 (LinearVar Rational)
+            tens = contrATens3 (0,0) $ contrATens3 (1,1) $ ans10 &* kTens &* kTens
+            tensList = toListShow6 tens
+            tList = map (\([a,b],val) -> (a,b,showAnsVarQuadVar val 'x' 'k')) tensList 
 
     --for the quadratic symbol we get multiple matrices 
-    quadSymbol :: ATens 3 0 1 0 0 0 (AnsVar Rational) -> [[((Int,Int),String)]]
-    quadSymbol ans14 = tensList 
+    quadSymbol :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> [[(Int,Int,String)]] 
+    quadSymbol ans14 = tList2 
         where 
-            kList = ["k__0*k__0", "k__0*k__1", "k__0*k__2", "k__0*k__3", "k__1*k__1", "k__1*k__2", "k__1*k__3", "k__2*k__2", "k__2*k__3", "k__3*k__3"]
-            tensList' = map (map (\([a,b,c,d],y) -> ((b+1,c+1), kList !! d ++ "*" ++ "(" ++ showAnsVar y ++ ")"))) $ groupBy (\(a:as,val1) (b:bs,val2) -> a == b) $ sortOn (\(x:xs,_) -> x) $ toListShow6 ans14
-            tensList = map (\x -> M.assocs $ M.fromListWith (\a b -> a ++ "+" ++ b) x) tensList'
+            kTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0,1,2,3]
+            kTens = fromListT6 $ zipWith (\i j -> ((Empty,Empty,Empty,Empty,Empty,singletonInd $ Ind3 i),j)) [0..] kTensList :: ATens 0 0 0 0 0 1 (LinearVar Rational)
+            tens = contrATens3 (0,0) $ contrATens3 (1,1) $ ans14 &* kTens &* kTens 
+            tens' = resortTens1 [1,2,0] tens
+            tensList = toListShow6 tens'
+            tList = sortOn (\(a,_,_,_) -> a) $ map (\([a,b,c],val) -> (a,b,c,showAnsVarQuadVar val 'x' 'k')) tensList 
+            tList2 = map (map (\(a,b,c,d) -> (b,c,d))) $ groupBy (\(z1,_,_,_) (z2,_,_,_) -> z1 == z2) tList
+
+    
+

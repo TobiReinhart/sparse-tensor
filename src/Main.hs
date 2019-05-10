@@ -40,7 +40,7 @@ main = do
 
     --kinetic term ansätze 
 
-    let (_,_,ans10') = mkAnsatzTensorEig 10 filterList10Rom symList10Rom areaList10IndsEtaRom areaList10IndsEpsRom 
+    let (_,_,ans10') = mkAnsatzTensorFast 10 filterList10Rom symList10Rom areaList10IndsEtaRom areaList10IndsEpsRom 
 
     let (_,_,ans14') = mkAnsatzTensorFast 14 filterList14Rom symList14Rom areaList14IndsEtaRom areaList14IndsEpsRom
     
@@ -60,27 +60,17 @@ main = do
 
     let ans8 = shiftLabels6 r12 ans8' 
 
-    let eomAnsAB = eomAB ans8 
+    let linMassEqn = linMass ans8
 
-    let eomAnsABC = eomABC ans12 
+    let linKinEqn = linKin ans10 
 
-    let eomAnsABI = eomABI ans10' 
-
-    let eomAnsABpCq = eomABpCq ans14 
-
-    let eomAnsABCI = eomABCI ans14 
+    let quadMassEqn = quadMass ans12 ans8 
     
-    let linMassEqn = linMass eomAnsAB 
+    let quadKinEqn1 = quadKin1 ans14 ans10 
     
-    let linKinEqn = linKin eomAnsABI
+    let quadKinEqn2 = quadKin2 ans14 ans10
 
-    let quadMassEqn = quadMass eomAnsABC eomAnsAB 
-    
-    let quadKinEqn1 = quadKin1 eomAnsABCI eomAnsABI 
-    
-    let quadKinEqn2 = quadKin2 eomAnsABpCq eomAnsABI
-
-    let quadKinEqn3 = quadKin3 eomAnsABCI eomAnsABI 
+    let quadKinEqn3 = quadKin3 ans14 ans10 
 
     let totalLinMass = singletonTList linMassEqn 
 
@@ -94,13 +84,8 @@ main = do
     
     let matQuadKin = toMatList6 totalQuadKin
 
-    let symbolLin = linSymbol eomAnsABI
+    let linSym = linSymbol ans10
 
-    let symbolQuad = quadSymbol eomAnsABCI
+    let quadSym = quadSymbol ans14 
 
-    let mapleMatQuad = map (\((a,b),val) -> let val' = if denominator val == 1 then show (numerator val) else show (numerator val) ++ "/" ++ show (denominator val) 
-                                           in  show (a,b) ++ "=" ++ val' ++ "," ) matQuadKin 
-
-    let mapleQuadSym = map (\x' -> unlines $ map (\(x,val) -> show x ++ "=" ++ val ++ ",") x') symbolQuad
-    
-    putStr $ unlines mapleQuadSym
+    print 1

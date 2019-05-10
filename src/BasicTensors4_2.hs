@@ -41,7 +41,8 @@ module BasicTensors4_2 (
     generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
     randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta9, delta3,
     lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3, interMetricArea, etaA, randMetric, genericMetric,
-    interMetric, interI2, randAxon, genericAxon, eta
+    interMetric, interI2, randAxon, genericAxon, eta, interI2Fac, interJ2, interJ2NoFac,
+    delta3Fac, delta9Fac, delta20Fac, interIAreaFac, interJAreaNoFac, interArea2
 
 ) where 
 
@@ -82,11 +83,40 @@ module BasicTensors4_2 (
     delta20 :: ATens 1 1 0 0 0 0 Rational 
     delta20 = fromListT6 $ zip [(singletonInd (Ind20 i),singletonInd (Ind20 i), Empty, Empty, Empty, Empty) | i <- [0..20]] (repeat 1)
 
+    delta20Fac :: ATens 1 1 0 0 0 0 Rational 
+    delta20Fac = fromListT6 $ zip [(singletonInd (Ind20 i),singletonInd (Ind20 i), Empty, Empty, Empty, Empty) | i <- [0..20]] l 
+        where 
+            jMultArea [a,b,c,d]
+                | a == c && b == d = 4 
+                | otherwise = 8
+            l = map jMultArea [[a,b,c,d] | a <- [0..2], b <- [a+1..3], c <- [0..2] , d <- [c+1..3], a < c && (not ( a == c && b > d))]
+
     delta9 :: ATens 0 0 1 1 0 0 Rational
     delta9 = fromListT6 $ zip [(Empty, Empty, singletonInd (Ind9 i),singletonInd (Ind9 i), Empty, Empty) | i <- [0..9]] (repeat 1)
 
+    delta9Fac :: ATens 0 0 1 1 0 0 Rational
+    delta9Fac = fromListT6 $ zip [(Empty, Empty, singletonInd (Ind9 i),singletonInd (Ind9 i), Empty, Empty) | i <- [0..9]] l 
+        where
+            jMult3 [a,b,c]
+                | i == 1 = 1
+                | i == 2 = 3
+                | otherwise = 6
+                    where 
+                        i = length [a,b,c]
+            l = map jMult3 [[a,b,c] | a <- [0..3], b <- [a..3], c <- [b..3]]
+
+
     delta3 :: ATens 0 0 0 0 1 1 Rational
     delta3 = fromListT6 $ zip [(Empty, Empty, Empty, Empty, singletonInd (Ind3 i),singletonInd (Ind3 i)) | i <- [0..3]] (repeat 1)
+
+    delta3Fac :: ATens 0 0 0 0 1 1 Rational
+    delta3Fac = fromListT6 $ zip [(Empty, Empty, Empty, Empty, singletonInd (Ind3 i),singletonInd (Ind3 i)) | i <- [0..3]] l 
+            where
+                jMult2 [a,b] 
+                    | a == b = 1
+                    | otherwise = 2 
+                l = map jMult2 [[a,b] | a <- [0..3] , b <- [a..3]]
+
 
     --eta and inverse eta (numerical)
 
@@ -170,6 +200,15 @@ module BasicTensors4_2 (
                     | ind1 == ((M.!) trian2 $ sortInd ind2 ) = 1 
                     | otherwise = 0 
 
+    interI2Fac :: ATens 0 0 1 0 0 2 Rational
+    interI2Fac = fromListT6 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                trian2 = trianMap2 
+                inds = [ (Empty, Empty, (singletonInd $ Ind9 a), Empty, Empty, (Append (Ind3 b) $ singletonInd $ Ind3 c)) | a <- [0..9], b <- [0..3], c <- [0..3]]
+                f (_, _, ind1, _, _, ind2)
+                    | ind1 == ((M.!) trian2 $ sortInd ind2 ) = jMult2 ind2 
+                    | otherwise = 0 
+
     interJ2 :: ATens 0 0 0 1 2 0 Rational
     interJ2 = fromListT6 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
             where
@@ -177,6 +216,15 @@ module BasicTensors4_2 (
                 inds = [ (Empty, Empty, Empty, (singletonInd $ Ind9 a), (Append (Ind3 b) $ singletonInd $ Ind3 c), Empty) | a <- [0..9], b <- [0..3], c <- [0..3]]
                 f (_, _, _, ind1, ind2, _)
                     | ind1 == ((M.!) trian2 $ sortInd ind2 ) = jMult2 ind2  
+                    | otherwise = 0 
+
+    interJ2NoFac :: ATens 0 0 0 1 2 0 Rational
+    interJ2NoFac = fromListT6 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                trian2 = trianMap2
+                inds = [ (Empty, Empty, Empty, (singletonInd $ Ind9 a), (Append (Ind3 b) $ singletonInd $ Ind3 c), Empty) | a <- [0..9], b <- [0..3], c <- [0..3]]
+                f (_, _, _, ind1, ind2, _)
+                    | ind1 == ((M.!) trian2 $ sortInd ind2 ) = 1  
                     | otherwise = 0 
 
     interIArea :: ATens 1 0 0 0 0 4  Rational
@@ -201,11 +249,36 @@ module BasicTensors4_2 (
                         where
                             (indArea, s) = canonicalizeArea ind2 
 
+    interIAreaFac :: ATens 1 0 0 0 0 4  Rational
+    interIAreaFac = fromListT6 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                trianArea = trianMapArea
+                inds = [ ((singletonInd $ Ind20 a), Empty, Empty, Empty, Empty, (Append (Ind3 b) $ Append (Ind3 c) $ Append (Ind3 d) $ singletonInd $ Ind3 e)) | a <- [0..20], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], not (b == c || d == e)]
+                f (ind1, _, _, _, _, ind2)
+                    | ind1 == ((M.!) trianArea indArea) = s * (jMultArea indArea)
+                    | otherwise = 0
+                        where
+                            (indArea, s) = canonicalizeArea ind2 
+
+    interJAreaNoFac :: ATens 0 1 0 0 4 0 Rational
+    interJAreaNoFac = fromListT6 $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+            where
+                trianArea = trianMapArea
+                inds = [  (Empty, (singletonInd $ Ind20 a), Empty, Empty, (Append (Ind3 b) $ Append (Ind3 c) $ Append (Ind3 d) $ singletonInd $ Ind3 e), Empty) | a <- [0..20], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], not (b == c || d == e)]
+                f (_, ind1, _, _, ind2, _)
+                    | ind1 == ((M.!) trianArea indArea) = s 
+                    | otherwise = 0
+                        where
+                            (indArea, s) = canonicalizeArea ind2 
+
     interMetric :: ATens 0 0 1 1 1 1 Rational
     interMetric = (-2) &. (contrATens3 (0,0) $ interI2 &* interJ2 )
 
     interArea :: ATens 1 1 0 0 1 1 Rational
     interArea = (-4) &. (contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ interIArea &* interJArea)
+
+    interArea2 :: ATens 1 1 0 0 1 1 Rational
+    interArea2 = 4 &. (contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ interIArea &* interJAreaNoFac)
 
     interEqn2 :: ATens 1 1 0 0 2 2 Rational
     interEqn2 = int1 &- int2

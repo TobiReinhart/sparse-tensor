@@ -1589,17 +1589,29 @@ module PerturbationTree2_3 (
               trianArea = trianMapArea
               list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ p : b' ++ [q], (areaMult a') * (areaMult b'), map (\[a,p,b,q] -> (Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ [[a,p,b,q], [a,q,b,p], [b,p,a,q], [b,q,a,p]]) | a <- [1..21], b <- [a..21], p <- [0..3], q <- [p..3]]
   
-    --A:Bp:Cq
+    --Ap:Bq:C
 
     areaList14IndsRom :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 2 0])]
-    areaList14IndsRom = areaList14_1Inds
-
+    areaList14IndsRom = mkEvalMap 14 list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ p : b' ++ q : c' , (areaMult a') * (areaMult b') * (areaMult c'), map (\[[a,p],[b,q]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], c <- [1..21], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
+  
     areaList14IndsEtaRom :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 2 0])]
-    areaList14IndsEtaRom = areaList14_1IndsEta
-
+    areaList14IndsEtaRom = mkEvalMapEta 14 list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ p : b' ++ q : c' , (areaMult a') * (areaMult b') * (areaMult c'), map (\[[a,p],[b,q]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], c <- [1..21], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
+  
     areaList14IndsEpsRom :: [(I.IntMap Int, Int, [IndTuple 3 0 0 0 2 0])]
-    areaList14IndsEpsRom = areaList14_1IndsEps
-
+    areaList14IndsEpsRom = mkEvalMapEps 14 list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ p : b' ++ q : c' , (areaMult a') * (areaMult b') * (areaMult c'), map (\[[a,p],[b,q]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], c <- [1..21], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
+  
     --now the symmetry and filter lists 
 
     filterList4 :: [(Int,Int)]
@@ -1817,10 +1829,12 @@ module PerturbationTree2_3 (
     symList10Rom = ([(5,10)], [(1,2),(3,4),(6,7),(8,9)], [([1,2],[3,4]),([6,7],[8,9]),([1,2,3,4],[6,7,8,9])], [], [])
 
     filterList14Rom :: [(Int,Int)]
-    filterList14Rom = filterList14_1 
+    filterList14Rom = [(1,2),(1,3),(3,4),(6,7),(6,8),(8,9),(11,12),(11,13),(13,14),(1,6)]
 
     symList14Rom :: Symmetry 
-    symList14Rom = symList14_1
+    symList14Rom = ([], [(1,2),(3,4),(6,7),(8,9),(11,12),(13,14)], [([1,2],[3,4]),([6,7],[8,9]),([11,12],[13,14]),
+                   ([1,2,3,4,5],[6,7,8,9,10])], [], [])
+
 
 
     --------------------------------------------------------------------------------------------------------------------------------------

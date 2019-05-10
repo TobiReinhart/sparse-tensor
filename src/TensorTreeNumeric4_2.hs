@@ -38,7 +38,7 @@
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
     resortTens1, resortTens5, fromListT6',
     (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6, removeZeros, toMatList6, toMatList6', mapTensList6, 
-    splitAnsTens, tensorRank', toMatList6Lin, toMatList6Quad, showAnsVar
+    splitAnsTens, tensorRank', toMatList6Lin, toMatList6Quad, showAnsVar, showAnsVarLinVar, showAnsVarQuadVar, showLinearVar, showQuadraticVar
  
     
 ) where
@@ -194,6 +194,12 @@
     removeContractionInd i ind1 ((Append x xs),t) = fmap (\(m,n) -> (Append x m, n)) $ removeContractionInd (i-1) ind1 (xs,t)
 
     --resort inds in INdList accroding to the permutation given by [Int], length of [Int] must be n
+
+    --example: perm = [1, 2, 0]
+    --         indList = [A, B, C]
+    --         algorithm sorts [(1,A), (2,B), (0,C)] on firsts
+    --         => [(0,C), (1,A), (2,B)]
+    --         => [C, A, B]
 
     resortInd :: (SingI n, Ord a) => [Int] -> IndList n a -> IndList n a
     resortInd perm indList = newindList
@@ -1424,35 +1430,50 @@
     ansVarToQuadraticVar :: AnsVar a -> AnsVar (QuadraticVar a)
     ansVarToQuadraticVar (AnsVar mapA) = AnsVar $ I.map (\x -> QuadraticVar x I.empty I.empty) mapA
 
-    showAnsVar :: AnsVar Rational -> String 
-    showAnsVar (AnsVar linMap)
+    showAnsVar :: AnsVar Rational -> Char -> String 
+    showAnsVar (AnsVar linMap) varLabel
         | assocs == [] = " "
         | otherwise = tail assocs
             where 
-                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ "x" ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
                 showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
                 showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
 
-    showLinearVar :: LinearVar Rational -> String 
-    showLinearVar (LinearVar s linMap)
+    showLinearVar :: LinearVar Rational -> Char -> String 
+    showLinearVar (LinearVar s linMap) varLabel
         | assocs == [] = showFrac s
         | otherwise = if s == 0 then tail assocs else showFrac s ++ assocs
             where 
-                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ "x" ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
                 showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
                 showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
 
-    showQuadraticVar :: QuadraticVar Rational -> String 
-    showQuadraticVar (QuadraticVar s linMap quadMap)
+    showAnsVarLinVar :: AnsVar (LinearVar Rational) -> Char -> Char -> String 
+    showAnsVarLinVar (AnsVar linMap) varLabelAns varLabelLin
+        | assocs == [] = " "
+        | otherwise = tail assocs
+            where 
+                assocs = concat $ map (\(x,y) -> "+" ++ showLinearVar y varLabelLin ++ "*" ++ [varLabelAns] ++ show x) $ filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap     
+
+    showQuadraticVar :: QuadraticVar Rational -> Char -> String 
+    showQuadraticVar (QuadraticVar s linMap quadMap) varLabel
         | totalAssocs == [] = showFrac s
         | otherwise = if s == 0 then tail totalAssocs else showFrac s ++ totalAssocs
             where 
-                assocsLin = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ "x" ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
-                assocsQuad = concat $ map (\(x1,x2,y) -> "+" ++ showFrac y ++ "*" ++ "x" ++ show x1 ++ "*" ++ "x" ++ show x2 ) $ filter (\(_,_,y) -> y /= 0) $ concat $ map (\(k,m) -> map (\(k2,v) -> (k,k2,v)) $ I.assocs m) $ I.assocs quadMap
+                assocsLin = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                assocsQuad = concat $ map (\(x1,x2,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ show x1 ++ "*" ++ [varLabel] ++ show x2 ) $ filter (\(_,_,y) -> y /= 0) $ concat $ map (\(k,m) -> map (\(k2,v) -> (k,k2,v)) $ I.assocs m) $ I.assocs quadMap
                 totalAssocs = assocsLin ++ assocsQuad
                 showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
                 showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
    
+    showAnsVarQuadVar :: AnsVar (QuadraticVar Rational) -> Char -> Char -> String 
+    showAnsVarQuadVar (AnsVar linMap) varLabelAns varLabelQuad
+        | assocs == [] = " "
+        | otherwise = tail assocs
+            where 
+                assocs = concat $ map (\(x,y) -> "+" ++ showQuadraticVar y varLabelQuad ++ "*" ++ [varLabelAns] ++ show x) $ filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap 
+
+
     --flatten tensor with ansVar values to assocs list 
     
     toListShowVar1 :: (TIndex k1, TScalar a) => AbsTensor1 n1 k1 (AnsVar a) -> [([Int], [(Int, a)])]
@@ -1527,101 +1548,101 @@
 
     --show the dof vars 
 
-    toMatList1Lin :: (TIndex k1) => AbsTensor1 n1 k1 (AnsVar (LinearVar Rational)) -> [(Int, Int, String)]
-    toMatList1Lin t = concat l' 
+    toMatList1Lin :: (TIndex k1) => AbsTensor1 n1 k1 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList1Lin t varLabel = concat l' 
         where 
-            l = map (map (\(x,y) -> (x, showLinearVar y))) $ map snd $ toListShowVar1 t
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar1 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList2Lin :: (TIndex k1) => AbsTensor2 n1 n2 k1 (AnsVar (LinearVar Rational)) -> [(Int, Int, String)]
-    toMatList2Lin t = concat l'
+    toMatList2Lin :: (TIndex k1) => AbsTensor2 n1 n2 k1 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList2Lin t varLabel = concat l'
         where 
-            l = map (map (\(x,y) -> (x, showLinearVar y))) $ map snd $ toListShowVar2 t
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar2 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList3Lin :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (LinearVar Rational)) -> [(Int, Int, String)]
-    toMatList3Lin t = concat l' 
+    toMatList3Lin :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList3Lin t varLabel = concat l' 
         where 
-            l = map (map (\(x,y) -> (x, showLinearVar y))) $ map snd $ toListShowVar3 t
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar3 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList4Lin :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (LinearVar Rational)) -> [(Int, Int, String)]
-    toMatList4Lin t = concat l'
+    toMatList4Lin :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList4Lin t varLabel = concat l'
         where 
-            l = map (map (\(x,y) -> (x, showLinearVar y))) $ map snd $ toListShowVar4 t
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar4 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList5Lin :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (LinearVar Rational)) -> [(Int, Int, String)]
-    toMatList5Lin t = concat l'
+    toMatList5Lin :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList5Lin t varLabel = concat l'
         where 
-            l = map (map (\(x,y) -> (x, showLinearVar y))) $ map snd $ toListShowVar5 t
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar5 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList6Lin :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (LinearVar Rational)) -> [(Int, Int, String)]
-    toMatList6Lin t = concat l'
+    toMatList6Lin :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList6Lin t varLabel = concat l'
         where 
-            l = map (map (\(x,y) -> (x, showLinearVar y))) $ map snd $ toListShowVar6 t
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar6 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList7Lin :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (LinearVar Rational)) -> [(Int, Int, String)]
-    toMatList7Lin t = concat l' 
+    toMatList7Lin :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList7Lin t varLabel = concat l' 
         where 
-            l = map (map (\(x,y) -> (x, showLinearVar y))) $ map snd $ toListShowVar7 t
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar7 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList8Lin :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (LinearVar Rational)) -> [(Int, Int, String)]
-    toMatList8Lin t = concat l' 
+    toMatList8Lin :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList8Lin t varLabel = concat l' 
          where 
-            l = map (map (\(x,y) -> (x, showLinearVar y))) $ map snd $ toListShowVar8 t
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar8 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
 
-    toMatList1Quad :: (TIndex k1) => AbsTensor1 n1 k1 (AnsVar (QuadraticVar Rational)) -> [(Int, Int, String)]
-    toMatList1Quad t = concat l' 
+    toMatList1Quad :: (TIndex k1) => AbsTensor1 n1 k1 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList1Quad t varLabel = concat l' 
         where 
-            l = map (map (\(x,y) -> (x, showQuadraticVar y))) $ map snd $ toListShowVar1 t
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar1 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList2Quad :: (TIndex k1) => AbsTensor2 n1 n2 k1 (AnsVar (QuadraticVar Rational)) -> [(Int, Int, String)]
-    toMatList2Quad t = concat l'
+    toMatList2Quad :: (TIndex k1) => AbsTensor2 n1 n2 k1 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList2Quad t varLabel = concat l'
         where 
-            l = map (map (\(x,y) -> (x, showQuadraticVar y))) $ map snd $ toListShowVar2 t
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar2 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList3Quad :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (QuadraticVar Rational)) -> [(Int, Int, String)]
-    toMatList3Quad t = concat l' 
+    toMatList3Quad :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList3Quad t varLabel = concat l' 
         where 
-            l = map (map (\(x,y) -> (x, showQuadraticVar y))) $ map snd $ toListShowVar3 t
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar3 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList4Quad :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (QuadraticVar Rational)) -> [(Int, Int, String)]
-    toMatList4Quad t = concat l' 
+    toMatList4Quad :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList4Quad t varLabel = concat l' 
         where 
-            l = map (map (\(x,y) -> (x, showQuadraticVar y))) $ map snd $ toListShowVar4 t
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar4 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList5Quad :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (QuadraticVar Rational)) -> [(Int, Int, String)]
-    toMatList5Quad t = concat l' 
+    toMatList5Quad :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList5Quad t varLabel = concat l' 
         where 
-            l = map (map (\(x,y) -> (x, showQuadraticVar y))) $ map snd $ toListShowVar5 t
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar5 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList6Quad :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (QuadraticVar Rational)) -> [(Int, Int, String)]
-    toMatList6Quad t = concat l'
+    toMatList6Quad :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList6Quad t varLabel = concat l'
         where 
-            l = map (map (\(x,y) -> (x, showQuadraticVar y))) $ map snd $ toListShowVar6 t
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar6 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList7Quad :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (QuadraticVar Rational)) -> [(Int, Int, String)]
-    toMatList7Quad t = concat l' 
+    toMatList7Quad :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList7Quad t varLabel = concat l' 
         where 
-            l = map (map (\(x,y) -> (x, showQuadraticVar y))) $ map snd $ toListShowVar7 t
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar7 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
-    toMatList8Quad :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (QuadraticVar Rational)) -> [(Int, Int, String)]
-    toMatList8Quad t = concat l' 
+    toMatList8Quad :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList8Quad t varLabel = concat l' 
         where 
-            l = map (map (\(x,y) -> (x, showQuadraticVar y))) $ map snd $ toListShowVar8 t
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar8 t
             l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
 
 

@@ -1383,7 +1383,7 @@
                     | k1 < k2 = (k1, I.fromList [(k2, v1 * v2)])
                     | otherwise = (k2, I.fromList [(k1, v1 * v2)])
                 newAssocs = liftA2 combineF assocs1 assocs2 
-                newQuadratic = I.unions $ map (\(x,y) -> I.singleton x y) newAssocs
+                newQuadratic = I.unionsWith (I.unionWith (+)) $ map (\(x,y) -> I.singleton x y) newAssocs
 
     instance (TScalar a) => TScalar (QuadraticVar a) where 
         addS (QuadraticVar s1 lin1 quad1) (QuadraticVar s2 lin2 quad2) = QuadraticVar (addS s1 s2) (I.unionWith (addS) lin1 lin2) (I.unionWith (I.unionWith addS) quad1 quad2)
@@ -1454,7 +1454,7 @@
         | otherwise = tail assocs
             where 
                 assocs' = filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap
-                assocs = concat $ map (\(x,y) -> "+" ++ showLinearVar y varLabelLin ++ "*" ++ [varLabelAns] ++ show x) assocs'     
+                assocs = concat $ map (\(x,y) -> "+" ++ "(" ++ showLinearVar y varLabelLin ++ ")" ++ "*" ++ [varLabelAns] ++ show x) assocs'     
 
     showQuadraticVar :: QuadraticVar Rational -> Char -> String 
     showQuadraticVar (QuadraticVar s linMap quadMap) varLabel
@@ -1473,7 +1473,7 @@
         | otherwise = tail assocs
             where 
                 assocs' = filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap
-                assocs = concat $ map (\(x,y) -> "+" ++ showQuadraticVar y varLabelQuad ++ "*" ++ [varLabelAns] ++ show x) assocs'
+                assocs = concat $ map (\(x,y) -> "+" ++ "(" ++ showQuadraticVar y varLabelQuad ++ ")" ++ "*" ++ [varLabelAns] ++ show x) assocs'
 
     --flatten tensor with ansVar values to assocs list 
     

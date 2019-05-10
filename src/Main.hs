@@ -84,8 +84,38 @@ main = do
     
     let matQuadKin = toMatList6 totalQuadKin
 
-    let linSym = linSymbol ans10
+    let mkMatLin l = "LinSym := Matrix(21,21,{" ++ (init $ init $ unlines $ map (\(a,b,c) -> show (a,b) ++ " = " ++ c ++ ",") l) ++ "});" ++ "\n" 
 
-    let quadSym = quadSymbol ans14 
+    let mkMatQuad l = "Matrix(21,21,{" ++ (init $ init $ unlines $ map (\(a,b,c) -> show (a,b) ++ " = " ++ c ++ ",") l) ++ "})," ++ "\n" 
 
-    print 1
+    let linSym = mkMatLin $ linSymbol ans10 
+
+    let showFrac x = if denominator x == 1 then show (numerator x) else  "(" ++ show (numerator x) ++ "/" ++ show (denominator x) ++ ")"
+
+    let quadSym = "QuadSymList := [" ++ (init $ init $ init $ unlines $ map mkMatQuad $ quadSymbol ans14) ++ "];" ++ "\n" 
+
+    let mkMatLinKin l = "LinKin := Matrix (" ++ "8,121,{" ++ (init $ init $ unlines $ map (\((a,b),c) -> show (a,b) ++ " = " ++ showFrac c ++ ",") l) ++ "});" ++ "\n"
+    
+    let linKinList = mkMatLinKin matLinKin 
+
+    let mkMatQuadKin l = "QuadKin := Matrix (" ++ "1174,121,{" ++ (init $ init $ unlines $ map (\((a,b),c) -> show (a,b) ++ " = " ++ showFrac c ++ ",") l) ++ "});" ++ "\n"
+    
+    let quadKinList = mkMatQuadKin matQuadKin 
+    
+
+    putStr linKinList 
+
+    putStr "\n"
+
+    putStr quadKinList
+
+    putStr "\n"
+    
+    putStr linSym
+
+    putStr "\n"
+    
+    putStr quadSym
+
+
+    

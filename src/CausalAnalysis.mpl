@@ -74,7 +74,7 @@ quadPoly := proc(M::Matrix, Q::list)
     (randM, randQ) := evalRandQuad(M,Q);
     (randSubM, randSubQ) := randSubMatrixQuad(randM, randQ);
     subMInv := MatrixInverse(randSubM, method = polynom);
-    polyL := zip((x,i) -> H__i * prodTrace(subMInv,x), randSubQ, [seq(1..21)]);
+    polyL := zip((x,i) -> H[i] * prodTrace(subMInv,x), randSubQ, [seq(1..21)]);
     add(polyL);
     end proc;
 

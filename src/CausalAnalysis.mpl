@@ -76,7 +76,8 @@ quadPoly := proc(M::Matrix, Q::list)
 
 solveMatrixEqns := proc(M::Matrix)
     colsM := ColumnDimension(M);
-    zeroVec := ZeroVector(colsM);
+    rowsM := RowDimension(M);
+    zeroVec := ZeroVector(rowsM);
     sol := convert(LinearSolve(M,zeroVec), list);
     vars := [seq(x[i],i=1..colsM)];
     evalL := zip((x,y) -> x = y, vars, sol); 

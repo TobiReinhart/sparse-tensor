@@ -38,8 +38,10 @@ randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
     uses LinearAlgebra, combinat;
     n := RowDimension(Lin);
     rowList := [seq(1..n)];
-    QuadL := map(x -> SubMatrix(x,randcomb(rowList,n-4),randcomb(rowList,n-4)), Quad);
-    LinM := SubMatrix(Lin,randcomb(rowList,n-4),randcomb(rowList,n-4));
+    rowComb := randcomb(rowList,n-4);
+    colComb := randcomb(rowList,n-4);
+    QuadL := map(x -> SubMatrix(x,rowComb,colComb), Quad);
+    LinM := SubMatrix(Lin,rowComb,colComb);
     if  Rank(LinM) < n-4 then 
         randSubMatrixQuad(Lin,Quad); 
         else (LinM, QuadL); 

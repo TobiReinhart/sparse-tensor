@@ -16,7 +16,7 @@ evalRand := proc(M::Matrix)
 
 #construct a random SubMatrix 
 randSubMatrix := proc(M::Matrix)
-    uses LinearAlgebra;
+    uses LinearAlgebra, combinat;
     n := RowDimension(M);
     rowList := [seq(1..n)];
     M2 := SubMatrix(M,randcomb(rowList,n-4),randcomb(rowList,n-4));
@@ -35,7 +35,7 @@ linPoly := proc(M::Matrix)
 #construct the subMatrices for the linear Matrix and the list of quadratic matrices
 #linear subMatrix must have full rank
 randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
-    uses LinearAlgebra;
+    uses LinearAlgebra, combinat;
     n := RowDimension(Lin);
     rowList := [seq(1..n)];
     QuadL := map(x -> SubMatrix(x,randcomb(rowList,n-4),randcomb(rowList,n-4)), Quad);

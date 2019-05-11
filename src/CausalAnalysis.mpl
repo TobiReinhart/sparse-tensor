@@ -87,37 +87,3 @@ solveMatrixEqns := proc(M::Matrix)
     end proc;
 
 end module;
-
-with(LinearAlgebra);
-with(combinat);
-with(Threads);
-with(ListTools);
-
-with(CausalAnalysis);
-
-read "RomAll.txt";
-
-sol := solveMatrixEqns(QuadKin);
-
-linSymSol := subs(sol, linSym);
-
-quadSymSol := map(x -> subs(sol,x),quadSymList); 
-
-Poly := quadPoly(linSymSol, quadSymSol);
-
-print(Poly);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

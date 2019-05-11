@@ -343,7 +343,7 @@ module FlatTensorEquations (
             kTens = fromListT6 $ zipWith (\i j -> ((Empty,Empty,Empty,Empty,Empty,singletonInd $ Ind3 i),j)) [0..] kTensList :: ATens 0 0 0 0 0 1 (LinearVar Rational)
             tens = contrATens3 (0,0) $ contrATens3 (1,1) $ ans10 &* kTens &* kTens
             tensList = toListShow6 tens
-            tList = map (\([a,b],val) -> (a,b,showAnsVarQuadVar val 'x' 'k')) tensList 
+            tList = map (\([a,b],val) -> (a+1,b+1,showAnsVarQuadVar val 'x' 'k')) tensList 
 
     --for the quadratic symbol we get multiple matrices 
     quadSymbol :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> [[(Int,Int,String)]] 
@@ -355,7 +355,7 @@ module FlatTensorEquations (
             tens' = resortTens1 [1,2,0] tens
             tensList = toListShow6 tens'
             tList = sortOn (\(a,_,_,_) -> a) $ map (\([a,b,c],val) -> (a,b,c,showAnsVarQuadVar val 'x' 'k')) tensList 
-            tList2 = map (map (\(a,b,c,d) -> (b,c,d))) $ groupBy (\(z1,_,_,_) (z2,_,_,_) -> z1 == z2) tList
+            tList2 = map (map (\(a,b,c,d) -> (b+1,c+1,d))) $ groupBy (\(z1,_,_,_) (z2,_,_,_) -> z1 == z2) tList
 
     
 

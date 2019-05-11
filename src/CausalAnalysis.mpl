@@ -78,7 +78,7 @@ solveMatrixEqns := proc(M::Matrix)
     colsM := ColumnDimension(M);
     zeroVec := ZeroVector(colsM);
     sol := convert(LinearSolve(M,zeroVec), list);
-    vars := sort(convert(indets(M),list));
+    vars := [seq(x[i],i=1..colsM)];
     evalL := zip((x,y) -> x = y, vars, sol); 
     end proc;
 

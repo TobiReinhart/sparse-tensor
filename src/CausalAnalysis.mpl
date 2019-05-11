@@ -54,7 +54,7 @@ evalRandQuad := proc(Lin::Matrix, Quad::list)
     varsLin := convert(indets(Lin) minus {k__0,k__1,k__2,k__3},list);
     fRand := rand(-1000..1000);
     evalL := zip((a,b) -> a = b, varsLin, [seq(fRand(), i = 1..nops(varsLin))]);
-    QuadL := map(x -> simplify(subs(evalL,Quad)), evalL);
+    QuadL := map(x -> simplify(subs(evalL,x)), Quad);
     LinM := simplify(subs(evalL, Lin)); 
     (LinM, QuadL);
     end proc;

@@ -1,7 +1,7 @@
 #function to compute the symbol of a rank deficient matrix 
 CausalAnalysis := module()
 
-export evalRand, randSubMatrix, linPoly, linPoly2, linPolyParallel, mkQuadMatrices, randSubMatrixQuad, evalRandQuad, eval1MinorL;
+export evalRand, randSubMatrix, linPoly, randSubMatrixQuad, evalRandQuad, prodTrace, quadPoly, solveMatrixEqns;
 
 option package;
 
@@ -27,38 +27,15 @@ randSubMatrix := proc(M::Matrix)
     end proc;
 
 #compute the principal polynomial for one matrix (linear order) and one rand combination 
-linPoly2 := proc(M::Matrix)
+linPoly := proc(M::Matrix)
     n := RowDimension(M);
     (MRand, evalL) := evalRand(M);
     SubM := randSubMatrix(MRand);
     Pol := factor(Determinant(SubM, method=multivar));
-    if degree(Pol) = 2*n-8 then (Pol, evalL); else gcd(Pol,linPoly(M)); end if;
     end proc;
 
-#parallel implementation for fixed number of random submatrices
-linPolyParallel := proc(M::Matrix,i::integer)
-    n := RowDimension(M);
-    (MRand, evalL) := evalRand(M);
-    SubMList := map(x -> randSubMatrix(MRand), [seq(1..i)]);
-    PolyList := Map(x -> factor(Determinant(x, method=multivar)), SubMList);
-    Poly := foldr(gcd,0,op(PolyList));
-    (Poly,evalL);
-    end proc;
-
-#now the parallel implementation for a fixed number of evaluation points
-linPoly := proc(M::Matrix, i::integer)
-    Map(x -> linPoly2(M), [seq(1..i)]);
-    end proc;
-
-
-#construct the n^2 quadratic matrices from the linear matrix and the n (factors in front of HA) quadratic matrices 
-mkQuadMatrices := proc(Lin::Matrix, Quad::list)
-    n := RowDimension(Lin); 
-    LinCols := [Column(Lin,[seq(1..n)])];
-    QuadCols := map(x -> [Column(x,[seq(1..n)])],Quad);
-    MatList := map(x -> zip((y,z) -> Matrix(subs(y = z, LinCols)), LinCols, x), QuadCols); 
-    end proc;
-
+#construct the subMatrices for the linear Matrix and the list of quadratic matrices
+#linear subMatrix must have full rank
 randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
     n := RowDimension(Lin);
     rowList := [seq(1..n)];
@@ -70,27 +47,40 @@ randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
     end if;
     end proc;
 
+#evaluate randomly in the linear constants as this is probably 
 evalRandQuad := proc(Lin::Matrix, Quad::list)
-    varsLin := indets(Lin) minus {k__0,k__1,k__2,k__3};
-    varsQuad := map(x -> indets(x) minus {k__0,k__1,k__2,k__3}, Quad);
-    vars := convert( `union`(varsLin,op(varsQuad)) ,list);
+    varsLin := convert(indets(Lin) minus {k__0,k__1,k__2,k__3},list);
     fRand := rand(-1000..1000);
-    evalL := zip((a,b) -> a = b, vars, [seq(fRand(), i = 1..nops(vars))]);
+    evalL := zip((a,b) -> a = b, varsLin, [seq(fRand(), i = 1..nops(varsLin))]);
     QuadL := map(x -> simplify(subs(evalL,Quad)), evalL);
     LinM := simplify(subs(evalL, Lin)); 
     (LinM, QuadL);
     end proc;
 
-eval1MinorL := proc(Lin::Matrix, Quad::list)
-    (matListRand, evalL) := evalRandQuad(matList);
-    (subMatLin, subMatList) := randSubMatrixQuad(matListRand, evalL);
-    matList := mkQuadMatrices(subMatLin,subMatList);
-    PolyLin := factor(Determinant(Lin, method=multivar));
-    PolyQuad := Map(x -> factor(add(Determinant(i, method=multivar)), i in x), subMatList);
-    (PolyLin,PolyQuad);
-    end proc; 
+#compute the trace of a mutrix product 
+prodTrace := proc(M::Matrix, Q::Matrix)
+    size := min(RowDimension(M),ColumnDimension(Q));
+    rowsM := Row(M,[seq(1..size)]);
+    colsQ := Column(Q,[seq(1..size)]);
+    l := zip((x,y) -> Multiply(x,y), rowsM, colsQ);
+    factor(add(l));
+    end proc;
 
-#how can we compute the gcd perturbatively ?
+quadPoly := proc(M::Matrix, Q::list)
+    (randM, randQ) := evalRandQuad(M,Q);
+    (randSubM, randSubQ) := randSubMatrixQuad(randM, randQ);
+    subMInv := MatrixInverse(randSubM, method = polynom);
+    polyL := zip((x,i) -> H__i * prodTrace(subMInv,x), randSubQ, [seq(1..21)]);
+    add(polyL);
+    end proc;
+
+solveMatrixEqns := proc(M::Matrix)
+    colsM := ColumnDimension(M);
+    zeroVec := ZeroVector(colsM);
+    sol := convert(LinearSolve(M,zeroVec), list);
+    vars := sort(convert(indets(M),list));
+    evalL := zip((x,y) -> x = y, vars, sol); 
+    end proc;
 
 end module;
 

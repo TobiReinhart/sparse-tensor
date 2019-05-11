@@ -1444,7 +1444,7 @@
         | assocs == [] = showFrac s
         | otherwise = if s == 0 then tail assocs else showFrac s ++ assocs
             where 
-                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x ++ "]") $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
                 showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
                 showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
 
@@ -1454,15 +1454,15 @@
         | otherwise = tail assocs
             where 
                 assocs' = filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap
-                assocs = concat $ map (\(x,y) -> "+" ++ "(" ++ showLinearVar y varLabelLin ++ ")" ++ "*" ++ [varLabelAns] ++ show x) assocs'     
+                assocs = concat $ map (\(x,y) -> "+" ++ "(" ++ showLinearVar y varLabelLin ++ ")" ++ "*" ++ [varLabelAns] ++ "[" ++ show x ++ "]") assocs'     
 
     showQuadraticVar :: QuadraticVar Rational -> Char -> String 
     showQuadraticVar (QuadraticVar s linMap quadMap) varLabel
         | totalAssocs == [] = showFrac s
         | otherwise = if s == 0 then tail totalAssocs else showFrac s ++ totalAssocs
             where 
-                assocsLin = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
-                assocsQuad = concat $ map (\(x1,x2,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ show x1 ++ "*" ++ [varLabel] ++ show x2 ) $ filter (\(_,_,y) -> y /= 0) $ concat $ map (\(k,m) -> map (\(k2,v) -> (k,k2,v)) $ I.assocs m) $ I.assocs quadMap
+                assocsLin = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x ++ "]") $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                assocsQuad = concat $ map (\(x1,x2,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x1 ++ "]" ++ "*" ++ [varLabel] ++ "[" ++ show x2 ++ "]" ) $ filter (\(_,_,y) -> y /= 0) $ concat $ map (\(k,m) -> map (\(k2,v) -> (k,k2,v)) $ I.assocs m) $ I.assocs quadMap
                 totalAssocs = assocsLin ++ assocsQuad
                 showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
                 showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
@@ -1473,7 +1473,7 @@
         | otherwise = tail assocs
             where 
                 assocs' = filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap
-                assocs = concat $ map (\(x,y) -> "+" ++ "(" ++ showQuadraticVar y varLabelQuad ++ ")" ++ "*" ++ [varLabelAns] ++ show x) assocs'
+                assocs = concat $ map (\(x,y) -> "+" ++ "(" ++ showQuadraticVar y varLabelQuad ++ ")" ++ "*" ++ [varLabelAns] ++ "[" ++ show x ++ "]") assocs'
 
     --flatten tensor with ansVar values to assocs list 
     

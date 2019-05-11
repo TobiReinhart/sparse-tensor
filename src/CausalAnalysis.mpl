@@ -8,7 +8,7 @@ option package;
 #evaluate all constants randomly
 evalRand := proc(M::Matrix)
     uses LinearAlgebra;
-    vars := convert(indets(M) minus {k__0,k__1,k__2,k__3},list);
+    vars := convert(indets(M) minus {k[0],k[1],k[2],k[3]},list);
     fRand := rand(-1000..1000);
     evalL := zip((a,b) -> a = b, vars, [seq(fRand(), i = 1..nops(vars))]);
     (simplify(subs(evalL,M)), evalL);
@@ -51,7 +51,7 @@ randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
 #evaluate randomly in the linear constants as this is probably 
 evalRandQuad := proc(Lin::Matrix, Quad::list)
     uses LinearAlgebra;
-    varsLin := convert(indets(Lin) minus {k__0,k__1,k__2,k__3},list);
+    varsLin := convert(indets(Lin) minus {k[0],k[1],k[2],k[3]},list);
     fRand := rand(-1000..1000);
     evalL := zip((a,b) -> a = b, varsLin, [seq(fRand(), i = 1..nops(varsLin))]);
     QuadL := map(x -> simplify(subs(evalL,x)), Quad);
@@ -63,8 +63,8 @@ evalRandQuad := proc(Lin::Matrix, Quad::list)
 prodTrace := proc(M::Matrix, Q::Matrix)
     uses LinearAlgebra;
     size := min(RowDimension(M),ColumnDimension(Q));
-    rowsM := Row(M,[seq(1..size)]);
-    colsQ := Column(Q,[seq(1..size)]);
+    rowsM := [Row(M,[seq(1..size)])];
+    colsQ := [Column(Q,[seq(1..size)])];
     l := zip((x,y) -> Multiply(x,y), rowsM, colsQ);
     factor(add(l));
     end proc;

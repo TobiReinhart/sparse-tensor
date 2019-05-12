@@ -1,7 +1,7 @@
 #function to compute the symbol of a rank deficient matrix 
 CausalAnalysis := module()
 
-export evalRand, randSubMatrix, linPoly, randSubMatrixQuad, evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyExact, linPolyExact;
+export evalRand, randSubMatrix, linPoly, randSubMatrixQuad, evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyExact, linPolyExact, quadPolyN;
 
 option package;
 
@@ -48,7 +48,7 @@ linPoly := proc(M::Matrix)
     Pol := factor(Determinant(SubM, method=multivar));
     end proc;
 
-#try to compute the polynomial without making approximations, inserting random values 
+#try to compute the polynomial without making approximations, inserting random values -> not possible with 26GB
 linPolyExact := proc(M::Matrix)
     uses LinearAlgebra;
     SubM := randSubMatrixExact(M);
@@ -127,6 +127,23 @@ quadPolyExact := proc(M::Matrix, Q::list)
     poly := add(polyL);
     fac1 := Determinant(randSubM, method = multivar);
     simplify(fac1*poly);
+    end proc;
+
+quadPoly2 := proc(M::Matrix, Q::list)
+    uses LinearAlgebra;
+    (randSubM, randSubQ) := randSubMatrixQuad(randM, randQ);
+    subMInv := MatrixInverse(randSubM, method = polynom);
+    polyL := map(x -> prodTrace(subMInv,x), randSubQ);
+    fac1 := Determinant(randSubM, method = multivar);
+    map(x -> simplify(fac1*x),polyL);
+    end proc;
+
+quadPolyN := proc(M::Matrix, Q::list, n::integer)
+    uses LinearAlgebra, Threads;
+    l := [seq(1..n)];
+    (randM, randQ) := evalRandQuad(M,Q);
+    PolyL := Map(x -> quadPoly2(M,Q), l);
+    foldr((x1,x2) -> zip((y,z) -> gcd(y,z), x1 x2), 0, PolyL);
     end proc;
 
 solveMatrixEqns := proc(M::Matrix)

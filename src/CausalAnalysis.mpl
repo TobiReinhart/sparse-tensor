@@ -19,7 +19,7 @@ evalRandFull := proc(M::Matrix)
     vars := convert(indets(M),list);
     fRand := rand(-1000..1000);
     evalL := zip((a,b) -> a = b, vars, [seq(fRand(), i = 1..nops(vars))]);
-    (simplify(subs(evalL,M)), evalL);
+    simplify(subs(evalL,M));
     end proc;
 
 #construct a random SubMatrix 
@@ -43,7 +43,6 @@ randSubMatrixExact := proc(M::Matrix)
 #compute the principal polynomial for one matrix (linear order) and one rand combination 
 linPoly := proc(M::Matrix)
     uses LinearAlgebra;
-    n := RowDimension(M);
     (MRand, evalL) := evalRand(M);
     SubM := randSubMatrix(MRand);
     Pol := factor(Determinant(SubM, method=multivar));
@@ -52,7 +51,6 @@ linPoly := proc(M::Matrix)
 #try to compute the polynomial without making approximations, inserting random values 
 linPolyExact := proc(M::Matrix)
     uses LinearAlgebra;
-    n := RowDimension(M);
     SubM := randSubMatrixExact(M);
     Pol := factor(Determinant(SubM, method=multivar));
     end proc;

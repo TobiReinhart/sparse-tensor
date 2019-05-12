@@ -143,7 +143,7 @@ quadPolyN := proc(M::Matrix, Q::list, n::integer)
     l := [seq(1..n)];
     (randM, randQ) := evalRandQuad(M,Q);
     PolyL := Map(x -> quadPoly2(M,Q), l);
-    foldr((x1,x2) -> zip((y,z) -> gcd(y,z), x1 x2), 0, PolyL);
+    foldr((x1,x2) -> zip((y,z) -> gcd(y,z), x1, x2), 0, PolyL);
     end proc;
 
 solveMatrixEqns := proc(M::Matrix)

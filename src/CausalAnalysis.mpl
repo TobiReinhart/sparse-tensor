@@ -131,7 +131,7 @@ quadPolyExact := proc(M::Matrix, Q::list)
 
 quadPoly2 := proc(M::Matrix, Q::list)
     uses LinearAlgebra;
-    (randSubM, randSubQ) := randSubMatrixQuad(randM, randQ);
+    (randSubM, randSubQ) := randSubMatrixQuad(M, Q);
     subMInv := MatrixInverse(randSubM, method = polynom);
     polyL := map(x -> prodTrace(subMInv,x), randSubQ);
     fac1 := Determinant(randSubM, method = multivar);
@@ -142,7 +142,7 @@ quadPolyN := proc(M::Matrix, Q::list, n::integer)
     uses LinearAlgebra, Threads;
     l := [seq(1..n)];
     (randM, randQ) := evalRandQuad(M,Q);
-    PolyL := Map(x -> quadPoly2(M,Q), l);
+    PolyL := Map(x -> quadPoly2(randM,randQ), l);
     foldr((x1,x2) -> zip((y,z) -> gcd(y,z), x1, x2), 0, PolyL);
     end proc;
 

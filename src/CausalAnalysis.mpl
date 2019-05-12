@@ -69,13 +69,16 @@ prodTrace := proc(M::Matrix, Q::Matrix)
     factor(add(l));
     end proc;
 
+#better use area metric dofs 
 quadPoly := proc(M::Matrix, Q::list)
     uses LinearAlgebra;
     (randM, randQ) := evalRandQuad(M,Q);
     (randSubM, randSubQ) := randSubMatrixQuad(randM, randQ);
     subMInv := MatrixInverse(randSubM, method = polynom);
     polyL := zip((x,i) -> H[i] * prodTrace(subMInv,x), randSubQ, [seq(1..21)]);
-    add(polyL);
+    poly := add(polyL);
+    fac1 := Determinant(randSubM, method = multivar);
+    simplify(fac1*poly);
     end proc;
 
 solveMatrixEqns := proc(M::Matrix)

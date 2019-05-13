@@ -126,7 +126,7 @@ totalPoly := proc(M::Matrix, Q::list)
     subMInv := MatrixInverse(randSubM, method = polynom);
     polyL := map(x -> prodTrace(subMInv,x), randSubQ);
     fac1 := Determinant(randSubM, method = multivar);
-    Poly := map(x -> factor(fac1*x));
+    Poly := map(x -> factor(fac1*x),polyL);
     (fac1,Poly);
     end proc;
 

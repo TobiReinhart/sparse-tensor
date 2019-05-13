@@ -1,7 +1,7 @@
 #function to compute the symbol of a rank deficient matrix 
 CausalAnalysis := module()
 
-export evalRand, randSubMatrix, linPoly, randSubMatrixQuad, evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyExact, linPolyExact, quadPolyN;
+export evalRand, randSubMatrix, linPoly, randSubMatrixQuad, evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyExact, linPolyExact, quadPolyN, totalPoly;
 
 option package;
 
@@ -119,6 +119,17 @@ quadPoly := proc(M::Matrix, Q::list)
     simplify(fac1*poly);
     end proc;
 
+totalPoly := proc(M::Matrix, Q::list)
+    uses LinearAlgebra;
+    (randM, randQ) := evalRandQuad(M,Q);
+    (randSubM, randSubQ) := randSubMatrixQuad(randM, randQ);
+    subMInv := MatrixInverse(randSubM, method = polynom);
+    polyL := map(x -> prodTrace(subMInv,x), randSubQ);
+    fac1 := Determinant(randSubM, method = multivar);
+    Poly := map(x -> factor(fac1*x));
+    (fac1,Poly);
+    end proc;
+
 quadPolyExact := proc(M::Matrix, Q::list)
     uses LinearAlgebra;
     (randSubM, randSubQ) := randSubMatrixQuad(M, Q);
@@ -141,9 +152,10 @@ quadPoly2 := proc(M::Matrix, Q::list)
 quadPolyN := proc(M::Matrix, Q::list, n::integer)
     uses LinearAlgebra, Threads;
     l := [seq(1..n)];
+    zeroL := [seq(0,i=1..n)];
     (randM, randQ) := evalRandQuad(M,Q);
     PolyL := Map(x -> quadPoly2(randM,randQ), l);
-    foldr((x1,x2) -> zip((y,z) -> gcd(y,z), x1, x2), 0, PolyL);
+    foldr((x1,x2) -> zip((y,z) -> gcd(y,z), x1, x2), zeroL , op(PolyL));
     end proc;
 
 solveMatrixEqns := proc(M::Matrix)

@@ -105,7 +105,7 @@ randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
     LinMRand := evalRandFull(LinM);
     if  Rank(LinMRand) < n-4 then 
         randSubMatrixQuad(Lin,Quad); 
-        else (LinM, QuadL); 
+        else [LinM, QuadL]; 
     end if;
     end proc;
 
@@ -153,7 +153,9 @@ prodTrace := proc(M::Matrix, Q::Matrix)
 quadPoly := proc(M::Matrix, Q::list)
     uses LinearAlgebra;
     (randM, randQ) := evalRandQuad(M,Q);
-    (randSubM, randSubQ) := randSubMatrixQuad(randM, randQ);
+    randSubL := randSubMatrixQuad(randM, randQ);
+    randSubM := randSubL[1];
+    randSubQ := randSubL[2];
     quadPolySubF(randSubM, randSubQ);
     end proc;
 
@@ -171,7 +173,7 @@ quadPolyN := proc(M::Matrix, Q::list, n::integer)
     l := [seq(1..n)];
     (randM, randQ) := evalRandQuad(M,Q);
     SubML := randSubMatrixQuadN(randM, randQ, n);
-    PolyL := Map(x -> quadPolySubF(op(x)), SubML);
+    PolyL := Map(x -> quadPolySubF(x[1], x[2], SubML);
     end proc; 
 
 

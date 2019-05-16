@@ -1,7 +1,8 @@
 #function to compute the symbol of a rank deficient matrix 
 CausalAnalysis := module()
 
-export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN, evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc ;
+export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN,
+       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact ;
 
 option package;
 
@@ -183,12 +184,28 @@ quadPolyN := proc(M::Matrix, Q::list, n::integer)
     PolyL := Map[tasksize = 1](x -> quadPolySubF(x[1], x[2]), SubML);
     end proc; 
 
+quadPolyNExact := proc(M::Matrix, Q::list, n::integer)
+    uses LinearAlgebra, Threads;
+    l := [seq(1..n)];
+    SubML := randSubMatrixQuadN(M, Q, n);
+    print("list is constructed");
+    PolyL := Map[tasksize = 1](x -> quadPolySubF(x[1], x[2]), SubML);
+    end proc; 
+
 calc := proc(n::integer)
     read "RomAll.txt":
     sol := solveMatrixEqns(QuadKin):
     LinSymSol := subs(sol,LinSym):
     QuadSymSol := subs(sol, QuadSymList):
     quadPolyN(LinSymSol, QuadSymSol, n);
+    end proc;    
+
+calcExact := proc(n::integer)
+    read "RomAll.txt":
+    sol := solveMatrixEqns(QuadKin):
+    LinSymSol := subs(sol,LinSym):
+    QuadSymSol := subs(sol, QuadSymList):
+    quadPolyNExact(LinSymSol, QuadSymSol, n);
     end proc;    
 
 

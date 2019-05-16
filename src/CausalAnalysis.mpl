@@ -146,7 +146,7 @@ prodTrace := proc(M::Matrix, Q::Matrix)
     rowsM := [Row(M,[seq(1..size)])];
     colsQ := [Column(Q,[seq(1..size)])];
     l := zip((x,y) -> Multiply(x,y), rowsM, colsQ);
-    simplify(add(l));
+    add(l);
     end proc;
 
 #polynomial up to quadratic order
@@ -161,16 +161,17 @@ quadPoly := proc(M::Matrix, Q::list)
 
 quadPolySubF := proc(M::Matrix, Q::list)
     uses LinearAlgebra;
-    print("inverting matrix");
-    subMInv := LinearAlgebra:-MatrixInverse(M, method = polynom);
-    print("matrix inverted");
-    polyL := map(x -> prodTrace(subMInv,x), Q);
     print("calculating determinant");
     fac1 := Determinant(M, method = multivar);
     print("determinant calculated");
-    Poly := map(x -> simplify(fac1*x),polyL);
+    print("inverting matrix");
+    subMInv := LinearAlgebra:-MatrixInverse(M, method = polynom);
+    print("matrix inverted");
+    print("calculating prod trace");
+    subMInv2 := simplify(fac1 * subMInv);
+    polyL := map(x -> simplify(prodTrace(subMInv2,x)), Q);
     print("another one finsihed!");
-    [fac1,Poly];
+    [fac1,PolyL];
     end proc;
 
 quadPolyN := proc(M::Matrix, Q::list, n::integer)

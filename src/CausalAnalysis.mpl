@@ -172,7 +172,7 @@ quadPolySubF := proc(M::Matrix, Q::list)
     subMInv2 := fac1 * subMInv;
     polyL := map(x -> prodTrace(subMInv2,x), Q);
     print("another one finsihed!");
-    [fac1,PolyL];
+    [fac1,polyL];
     end proc;
 
 quadPolyN := proc(M::Matrix, Q::list, n::integer)

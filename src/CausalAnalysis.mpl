@@ -162,7 +162,7 @@ quadPoly := proc(M::Matrix, Q::list)
 quadPolySubF := proc(M::Matrix, Q::list)
     uses LinearAlgebra;
     print("calculating determinant");
-    fac1 := Determinant(M, method = multivar);
+    fac1 := Determinant(M, method = fracfree);
     print("determinant calculated");
     print("inverting matrix");
     subMInv := LinearAlgebra:-MatrixInverse(M, method = polynom);

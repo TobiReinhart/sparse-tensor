@@ -161,9 +161,13 @@ quadPoly := proc(M::Matrix, Q::list)
 
 quadPolySubF := proc(M::Matrix, Q::list)
     uses LinearAlgebra;
+    print("inverting matrix");
     subMInv := LinearAlgebra:-MatrixInverse(M, method = polynom);
+    print("matrix inverted");
     polyL := map(x -> prodTrace(subMInv,x), Q);
+    print("calculating determinant");
     fac1 := Determinant(M, method = multivar);
+    print("determinant calculated");
     Poly := map(x -> simplify(fac1*x),polyL);
     print("another one finsihed!");
     [fac1,Poly];
@@ -174,6 +178,7 @@ quadPolyN := proc(M::Matrix, Q::list, n::integer)
     l := [seq(1..n)];
     (randM, randQ) := evalRandQuad(M,Q);
     SubML := randSubMatrixQuadN(randM, randQ, n);
+    print("list is constructed");
     PolyL := Map[tasksize = 1](x -> quadPolySubF(x[1], x[2]), SubML);
     end proc; 
 

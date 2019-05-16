@@ -1,7 +1,7 @@
 #function to compute the symbol of a rank deficient matrix 
 CausalAnalysis := module()
 
-export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN, evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN ;
+export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN, evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc ;
 
 option package;
 

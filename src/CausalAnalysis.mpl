@@ -13,7 +13,7 @@ evalRand := proc(M::Matrix)
     vars := convert(indets(M) minus {k[0],k[1],k[2],k[3]},list);
     fRand := rand(-1000..1000);
     evalL := zip((a,b) -> a = b, vars, [seq(fRand(), i = 1..nops(vars))]);
-    (simplify(subs(evalL,M)), evalL);
+    simplify(subs(evalL,M));
     end proc;
 
 #evaluate all constants randomly
@@ -68,7 +68,7 @@ randSubMatrixN := proc(M::Matrix, n::integer)
 #compute the principal polynomial for one matrix (linear order) and one rand combination 
 linPoly := proc(M::Matrix)
     uses LinearAlgebra;
-    (MRand, evalL) := evalRand(M);
+    MRand := evalRand(M);
     SubM := randSubMatrix(MRand);
     Pol := simplify(Determinant(SubM, method=multivar));
     end proc;
@@ -76,7 +76,7 @@ linPoly := proc(M::Matrix)
 linPolyN := proc(M::Matrix, n::integer)
     uses LinearAlgebra, Threads;
     l := [seq(1..n)];
-    (MRand, evalL) := evalRand(M);
+    MRand := evalRand(M);
     SubML := randSubMatrixN(MRand, n);
     PolyL := Map(x -> simplify(Determinant(x, method = multivar)),subML);
     end proc; 
@@ -84,7 +84,7 @@ linPolyN := proc(M::Matrix, n::integer)
 linPolyNGCD := proc(M::Matrix, n::integer)
     uses LinearAlgebra, Threads;
     l := [seq(1..n)];
-    (MRand, evalL) := evalRand(M);
+    MRand := evalRand(M);
     SubML := randSubMatrixN(MRand, n);
     PolyL := Map(x -> simplify(Determinant(x, method = multivar)),subML);
     foldr(gcd,0,PolyL);
@@ -136,7 +136,7 @@ evalRandQuad := proc(Lin::Matrix, Quad::list)
     evalL := zip((a,b) -> a = b, varsLin, [seq(fRand(), i = 1..nops(varsLin))]);
     QuadL := map(x -> simplify(subs(evalL,x)), Quad);
     LinM := simplify(subs(evalL, Lin)); 
-    ((LinM, QuadL),evalL);
+    (LinM, QuadL);
     end proc;
 
 #compute the trace of a mutrix product 

@@ -171,7 +171,7 @@ quadPolyN := proc(M::Matrix, Q::list, n::integer)
     l := [seq(1..n)];
     (randM, randQ) := evalRandQuad(M,Q);
     SubML := randSubMatrixQuadN(randM, randQ, n);
-    PolyL := Map(x -> quadPolySubF(op(x)), subML);
+    PolyL := Map(x -> quadPolySubF(op(x)), SubML);
     end proc; 
 
 

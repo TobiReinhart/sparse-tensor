@@ -160,10 +160,10 @@ quadPoly := proc(M::Matrix, Q::list)
 quadPolySubF := proc(M::Matrix, Q::list)
     uses LinearAlgebra;
     subMInv := MatrixInverse(M, method = polynom);
-    polyL := map(x -> prodTrace(M,x), Q);
+    polyL := map(x -> prodTrace(subMInv,x), Q);
     fac1 := Determinant(M, method = multivar);
-    Poly := map(x -> factor(fac1*x),polyL);
-    (fac1,Poly);
+    Poly := map(x -> simplify(fac1*x),polyL);
+    [fac1,Poly];
     end proc;
 
 quadPolyN := proc(M::Matrix, Q::list, n::integer)

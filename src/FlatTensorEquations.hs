@@ -319,7 +319,7 @@ module FlatTensorEquations (
 
 
     quadKin2 :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
-    quadKin2 ans14 ans10 = symATens5 (0,2) $ tens0 &+ tens2 &- (tens1 &+ tens3 &+ tens4)
+    quadKin2 ans14 ans10 = symATens5 (0,2) $ tens1 &+ tens3 &+ tens4 &- (tens0 &+ tens2)
         where 
             tens0 = tensorTrans5 (1,2) $ ans10 &* delta3 
             tens1 = (2 &.) $ contrATens1 (1,0) $ ans10 &* interArea 

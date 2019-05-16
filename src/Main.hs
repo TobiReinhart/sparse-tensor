@@ -102,6 +102,7 @@ main = do
     
     let quadKinList = mkMatQuadKin matQuadKin 
     
+    
 
     putStr linKinList 
 
@@ -118,4 +119,4 @@ main = do
     putStr quadSym
 
 
-    
+   

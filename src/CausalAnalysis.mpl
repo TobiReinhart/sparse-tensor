@@ -165,6 +165,7 @@ quadPolySubF := proc(M::Matrix, Q::list)
     polyL := map(x -> prodTrace(subMInv,x), Q);
     fac1 := Determinant(M, method = multivar);
     Poly := map(x -> simplify(fac1*x),polyL);
+    print("another one finsihed!");
     [fac1,Poly];
     end proc;
 
@@ -173,8 +174,16 @@ quadPolyN := proc(M::Matrix, Q::list, n::integer)
     l := [seq(1..n)];
     (randM, randQ) := evalRandQuad(M,Q);
     SubML := randSubMatrixQuadN(randM, randQ, n);
-    PolyL := Map(x -> quadPolySubF(x[1], x[2]), SubML);
+    PolyL := Map[tasksize = 1](x -> quadPolySubF(x[1], x[2]), SubML);
     end proc; 
+
+calc := proc(n::integer)
+    read "RomAll.txt":
+    sol := solveMatrixEqns(QuadKin):
+    LinSymSol := subs(sol,LinSym):
+    QuadSymSol := subs(sol, QuadSymList):
+    quadPolyN(LinSymSol, QuadSymSol, n);
+    end proc;    
 
 
 end module;

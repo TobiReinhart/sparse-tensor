@@ -134,8 +134,8 @@ evalRandQuad := proc(Lin::Matrix, Quad::list)
     varsLin := convert(indets(Lin) minus {k[0],k[1],k[2],k[3]},list);
     fRand := rand(-1000..1000);
     evalL := zip((a,b) -> a = b, varsLin, [seq(fRand(), i = 1..nops(varsLin))]);
-    QuadL := map(x -> simplify(subs(evalL,x)), Quad);
-    LinM := simplify(subs(evalL, Lin)); 
+    QuadL := map(x -> subs(evalL,x), Quad);
+    LinM := subs(evalL, Lin); 
     (LinM, QuadL);
     end proc;
 
@@ -168,8 +168,8 @@ quadPolySubF := proc(M::Matrix, Q::list)
     subMInv := LinearAlgebra:-MatrixInverse(M, method = polynom);
     print("matrix inverted");
     print("calculating prod trace");
-    subMInv2 := simplify(fac1 * subMInv);
-    polyL := map(x -> simplify(prodTrace(subMInv2,x)), Q);
+    subMInv2 := fac1 * subMInv;
+    polyL := map(x -> prodTrace(subMInv2,x), Q);
     print("another one finsihed!");
     [fac1,PolyL];
     end proc;

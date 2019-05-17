@@ -75,19 +75,19 @@ linPoly := proc(M::Matrix)
     end proc;
 
 linPolyN := proc(M::Matrix, n::integer)
-    uses LinearAlgebra, Threads;
+    uses LinearAlgebra;
     l := [seq(1..n)];
     MRand := evalRand(M);
     SubML := randSubMatrixN(MRand, n);
-    PolyL := Map(x -> simplify(Determinant(x, method = multivar)),subML);
+    PolyL := map(x -> simplify(Determinant(x, method = fracfree)),subML);
     end proc; 
 
 linPolyNGCD := proc(M::Matrix, n::integer)
-    uses LinearAlgebra, Threads;
+    uses LinearAlgebra;
     l := [seq(1..n)];
     MRand := evalRand(M);
     SubML := randSubMatrixN(MRand, n);
-    PolyL := Map(x -> simplify(Determinant(x, method = multivar)),subML);
+    PolyL := map(x -> simplify(Determinant(x, method = fracfree)),subML);
     foldr(gcd,0,PolyL);
     end proc; 
 
@@ -176,20 +176,20 @@ quadPolySubF := proc(M::Matrix, Q::list)
     end proc;
 
 quadPolyN := proc(M::Matrix, Q::list, n::integer)
-    uses LinearAlgebra, Threads;
+    uses LinearAlgebra;
     l := [seq(1..n)];
     (randM, randQ) := evalRandQuad(M,Q);
     SubML := randSubMatrixQuadN(randM, randQ, n);
     print("list is constructed");
-    PolyL := Map[tasksize = 1](x -> quadPolySubF(x[1], x[2]), SubML);
+    PolyL := map(x -> quadPolySubF(x[1], x[2]), SubML);
     end proc; 
 
 quadPolyNExact := proc(M::Matrix, Q::list, n::integer)
-    uses LinearAlgebra, Threads;
+    uses LinearAlgebra;
     l := [seq(1..n)];
     SubML := randSubMatrixQuadN(M, Q, n);
     print("list is constructed");
-    PolyL := Map(x -> quadPolySubF(x[1], x[2]), SubML);
+    PolyL := map(x -> quadPolySubF(x[1], x[2]), SubML);
     end proc; 
 
 calc := proc(n::integer)
@@ -209,15 +209,15 @@ calcExact := proc(n::integer)
     end proc;    
 
 quadPolyN2 := proc(M::Matrix, Q::list, n :: integer, m:: integer)
-    uses LinearAlgebra, Threads;
+    uses LinearAlgebra;
     l := [seq(1..n)];
     SubML := randSubMatrixQuadN(M, Q, n);
     SubLinL := randSubMatrixN(M, m);
     print("lists are constructed");
     print("computing linear Polynomials");
-    PolyLin := Threads:-Map[ tasksize = 2](x -> simplify(Determinant(x, method = fracfree)),SubLinL); 
+    PolyLin := map(x -> simplify(Determinant(x, method = fracfree)),SubLinL); 
     print("Linear Polynomials calculated");
-    PolyQuad := Threads:-Map[ tasksize = 1](x -> quadPolySubF(x[1], x[2]), SubML);
+    PolyQuad := map(x -> quadPolySubF(x[1], x[2]), SubML);
     [PolyLin, PolyQuad];
     end proc; 
 

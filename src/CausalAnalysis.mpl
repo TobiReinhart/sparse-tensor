@@ -211,8 +211,9 @@ calcExact := proc(n::integer)
 quadPolyN2 := proc(M::Matrix, Q::list, n :: integer, m:: integer)
     uses LinearAlgebra;
     l := [seq(1..n)];
-    SubML := randSubMatrixQuadN(M, Q, n);
-    SubLinL := randSubMatrixN(M, m);
+    (randM, randQ) := evalRandQuad(M,Q);
+    SubML := randSubMatrixQuadN(randM, randQ, n);
+    SubLinL := randSubMatrixN(randM, m);
     print("lists are constructed");
     print("computing linear Polynomials");
     PolyLin := map(x -> simplify(Determinant(x, method = fracfree)),SubLinL); 

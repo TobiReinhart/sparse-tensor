@@ -1435,7 +1435,7 @@
         | assocs == [] = " "
         | otherwise = tail assocs
             where 
-                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ show x) $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x ++ "]") $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
                 showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
                 showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
 

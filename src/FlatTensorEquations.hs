@@ -38,7 +38,7 @@ module FlatTensorEquations (
     ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
     eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd, eqn3, eqn3AI, eqn1A, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
     eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC, ansatzABCD,
-    linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass, linSymbol, quadSymbol
+    linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass, linSymbol, quadSymbol, polyTensEqn, polyDensEqn
    
 ) where
 
@@ -357,5 +357,24 @@ module FlatTensorEquations (
             tList = sortOn (\(a,_,_,_) -> a) $ map (\([a,b,c],val) -> (a,b,c,showAnsVarQuadVar val 'x' 'k')) tensList 
             tList2 = map (map (\(a,b,c,d) -> (b+1,c+1,d))) $ groupBy (\(z1,_,_,_) (z2,_,_,_) -> z1 == z2) tList
 
-    
+    polyTensEqn :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> [[String]] 
+    polyTensEqn ans6 = tensList 
+            where 
+                ans6' = shiftLabels6 1 ans6 
+                ans2 = fromListT6 $ map (\(x,y) -> ((Empty, Empty, singletonInd $ Ind9 x, Empty, Empty, Empty),AnsVar $ I.singleton 1 y)) [(0,-1),(4,1),(7,1),(9,1)] :: ATens 0 0 1 0 0 0 (AnsVar Rational)           
+                tens1 = contrATens1 (0,0) $ ans6' &* flatInter 
+                tens2 = contrATens2 (0,0) $ ans2 &* interMetric
+                total = tens1 &+ tens2 
+                tensList = map (map (\(_,y) -> showAnsVar y 'x' )) $ groupBy (\x y -> (fst x) == (fst y) ) $ sortOn (\(x,y) -> x) $ toListShow6 total
 
+    polyDensEqn :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> [[String]] 
+    polyDensEqn ans6 = tensList 
+            where 
+                ans6' = shiftLabels6 1 ans6 
+                ans2 = fromListT6 $ map (\(x,y) -> ((Empty, Empty, singletonInd $ Ind9 x, Empty, Empty, Empty),AnsVar $ I.singleton 1 y)) [(0,-1),(4,1),(7,1),(9,1)] :: ATens 0 0 1 0 0 0 (AnsVar Rational)           
+                tens1 = contrATens1 (0,0) $ ans6' &* flatInter 
+                tens2 = contrATens2 (0,0) $ ans2 &* interMetric
+                total = tens1 &+ tens2 &+ (ans2 &* delta3) 
+                tensList = map (map (\(_,y) -> showAnsVar y 'x' )) $ groupBy (\x y -> (fst x) == (fst y) ) $ sortOn (\(x,y) -> x) $ toListShow6 total
+
+    

@@ -102,7 +102,7 @@ main = do
     
     let quadKinList = mkMatQuadKin matQuadKin 
     
-    
+    {-
 
     putStr linKinList 
 
@@ -119,4 +119,34 @@ main = do
     putStr quadSym
 
 
-   
+    -}
+
+    let (_,_,ans6') = mkAnsatzTensorEig 6 filterList6 symList6 areaList6IndsEta areaList6IndsEps 
+
+    let ans6 = shiftLabels6 1 ans6' 
+
+    let ans2 = fromListT6 $ map (\(x,y) -> ((Empty, Empty, singletonInd $ Ind9 x, Empty, Empty, Empty),AnsVar $ I.singleton 1 y)) [(0,-1),(4,1),(7,1),(9,1)] :: ATens 0 0 1 0 0 0 (AnsVar Rational)           
+
+    let hTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0..20]
+            
+    let hTens = fromListT6 $ zipWith (\i j -> ((Empty, singletonInd $ Ind20 i,Empty,Empty,Empty,Empty),j)) [0..] hTensList :: ATens 0 1 0 0 0 0 (LinearVar Rational)
+
+    let ansTens = ans6 
+    
+    let tens = (contrATens1 (0,0) $ ansTens &* hTens) 
+
+    let tens2 = ans2 
+    
+    let l = map (\([i],y) -> "(" ++ showAnsVarLinVar y 'x' 'H' ++ ")*k[" ++ show i ++ "]") $ toListShow6 tens
+
+    let l2 = map (\([i],y) -> "(" ++ showAnsVar y 'x' ++ ")*k[" ++ show i ++ "]") $ toListShow6 tens2
+
+    let (_,_,ans4) = mkAnsatzTensorEig 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps 
+
+    let eqn1Mass = eqn1 ans4 
+
+    let l3 = Mat.toList $ Sparse.toMatrix $ toEMatrix6 $ singletonTList eqn1Mass
+
+    print l3 
+
+

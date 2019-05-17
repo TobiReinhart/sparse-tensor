@@ -215,9 +215,9 @@ quadPolyN2 := proc(M::Matrix, Q::list, n :: integer, m:: integer)
     SubLinL := randSubMatrixN(M, m);
     print("lists are constructed");
     print("computing linear Polynomials");
-    PolyLin := Threads:-Map(x -> simplify(Determinant(x, method = fracfree)),SubLinL); 
+    PolyLin := Threads:-Map[ tasksize = 2](x -> simplify(Determinant(x, method = fracfree)),SubLinL); 
     print("Linear Polynomials calculated");
-    PolyQuad := Threads:-Map(x -> quadPolySubF(x[1], x[2]), SubML);
+    PolyQuad := Threads:-Map[ tasksize = 1](x -> quadPolySubF(x[1], x[2]), SubML);
     [PolyLin, PolyQuad];
     end proc; 
 

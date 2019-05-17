@@ -2,7 +2,7 @@
 CausalAnalysis := module()
 
 export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN,
-       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, calc2 ;
+       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, quadPolyN2, calc2 ;
 
 option package;
 
@@ -208,10 +208,9 @@ calcExact := proc(n::integer)
     quadPolyNExact(LinSymSol, QuadSymSol, n);
     end proc;    
 
-calc2 := proc(n :: integer, m:: integer)
+quadPolyN2 := proc(M::Matrix, Q::list, n :: integer, m:: integer)
     uses LinearAlgebra, Threads;
     l := [seq(1..n)];
-    read "RomAll.txt":
     SubML := randSubMatrixQuadN(M, Q, n);
     SubLinL := randSubMatrixN(M, m);
     print("lists are constructed");
@@ -221,6 +220,16 @@ calc2 := proc(n :: integer, m:: integer)
     PolyQuad := Threads:-Map(x -> quadPolySubF(x[1], x[2]), SubML);
     [PolyLin, PolyQuad];
     end proc; 
+
+calc2 := proc(n::integer, m::integer)
+    read "RomAll.txt":
+    sol := solveMatrixEqns(QuadKin):
+    LinSymSol := subs(sol,LinSym):
+    QuadSymSol := subs(sol, QuadSymList):
+    quadPolyN2(LinSymSol, QuadSymSol, n, m);
+    end proc; 
+
+
 
 
 

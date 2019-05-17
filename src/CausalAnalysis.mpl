@@ -189,7 +189,7 @@ quadPolyNExact := proc(M::Matrix, Q::list, n::integer)
     l := [seq(1..n)];
     SubML := randSubMatrixQuadN(M, Q, n);
     print("list is constructed");
-    PolyL := Map[tasksize = 1](x -> quadPolySubF(x[1], x[2]), SubML);
+    PolyL := Map(x -> quadPolySubF(x[1], x[2]), SubML);
     end proc; 
 
 calc := proc(n::integer)

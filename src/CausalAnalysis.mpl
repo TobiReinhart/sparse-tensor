@@ -211,6 +211,7 @@ calcExact := proc(n::integer)
 calc2 := proc(n :: integer, m:: integer)
     uses LinearAlgebra, Threads;
     l := [seq(1..n)];
+    read "RomAll.txt":
     SubML := randSubMatrixQuadN(M, Q, n);
     SubLinL := randSubMatrixN(M, m);
     print("lists are constructed");

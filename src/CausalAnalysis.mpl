@@ -209,16 +209,16 @@ calcExact := proc(n::integer)
     end proc;    
 
 quadPolyN2 := proc(M::Matrix, Q::list, n :: integer, m:: integer)
-    uses LinearAlgebra, Threads;
+    uses LinearAlgebra;
     l := [seq(1..n)];
     (randM, randQ) := evalRandQuad(M,Q);
     SubML := randSubMatrixQuadN(randM, randQ, n);
     SubLinL := randSubMatrixN(randM, m);
     print("lists are constructed");
     print("computing linear Polynomials");
-    PolyLin := Threads:-Map[ tasksize = 1](x -> simplify(Determinant(x, method = fracfree)),SubLinL); 
+    PolyLin := map(x -> simplify(Determinant(x, method = fracfree)),SubLinL); 
     print("Linear Polynomials calculated");
-    PolyQuad := Threads:-Map[ tasksize = 1](x -> quadPolySubF(x[1], x[2]), SubML);
+    PolyQuad := map(x -> quadPolySubF(x[1], x[2]), SubML);
     [PolyLin, PolyQuad];
     end proc; 
 

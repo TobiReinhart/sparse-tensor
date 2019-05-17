@@ -2,7 +2,7 @@
 CausalAnalysis := module()
 
 export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN,
-       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact ;
+       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, calc2 ;
 
 option package;
 
@@ -147,7 +147,7 @@ prodTrace := proc(M::Matrix, Q::Matrix)
     rowsM := [Row(M,[seq(1..size)])];
     colsQ := [Column(Q,[seq(1..size)])];
     l := zip((x,y) -> Multiply(x,y), rowsM, colsQ);
-    add(l);
+    simplify(add(l));
     end proc;
 
 #polynomial up to quadratic order
@@ -172,7 +172,7 @@ quadPolySubF := proc(M::Matrix, Q::list)
     subMInv2 := fac1 * subMInv;
     polyL := map(x -> prodTrace(subMInv2,x), Q);
     print("another one finsihed!");
-    [fac1,polyL];
+    [simplify(fac1),simplify(polyL)];
     end proc;
 
 quadPolyN := proc(M::Matrix, Q::list, n::integer)
@@ -207,6 +207,21 @@ calcExact := proc(n::integer)
     QuadSymSol := subs(sol, QuadSymList):
     quadPolyNExact(LinSymSol, QuadSymSol, n);
     end proc;    
+
+calc2 := proc(n :: integer, m:: integer)
+    uses LinearAlgebra, Threads;
+    l := [seq(1..n)];
+    SubML := randSubMatrixQuadN(M, Q, n);
+    SubLinL := randSubMatrixN(M, m);
+    print("lists are constructed");
+    print("computing linear Polynomials");
+    PolyLin := Threads:-Map(x -> simplify(Determinant(x, method = fracfree)),SubLinL); 
+    print("Linear Polynomials calculated");
+    PolyQuad := Threads:-Map(x -> quadPolySubF(x[1], x[2]), SubML);
+    [PolyLin, PolyQuad];
+    end proc; 
+
+
 
 
 end module;

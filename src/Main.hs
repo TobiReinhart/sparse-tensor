@@ -147,6 +147,14 @@ main = do
 
     let l3 = Mat.toList $ Sparse.toMatrix $ toEMatrix6 $ singletonTList eqn1Mass
 
-    print l3 
+    let l4 = "RankDefLin := Matrix(21,4,{" ++ (unlines rankDefLin) ++ "});"
 
+    let l5 = "RankDefQuad := Matrix(21,4,{" ++ (unlines rankDefLin) ++ "});"
+
+
+    putStr l4
+
+    putStr "\n"
+
+    putStr l5
 

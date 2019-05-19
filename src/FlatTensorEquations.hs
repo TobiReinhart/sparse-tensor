@@ -38,7 +38,7 @@ module FlatTensorEquations (
     ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
     eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd, eqn3, eqn3AI, eqn1A, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
     eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC, ansatzABCD,
-    linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass, linSymbol, quadSymbol, polyTensEqn, polyDensEqn
+    linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass, linSymbol, quadSymbol, polyTensEqn, polyDensEqn, rankDefLin, rankDefQuad
    
 ) where
 
@@ -377,4 +377,24 @@ module FlatTensorEquations (
                 total = tens1 &+ tens2 &+ (ans2 &* delta3) 
                 tensList = map (map (\(_,y) -> showAnsVar y 'x' )) $ groupBy (\x y -> (fst x) == (fst y) ) $ sortOn (\(x,y) -> x) $ toListShow6 total
 
-    
+    rankDefLin :: [String] 
+    rankDefLin = tensList
+            where
+                kTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0,1,2,3]
+                kTens = fromListT6 $ zipWith (\i j -> ((Empty,Empty,Empty,Empty,Empty,singletonInd $ Ind3 i),j)) [0..] kTensList :: ATens 0 0 0 0 0 1 (LinearVar Rational)    
+                tens1 = contrATens3 (0,1) $ flatInter &* kTens   
+                tensTotal = tens1 
+                tensList = (map (\([x,y],z) -> "(" ++ show (x+1) ++ "," ++ show (y+1) ++ ") =" ++ showLinearVar z 'k' ++ "," )) $ toListShow6 tensTotal 
+
+    rankDefQuad :: [String] 
+    rankDefQuad = tensList
+            where
+                kTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0,1,2,3]
+                kTens = fromListT6 $ zipWith (\i j -> ((Empty,Empty,Empty,Empty,Empty,singletonInd $ Ind3 i),j)) [0..] kTensList :: ATens 0 0 0 0 0 1 (LinearVar Rational)    
+                hTensList = map (\i -> AnsVar (I.singleton i 1)) [0..20]
+                hTens = fromListT6 $ zipWith (\i j -> ((Empty, singletonInd $ Ind20 i,Empty,Empty,Empty,Empty),j)) [0..] hTensList :: ATens 0 1 0 0 0 0 (AnsVar Rational)
+                tens1 = contrATens3 (0,1) $ contrATens1 (0,1) $ (interArea &* hTens) &* kTens   
+                tensTotal = tens1  
+                tensList = (map (\([x,y],z) -> "(" ++ show (x+1) ++ "," ++ show (y+1) ++ ") =" ++ showAnsVarLinVar z 'H' 'k' ++ "," )) $ toListShow6 tensTotal 
+
+    --there are still some TAlg instances mmissing

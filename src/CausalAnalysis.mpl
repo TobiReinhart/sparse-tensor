@@ -2,7 +2,7 @@
 CausalAnalysis := module()
 
 export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN,
-       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, quadPolyN2, calc2 ;
+       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, quadPolyN2, calc2, preFacLin, preFacQuad, randSubMatrixLabel, randSubMatrixQuadLabel, calc3, calc4 ;
 
 option package;
 
@@ -45,6 +45,17 @@ randSubMatrix := proc(M::Matrix)
     M2 := SubMatrix(M,randcomb(rowList,n-4),randcomb(rowList,n-4));
     M2Rand := evalRandFull(M2); 
     if Rank(M2Rand) = n-4 then M2; else randSubMatrix(M); end if;
+    end proc;
+
+randSubMatrixLabel := proc(M::Matrix)
+    uses LinearAlgebra, combinat;
+    n := RowDimension(M);
+    rowList := [seq(1..n)];
+    rows := randcomb(rowList,n-4);
+    cols := randcomb(rowList,n-4);
+    M2 := SubMatrix(M,rows,cols);
+    M2Rand := evalRandFull(M2); 
+    if Rank(M2Rand) = n-4 then (M2,rows,cols); else randSubMatrixLabel(M); end if;
     end proc;
 
 #construct n different submatrices
@@ -107,6 +118,21 @@ randSubMatrixQuad := proc(Lin::Matrix, Quad::list)
     if  Rank(LinMRand) < n-4 then 
         randSubMatrixQuad(Lin,Quad); 
         else [LinM, QuadL]; 
+    end if;
+    end proc;
+
+randSubMatrixQuadLabel := proc(Lin::Matrix, Quad::list)
+    uses LinearAlgebra, combinat;
+    n := RowDimension(Lin);
+    rowList := [seq(1..n)];
+    rowComb := randcomb(rowList,n-4);
+    colComb := randcomb(rowList,n-4);
+    QuadL := map(x -> SubMatrix(x,rowComb,colComb), Quad);
+    LinM := SubMatrix(Lin,rowComb,colComb);
+    LinMRand := evalRandFull(LinM);
+    if  Rank(LinMRand) < n-4 then 
+        randSubMatrixQuadLabel(Lin,Quad); 
+        else (LinM, QuadL, rows, cols); 
     end if;
     end proc;
 
@@ -230,10 +256,55 @@ calc2 := proc(n::integer, m::integer)
     quadPolyN2(LinSymSol, QuadSymSol, n, m);
     end proc; 
 
+#compute the prefactor of the polyinomial w.r.t. the given subMatrix 
+#linear order 
 
+preFacLin := proc(rows::list, cols::list)
+    uses LinearAlgebra;
+    read "RankDef.txt";
+    X := Determinant(SubMatrix(LinRankDef, rows, [1,2,3,4]));
+    Y := Determinant(SubMatrix(LinRankDef, cols, [1,2,3,4]));
+    simplify(X*Y);
+    end proc;
 
+#quadratic order
+preFacQuad := proc(rows::list, cols::list)
+    uses LinearAlgebra;
+    read "RankDef.txt";
+    X := SubMatrix(LinRankDef, rows, [1,2,3,4]);
+    Y := SubMatrix(LinRankDef, cols, [1,2,3,4]);
+    X2 := SubMatrix(QuadRankDef, rows, [1,2,3,4]);
+    Y2 := SubMatrix(QuadRankDef, cols, [1,2,3,4]);
+    Lin := simplify(Determinant(X)*Determinant(Y));
+    X2Inv := MatrixInverse(X2);
+    Y2Inv := MatrixInverse(Y2);
+    Trace1 := prodTrace(X2Inv,X);
+    Trace2 := prodTrace(Y2Inv,Y);
+    simplify(Lin*(1+Trace1,Trace2));
+    end proc;
 
+calc3 := proc()
+    read "RomAll.txt":
+    sol := solveMatrixEqns(LinKin):
+    LinSymSol := subs(sol,LinSym):
+    MRand := evalRand(LinSymSol);
+    (subM, rows, cols) := randSubMatrixLabel(MRand);
+    Poly := simplify(Determinant(subM, method=fracfree));
+    PreFac := preFacLin(rows, cols);
+    (poly, PreFac);
+    end proc; 
 
+calc4 := proc()
+    read "RomAll.txt":
+    sol := solveMatrixEqns(QuadKin):
+    LinSymSol := subs(sol,LinSym):
+    QuadSymSol := subs(sol, QuadKin);
+    (randM, randQ) := evalRandQuad(M,Q);
+    (M,Q,rows,cols) := randSubMatrixQuadLabel(randM, randQ);
+    Poly := simplify(Determinant(subM, method=fracfree));
+    PreFac := preFacQuad(rows, cols);
+    (poly, PreFac);
+    end proc;  
 
 end module;
 

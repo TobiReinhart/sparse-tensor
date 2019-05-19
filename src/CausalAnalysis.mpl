@@ -53,9 +53,11 @@ randSubMatrixLabel := proc(M::Matrix)
     rowList := [seq(1..n)];
     rows := randcomb(rowList,n-4);
     cols := randcomb(rowList,n-4);
+    rows2 := remove(x -> member(x,rows), rowList);
+    cols2 := remove(x -> member(x,cols), rowList);
     M2 := SubMatrix(M,rows,cols);
     M2Rand := evalRandFull(M2); 
-    if Rank(M2Rand) = n-4 then (M2,rows,cols); else randSubMatrixLabel(M); end if;
+    if Rank(M2Rand) = n-4 then (M2,rows2,cols2); else randSubMatrixLabel(M); end if;
     end proc;
 
 #construct n different submatrices
@@ -127,12 +129,14 @@ randSubMatrixQuadLabel := proc(Lin::Matrix, Quad::list)
     rowList := [seq(1..n)];
     rowComb := randcomb(rowList,n-4);
     colComb := randcomb(rowList,n-4);
+    rows2 := remove(x -> member(x,rowComb), rowList);
+    cols2 := remove(x -> member(x,colComb), rowList);
     QuadL := map(x -> SubMatrix(x,rowComb,colComb), Quad);
     LinM := SubMatrix(Lin,rowComb,colComb);
     LinMRand := evalRandFull(LinM);
     if  Rank(LinMRand) < n-4 then 
         randSubMatrixQuadLabel(Lin,Quad); 
-        else (LinM, QuadL, rows, cols); 
+        else (LinM, QuadL, rows2, cols2); 
     end if;
     end proc;
 

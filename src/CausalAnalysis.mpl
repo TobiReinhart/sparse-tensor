@@ -295,7 +295,7 @@ calc3 := proc()
     (subM, rows, cols) := randSubMatrixLabel(MRand);
     Poly := simplify(Determinant(subM, method=fracfree));
     PreFac := preFLin(rows, cols);
-    (poly, PreFac);
+    (Poly, PreFac);
     end proc; 
 
 calc4 := proc()

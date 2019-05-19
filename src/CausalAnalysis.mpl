@@ -262,8 +262,8 @@ calc2 := proc(n::integer, m::integer)
 preFacLin := proc(rows::list, cols::list)
     uses LinearAlgebra;
     read "RankDef.txt";
-    X := Determinant(SubMatrix(LinRankDef, rows, [1,2,3,4]));
-    Y := Determinant(SubMatrix(LinRankDef, cols, [1,2,3,4]));
+    X := Determinant(SubMatrix(RankDefLin, rows, [1,2,3,4]));
+    Y := Determinant(SubMatrix(RankDefLin, cols, [1,2,3,4]));
     simplify(X*Y);
     end proc;
 
@@ -271,10 +271,10 @@ preFacLin := proc(rows::list, cols::list)
 preFacQuad := proc(rows::list, cols::list)
     uses LinearAlgebra;
     read "RankDef.txt";
-    X := SubMatrix(LinRankDef, rows, [1,2,3,4]);
-    Y := SubMatrix(LinRankDef, cols, [1,2,3,4]);
-    X2 := SubMatrix(QuadRankDef, rows, [1,2,3,4]);
-    Y2 := SubMatrix(QuadRankDef, cols, [1,2,3,4]);
+    X := SubMatrix(RankDefLin, rows, [1,2,3,4]);
+    Y := SubMatrix(RankDefLin, cols, [1,2,3,4]);
+    X2 := SubMatrix(RankDefQuad, rows, [1,2,3,4]);
+    Y2 := SubMatrix(RankDefQuad, cols, [1,2,3,4]);
     Lin := simplify(Determinant(X)*Determinant(Y));
     X2Inv := MatrixInverse(X2);
     Y2Inv := MatrixInverse(Y2);

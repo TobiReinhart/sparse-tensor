@@ -197,7 +197,7 @@ quadPolyH := proc(M::Matrix, Q::list)
     PolyL := quadPolySubF(M, Q);
     Lin := PolyL[1];
     QuadL := PolyL[2];
-    QuadSum := simplify(add(zip((x,y) -> x * H[y], QuadL, [seq(0..20)]));
+    QuadSum := simplify(add(zip((x,y) -> x * H[y], QuadL, [seq(0..20)])));
     (Lin,QuadSum);
     end proc;
 

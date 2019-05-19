@@ -2,7 +2,8 @@
 CausalAnalysis := module()
 
 export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN,
-       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, quadPolyN2, calc2, preFLin, preFQuad, randSubMatrixLabel, randSubMatrixQuadLabel, calc3, calc4, QUadPolyH ;
+       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, quadPolyN2, calc2, preFLin, preFQuad,
+       randSubMatrixLabel, randSubMatrixQuadLabel, calc3, calc4, QUadPolyH, calc5, calc6 ;
 
 option package;
 
@@ -196,7 +197,7 @@ quadPolyH := proc(M::Matrix, Q::list)
     PolyL := quadPolySubF(M, Q);
     Lin := PolyL[1];
     QuadL := PolyL[2];
-    QuadSum := simplify(zip((x,y) -> x * H[y], QuadL, [seq(0..20)]));
+    QuadSum := simplify(add(zip((x,y) -> x * H[y], QuadL, [seq(0..20)]));
     (Lin,QuadSum);
     end proc;
 
@@ -320,6 +321,27 @@ calc4 := proc()
     (PreFacLin, PreFacQuad) := preFQuad(rows, cols);
     (PolyLin, PolyQuad, PreFacLin, PreFacQuad);
     end proc;  
+
+#try to compute inverse and determinant of the submatrix exact
+calc5 := proc()
+    read "RomAll.txt":
+    sol := solveMatrixEqns(QuadKin):
+    LinSymSol := subs(sol,LinSym):
+    (subM, rows, cols) := randSubMatrixLabel(LinSymSol);
+    FullDet := Determinant(subM, method = fracfree);
+    (FullDet,subM,rows,cols);
+    end proc; 
+
+calc6 := proc()
+    read "RomAll.txt":
+    sol := solveMatrixEqns(QuadKin):
+    LinSymSol := subs(sol,LinSym):
+    (subM, rows, cols) := randSubMatrixLabel(LinSymSol);
+    FullInv := LinearAlgebra:-MatrixInverse(subM, method = polynom);
+    (FullInv,subM,rows,cols);
+    end proc; 
+
+
 
 end module;
 

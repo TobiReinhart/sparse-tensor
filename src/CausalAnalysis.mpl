@@ -290,10 +290,10 @@ preFQuad := proc(rows::list, cols::list)
     X2 := SubMatrix(RankDefQuad, rows, [1,2,3,4]);
     Y2 := SubMatrix(RankDefQuad, cols, [1,2,3,4]);
     Lin := simplify(Determinant(X)*Determinant(Y));
-    X2Inv := LinearAlgebra:-MatrixInverse(X2, method=polynom);
-    Y2Inv := LinearAlgebra:-MatrixInverse(Y2, method=polynom);
-    Trace1 := prodTrace(X2Inv,X);
-    Trace2 := prodTrace(Y2Inv,Y);
+    XInv := LinearAlgebra:-MatrixInverse(X, method=polynom);
+    YInv := LinearAlgebra:-MatrixInverse(Y, method=polynom);
+    Trace1 := prodTrace(XInv,X2);
+    Trace2 := prodTrace(YInv,Y2);
     (Lin,simplify(Lin*(Trace1+Trace2)));
     end proc;
 
@@ -316,6 +316,7 @@ calc4 := proc()
     (randM, randQ) := evalRandQuad(LinSymSol,QuadSymSol);
     (M,Q,rows,cols) := randSubMatrixQuadLabel(randM, randQ);
     (PolyLin, PolyQuad) := quadPolyH(M,Q);
+    print("QuadPoly Computed");
     (PreFacLin, PreFacQuad) := preFQuad(rows, cols);
     (PolyLin, PolyQuad, PreFacLin, PreFacQuad);
     end proc;  

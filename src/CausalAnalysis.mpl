@@ -315,7 +315,7 @@ calc4 := proc()
     QuadSymSol := subs(sol, QuadSymList);
     (randM, randQ) := evalRandQuad(LinSymSol,QuadSymSol);
     (M,Q,rows,cols) := randSubMatrixQuadLabel(randM, randQ);
-    (PolyLin, PolyQuad) := QuadPolyH(M,Q);
+    (PolyLin, PolyQuad) := quadPolyH(M,Q);
     (PreFacLin, PreFacQuad) := preFQuad(rows, cols);
     (PolyLin, PolyQuad, PreFacLin, PreFacQuad);
     end proc;  

@@ -290,8 +290,8 @@ preFQuad := proc(rows::list, cols::list)
     X2 := SubMatrix(RankDefQuad, rows, [1,2,3,4]);
     Y2 := SubMatrix(RankDefQuad, cols, [1,2,3,4]);
     Lin := simplify(Determinant(X)*Determinant(Y));
-    X2Inv := MatrixInverse(X2);
-    Y2Inv := MatrixInverse(Y2);
+    X2Inv := LinearAlgebra:-MatrixInverse(X2);
+    Y2Inv := LinearAlgebra:-MatrixInverse(Y2);
     Trace1 := prodTrace(X2Inv,X);
     Trace2 := prodTrace(Y2Inv,Y);
     (Lin,simplify(Lin*(Trace1+Trace2)));

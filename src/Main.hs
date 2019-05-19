@@ -149,7 +149,7 @@ main = do
 
     let l4 = "RankDefLin := Matrix(21,4,{" ++ (unlines rankDefLin) ++ "});"
 
-    let l5 = "RankDefQuad := Matrix(21,4,{" ++ (unlines rankDefLin) ++ "});"
+    let l5 = "RankDefQuad := Matrix(21,4,{" ++ (unlines rankDefQuad) ++ "});"
 
 
     putStr l4

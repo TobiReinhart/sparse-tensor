@@ -2,7 +2,7 @@
 CausalAnalysis := module()
 
 export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN,
-       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, quadPolyN2, calc2, preFLin, preFQuad, randSubMatrixLabel, randSubMatrixQuadLabel, calc3, calc4 ;
+       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, quadPolyN2, calc2, preFLin, preFQuad, randSubMatrixLabel, randSubMatrixQuadLabel, calc3, calc4, QUadPolyH ;
 
 option package;
 
@@ -190,6 +190,16 @@ quadPoly := proc(M::Matrix, Q::list)
     quadPolySubF(randSubM, randSubQ);
     end proc;
 
+#for already randomly eavluated matrix
+quadPolyH := proc(M::Matrix, Q::list)
+    uses LinearAlgebra; 
+    PolyL := quadPolySubF(M, Q);
+    Lin := PolyL[1];
+    QuadL := PolyL[2];
+    QuadSum := simplify(zip((x,y) -> x * H[y], QuadL, [seq(0..20)]));
+    (Lin,QuadSum);
+    end proc;
+
 quadPolySubF := proc(M::Matrix, Q::list)
     uses LinearAlgebra;
     print("calculating determinant");
@@ -284,7 +294,7 @@ preFQuad := proc(rows::list, cols::list)
     Y2Inv := MatrixInverse(Y2);
     Trace1 := prodTrace(X2Inv,X);
     Trace2 := prodTrace(Y2Inv,Y);
-    simplify(Lin*(1+Trace1,Trace2));
+    (Lin,simplify(Lin*(Trace1+Trace2)));
     end proc;
 
 calc3 := proc()
@@ -305,9 +315,9 @@ calc4 := proc()
     QuadSymSol := subs(sol, QuadKin);
     (randM, randQ) := evalRandQuad(M,Q);
     (M,Q,rows,cols) := randSubMatrixQuadLabel(randM, randQ);
-    Poly := simplify(Determinant(subM, method=fracfree));
-    PreFac := preFQuad(rows, cols);
-    (Poly, PreFac);
+    (PolyLin, PolyQuad) := QUadPolyH;
+    (PreFacLin, PreFacQuad) := preFQuad(rows, cols);
+    (PolyLin, PolyQuad, PreFacLin, PreFacQuad);
     end proc;  
 
 end module;

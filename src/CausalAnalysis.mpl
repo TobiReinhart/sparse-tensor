@@ -2,7 +2,7 @@
 CausalAnalysis := module()
 
 export evalRand, evalRandFull, randSubMatrix, randSubMatrixN, linPoly, linPolyN, linPolyNGCD, randSubMatrixQuad, randSubMatrixQuadN,
-       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, quadPolyN2, calc2, preFacLin, preFacQuad, randSubMatrixLabel, randSubMatrixQuadLabel, calc3, calc4 ;
+       evalRandQuad, prodTrace, quadPoly, solveMatrixEqns, quadPolyN, calc, quadPolyNExact, calcExact, quadPolyN2, calc2, preFLin, preFQuad, randSubMatrixLabel, randSubMatrixQuadLabel, calc3, calc4 ;
 
 option package;
 
@@ -263,7 +263,7 @@ calc2 := proc(n::integer, m::integer)
 #compute the prefactor of the polyinomial w.r.t. the given subMatrix 
 #linear order 
 
-preFacLin := proc(rows::list, cols::list)
+preFLin := proc(rows::list, cols::list)
     uses LinearAlgebra;
     read "RankDef.txt";
     X := Determinant(SubMatrix(RankDefLin, rows, [1,2,3,4]));
@@ -272,7 +272,7 @@ preFacLin := proc(rows::list, cols::list)
     end proc;
 
 #quadratic order
-preFacQuad := proc(rows::list, cols::list)
+preFQuad := proc(rows::list, cols::list)
     uses LinearAlgebra;
     read "RankDef.txt";
     X := SubMatrix(RankDefLin, rows, [1,2,3,4]);
@@ -294,7 +294,7 @@ calc3 := proc()
     MRand := evalRand(LinSymSol);
     (subM, rows, cols) := randSubMatrixLabel(MRand);
     Poly := simplify(Determinant(subM, method=fracfree));
-    PreFac := preFacLin(rows, cols);
+    PreFac := preFLin(rows, cols);
     (poly, PreFac);
     end proc; 
 
@@ -306,7 +306,7 @@ calc4 := proc()
     (randM, randQ) := evalRandQuad(M,Q);
     (M,Q,rows,cols) := randSubMatrixQuadLabel(randM, randQ);
     Poly := simplify(Determinant(subM, method=fracfree));
-    PreFac := preFacQuad(rows, cols);
+    PreFac := preFQuad(rows, cols);
     (poly, PreFac);
     end proc;  
 

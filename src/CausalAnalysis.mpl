@@ -312,7 +312,7 @@ calc4 := proc()
     read "RomAll.txt":
     sol := solveMatrixEqns(QuadKin):
     LinSymSol := subs(sol,LinSym):
-    QuadSymSol := subs(sol, QuadKin);
+    QuadSymSol := subs(sol, QuadSym);
     (randM, randQ) := evalRandQuad(LinSymSol,QuadSymSol);
     (M,Q,rows,cols) := randSubMatrixQuadLabel(randM, randQ);
     (PolyLin, PolyQuad) := QUadPolyH;

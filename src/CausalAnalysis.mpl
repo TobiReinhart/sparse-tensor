@@ -307,7 +307,7 @@ calc4 := proc()
     (M,Q,rows,cols) := randSubMatrixQuadLabel(randM, randQ);
     Poly := simplify(Determinant(subM, method=fracfree));
     PreFac := preFQuad(rows, cols);
-    (poly, PreFac);
+    (Poly, PreFac);
     end proc;  
 
 end module;

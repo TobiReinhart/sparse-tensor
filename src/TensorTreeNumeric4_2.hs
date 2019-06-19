@@ -16,6 +16,7 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver   #-}
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
@@ -24,15 +25,20 @@
 
 
  module TensorTreeNumeric4_2 (
-    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple, AnsVar, AreaVar(..),
+    Tensor(..), Ind20(..), Ind9(..), Ind3(..), IndList(..), ATens, IndTuple, AnsVar(..), LinearVar(..), QuadraticVar(..),
     (&*), (&+), (&-), (&.),
-    fromListT6, singletonInd, (+>), sortInd, toListT6, toListShow6,
+    fromListT6, singletonInd, (+>), sortInd, toListT6, toListShow6, toListShowVar6,
     tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6,
     symATens1, symATens2, symATens3, symATens4, symATens5, symATens6,
     aSymATens1, aSymATens2, aSymATens3, aSymATens4, aSymATens5, aSymATens6,
     cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6,
     cyclicSymATens1, cyclicSymATens2, cyclicSymATens3, cyclicSymATens4, cyclicSymATens5, cyclicSymATens6,
-    contrATens1, contrATens2, contrATens3
+    contrATens1, contrATens2, contrATens3,
+    decodeTensor, encodeTensor, ansVarToLinearVar, 
+    mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
+    resortTens1, resortTens5, fromListT6',
+    (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6, removeZeros, toMatList6, toMatList6', mapTensList6, 
+    splitAnsTens, tensorRank', toMatList6Lin, toMatList6Quad, showAnsVar, showAnsVarLinVar, showAnsVarQuadVar, showLinearVar, showQuadraticVar
  
     
 ) where
@@ -42,8 +48,8 @@
     import Data.List 
     import Control.Applicative
     import Data.Maybe
-    import qualified Data.Map.Strict as M
     import qualified Data.IntMap.Strict as I
+    import qualified Data.Map.Strict as M
     import Numeric.Natural
     import GHC.TypeLits
     import Data.Proxy
@@ -57,11 +63,14 @@
     import Data.Singletons.Prelude.Enum
     import Data.Singletons.TypeLits
     import Unsafe.Coerce (unsafeCoerce)
+    import qualified Data.ByteString.Lazy as BS
+    import Codec.Compression.GZip
+    import Data.Either
+
+
 
     --for Linear Algebra 
 
-    import qualified Numeric.LinearAlgebra.Data as HMat
-    import qualified Numeric.LinearAlgebra as HLin 
     import qualified Data.Eigen.Matrix as Mat 
     import qualified Data.Eigen.SparseMatrix as Sparse
     import qualified Data.Eigen.LA as Sol
@@ -186,11 +195,18 @@
 
     --resort inds in INdList accroding to the permutation given by [Int], length of [Int] must be n
 
-    resortInd :: (SingI n) => [Int] -> IndList n a -> IndList n a
+    --example: perm = [1, 2, 0]
+    --         indList = [A, B, C]
+    --         algorithm sorts [(1,A), (2,B), (0,C)] on firsts
+    --         => [(0,C), (1,A), (2,B)]
+    --         => [C, A, B]
+
+    resortInd :: (SingI n, Ord a) => [Int] -> IndList n a -> IndList n a
     resortInd perm indList = newindList
             where 
-                l = zip [0..] $ toList indList 
-                lReSorted = sortOn fst l 
+                l' = toList indList
+                l'' = if length l' == length perm then zip perm l' else error "permutation has wrong length"  
+                lReSorted = sortOn fst l'' 
                 newindList = fromList' $ map snd lReSorted
  
     -------------------------------------------------------------------------------------------------------------------------------------
@@ -212,14 +228,49 @@
     class (Eq a, Ord a, Enum a) => TIndex a where 
         indRange :: Int 
 
+    --instead of maps use orderd lists 
+
+    type TMap k v = [(k,v)]
+
+    isValidTMap :: (Ord k, Eq v) => TMap k v -> Bool 
+    isValidTMap l = l == (sortOn fst l)
+
+    insertWithTMap :: (Ord k) => (v -> v -> v) -> k -> v -> TMap k v -> TMap k v
+    insertWithTMap f key val [] = [(key,val)]
+    insertWithTMap f key val ((k1,v1):xs) 
+            | key < k1 = (key,val) : ((k1,v1):xs)
+            | key == k1 = (k1,f val v1) : xs 
+            | otherwise = (k1,v1) : (insertWithTMap f key val xs)
+
+    addTMaps :: (Ord k) => (v -> v -> v) -> TMap k v -> TMap k v -> TMap k v 
+    addTMaps f m1 [] = m1 
+    addTMaps f [] m2 = m2 
+    addTMaps f ((k1,v1):xs) ((k2,v2):ys) 
+            | k1 < k2 = (k1,v1) : (addTMaps f xs ((k2,v2):ys))
+            | k2 < k1 = (k2,v2) : (addTMaps f ((k1,v1):xs) ys)
+            | k1 == k2 = (k1, f v1 v2) : (addTMaps f xs ys)
+
+    mapTMap :: (v -> v') -> TMap k v -> TMap k v' 
+    mapTMap f m = map (\(k,v) -> (k,f v)) m  
+
+    filterTMap :: (v -> Bool) -> TMap k v -> TMap k v 
+    filterTMap f m = filter (\(_,v) -> f v) m 
+
     data Tensor n k v where 
         Scalar :: v -> Tensor 0 k v 
-        Tensor :: M.Map k (Tensor n k v) -> Tensor (n+1) k v
+        Tensor :: TMap k (Tensor n k v) -> Tensor (n+1) k v
         ZeroTensor :: Tensor n k v
+
+    --remove possible zero values in a given Tensor  
+
+    removeZeros :: (TScalar v, TIndex k) => Tensor n k v -> Tensor n k v
+    removeZeros (Scalar x) = if x == scaleZero then ZeroTensor else Scalar x 
+    removeZeros (Tensor m) = let newMap = filterTMap (/=ZeroTensor) $ mapTMap removeZeros m in if newMap == [] then ZeroTensor else Tensor newMap
+    removeZeros ZeroTensor = ZeroTensor 
 
     --for converting tensors to bytestrings we need a non typesafe data type as intermediate type
 
-    data TensorRep k v = ScalarR v | TensorR Natural (M.Map k (TensorRep k v)) | ZeroR Natural deriving (Show, Generic, Serialize)
+    data TensorRep k v = ScalarR v | TensorR Natural (TMap k (TensorRep k v)) | ZeroR Natural deriving (Show, Generic, Serialize)
 
     --convert betweeen typesafe and non typesafe tensors
 
@@ -234,7 +285,7 @@
                             case lemma @n Refl
                              of Refl ->
                                    let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
-                                   in TensorR r $ fmap (\(t :: Tensor (n-1) k v) -> toRep t) m
+                                   in TensorR r $ mapTMap (\(t :: Tensor (n-1) k v) -> toRep t) m
     toRep ZeroTensor = let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
                        in ZeroR r
 
@@ -247,7 +298,7 @@
                                               of SomeNat (_ :: Proxy x) -> case isZero (SNat @x)
                                                                              of NonZero -> case sameNat (Proxy @x) (Proxy @n)
                                                                                              of Nothing   -> undefined
-                                                                                                Just Refl -> Tensor (fmap (\t -> (fromRep t) :: Tensor (x-1) k v) m)
+                                                                                                Just Refl -> Tensor (mapTMap (\t -> (fromRep t) :: Tensor (x-1) k v) m)
                                                                                 Zero    -> undefined
                                  Nothing -> undefined
     fromRep (ZeroR r) = case someNatVal (fromIntegral r)
@@ -255,6 +306,11 @@
                              Nothing -> undefined
 
     --instances
+
+    instance (NFData k, NFData v) => NFData (Tensor n k v) where
+        rnf ZeroTensor = ()
+        rnf (Scalar v) = v `seq` rnf v
+        rnf (Tensor m) = m `seq` rnf m
     
     instance KnownNat n => Generic (Tensor n k v) where
         type Rep (Tensor n k v) = Rep (TensorRep k v)
@@ -266,7 +322,7 @@
 
     instance Functor (Tensor n k) where 
         fmap f (Scalar x) = Scalar (f x)
-        fmap f (Tensor m) = Tensor (M.map (fmap f) m)
+        fmap f (Tensor m) = Tensor (mapTMap (fmap f) m)
         fmap f (ZeroTensor) = ZeroTensor
 
     deriving instance (Show a, Show k) => Show (Tensor n k a)
@@ -283,7 +339,7 @@
         scaleS = (&.)
         scaleZero = ZeroTensor
 
-    instance (TIndex k, TAlgebra v v') => TAlgebra (Tensor n k v) (Tensor m k v') where 
+    instance (TIndex k, TAlgebra v v', TScalar v, TScalar v', TScalar (TAlg v v')) => TAlgebra (Tensor n k v) (Tensor m k v') where 
         type TAlg (Tensor n k v) (Tensor m k v') = Tensor (n+m) k (TAlg v v')
         prodA = (&*)
 
@@ -293,25 +349,33 @@
         scaleS = (*)
         scaleZero = 0
 
+    instance TScalar Double where 
+        addS = (+)
+        subS = (-)
+        scaleS r b = (fromRational r) * b  
+        scaleZero = 0
+
     instance TAlgebra Rational Rational where 
         type TAlg Rational Rational = Rational
         prodA = (*)
 
+    instance TAlgebra Double Double where 
+        type TAlg Double Double = Double
+        prodA = (*)
 
-
-    getTensorMap :: Tensor (n+1) k v -> M.Map k (Tensor n k v)
+    getTensorMap :: Tensor (n+1) k v -> TMap k (Tensor n k v)
     getTensorMap (Tensor m) = m 
 
     toListT :: Tensor n k v -> [(IndList n k, v)]
     toListT (Scalar x) = [(Empty, x)]
-    toListT (Tensor m) =  concat $ map (\(i,t) -> appendF i $ toListT t) $ M.assocs m
+    toListT (Tensor m) =  concat $ map (\(i,t) -> appendF i $ toListT t) m
             where
                 appendF = \i l2 -> map (\(l,val) -> (Append i l ,val)) l2
     toListT ZeroTensor = []
     
     mkTens :: (IndList n k, v) -> Tensor n k v
     mkTens (Empty, a) = Scalar a
-    mkTens (Append x xs, a) = Tensor $ M.singleton x $ mkTens (xs, a)
+    mkTens (Append x xs, a) = Tensor  [(x, mkTens (xs, a))]
 
     --construct from typed list
 
@@ -329,18 +393,18 @@
 
     insertOrAdd :: (TIndex k, TScalar v) => (IndList n k, v) -> Tensor n k v -> Tensor n k v 
     insertOrAdd (Empty, a) (Scalar b) = Scalar (addS a b)
-    insertOrAdd (Append x xs, a) (Tensor m) = Tensor $ M.insertWith (\_ o -> insertOrAdd (xs, a) o) x indTens m 
+    insertOrAdd (Append x xs, a) (Tensor m) = Tensor $ insertWithTMap (\_ o -> insertOrAdd (xs, a) o) x indTens m 
                 where
                     indTens = mkTens (xs, a)
     insertOrAdd inds ZeroTensor = mkTens inds
     
     --addition for tensors
 
-    infixl 6 &+
+    infixr 6 &+
 
     (&+) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor n k v -> Tensor n k v 
-    (&+) (Scalar a) (Scalar b) = Scalar (addS a b)
-    (&+) (Tensor m1) (Tensor m2) = Tensor $ M.unionWith (&+) m1 m2
+    (&+) (Scalar a) (Scalar b) = Scalar $ addS a b 
+    (&+) (Tensor m1) (Tensor m2) = Tensor $ addTMaps (&+) m1 m2     
     (&+) t1 ZeroTensor = t1
     (&+) ZeroTensor t2 = t2
 
@@ -349,7 +413,7 @@
     (&.) :: (TIndex k, TScalar v) => Rational -> Tensor n k v -> Tensor n k v 
     (&.) scalar t = fmap (scaleS scalar) t 
 
-    infixl 5 &- 
+    infix 5 &- 
     
     (&-) :: (TIndex k, TScalar v) => Tensor n k v -> Tensor n k v -> Tensor n k v
     (&-) t1 t2 = t1 &+ (-1) &. t2 
@@ -358,10 +422,10 @@
 
     infixr 7 &*
 
-    (&*) :: (TIndex k, TAlgebra v v') => Tensor n k v -> Tensor m k v' -> Tensor (n+m) k (TAlg v v') 
-    (&*) (Scalar x) (Scalar y) = Scalar (prodA x y)
+    (&*) :: (TIndex k, TAlgebra v v', TScalar v, TScalar v', TScalar (TAlg v v')) => Tensor n k v -> Tensor m k v' -> Tensor (n+m) k (TAlg v v') 
+    (&*) (Scalar x) (Scalar y) = let newVal = prodA x y in if newVal == scaleZero then ZeroTensor else Scalar newVal 
     (&*) (Scalar x) t2 = fmap (prodA x) t2 
-    (&*) (Tensor m) t2 = Tensor $ M.map (\t1 -> (&*) t1 t2) m 
+    (&*) (Tensor m) t2 = Tensor $ mapTMap (\t1 -> (&*) t1 t2) m 
     (&*) t1 ZeroTensor = ZeroTensor 
     (&*) ZeroTensor t2 = ZeroTensor 
 
@@ -371,7 +435,7 @@
     tensorTrans (0, j) t = fromListT l
                     where 
                         l = (map (\(x,y) -> (swapHead j x, y)) $ toListT t)
-    tensorTrans (i, j) (Tensor m) = Tensor $ M.map (tensorTrans (i-1, j-1)) m 
+    tensorTrans (i, j) (Tensor m) = Tensor $ mapTMap (tensorTrans (i-1, j-1)) m 
     tensorTrans (i ,j) ZeroTensor = ZeroTensor
 
     --transpose a given Tensor in several of its indices (does not work i the same index occurs several times)
@@ -381,7 +445,8 @@
             where
                 indList = if (intersect l1 l2 == []) then zip l1 l2 else error "at least one indexin the list occurs several times"
 
-    --generic resorting of the indices of a given tensor according to permutation given by [Int] -> the most expensive as th ewhole tensor is flattened to a list
+    --generic resorting of the indices of a given tensor according to permutation given by [Int] -> the most expensive as the whole tensor is flattened to a list
+    --input is current ordering of tesnor w.r.t. goal orderig, i.e. resorting [A,B,C,D] to [B,C,D,A] is achieved by [3,0,2,1]  
 
     resortTens :: (SingI n, TIndex k, TScalar v) => [Int] -> Tensor n k v -> Tensor n k v 
     resortTens perm t = fromListT $ map (\(x,y) -> (resortInd perm x, y)) $ toListT t
@@ -467,8 +532,17 @@
             l2 = map (\(x,y) -> (tailInd x,(mapMaybe (removeContractionInd j (headInd x)) y))) l
             l3 = filter (\(_,y) -> length y >= 1) l2 
             tensList = map (\(x,y) -> (x, fromListT y)) l3
-    tensorContr (i,j) (Tensor m) = Tensor $ M.map (tensorContr (i-1,j)) m
-    tensorContr inds ZeroTensor = ZeroTensor    
+    tensorContr (i,j) (Tensor m) = Tensor $ mapTMap (tensorContr (i-1,j)) m
+    tensorContr inds ZeroTensor = ZeroTensor 
+    tensorContr inds (Scalar s) = error "cannot contract scalar!"   
+
+    --encode and decode tensors as bytestrings 
+
+    encodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => Tensor n k v -> BS.ByteString 
+    encodeTensor = compress . encodeLazy 
+
+    decodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => BS.ByteString -> Tensor n k v 
+    decodeTensor bs = (fromRight undefined $ decodeLazy $ decompress bs)
 
     --now a generic abstract Tensor "consists of several" Tensor2s 
 
@@ -495,29 +569,55 @@
 
     --fmap takes us 1 level deeper 
 
-    mapTo1 :: (v1 -> v2) -> Tensor n1 k v1 -> Tensor n1 k v2 
+    mapTo1 :: (TScalar v1, TScalar v2, TIndex k) => (v1 -> v2) -> Tensor n1 k v1 -> Tensor n1 k v2 
     mapTo1 = fmap 
 
-    mapTo2 :: (v1 -> v2) -> Tensor2 n1 n2 k v1 -> Tensor2 n1 n2 k v2 
+    mapTo2 :: (TScalar v1, TScalar v2, TIndex k) => (v1 -> v2) -> Tensor2 n1 n2 k v1 -> Tensor2 n1 n2 k v2 
     mapTo2 f = fmap (fmap f)
 
-    mapTo3 :: (v1 -> v2) -> AbsTensor3 n1 n2 n3 k1 k2 v1 -> AbsTensor3 n1 n2 n3 k1 k2 v2 
+    mapTo3 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2) => (v1 -> v2) -> AbsTensor3 n1 n2 n3 k1 k2 v1 -> AbsTensor3 n1 n2 n3 k1 k2 v2 
     mapTo3 f = fmap (fmap (fmap f))
 
-    mapTo4 :: (v1 -> v2) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v1 -> AbsTensor4 n1 n2 n3 n4 k1 k2 v2 
+    mapTo4 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2) => (v1 -> v2) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v1 -> AbsTensor4 n1 n2 n3 n4 k1 k2 v2 
     mapTo4 f = fmap (fmap (fmap (fmap f)))
 
-    mapTo5 :: (v1 -> v2) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v1 -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v2 
+    mapTo5 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2, TIndex k3) => (v1 -> v2) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v1 -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v2 
     mapTo5 f = fmap (fmap (fmap (fmap (fmap f))))
 
-    mapTo6 :: (v1 -> v2) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v1 -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v2 
+    mapTo6 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2, TIndex k3) => (v1 -> v2) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v1 -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v2 
     mapTo6 f = fmap (fmap (fmap (fmap (fmap (fmap f)))))
 
-    mapTo7 :: (v1 -> v2) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v1 -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v2 
+    mapTo7 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => (v1 -> v2) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v1 -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v2 
     mapTo7 f = fmap (fmap (fmap (fmap (fmap (fmap (fmap f))))))
 
-    mapTo8 :: (v1 -> v2) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v1 -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v2 
+    mapTo8 :: (TScalar v1, TScalar v2, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => (v1 -> v2) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v1 -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v2 
     mapTo8 f = fmap (fmap (fmap (fmap (fmap (fmap (fmap (fmap f)))))))
+
+    --remove Zero Values at every level of Abstact Tensor 
+
+    removeZeros1 :: (TScalar v, TIndex k) => AbsTensor1 n1 k v -> AbsTensor1 n1 k v 
+    removeZeros1 = removeZeros 
+
+    removeZeros2 :: (TScalar v, TIndex k) => AbsTensor2 n1 n2 k v -> AbsTensor2 n1 n2 k v 
+    removeZeros2 = removeZeros . (mapTo1 removeZeros) 
+
+    removeZeros3 :: (TScalar v, TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v 
+    removeZeros3 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros)
+
+    removeZeros4 :: (TScalar v, TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v 
+    removeZeros4 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros)
+
+    removeZeros5 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v 
+    removeZeros5 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros)
+
+    removeZeros6 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v 
+    removeZeros6 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros) . (mapTo5 removeZeros)
+
+    removeZeros7 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v 
+    removeZeros7 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros) . (mapTo5 removeZeros) . (mapTo6 removeZeros)
+
+    removeZeros8 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v 
+    removeZeros8 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros) . (mapTo5 removeZeros) . (mapTo6 removeZeros) . (mapTo7 removeZeros)
 
     --transpose a general absatract tensor 
 
@@ -1195,155 +1295,357 @@
 
     --define vars for non numeric tensor computations -> AnsVar represents the variables in the tensor ansätze
 
-    type AnsVar = I.IntMap Rational 
+    data AnsVar a = AnsVar (I.IntMap a) deriving (Eq) 
 
-    instance TScalar AnsVar where 
-        addS = I.unionWith (+)
-        subS v1 v2 = I.unionWith (+) v1 $ I.map ((*)(-1)) v2 
-        scaleS s = I.map ((*) s) 
-        scaleZero = I.empty
-        
+    --split the ansatz tensor into the subtensors containing the different vars 
 
-    instance TAlgebra Rational AnsVar where 
-        type TAlg Rational AnsVar = AnsVar 
+    splitAnsTens :: ATens n1 n2 n3 n4 n5 n6 (AnsVar Rational) -> [ATens n1 n2 n3 n4 n5 n6 Rational]
+    splitAnsTens t = map selectTens [1..r]
+            where 
+                r = tensorRank' t 
+                selectTens i = removeZeros6 $ mapTo6 (\(AnsVar m) -> fromMaybe 0 $ I.lookup i m) t
+
+   
+    shiftVarLabels :: Int -> AnsVar a -> AnsVar a
+    shiftVarLabels s (AnsVar v) = AnsVar $ I.mapKeys ((+) s) v
+
+    shiftLabels1 :: (TIndex k1, TScalar a) => Int -> AbsTensor1 n1 k1 (AnsVar a) -> AbsTensor1 n1 k1 (AnsVar a)
+    shiftLabels1 s = mapTo1 (shiftVarLabels s)
+
+    shiftLabels2 :: (TIndex k1, TScalar a) => Int -> AbsTensor2 n1 n2 k1 (AnsVar a) -> AbsTensor2 n1 n2 k1 (AnsVar a) 
+    shiftLabels2 s = mapTo2 (shiftVarLabels s)
+
+    shiftLabels3 :: (TIndex k1, TIndex k2, TScalar a) =>Int -> AbsTensor3 n1 n2 n3 k1 k2 (AnsVar a) -> AbsTensor3 n1 n2 n3 k1 k2 (AnsVar a) 
+    shiftLabels3 s = mapTo3 (shiftVarLabels s)
+
+    shiftLabels4 :: (TIndex k1, TIndex k2, TScalar a) => Int -> AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar a) -> AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar a) 
+    shiftLabels4 s = mapTo4 (shiftVarLabels s)
+
+    shiftLabels5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar a) => Int -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar a) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar a) 
+    shiftLabels5 s = mapTo5 (shiftVarLabels s)
+
+    shiftLabels6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar a) => Int -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar a) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar a)
+    shiftLabels6 s = mapTo6 (shiftVarLabels s)
+
+    shiftLabels7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar a) => Int -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar a) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar a) 
+    shiftLabels7 s = mapTo7 (shiftVarLabels s)
+
+    shiftLabels8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar a) => Int -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar a) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar a)
+    shiftLabels8 s = mapTo8 (shiftVarLabels s)
+
+    instance (TScalar a) => TScalar (AnsVar a) where 
+        addS (AnsVar v1) (AnsVar v2) = AnsVar $ I.unionWith addS v1 v2
+        subS (AnsVar v1) (AnsVar v2) = AnsVar $ I.unionWith addS v1 $ I.map (scaleS(-1)) v2 
+        scaleS s (AnsVar v) = AnsVar $ I.map (scaleS s) v 
+        scaleZero = AnsVar I.empty 
+
+    instance TAlgebra Rational (AnsVar Rational) where 
+        type TAlg Rational (AnsVar Rational) = AnsVar Rational
         prodA = scaleS  
 
-    instance TAlgebra AnsVar Rational where 
-        type TAlg AnsVar Rational = AnsVar 
+    instance TAlgebra (AnsVar Rational) Rational where 
+        type TAlg (AnsVar Rational) Rational = AnsVar Rational
         prodA = flip scaleS  
 
-    --variable for generic are metric dofs, i.e parameters that are not obtained by making ansätze for the L derivatives
+    --variable for generic are metric dofs, i.e parameters that are not obtained by making ansätze for the L derivatives (only linear and quadratic)
 
-    newtype AreaVar a = AreaVar (I.IntMap a) deriving (Eq)
+    data LinearVar a = LinearVar a (I.IntMap a) deriving (Eq, Show)
 
-    instance (TScalar a) => TScalar (AreaVar a) where 
-        addS (AreaVar varMap1) (AreaVar varMap2) = AreaVar $ I.unionWith (addS) varMap1 varMap2
-        subS (AreaVar varMap1) (AreaVar varMap2) = AreaVar $ I.unionWith (addS) varMap1 $ I.map (scaleS (-1)) varMap2 
-        scaleS s (AreaVar varMap1) = AreaVar $ I.map (scaleS s) varMap1
-        scaleZero = AreaVar I.empty 
+    instance (TScalar a) => TScalar (LinearVar a) where 
+        addS (LinearVar s1 varMap1) (LinearVar s2 varMap2) = LinearVar (addS s1 s2) $ I.unionWith (addS) varMap1 varMap2
+        subS (LinearVar s1 varMap1) (LinearVar s2 varMap2) = LinearVar (subS s1 s2) $ I.unionWith (addS) varMap1 $ I.map (scaleS (-1)) varMap2 
+        scaleS s (LinearVar s1 varMap1) = LinearVar (scaleS s s1) $ I.map (scaleS s) varMap1
+        scaleZero = LinearVar scaleZero I.empty 
 
-    instance (TScalar a) => TAlgebra (AreaVar a) Rational where 
-        type TAlg (AreaVar a) Rational = AreaVar a
+    instance (TScalar a) => TAlgebra (LinearVar a) Rational where 
+        type TAlg (LinearVar a) Rational = LinearVar a
         prodA = flip scaleS
 
-    instance (TScalar a) => TAlgebra Rational (AreaVar a) where 
-        type TAlg Rational (AreaVar a) = AreaVar a
+    instance (TScalar a) => TAlgebra Rational (LinearVar a) where 
+        type TAlg Rational (LinearVar a) = LinearVar a
         prodA = scaleS 
 
-    --up to now the same as AnsVar, but if both the ansätze and the dofVars contain parameters always order the ansatzVars to the deeper levels in the extpresion tree
+    --product of to LinearVars (quadratic Variables)
 
-    instance TAlgebra (AreaVar Rational) AnsVar where 
-        type TAlg (AreaVar Rational) AnsVar = AreaVar (AnsVar) 
-        prodA (AreaVar varMapArea) varMapAns = AreaVar $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
+    data QuadraticVar a = QuadraticVar a (I.IntMap a) (I.IntMap (I.IntMap a)) deriving (Eq, Show)
+
+    linearVarToQuadraticVar :: LinearVar a -> QuadraticVar a 
+    linearVarToQuadraticVar (LinearVar s linMap) = QuadraticVar s linMap I.empty
+
+    prodLinearVar :: LinearVar Rational -> LinearVar Rational -> QuadraticVar Rational
+    prodLinearVar (LinearVar a map1) (LinearVar b map2) = QuadraticVar newScalar newLinear newQuadratic
+            where 
+                newScalar = a * b 
+                newLinear = I.unionWith (+) (I.map (* a) map2) (I.map (* b) map1)
+                assocs1 = I.assocs map1 
+                assocs2 = I.assocs map2 
+                combineF (k1,v1) (k2,v2)
+                    | k1 < k2 = (k1, I.fromList [(k2, v1 * v2)])
+                    | otherwise = (k2, I.fromList [(k1, v1 * v2)])
+                newAssocs = liftA2 combineF assocs1 assocs2 
+                newQuadratic = I.unionsWith (I.unionWith (+)) $ map (\(x,y) -> I.singleton x y) newAssocs
+
+    instance (TScalar a) => TScalar (QuadraticVar a) where 
+        addS (QuadraticVar s1 lin1 quad1) (QuadraticVar s2 lin2 quad2) = QuadraticVar (addS s1 s2) (I.unionWith (addS) lin1 lin2) (I.unionWith (I.unionWith addS) quad1 quad2)
+        subS (QuadraticVar s1 lin1 quad1) (QuadraticVar s2 lin2 quad2) = QuadraticVar (subS s1 s2) (I.unionWith (addS) lin1 (I.map (scaleS (-1)) lin2)) (I.unionWith (I.unionWith addS) quad1 $ I.map (I.map (scaleS (-1))) quad2)
+        scaleS s (QuadraticVar x lin1 quad1) = QuadraticVar (scaleS s x) (I.map (scaleS s) lin1) (I.map (I.map (scaleS s)) quad1)
+        scaleZero = QuadraticVar scaleZero I.empty I.empty 
+
+    instance (TScalar a) => TAlgebra (QuadraticVar a) Rational where 
+        type TAlg (QuadraticVar a) Rational = QuadraticVar a
+        prodA = flip scaleS
+    
+    instance (TScalar a) => TAlgebra Rational (QuadraticVar a) where 
+        type TAlg Rational (QuadraticVar a) = QuadraticVar a
+        prodA = scaleS 
+
+    --requires sorting of the expression    
+    instance TAlgebra (LinearVar Rational) (LinearVar Rational) where
+        type TAlg (LinearVar Rational) (LinearVar Rational) = QuadraticVar Rational 
+        prodA = prodLinearVar
+
+    --up to now all vars are of the syme type, but if both the ansätze and the dofVars contain parameters always order the ansatzVars to the lower levels in the expression tree/ left of the dof vars
+
+    instance TAlgebra (LinearVar Rational) (AnsVar Rational) where 
+        type TAlg (LinearVar Rational) (AnsVar Rational) = AnsVar (LinearVar Rational)  
+        prodA linVars (AnsVar varMapAns) = AnsVar $ I.map (\x -> scaleS x linVars) varMapAns 
         
-    instance TAlgebra AnsVar (AreaVar Rational) where 
-        type TAlg AnsVar (AreaVar Rational) = AreaVar (AnsVar) 
-        prodA varMapAns (AreaVar varMapArea) = AreaVar $ I.map (\x -> I.map ((*)x) varMapAns) varMapArea 
+    instance TAlgebra (AnsVar Rational) (LinearVar Rational) where 
+        type TAlg (AnsVar Rational) (LinearVar Rational) = AnsVar (LinearVar Rational) 
+        prodA (AnsVar varMapAns) linVars = AnsVar $ I.map (\x -> scaleS x linVars) varMapAns  
+
+    instance TAlgebra (QuadraticVar Rational) (AnsVar Rational) where 
+        type TAlg (QuadraticVar Rational) (AnsVar Rational) = AnsVar (QuadraticVar Rational)
+        prodA quadVars (AnsVar varMapAns) = AnsVar $ I.map (\x -> scaleS x quadVars) varMapAns
+        
+    instance TAlgebra (AnsVar Rational) (QuadraticVar Rational) where 
+        type TAlg (AnsVar Rational) (QuadraticVar Rational) = AnsVar (QuadraticVar Rational)
+        prodA (AnsVar varMapAns) quadVars = AnsVar $ I.map (\x -> scaleS x quadVars) varMapAns
 
     --tensors containing parameters in the derivatives must usually be evaluated before we can compute ranks, etc.
 
-    evalAreaVar :: (TScalar a) => I.IntMap Rational -> AreaVar a -> a 
-    evalAreaVar iMap (AreaVar areaMap) = foldr addS fst rest 
-                where 
-                    assocs = I.assocs areaMap 
-                    newList = map (\(x,y) -> scaleS ((I.!) iMap x) y) assocs
-                    ([fst],rest) = splitAt 1 newList 
-                    
-    evalTensorAreaVar1 :: (TScalar a) => I.IntMap Rational -> AbsTensor1 n1 k1 (AreaVar a) -> AbsTensor1 n1 k1 a  
-    evalTensorAreaVar1 evalMap tens = mapTo1 (evalAreaVar evalMap) tens 
+    ansVarToLinearVar :: AnsVar a -> AnsVar (LinearVar a) 
+    ansVarToLinearVar (AnsVar mapA) = AnsVar $ I.map (\x -> LinearVar x I.empty) mapA
 
-    evalTensorAreaVar2 :: (TScalar a) => I.IntMap Rational -> AbsTensor2 n1 n2 k1 (AreaVar a) -> AbsTensor2 n1 n2 k1 a  
-    evalTensorAreaVar2 evalMap tens = mapTo2 (evalAreaVar evalMap) tens 
+    ansVarToQuadraticVar :: AnsVar a -> AnsVar (QuadraticVar a)
+    ansVarToQuadraticVar (AnsVar mapA) = AnsVar $ I.map (\x -> QuadraticVar x I.empty I.empty) mapA
 
-    evalTensorAreaVar3 :: (TScalar a) => I.IntMap Rational -> AbsTensor3 n1 n2 n3 k1 k2 (AreaVar a) -> AbsTensor3 n1 n2 n3 k1 k2 a  
-    evalTensorAreaVar3 evalMap tens = mapTo3 (evalAreaVar evalMap) tens 
+    showAnsVar :: AnsVar Rational -> Char -> String 
+    showAnsVar (AnsVar linMap) varLabel
+        | assocs == [] = " "
+        | otherwise = tail assocs
+            where 
+                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x ++ "]") $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
+                showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
 
-    evalTensorAreaVar4 :: (TScalar a) => I.IntMap Rational -> AbsTensor4 n1 n2 n3 n4 k1 k2 (AreaVar a) -> AbsTensor4 n1 n2 n3 n4 k1 k2 a  
-    evalTensorAreaVar4 evalMap tens = mapTo4 (evalAreaVar evalMap) tens 
+    showLinearVar :: LinearVar Rational -> Char -> String 
+    showLinearVar (LinearVar s linMap) varLabel
+        | assocs == [] = showFrac s
+        | otherwise = if s == 0 then tail assocs else showFrac s ++ assocs
+            where 
+                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x ++ "]") $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
+                showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
 
-    evalTensorAreaVar5 :: (TScalar a) => I.IntMap Rational -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AreaVar a) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 a  
-    evalTensorAreaVar5 evalMap tens = mapTo5 (evalAreaVar evalMap) tens 
+    showAnsVarLinVar :: AnsVar (LinearVar Rational) -> Char -> Char -> String 
+    showAnsVarLinVar (AnsVar linMap) varLabelAns varLabelLin
+        | assocs' == [] = " "
+        | otherwise = tail assocs
+            where 
+                assocs' = filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap
+                assocs = concat $ map (\(x,y) -> "+" ++ "(" ++ showLinearVar y varLabelLin ++ ")" ++ "*" ++ [varLabelAns] ++ "[" ++ show x ++ "]") assocs'     
 
-    evalTensorAreaVar6 :: (TScalar a) => I.IntMap Rational -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AreaVar a) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 a  
-    evalTensorAreaVar6 evalMap tens = mapTo6 (evalAreaVar evalMap) tens 
+    showQuadraticVar :: QuadraticVar Rational -> Char -> String 
+    showQuadraticVar (QuadraticVar s linMap quadMap) varLabel
+        | totalAssocs == [] = showFrac s
+        | otherwise = if s == 0 then tail totalAssocs else showFrac s ++ totalAssocs
+            where 
+                assocsLin = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x ++ "]") $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                assocsQuad = concat $ map (\(x1,x2,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x1 ++ "]" ++ "*" ++ [varLabel] ++ "[" ++ show x2 ++ "]" ) $ filter (\(_,_,y) -> y /= 0) $ concat $ map (\(k,m) -> map (\(k2,v) -> (k,k2,v)) $ I.assocs m) $ I.assocs quadMap
+                totalAssocs = assocsLin ++ assocsQuad
+                showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
+                showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
+   
+    showAnsVarQuadVar :: AnsVar (QuadraticVar Rational) -> Char -> Char -> String 
+    showAnsVarQuadVar (AnsVar linMap) varLabelAns varLabelQuad
+        | assocs' == [] = " "
+        | otherwise = tail assocs
+            where 
+                assocs' = filter (\(_,y) -> y /= scaleZero) $ I.assocs linMap
+                assocs = concat $ map (\(x,y) -> "+" ++ "(" ++ showQuadraticVar y varLabelQuad ++ ")" ++ "*" ++ [varLabelAns] ++ "[" ++ show x ++ "]") assocs'
 
-    evalTensorAreaVar7 :: (TScalar a) => I.IntMap Rational -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AreaVar a) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 a  
-    evalTensorAreaVar7 evalMap tens = mapTo7 (evalAreaVar evalMap) tens 
-
-    evalTensorAreaVar8 :: (TScalar a) => I.IntMap Rational -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AreaVar a) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 a  
-    evalTensorAreaVar8 evalMap tens = mapTo8 (evalAreaVar evalMap) tens 
-                     
     --flatten tensor with ansVar values to assocs list 
     
-    toListShowVar1 :: (TIndex k1) => AbsTensor1 n1 k1 AnsVar -> [([Int], [(Int, Rational)])]
-    toListShowVar1 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
+    toListShowVar1 :: (TIndex k1, TScalar a) => AbsTensor1 n1 k1 (AnsVar a) -> [([Int], [(Int, a)])]
+    toListShowVar1 t = filter (\(_,c) -> c /= []) $ map (\(a,AnsVar b) -> (a, filter (\(_,b) -> b/= scaleZero) $ I.assocs b)) l
             where
                 l = toListShow1 t 
 
-    toListShowVar2 :: (TIndex k1) => AbsTensor2 n1 n2 k1 AnsVar -> [([Int], [(Int, Rational)])]
-    toListShowVar2 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
+    toListShowVar2 :: (TIndex k1, TScalar a) => AbsTensor2 n1 n2 k1 (AnsVar a) -> [([Int], [(Int, a)])]
+    toListShowVar2 t = filter (\(_,c) -> c /= []) $ map (\(a,AnsVar b) -> (a, filter (\(_,b) -> b/= scaleZero) $ I.assocs b)) l
             where
                 l = toListShow2 t 
 
-    toListShowVar3 :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 AnsVar -> [([Int], [(Int, Rational)])]
-    toListShowVar3 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
+    toListShowVar3 :: (TIndex k1, TIndex k2, TScalar a) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar a) -> [([Int], [(Int, a)])]
+    toListShowVar3 t = filter (\(_,c) -> c /= []) $ map (\(a,AnsVar b) -> (a, filter (\(_,b) -> b/= scaleZero) $ I.assocs b)) l
             where
                 l = toListShow3 t 
 
-    toListShowVar4 :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 AnsVar -> [([Int], [(Int, Rational)])]
-    toListShowVar4 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
+    toListShowVar4 :: (TIndex k1, TIndex k2, TScalar a) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar a) -> [([Int], [(Int, a)])]
+    toListShowVar4 t = filter (\(_,c) -> c /= []) $ map (\(a,AnsVar b) -> (a, filter (\(_,b) -> b/= scaleZero) $ I.assocs b)) l
             where
                 l = toListShow4 t 
 
-    toListShowVar5 :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 AnsVar -> [([Int], [(Int, Rational)])]
-    toListShowVar5 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
+    toListShowVar5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar a) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar a) -> [([Int], [(Int, a)])]
+    toListShowVar5 t = filter (\(_,c) -> c /= []) $ map (\(a,AnsVar b) -> (a, filter (\(_,b) -> b/= scaleZero) $ I.assocs b)) l
             where
                 l = toListShow5 t 
 
-    toListShowVar6 :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 AnsVar -> [([Int], [(Int, Rational)])]
-    toListShowVar6 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
+    toListShowVar6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar a) -> [([Int], [(Int, a)])]
+    toListShowVar6 t = filter (\(_,c) -> c /= []) $ map (\(a,AnsVar b) -> (a, filter (\(_,b) -> b/= scaleZero) $ I.assocs b)) l
             where
                 l = toListShow6 t 
 
-    toListShowVar7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 AnsVar -> [([Int], [(Int, Rational)])]
-    toListShowVar7 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
+    toListShowVar7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar a) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar a) -> [([Int], [(Int, a)])]
+    toListShowVar7 t = filter (\(_,c) -> c /= []) $ map (\(a,AnsVar b) -> (a, filter (\(_,b) -> b/= scaleZero) $ I.assocs b)) l
             where
                 l = toListShow7 t 
 
-    toListShowVar8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 AnsVar -> [([Int], [(Int, Rational)])]
-    toListShowVar8 t = filter (\(_,c) -> c /= []) $ map (\(a,b) -> (a, filter (\(_,b) -> b/= 0) $ I.assocs b)) l
+    toListShowVar8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar a) -> [([Int], [(Int, a)])]
+    toListShowVar8 t = filter (\(_,c) -> c /= []) $ map (\(a,AnsVar b) -> (a, filter (\(_,b) -> b/= scaleZero) $ I.assocs b)) l
             where
                 l = toListShow8 t 
 
     --write the tensor dat into a matrix 
 
-    toMatList1' :: (TIndex k1) => AbsTensor1 n1 k1 AnsVar -> [[(Int, Rational)]]
+    toMatList1' :: (TIndex k1, TScalar a) => AbsTensor1 n1 k1 (AnsVar a) -> [[(Int, a)]]
     toMatList1' t = map snd $ toListShowVar1 t
 
-    toMatList2' :: (TIndex k1) => AbsTensor2 n1 n2 k1 AnsVar -> [[(Int, Rational)]]
+    toMatList2' :: (TIndex k1, TScalar a) => AbsTensor2 n1 n2 k1 (AnsVar a) -> [[(Int, a)]]
     toMatList2' t = map snd $ toListShowVar2 t
 
-    toMatList3' :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 AnsVar -> [[(Int, Rational)]]
+    toMatList3' :: (TIndex k1, TIndex k2, TScalar a) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar a) -> [[(Int, a)]]
     toMatList3' t = map snd $ toListShowVar3 t
 
-    toMatList4' :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 AnsVar -> [[(Int, Rational)]]
+    toMatList4' :: (TIndex k1, TIndex k2, TScalar a) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar a) -> [[(Int, a)]]
     toMatList4' t = map snd $ toListShowVar4 t
 
-    toMatList5' :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 AnsVar -> [[(Int, Rational)]]
+    toMatList5' :: (TIndex k1, TIndex k2, TIndex k3, TScalar a) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar a) -> [[(Int, a)]]
     toMatList5' t = map snd $ toListShowVar5 t
 
-    toMatList6' :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 AnsVar -> [[(Int, Rational)]]
+    toMatList6' :: (TIndex k1, TIndex k2, TIndex k3, TScalar a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar a) -> [[(Int, a)]]
     toMatList6' t = map snd $ toListShowVar6 t
 
-    toMatList7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 AnsVar -> [[(Int, Rational)]]
+    toMatList7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar a) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar a) -> [[(Int, a)]]
     toMatList7' t = map snd $ toListShowVar7 t
 
-    toMatList8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 AnsVar -> [[(Int, Rational)]]
+    toMatList8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar a) -> [[(Int, a)]]
     toMatList8' t = map snd $ toListShowVar8 t
 
     normalize :: [(Int,Rational)] -> ([(Int,Rational)],Rational)
     normalize [] = ([],1) 
     normalize ((a,b) : xs) = ((a,1) : (map (\(x,y) -> (x,y / b)) xs),b)
+
+    --show the dof vars 
+
+    toMatList1Lin :: (TIndex k1) => AbsTensor1 n1 k1 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList1Lin t varLabel = concat l' 
+        where 
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar1 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList2Lin :: (TIndex k1) => AbsTensor2 n1 n2 k1 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList2Lin t varLabel = concat l'
+        where 
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar2 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList3Lin :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList3Lin t varLabel = concat l' 
+        where 
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar3 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList4Lin :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList4Lin t varLabel = concat l'
+        where 
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar4 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList5Lin :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList5Lin t varLabel = concat l'
+        where 
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar5 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList6Lin :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList6Lin t varLabel = concat l'
+        where 
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar6 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList7Lin :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList7Lin t varLabel = concat l' 
+        where 
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar7 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList8Lin :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (LinearVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList8Lin t varLabel = concat l' 
+         where 
+            l = map (map (\(x,y) -> (x, showLinearVar y varLabel))) $ map snd $ toListShowVar8 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+
+    toMatList1Quad :: (TIndex k1) => AbsTensor1 n1 k1 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList1Quad t varLabel = concat l' 
+        where 
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar1 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList2Quad :: (TIndex k1) => AbsTensor2 n1 n2 k1 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList2Quad t varLabel = concat l'
+        where 
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar2 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList3Quad :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList3Quad t varLabel = concat l' 
+        where 
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar3 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList4Quad :: (TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList4Quad t varLabel = concat l' 
+        where 
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar4 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList5Quad :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList5Quad t varLabel = concat l' 
+        where 
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar5 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList6Quad :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList6Quad t varLabel = concat l'
+        where 
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar6 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList7Quad :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList7Quad t varLabel = concat l' 
+        where 
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar7 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
+    toMatList8Quad :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (QuadraticVar Rational)) -> Char -> [(Int, Int, String)]
+    toMatList8Quad t varLabel = concat l' 
+        where 
+            l = map (map (\(x,y) -> (x, showQuadraticVar y varLabel))) $ map snd $ toListShowVar8 t
+            l' = zipWith (\x y -> map (\(a,b) -> (x,a,b)) y) [1..] l 
+
 
     --convert several tensor to one matrixList
 
@@ -1417,7 +1719,7 @@
 
     --collect data of heterogenic tensor list in one sparse matrix assocs list 
     
-    toMatList1 :: (TIndex k1) => TensList1 k1 AnsVar -> [((Int,Int),Rational)] 
+    toMatList1 :: (TIndex k1) => TensList1 k1 (AnsVar Rational) -> [((Int,Int),Rational)] 
     toMatList1 t = l' 
         where
             matList = concat $ mapTensList1 toMatList1' t 
@@ -1425,7 +1727,7 @@
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList2 :: (TIndex k1) => TensList2 k1 AnsVar -> [((Int,Int),Rational)] 
+    toMatList2 :: (TIndex k1) => TensList2 k1 (AnsVar Rational) -> [((Int,Int),Rational)] 
     toMatList2 t = l'
         where
             matList = concat $ mapTensList2 toMatList2' t 
@@ -1433,7 +1735,7 @@
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 AnsVar -> [((Int,Int),Rational)] 
+    toMatList3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 (AnsVar Rational) -> [((Int,Int),Rational)] 
     toMatList3 t = l'
         where
             matList = concat $ mapTensList3 toMatList3' t 
@@ -1441,7 +1743,7 @@
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 AnsVar -> [((Int,Int),Rational)] 
+    toMatList4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 (AnsVar Rational) -> [((Int,Int),Rational)] 
     toMatList4 t = l'
         where
             matList = concat $ mapTensList4 toMatList4' t 
@@ -1449,7 +1751,7 @@
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 AnsVar -> [((Int,Int),Rational)] 
+    toMatList5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 (AnsVar Rational) -> [((Int,Int),Rational)] 
     toMatList5 t = l' 
         where
             matList = concat $ mapTensList5 toMatList5' t 
@@ -1457,7 +1759,7 @@
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 AnsVar -> [((Int,Int),Rational)] 
+    toMatList6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 (AnsVar Rational) -> [((Int,Int),Rational)] 
     toMatList6 t = l'
         where
             matList = concat $ mapTensList6 toMatList6' t 
@@ -1465,7 +1767,7 @@
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 AnsVar -> [((Int,Int),Rational)] 
+    toMatList7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 (AnsVar Rational) -> [((Int,Int),Rational)] 
     toMatList7 t = l'
         where
             matList = concat $ mapTensList7 toMatList7' t 
@@ -1473,7 +1775,7 @@
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    toMatList8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 AnsVar -> [((Int,Int),Rational)] 
+    toMatList8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 (AnsVar Rational) -> [((Int,Int),Rational)] 
     toMatList8 t = l'
         where
             matList = concat $ mapTensList8 toMatList8' t 
@@ -1481,121 +1783,74 @@
             l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
             l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
-    --convert to hmatrix format 
-
-    toHMatrix1 :: (TIndex k1) => TensList1 k1 AnsVar -> HMat.Matrix Double 
-    toHMatrix1 tList =  HMat.toDense l'
-            where
-                l = toMatList1 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix2 :: (TIndex k1) => TensList2 k1 AnsVar -> HMat.Matrix Double 
-    toHMatrix2 tList =  HMat.toDense l'
-            where
-                l = toMatList2 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 AnsVar -> HMat.Matrix Double 
-    toHMatrix3 tList =  HMat.toDense l'
-            where
-                l = toMatList3 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-            
-    toHMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 AnsVar -> HMat.Matrix Double 
-    toHMatrix4 tList =  HMat.toDense l'
-            where
-                l = toMatList4 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 AnsVar -> HMat.Matrix Double 
-    toHMatrix5 tList =  HMat.toDense l'
-            where
-                l = toMatList5 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 AnsVar -> HMat.Matrix Double 
-    toHMatrix6 tList =  HMat.toDense l'
-            where
-                l = toMatList6 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 AnsVar -> HMat.Matrix Double 
-    toHMatrix7 tList =  HMat.toDense l'
-            where
-                l = toMatList7 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
-
-    toHMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 AnsVar -> HMat.Matrix Double 
-    toHMatrix8 tList =  HMat.toDense l'
-            where
-                l = toMatList8 tList
-                l' = map (\((x,y),z) -> ((x-1,y-1),fromRational z)) l
 
     --convert to Eigen format
 
-    toEMatrix1 :: (TIndex k1) => TensList1 k1 AnsVar -> Sparse.SparseMatrixXd
-    toEMatrix1 tList =  Sparse.fromList n m l'
+    toEMatrix1 :: (TIndex k1) => TensList1 k1 (AnsVar Rational) -> Sparse.SparseMatrixXd
+    toEMatrix1 tList =  Sparse.fromList m n l'
             where
                 l = toMatList1 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix2 :: (TIndex k1) => TensList2 k1 AnsVar -> Sparse.SparseMatrixXd
-    toEMatrix2 tList =  Sparse.fromList n m l'
+    toEMatrix2 :: (TIndex k1) => TensList2 k1 (AnsVar Rational) -> Sparse.SparseMatrixXd
+    toEMatrix2 tList =  Sparse.fromList m n l'
             where
                 l = toMatList2 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 AnsVar -> Sparse.SparseMatrixXd
-    toEMatrix3 tList =  Sparse.fromList n m l'
+    toEMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 (AnsVar Rational) -> Sparse.SparseMatrixXd
+    toEMatrix3 tList =  Sparse.fromList m n l'
             where
                 l = toMatList3 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
             
-    toEMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix4 tList =  Sparse.fromList n m l'
+    toEMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 (AnsVar Rational) -> Sparse.SparseMatrixXd 
+    toEMatrix4 tList =  Sparse.fromList m n l'
             where
                 l = toMatList4 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix5 tList =  Sparse.fromList n m l'
+    toEMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 (AnsVar Rational) -> Sparse.SparseMatrixXd 
+    toEMatrix5 tList =  Sparse.fromList m n l'
             where
                 l = toMatList5 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix6 tList =  Sparse.fromList n m l'
+    toEMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 (AnsVar Rational) -> Sparse.SparseMatrixXd 
+    toEMatrix6 tList =  Sparse.fromList m n l'
             where
                 l = toMatList6 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix7 tList =  Sparse.fromList n m l'
+    toEMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 (AnsVar Rational) -> Sparse.SparseMatrixXd 
+    toEMatrix7 tList =  Sparse.fromList m n l'
             where
                 l = toMatList7 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    toEMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 AnsVar -> Sparse.SparseMatrixXd 
-    toEMatrix8 tList =  Sparse.fromList n m l'
+    toEMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 (AnsVar Rational) -> Sparse.SparseMatrixXd 
+    toEMatrix8 tList =  Sparse.fromList m n l'
             where
                 l = toMatList8 tList
                 l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
+
+    --rank of the equations can be computed with rank Sol.FullPivLU or Sol.JakobySVD
 
     ------------------------------------------------------------------------------------------------------------------------------------
     --for our concrete purpose we need 3 types of indices 
@@ -1641,32 +1896,18 @@
     singletonTList :: ATens n1 n2 n3 n4 n5 n6 a -> TList a
     singletonTList t = t &> EmptyTList6
 
-    
+    infixr 6 &++
 
+    (&++) :: TList a -> TList a -> TList a 
+    (&++) EmptyTList6 t1 = t1 
+    (&++) t1 EmptyTList6 = t1
+    (&++) (AppendTList6 t1 EmptyTList6) t2 = AppendTList6 t1 t2 
+    (&++) (AppendTList6 t1 t1') t2 = AppendTList6 t1 (t1' &++ t2)
 
-    
+    tensorRank' :: ATens n1 n2 n3 n4 n5 n6 (AnsVar Rational) -> Int 
+    tensorRank' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix6 (singletonTList t)
 
-
-    
-    
-    
-
-
-
-
-
-
-
-
-
+    tensorRank :: TList (AnsVar Rational) -> Int 
+    tensorRank t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix6 t
 
     
-    
-
-
-    
-    
-    
-
-
-

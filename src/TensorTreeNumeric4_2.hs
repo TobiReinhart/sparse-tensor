@@ -30,6 +30,7 @@
     fromListT6, singletonInd, (+>), sortInd, toListT6, toListShow6, toListShowVar6,
     tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6,
     symATens1, symATens2, symATens3, symATens4, symATens5, symATens6,
+    symATensFac1, symATensFac2, symATensFac3, symATensFac4, symATensFac5, symATensFac6,
     aSymATens1, aSymATens2, aSymATens3, aSymATens4, aSymATens5, aSymATens6,
     cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6,
     cyclicSymATens1, cyclicSymATens2, cyclicSymATens3, cyclicSymATens4, cyclicSymATens5, cyclicSymATens6,

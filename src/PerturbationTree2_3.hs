@@ -35,7 +35,10 @@ module PerturbationTree2_3 (
     canonicalizeEvalMaps, getSyms, epsMap,
     decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta, flattenForestEpsilon, getIndSyms,
     getEpsForestFast, flattenForest, getAllIndsEta, getExtraEtaSyms, maxCycleNr, findExtraSym, Var(..),
-    areaList10IndsEtaRom, areaList10IndsEpsRom, areaList14IndsEtaRom, areaList14IndsEpsRom, filterList10Rom, symList10Rom, filterList14Rom, symList14Rom
+    areaList10IndsEtaRom, areaList10IndsEpsRom, areaList14IndsEtaRom, areaList14IndsEpsRom, filterList10Rom, symList10Rom, filterList14Rom, symList14Rom,
+    metricList2IndsEta, metricList4_1IndsEta, metricList4_2IndsEta, metricList6_1IndsEps, metricList6_1IndsEta, metricList6_2IndsEta, metricList6_3IndsEta, metricList8_1IndsEps, metricList8_1IndsEta, metricList8_2IndsEta,
+    metricfilterList2, metricfilterList4_1, metricfilterList4_2, metricfilterList6_1, metricfilterList6_2, metricfilterList6_3, metricfilterList8_1, metricfilterList8_2,
+    metricsymList2, metricsymList4_1, metricsymList4_2, metricsymList6_1, metricsymList6_2, metricsymList6_3, metricsymList8_1, metricsymList8_2
 
     
 ) where
@@ -1195,6 +1198,8 @@ module PerturbationTree2_3 (
     isEpsilonList l = let (a,b,c,d) = countEqualInds l in odd a && odd b && odd c && odd d 
 
     --the lists for evaluating the ansätze -> output = [(evalMap, multiplicity, Index8)]
+    --
+    --
 
     mkEvalMap :: Int -> [([Int],a,b)] -> [(I.IntMap Int,a,b)]
     mkEvalMap ord l = map (\(x,y,z) -> (I.fromList $ zip [1..ord] x, y, z)) l 
@@ -1612,6 +1617,94 @@ module PerturbationTree2_3 (
               trianArea = trianMapArea
               list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ p : b' ++ q : c' , (areaMult a') * (areaMult b') * (areaMult c'), map (\[[a,p],[b,q]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], c <- [1..21], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
   
+
+    --now the same for the metric ansätze 
+    --
+    --
+
+    --A ansatz
+
+    metricList2IndsEta :: [(I.IntMap Int, Int, [IndTuple 0 0 1 0 0 0])]
+    metricList2IndsEta = mkEvalMapEta 2 list 
+          where 
+              trianMetric = trianMap2
+              list = [ let a' = (I.!) trianMetric a in (a', iMult2 a', [(Empty, Empty, (singletonInd (Ind9 $ a-1)), Empty, Empty, Empty)]) | a <- [1..10] ]
+   
+   
+    --AI ansatz (first metric indices)
+
+    metricList4_1IndsEta :: [(I.IntMap Int, Int, [IndTuple 0 0 2 0 0 0])]
+    metricList4_1IndsEta = mkEvalMapEta 4 list 
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',i') = ((I.!) trianMetric a, (I.!) trianMetric i) in (a'++i', (iMult2 a') * (iMult2 i'), [(Empty, Empty, Append (Ind9 $ i-1) (singletonInd (Ind9 $ i-1)), Empty, Empty, Empty)]) | a <- [1..10], i <- [1..10] ]
+   
+ 
+    --A:B ansatz
+
+    metricList4_2IndsEta :: [(I.IntMap Int, Int, [IndTuple 0 0 2 0 0 0])]
+    metricList4_2IndsEta = mkEvalMapEta 4 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b') = ((I.!) trianMetric a, (I.!) trianMetric b) in  (a' ++ b', (iMult2 a') * (iMult2 b'), map (\[a,b] -> (Empty, Empty, Append (Ind9 $ a-1) $ singletonInd (Ind9 $ b-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] )  | a <- [1..10], b <- [a..10]]
+
+
+    --Ap:Bq ansatz 
+
+    metricList6_1IndsEta :: [(I.IntMap Int, Int, [IndTuple 0 0 2 0 2 0])]
+    metricList6_1IndsEta = mkEvalMapEta 6 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b') = ((I.!) trianMetric a, (I.!) trianMetric b) in  (a' ++ p : b' ++ [q], (iMult2 a') * (iMult2 b'), map (\[[a,p],[b,q]] -> (Empty, Empty, Append (Ind9 $ a-1) $ singletonInd (Ind9 $ b-1), Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..10], b <- [a..10], p <- [0..3], q <- [0..3],  not (a==b && p>q)]
+  
+
+    metricList6_1IndsEps :: [(I.IntMap Int, Int, [IndTuple 0 0 2 0 2 0])]
+    metricList6_1IndsEps = mkEvalMapEps 6 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b') = ((I.!) trianMetric a, (I.!) trianMetric b) in  (a' ++ p : b' ++ [q], (iMult2 a') * (iMult2 b'), map (\[[a,p],[b,q]] -> (Empty, Empty, Append (Ind9 $ a-1) $ singletonInd (Ind9 $ b-1), Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..10], b <- [a..10], p <- [0..3], q <- [0..3],  not (a==b && p>q)]
+  
+    --A:BI ansatz
+
+    metricList6_2IndsEta :: [(I.IntMap Int, Int, [IndTuple 0 0 3 0 0 0])]
+    metricList6_2IndsEta = mkEvalMapEta 6 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',i') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric i) in  (a' ++ b' ++ i', (iMult2 a') * (iMult2 b') * (iMult2 i'), [ (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ i-1), Empty, Empty, Empty)] ) | a <- [1..10], b <- [1..10], i <- [1..10] ]
+  
+  
+    --A:B:C ansatz 
+    
+    metricList6_3IndsEta ::  [(I.IntMap Int, Int, [IndTuple 0 0 3 0 0 0])]
+    metricList6_3IndsEta = mkEvalMapEta 6 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',c') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c) in  (a' ++ b' ++ c', (iMult2 a') * (iMult2 b') * (iMult2 c'), map (\[a,b,c] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ c-1), Empty, Empty, Empty)) $ nub $ permutations [a,b,c] )| a <- [1..10], b <- [a..10], c <- [b..10] ]
+  
+    --A:Bp:Cq ansatz
+
+    metricList8_1IndsEta :: [(I.IntMap Int, Int, [IndTuple 0 0 3 0 2 0])]
+    metricList8_1IndsEta = mkEvalMapEta 8 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',c') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c) in  (a' ++ b' ++ p : c' ++ [q], (iMult2 a') * (iMult2 b') * (iMult2 c'), map (\[[b,p],[c,q]] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ c-1), Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[b,p],[c,q]]) | a <- [1..10], b <- [1..10], c <- [b..10], p <- [0..3], q <- [0..3], not (b==c && p>q) ]
+  
+    metricList8_1IndsEps :: [(I.IntMap Int, Int, [IndTuple 0 0 3 0 2 0])]
+    metricList8_1IndsEps = mkEvalMapEps 8 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',c') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c) in  (a' ++ b' ++ p : c' ++ [q], (iMult2 a') * (iMult2 b') * (iMult2 c'), map (\[[b,p],[c,q]] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ c-1), Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[b,p],[c,q]]) | a <- [1..10], b <- [1..10], c <- [b..10], p <- [0..3], q <- [0..3], not (b==c && p>q) ]
+  
+    --A:B:CI ansatz 
+
+    metricList8_2IndsEta :: [(I.IntMap Int, Int, [IndTuple 0 0 4 0 0 0])]
+    metricList8_2IndsEta = mkEvalMapEta 8 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',c',i') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c, (I.!) trianMetric i) in ( a' ++ b' ++ c' ++ i', (iMult2 a') * (iMult2 b') * (iMult2 c') * (iMult2 i'), map (\[a,b] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ Append (Ind9 $ c-1) $ singletonInd (Ind9 $ i-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] ) | a <- [1..10], b <- [a..10], c <- [1..10], i <- [1..10] ]
+  
+
+
     --now the symmetry and filter lists 
 
     filterList4 :: [(Int,Int)]
@@ -1836,6 +1929,78 @@ module PerturbationTree2_3 (
                    ([1,2,3,4,5],[6,7,8,9,10])], [], [])
 
 
+    --extra filter and symlists for the metric ansätze 
+
+    --A ansatz
+
+    metricfilterList2 :: [(Int,Int)]
+    metricfilterList2 = [(1,2)]
+
+    metricsymList2 :: Symmetry  
+    metricsymList2 = ([(1,2)], [], [], [], [])
+
+    --AI ansatz 
+
+    metricfilterList4_1 :: [(Int,Int)]
+    metricfilterList4_1 = [(1,2),(3,4)]
+
+    metricsymList4_1 :: Symmetry  
+    metricsymList4_1 = ([(1,2),(3,4)], [], [], [], [])
+
+
+    --A:B ansatz
+
+    metricfilterList4_2 :: [(Int,Int)]
+    metricfilterList4_2 = [(1,2),(1,3),(3,4)]
+
+    metricsymList4_2 :: Symmetry  
+    metricsymList4_2 = ([(1,2),(3,4)], [], [([1,2],[3,4])], [], [])
+
+
+    --Ap:Bq ansatz 
+
+    metricfilterList6_1 :: [(Int,Int)]
+    metricfilterList6_1 = [(1,2),(4,5), (1,3)]
+
+    metricsymList6_1 :: Symmetry  
+    metricsymList6_1 = ([(1,2),(4,5)], [], [([1,2,3],[4,5,6])], [], [])
+
+    --A:BI ansatz 
+
+    metricfilterList6_2 :: [(Int,Int)]
+    metricfilterList6_2 = [(1,2),(3,4),(5,6)]
+
+    metricsymList6_2 :: Symmetry  
+    metricsymList6_2 = ([(1,2),(3,4),(5,6)], [], [], [], [])
+
+    --A:B:C ansatz 
+
+    metricfilterList6_3 :: [(Int,Int)]
+    metricfilterList6_3 = [(1,2),(3,4), (5,6), (1,3), (3,5)]
+
+    metricsymList6_3 :: Symmetry  
+    metricsymList6_3 = ([(1,2),(3,4),(5,6)], [], [], [], [[[1,2],[3,4],[5,6]]])
+
+    --A:Bp:Cq ansatz 
+
+    metricfilterList8_1 :: [(Int,Int)]
+    metricfilterList8_1 = [(1,2),(3,4),(6,7),(3,6)]
+
+    metricsymList8_1 :: Symmetry  
+    metricsymList8_1 = ([(1,2),(3,4),(6,7)], [], [([3,4,5],[6,7,8])], [], [])
+
+    --A:B:CI ansatz 
+
+    metricfilterList8_2 :: [(Int,Int)]
+    metricfilterList8_2 = [(1,2),(3,4),(5,6),(7,8),(1,3)]
+
+    metricsymList8_2 :: Symmetry  
+    metricsymList8_2 = ([(1,2),(3,4),(5,6),(7,8)], [], [([1,2],[3,4])], [], [])
+
+    
+
+
+    --remark: rewrite everything such that only Symmetry must be specified !!
 
     --------------------------------------------------------------------------------------------------------------------------------------
 

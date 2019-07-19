@@ -39,7 +39,8 @@
     mapTo1, mapTo2, mapTo3, mapTo4, mapTo5, mapTo6,
     resortTens1, resortTens5, fromListT6',
     (&>), (&++), singletonTList, toEMatrix6, shiftLabels6, tensorRank, removeZeros6, removeZeros, toMatList6, toMatList6', mapTensList6, 
-    splitAnsTens, tensorRank', toMatList6Lin, toMatList6Quad, showAnsVar, showAnsVarLinVar, showAnsVarQuadVar, showLinearVar, showQuadraticVar
+    splitAnsTens, tensorRank', toMatList6Lin, toMatList6Quad, showAnsVar, showAnsVarLinVar, showAnsVarQuadVar, showLinearVar, showQuadraticVar,
+    toLatexSpList6
  
     
 ) where
@@ -1503,7 +1504,7 @@
             where
                 l = toListShow5 t 
 
-    toListShowVar6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar a) -> [([Int], [(Int, a)])]
+    toListShowVar6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar a)  -> [([Int], [(Int, a)])]
     toListShowVar6 t = filter (\(_,c) -> c /= []) $ map (\(a,AnsVar b) -> (a, filter (\(_,b) -> b/= scaleZero) $ I.assocs b)) l
             where
                 l = toListShow6 t 
@@ -1910,5 +1911,16 @@
 
     tensorRank :: TList (AnsVar Rational) -> Int 
     tensorRank t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix6 t
+
+
+    --display the ansatz tensors as sparse tensor in Latex style 
+
+    toLatexSpList6 :: ATens n1 n2 n3 n4 n5 n6 (AnsVar Rational) -> Char -> [String]
+    toLatexSpList6 tens var = newList
+            where 
+                varList = toListShowVar6 tens 
+                showFracLatex x = if (denominator x) == 1 then (show $ numerator x) else  (show $ numerator x) ++ " /" ++ (show $ denominator x) 
+                showFracListLatex l = tail $ concat $ map (\(x,y) -> "+" ++ showFracLatex y ++ "*" ++ var : "_{" ++ show x ++ "}"  )  l
+                newList = map (\(a,b) -> show a ++ "=" ++ "( " ++ showFracListLatex b ++ ")") varList
 
     

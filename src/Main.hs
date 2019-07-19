@@ -32,192 +32,86 @@ import Data.Ratio
 
 main = do 
 
-    --mass term ansätze
+    --metric term ansätze
 
-    let (_,_,ansTest') = mkAnsatzTensorEig 8 metricfilterList8_1 metricsymList8_1 metricList8_1IndsEta metricList8_1IndsEps  
+    let ans0 = fromListT6' [(([],[],[],[],[],[]),AnsVar $I.fromList [(1,1)] )] :: ATens 0 0 0 0 0 0 (AnsVar Rational)
+
+    let (_,_,ans2) = mkAnsatzTensorEig 2 metricfilterList2 metricsymList2 metricList2IndsEta metricList2IndsEps  
     
-    let (_,_,ans8') = mkAnsatzTensorEig 8 filterList8 symList8 areaList8IndsEta areaList8IndsEps 
+    let (_,_,ans4_1) = mkAnsatzTensorEig 4 metricfilterList4_1 metricsymList4_1 metricList4_1IndsEta metricList4_1IndsEps  
 
-    let (_,_,ans12') = mkAnsatzTensorFast 12 filterList12 symList12 areaList12IndsEta areaList12IndsEps 
+    let (_,_,ans4_2) = mkAnsatzTensorEig 4 metricfilterList4_2 metricsymList4_2 metricList4_2IndsEta metricList4_2IndsEps  
 
-    --kinetic term ansätze 
+    let (_,_,ans6_1) = mkAnsatzTensorEig 6 metricfilterList6_1 metricsymList6_1 metricList6_1IndsEta metricList6_1IndsEps  
 
-    let (_,_,ans10') = mkAnsatzTensorFast 10 filterList10Rom symList10Rom areaList10IndsEtaRom areaList10IndsEpsRom 
+    let (_,_,ans6_2) = mkAnsatzTensorEig 6 metricfilterList6_2 metricsymList6_2 metricList6_2IndsEta metricList6_2IndsEps  
 
-    let (_,_,ans14') = mkAnsatzTensorFast 14 filterList14Rom symList14Rom areaList14IndsEtaRom areaList14IndsEpsRom
+    let (_,_,ans6_3) = mkAnsatzTensorEig 6 metricfilterList6_3 metricsymList6_3 metricList6_3IndsEta metricList6_3IndsEps  
+
+    let (_,_,ans8_1) = mkAnsatzTensorEig 8 metricfilterList8_1 metricsymList8_1 metricList8_1IndsEta metricList8_1IndsEps  
+
+    let (_,_,ans8_2) = mkAnsatzTensorEig 8 metricfilterList8_2 metricsymList8_2 metricList8_2IndsEta metricList8_2IndsEps  
+
+    let r0 = tensorRank' ans0
+
+    let r2 = tensorRank' ans2 
+
+    let r4_1 = tensorRank' ans4_1 
+
+    let r4_2 = tensorRank' ans4_2
     
-    let r8 = tensorRank' ansTest' 
-
-    let r10 = tensorRank' ans10'
-
-    let r12 = tensorRank' ans12'
-
-    let r14 = tensorRank' ans14'
+    let r6_1 = tensorRank' ans6_1
     
-    let ans14 = ans14' 
-
-    let ans12 = ans12' 
-
-    let ans10 = shiftLabels6 r14 ans10'
-
-    let ans8 = shiftLabels6 r12 ans8' 
-
-    let linMassEqn = linMass ans8
-
-    let linKinEqn = linKin ans10 
-
-    let quadMassEqn = quadMass ans12 ans8 
+    let r6_2 = tensorRank' ans6_2
     
-    let quadKinEqn1 = quadKin1 ans14 ans10 
+    let r6_3 = tensorRank' ans6_3
     
-    let quadKinEqn2 = quadKin2 ans14 ans10
-
-    let quadKinEqn3 = quadKin3 ans14 ans10 
-
-    let totalLinMass = singletonTList linMassEqn 
-
-    let totalQuadMass = linMassEqn &> (singletonTList quadMassEqn)
-
-    let totalLinKin = singletonTList linKinEqn 
-
-    let totalQuadKin = linKinEqn &> quadKinEqn1 &> quadKinEqn2 &> (singletonTList quadKinEqn3)
+    let r8_1 = tensorRank' ans8_1
     
-    let matLinKin = toMatList6 totalLinKin
+    let r8_2 = tensorRank' ans8_2
+
+    let ans8_2' = ans8_2
+
+    let ans8_1' = shiftLabels6 r8_2 ans8_1 
     
-    let matQuadKin = toMatList6 totalQuadKin
+    let ans6_3' = shiftLabels6 (r8_2 + r8_1) ans6_3
 
-    let mkMatLin l = "LinSym := Matrix(21,21,{" ++ (init $ init $ unlines $ map (\(a,b,c) -> show (a,b) ++ " = " ++ c ++ ",") l) ++ "});" ++ "\n" 
+    let ans6_2' = shiftLabels6 (r8_2 + r8_1+ r6_3) ans6_2
 
-    let mkMatQuad l = "Matrix(21,21,{" ++ (init $ init $ unlines $ map (\(a,b,c) -> show (a,b) ++ " = " ++ c ++ ",") l) ++ "})," ++ "\n" 
+    let ans6_1' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2) ans6_1
 
-    let linSym = mkMatLin $ linSymbol ans10 
+    let ans4_2' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2+ r6_1) ans4_2
 
-    let showFrac x = if denominator x == 1 then show (numerator x) else  "(" ++ show (numerator x) ++ "/" ++ show (denominator x) ++ ")"
+    let ans4_1' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2+ r6_1+ r4_2) ans4_1
 
-    let quadSym = "QuadSymList := [" ++ (init $ init $ init $ unlines $ map mkMatQuad $ quadSymbol ans14) ++ "];" ++ "\n" 
+    let ans2' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2+ r6_1+ r4_2 +r4_1) ans2
 
-    let mkMatLinKin l = "LinKin := Matrix (" ++ "8,121,{" ++ (init $ init $ unlines $ map (\((a,b),c) -> show (a,b) ++ " = " ++ showFrac c ++ ",") l) ++ "});" ++ "\n"
+    let ans0' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2+ r6_1+ r4_2 +r4_1 +r2) ans0
+
+    let eqn1 = eqn1Met ans0' ans2' 
+
+    let eqn3 = eqn3Met ans4_1' 
+
+    let eqn1A = eqn1AMet ans2' ans4_2' 
+
+    let eqn1AB = eqn1ABMet ans4_2' ans6_3'
+
+    let eqn1AI = eqn1AIMet ans4_1' ans6_2' 
+
+    let eqn2Aa = eqn2AaMet ans4_1' ans6_1' 
+
+    let eqn3A = eqn3AMet ans4_1' ans6_2'
+
+    let eqn1ABI = eqn1ABIMet ans6_2' ans8_2'
+
+    let eqn3AB = eqn3ABMet ans6_2' ans8_2' 
+
+    let eqn2ABb = eqn2ABbMet ans6_1' ans6_2' ans8_1' 
+
+    let eqn1AaBb = eqn1AaBbMet ans6_1' ans8_1' 
     
-    let linKinList = mkMatLinKin matLinKin 
+    let tList = eqn1AaBb &> eqn2ABb &> eqn3AB &> eqn1ABI &> eqn3A &> eqn2Aa &> eqn1AI &> eqn1AB &> eqn1A &> eqn3 &> (singletonTList eqn1) 
 
-    let mkMatQuadKin l = "QuadKin := Matrix (" ++ "1174,121,{" ++ (init $ init $ unlines $ map (\((a,b),c) -> show (a,b) ++ " = " ++ showFrac c ++ ",") l) ++ "});" ++ "\n"
-    
-    let quadKinList = mkMatQuadKin matQuadKin 
-    
-    {-
+    print $ tensorRank tList 
 
-    putStr linKinList 
-
-    putStr "\n"
-
-    putStr quadKinList
-
-    putStr "\n"
-    
-    putStr linSym
-
-    putStr "\n"
-    
-    putStr quadSym
-
-
-    -}
-
-    let (eta6,eps6,ans6') = mkAnsatzTensorEig 6 filterList6 symList6 areaList6IndsEta areaList6IndsEps 
-
-    let ans6 = shiftLabels6 1 ans6' 
-
-    let ans2 = fromListT6 $ map (\(x,y) -> ((Empty, Empty, singletonInd $ Ind9 x, Empty, Empty, Empty),AnsVar $ I.singleton 1 y)) [(0,-1),(4,1),(7,1),(9,1)] :: ATens 0 0 1 0 0 0 (AnsVar Rational)           
-
-    let hTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0..20]
-            
-    let hTens = fromListT6 $ zipWith (\i j -> ((Empty, singletonInd $ Ind20 i,Empty,Empty,Empty,Empty),j)) [0..] hTensList :: ATens 0 1 0 0 0 0 (LinearVar Rational)
-
-    let ansTens = ans6 
-    
-    let tens = (contrATens1 (0,0) $ ansTens &* hTens) 
-
-    let tens2 = ans2 
-    
-    let l = map (\([i],y) -> "(" ++ showAnsVarLinVar y 'x' 'H' ++ ")*k[" ++ show i ++ "]") $ toListShow6 tens
-
-    let l2 = map (\([i],y) -> "(" ++ showAnsVar y 'x' ++ ")*k[" ++ show i ++ "]") $ toListShow6 tens2
-
-    let (_,_,ans4) = mkAnsatzTensorEig 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps 
-
-    let eqn1Mass = eqn1 ans4 
-
-    let l3 = Mat.toList $ Sparse.toMatrix $ toEMatrix6 $ singletonTList eqn1Mass
-
-    let l4 = "RankDefLin := Matrix(21,4,{" ++ (unlines rankDefLin) ++ "});"
-
-    let l5 = "RankDefQuad := Matrix(21,4,{" ++ (unlines rankDefQuad) ++ "});"
-
-    {-
-
-    putStr l4
-
-    putStr "\n"
-
-    putStr l5
-
-    -}
-
-    let hTensList = map (\i -> AnsVar (I.singleton i 1)) [0..20]
-                
-    let hTens = fromListT6 $ zipWith (\i j -> ((Empty, singletonInd $ Ind20 i,Empty,Empty,Empty,Empty),j)) [0..] hTensList :: ATens 0 1 0 0 0 0 (AnsVar Rational)
-    
-    let hST = contrATens1 (0,0) $ interIArea &* hTens
-
-    let flatAInv = ((tensorTrans5 (1,2) $ invEta &* invEta) &- (tensorTrans5 (1,3) $ invEta &* invEta)) &- epsilonInv
-
-    let hInv = ((1/4) &.) $ contrATens3 (2,0) $ contrATens3 (3,1) $ contrATens3 (6,2) $ contrATens3 (7,3) $ flatAInv &* flatAInv &* hST
-
-    let linPoly' = contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (5,2) $ contrATens3 (6,4) $ contrATens3 (9,3) $ contrATens3 (10,6) $ contrATens3 (11,7) $ epsilon &* epsilon &* flatAInv &* flatAInv &* flatAInv 
-
-    let linPoly = ((1/24) &.) $ cyclicSymATens5 [0,1,2,3] linPoly'
-
-    let quadPoly1 = ((1/24) &.) $ cyclicSymATens5 [0,1,2,3] $ contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (5,2) $ contrATens3 (6,4) $ contrATens3 (9,3) $ contrATens3 (10,6) $ contrATens3 (11,7) $ epsilon &* epsilon &* hInv &* flatAInv &* flatAInv 
-   
-    let quadPoly2 = ((1/24) &.) $ cyclicSymATens5 [0,1,2,3] $ contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (5,2) $ contrATens3 (6,4) $ contrATens3 (9,3) $ contrATens3 (10,6) $ contrATens3 (11,7) $ epsilon &* epsilon &* flatAInv &* hInv &* flatAInv 
-
-    let quadPoly3 = ((1/24) &.) $ cyclicSymATens5 [0,1,2,3] $ contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (5,2) $ contrATens3 (6,4) $ contrATens3 (9,3) $ contrATens3 (10,6) $ contrATens3 (11,7) $ epsilon &* epsilon &* flatAInv &* flatAInv &* hInv 
-
-    let quadPoly = quadPoly1 &+ quadPoly2 &+ quadPoly3
-   
-    let quadPolyL =  map (\([a,b,c,d], x) ->([a,b,c,d], showAnsVar x 'H')) $ toListShow6 quadPoly
-
-    let linPolyL = map (\([a,b,c,d],x) -> showFrac x ++ "*" ++ "k" ++ show a ++ "*k" ++ show b ++ "*k" ++ show c ++ "*k" ++ show d ++ "+" ) $ toListShow6 linPoly
-
-    --print $ concat $ map (\([a,b,c,d],v) -> "(" ++ v ++ ")*" ++ "k" ++ show a ++ "*k" ++ show b ++ "*k" ++ show c ++ "*k" ++ show d ++ "+") quadPolyL
-
-    let ans1Poly = contrATens1 (0,0) $ contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ (tensorTrans5 (1,2) $ invEta &* invEta) &* interIArea &* flatInter
-
-    let ans2Poly = contrATens1 (0,0) $ contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ epsilonInv &* interIArea &* flatInter
-
-    let ans3Poly = ((1/2) &.) $ symATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ (tensorTrans5 (3,4) $ tensorTrans5 (1,2) $ invEta &* invEta &* invEta ) &* interIArea &* flatInter
-
-    let ans3PolyTest1 = (2 &.) $ invEta &* delta3 
-
-    let ans3PolyTest2 = (2 &.) $ symATens5 (0,1) $ delta3 &* invEta
-
-    --print $ toListShow6 (ans3Poly &+ (ans3PolyTest1 &+ ans3PolyTest2))
-
-   
-    let test1 = contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ hST &* epsilonInv
-
-    let test2 = contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ hInv &* epsilon
-
-    let test3 = ((-4) &.) $ contrATens3 (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ hST &* (tensorTrans5 (1,2) $ invEta &* invEta)
-
-    --print $ map (\(x,y) -> showAnsVar y 'H') $ toListShow6 test1 
-
-    --print $ map (\(x,y) -> showAnsVar y 'H') $ toListShow6 test2 
-
-    --print $ map (\(x,y) -> showAnsVar y 'H') $ toListShow6 test3
-
-    --print $ map (\(x,y) -> showAnsVar y 'H') $ toListShow6 (test3 &- test2) 
-
-
-
-    print r8
+    print $ r0 + r2 + r4_1 + r4_2 + r6_1 + r6_2 + r6_3 + r8_1 + r8_2 

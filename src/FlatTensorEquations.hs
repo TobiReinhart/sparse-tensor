@@ -406,24 +406,27 @@ module FlatTensorEquations (
 
     --order 0
 
-    eqn1Met :: ATens 0 0 1 0 0 0 (AnsVar Rational) -> ATens 0 0 0 0 1 1 (AnsVar Rational)
-    eqn1Met ans2 = contrATens2 (0,0) $ ans2 &* flatInterMetric
+    eqn1Met :: ATens 0 0 0 0 0 0 (AnsVar Rational) -> ATens 0 0 1 0 0 0 (AnsVar Rational) -> ATens 0 0 0 0 1 1 (AnsVar Rational)
+    eqn1Met ans0 ans2 = (contrATens2 (0,0) $ ans2 &* flatInterMetric) &+ (ans0 &* delta3)
 
     --order 1
 
     eqn1AMet :: ATens 0 0 1 0 0 0 (AnsVar Rational) -> ATens 0 0 2 0 0 0 (AnsVar Rational) -> ATens 0 0 1 0 1 1 (AnsVar Rational)
-    eqn1AMet ans2 ans4 = block1 &+ block2 
+    eqn1AMet ans2 ans4 = block1 &+ block2 &+ block3
             where
                 block1 = contrATens2 (0,0) $ ans2 &* interMetric 
                 block2 = contrATens2 (0,0) $ ans4 &* flatInterMetric 
+                block3 = ans2 &* delta3
 
     --order 2
 
     eqn1ABMet :: ATens 0 0 2 0 0 0 (AnsVar Rational) -> ATens 0 0 3 0 0 0 (AnsVar Rational) -> ATens 0 0 2 0 1 1 (AnsVar Rational) 
-    eqn1ABMet ans4 ans6 = block1 &+ block2 
+    eqn1ABMet ans4 ans6 = block1 &+ block2 &+ block3
             where
                 block1 = symATens3 (0,1) $ contrATens2 (0,0) $ ans4 &* interMetric 
                 block2 = contrATens2 (0,0) $ ans6 &* flatInterMetric
+                block3 = ans4 &* delta3
+
 
 
     --the subgraph with 2 total derivative 
@@ -436,10 +439,11 @@ module FlatTensorEquations (
     --order 1
 
     eqn1AIMet :: ATens 0 0 2 0 0 0 (AnsVar Rational) -> ATens 0 0 3 0 0 0 (AnsVar Rational) -> ATens 0 0 2 0 1 1 (AnsVar Rational) 
-    eqn1AIMet ans4 ans6 = block1 &+ block2 
+    eqn1AIMet ans4 ans6 = block1 &+ block2 &+ block3
             where 
                 block1 = contrATens2 (0,0) $ ans6 &* flatInterMetric 
                 block2 = contrATens2 (0,0) $ contrATens2 (1,1) $ ans4 &* interEqn3Metric 
+                block3 = ans4 &* delta3
 
     eqn2AaMet :: ATens 0 0 2 0 0 0 (AnsVar Rational) -> ATens 0 0 2 0 2 0 (AnsVar Rational) -> ATens 0 0 1 0 3 1 (AnsVar Rational) 
     eqn2AaMet ans4 ans6 = block1 &+ block2
@@ -456,11 +460,12 @@ module FlatTensorEquations (
     --order 2
 
     eqn1ABIMet :: ATens 0 0 3 0 0 0 (AnsVar Rational) -> ATens 0 0 4 0 0 0 (AnsVar Rational) -> ATens 0 0 3 0 1 1 (AnsVar Rational) 
-    eqn1ABIMet ans6 ans8 = block1 &+ block2 &+ block3  
+    eqn1ABIMet ans6 ans8 = block1 &+ block2 &+ block3  &+ block4
             where 
                 block1 = contrATens2 (0,0) $ ans8 &* flatInterMetric 
                 block2 = contrATens2 (1,0) $ interMetric &* ans6
                 block3 = contrATens2 (1,0) $ contrATens2 (2,1) $ ans6 &* interEqn3Metric 
+                block4 = ans6 &* delta3
 
     eqn3ABMet :: ATens 0 0 3 0 0 0 (AnsVar Rational) -> ATens 0 0 4 0 0 0 (AnsVar Rational) -> ATens 0 0 2 0 3 1 (AnsVar Rational)
     eqn3ABMet ans6 ans8 = block1 &+ block2
@@ -477,8 +482,9 @@ module FlatTensorEquations (
                 block3 = tensorTrans3 (0,1) $ symATens5 (0,2) $ contrATens2 (0,0) $ ans6_1 &* interMetric
 
     eqn1AaBbMet :: ATens 0 0 2 0 2 0 (AnsVar Rational) -> ATens 0 0 3 0 2 0 (AnsVar Rational) -> ATens 0 0 2 0 3 1 (AnsVar Rational)
-    eqn1AaBbMet ans6 ans8 = block1 &+ block2 &+ block3 
+    eqn1AaBbMet ans6 ans8 = block1 &+ block2 &+ block3 &+ block4 
             where 
                 block1 = tensorTrans5 (1,2) $ contrATens2 (0,0) $ ans8 &* flatInterMetric 
                 block2 = contrATens2 (0,0) $ contrATens3 (0,1) $ ans6 &* interEqn2Metric 
-                block3 = tensorTrans2 (0,1) $ tensorTrans5 (0,2) block2
+                block3 = tensorTrans3 (0,1) $ tensorTrans5 (0,2) block2
+                block4 = ans6 &* delta3

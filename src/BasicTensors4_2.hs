@@ -42,7 +42,8 @@ module BasicTensors4_2 (
     randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta9, delta3,
     lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3, interMetricArea, etaA, randMetric, genericMetric,
     interMetric, interI2, randAxon, genericAxon, eta, interI2Fac, interJ2, interJ2NoFac,
-    delta3Fac, delta9Fac, delta20Fac, interIAreaFac, interJAreaNoFac, interArea2, interIArea, epsilonInv, epsilon
+    delta3Fac, delta9Fac, delta20Fac, interIAreaFac, interJAreaNoFac, interArea2, interIArea, epsilonInv, epsilon, flatInterMetric,
+    interEqn5Metric, interEqn4Metric, interEqn3Metric, interEqn2Metric
 
 ) where 
 
@@ -286,11 +287,23 @@ module BasicTensors4_2 (
                 int1 = interArea &* delta3
                 int2 = (tensorTrans6 (0,1) $ delta3 &* delta3 ) &* delta20
 
+    interEqn2Metric :: ATens 0 0 1 1 2 2 Rational
+    interEqn2Metric = int1 &- int2
+            where
+                int1 = interMetric &* delta3
+                int2 = (tensorTrans6 (0,1) $ delta3 &* delta3 ) &* delta9
+
     interEqn3 :: ATens 1 1 1 1 1 1 Rational
     interEqn3 = int1 &+ int2 
             where
                 int1 = interArea &* delta9
                 int2 = interMetric &* delta20
+
+    interEqn3Metric :: ATens 0 0 2 2 1 1 Rational
+    interEqn3Metric = int1 &+ int2 
+            where
+                int1 = interMetric &* delta9
+                int2 = tensorTrans3 (0,1) $ tensorTrans4 (0,1) int1
 
     interEqn4 :: ATens 1 1 0 1 3 1 Rational
     interEqn4 = block1 &- block2 
@@ -299,10 +312,24 @@ module BasicTensors4_2 (
                 block1 = block1' &+ (tensorTrans5 (1,2) block1') 
                 block2 = delta20 &* delta3 &* interJ2
 
+    interEqn4Metric :: ATens 0 0 1 2 3 1 Rational
+    interEqn4Metric = block1 &- block2 
+            where
+                block1' = interJ2 &* interMetric
+                block1 = block1' &+ (tensorTrans5 (1,2) block1') 
+                block2 = delta3 &* interJ2 &* delta9
+
     interEqn5 :: ATens 1 1 0 1 3 1 Rational 
     interEqn5 = cyclicSymATens5 [0,1,2] intA1 
             where
                 intA1 = interJ2 &* interArea 
+
+    --derivative indices are left metric indices right !!
+                
+    interEqn5Metric :: ATens 0 0 1 2 3 1 Rational 
+    interEqn5Metric = cyclicSymATens5 [0,1,2] intA1 
+            where
+                intA1 = interJ2 &* interMetric 
 
    
     --generic Ansätze up to prolongation order 2
@@ -424,6 +451,9 @@ module BasicTensors4_2 (
 
     flatInter :: ATens 0 1 0 0 1 1 Rational 
     flatInter = contrATens1 (0,1) $ interArea &* flatArea
+
+    flatInterMetric :: ATens 0 0 0 1 1 1 Rational 
+    flatInterMetric = contrATens2 (0,1) $ interMetric &* etaA
 
     genericMetric :: ATens 0 0 0 1 0 0 (LinearVar Rational)
     genericMetric = fromListT6 assocs

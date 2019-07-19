@@ -36,7 +36,8 @@ module PerturbationTree2_3 (
     decodeAnsatzForestEta, decodeAnsatzForestEpsilon, encodeAnsatzForestEpsilon, encodeAnsatzForestEta, flattenForestEpsilon, getIndSyms,
     getEpsForestFast, flattenForest, getAllIndsEta, getExtraEtaSyms, maxCycleNr, findExtraSym, Var(..),
     areaList10IndsEtaRom, areaList10IndsEpsRom, areaList14IndsEtaRom, areaList14IndsEpsRom, filterList10Rom, symList10Rom, filterList14Rom, symList14Rom,
-    metricList2IndsEta, metricList4_1IndsEta, metricList4_2IndsEta, metricList6_1IndsEps, metricList6_1IndsEta, metricList6_2IndsEta, metricList6_3IndsEta, metricList8_1IndsEps, metricList8_1IndsEta, metricList8_2IndsEta,
+    metricList2IndsEta, metricList2IndsEps, metricList4_1IndsEta, metricList4_1IndsEps, metricList4_2IndsEta, metricList4_2IndsEps, metricList6_1IndsEps, metricList6_1IndsEta, metricList6_2IndsEps,
+    metricList6_2IndsEta, metricList6_3IndsEta, metricList6_3IndsEps, metricList8_1IndsEps, metricList8_1IndsEta, metricList8_2IndsEta, metricList8_2IndsEps,
     metricfilterList2, metricfilterList4_1, metricfilterList4_2, metricfilterList6_1, metricfilterList6_2, metricfilterList6_3, metricfilterList8_1, metricfilterList8_2,
     metricsymList2, metricsymList4_1, metricsymList4_2, metricsymList6_1, metricsymList6_2, metricsymList6_3, metricsymList8_1, metricsymList8_2
 
@@ -75,6 +76,7 @@ module PerturbationTree2_3 (
     --one 1,3 area pair contracted against epsilon yields an antisymmetry in 2,4 contracted against eta yields another symmetry
 
     get2ndAreaBlock :: [Int] -> [[Int]] -> Maybe [Int]
+    get2ndAreaBlock i [] = Nothing 
     get2ndAreaBlock [a,b] areaBlocks = case block of 
                                         Just block'      -> Just $ block' \\ [a,b]
                                         Nothing          -> Nothing 
@@ -102,6 +104,7 @@ module PerturbationTree2_3 (
     --a symmetric or antisymmetric pair contracted against 2 etas yields another symmetric or antisymmetric pair 
 
     findExtraSym :: [[Int]] -> [Int] -> Maybe [Int]
+    findExtraSym [] i = Nothing
     findExtraSym inds [a,b] = Just $ sort [head newSymInd1, head newSymInd2]
             where 
                 newSymInd1 = head (filter (\x -> elem a x) inds) \\ [a] 
@@ -163,6 +166,7 @@ module PerturbationTree2_3 (
     -}
 
     getIndsEpsilon :: Int -> [[Int]] -> [[Int]] -> [[Int]]
+    getIndsEpsilon i syms [] = [[a,b,c,d] | a <- [1..i-3], b <- [a+1..i-2], c <- [b+1..i-1], d <- [c+1..i] ]
     getIndsEpsilon i syms areaBlocks = [ [a,b,c,d] | a <- [1..i-3], b <- [a+1..i-2], c <- [b+1..i-1], d <- [c+1..i], (not $ isSym syms [a,b,c,d]) && (not $ is3Area areaBlocks [a,b,c,d]) && (isValid2Area areaBlocks [a,b,c,d]) && (not $ is1Area areaBlocks [a,b,c,d]) ]
                     where 
                         isSym [] x = False
@@ -355,7 +359,7 @@ module PerturbationTree2_3 (
     removeVarsEta vars EmptyForest = EmptyForest
 
     relabelAnsatzForestEpsilon :: Int -> AnsatzForestEpsilon -> AnsatzForestEpsilon
-    relabelAnsatzForestEpsilon i ans =  mapVarsEpsilon update ans
+    relabelAnsatzForestEpsilon i ans = if ans == M.empty then M.empty else mapVarsEpsilon update ans
             where
                 vars = getForestLabelsEpsilon ans 
                 relabMap = I.fromList $ zip vars [i..]
@@ -653,7 +657,7 @@ module PerturbationTree2_3 (
                     allForests = zipWith mkEtaList' allVars allInds
 
     getEpsForestFast :: Int -> [(Int,Int)] -> Symmetry -> AnsatzForestEpsilon
-    getEpsForestFast ord filters syms = relabelAnsatzForestEpsilon 1 $ reduceAnsatzEpsilon' syms allForests
+    getEpsForestFast ord filters syms = if ord < 4 then M.empty else relabelAnsatzForestEpsilon 1 $ reduceAnsatzEpsilon' syms allForests
                 where
                     allInds = getEpsilonInds [1..ord] filters syms 
                     allVars = mkAllVars
@@ -757,6 +761,7 @@ module PerturbationTree2_3 (
     type AssocsList a = [([(Int,Int)],Int,a)]
 
     evalAllEta :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEta -> [[(Int,Int)]]
+    evalAllEta epsM [] f = []
     evalAllEta epsM evalMs EmptyForest = [] 
     evalAllEta epsM evalMs f = l'
                 where
@@ -764,6 +769,7 @@ module PerturbationTree2_3 (
                     l' = runEval $ parListChunk 500 rdeepseq l
 
     evalAllTensorEta :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> AssocsList a
+    evalAllTensorEta epsM [] f = []
     evalAllTensorEta epsM evalMs EmptyForest = [] 
     evalAllTensorEta epsM evalMs f = l'
                 where
@@ -771,12 +777,14 @@ module PerturbationTree2_3 (
                     l' = runEval $ parListChunk 500 rdeepseq l
 
     evalAllEpsilon :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon -> [[(Int,Int)]]
+    evalAllEpsilon epsM  [] f = []
     evalAllEpsilon epsM evalMs f = if f == M.empty then [] else l'
                 where
                     l = map (\x -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f)) evalMs
                     l' = runEval $ parListChunk 500 rdeepseq l
 
     evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> [([(Int,Int)],Int,a)]
+    evalAllTensorEpsilon epsM [] f = []
     evalAllTensorEpsilon epsM evalMs f = if f == M.empty then [] else l'
                 where
                     l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
@@ -911,7 +919,7 @@ module PerturbationTree2_3 (
                 let newVec = evalAnsatzEtaVecListEig epsM evalM newAns
                 let restList = tail etaL 
                 case newVec of
-                                    Nothing         -> mk1stRankDataEtaEigIO symL numEta restList epsM evalM 
+                                    Nothing         -> if restList == [] then return (EmptyForest ,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEigIO symL numEta restList epsM evalM 
                                     Just newVec'    -> return (newAns, (newMat, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
@@ -924,7 +932,7 @@ module PerturbationTree2_3 (
                 newVec = evalAnsatzEtaVecListEig epsM evalM newAns
                 restList = tail etaL 
                 output = case newVec of
-                                    Nothing         -> mk1stRankDataEtaEig symL restList epsM evalM 
+                                    Nothing         -> if restList == [] then (EmptyForest,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEig symL restList epsM evalM 
                                     Just newVec'    -> (newAns, (newMat, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
@@ -939,7 +947,7 @@ module PerturbationTree2_3 (
                 let newVec = evalAnsatzEpsilonVecListEig epsM evalM newAns
                 let restList = tail epsL
                 case newVec of
-                                    Nothing         -> mk1stRankDataEpsilonEigIO symL numEps restList epsM evalM
+                                    Nothing         -> if restList == [] then return (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEigIO symL numEps restList epsM evalM
                                     Just newVec'    -> return (newAns,(newMat, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
@@ -952,7 +960,7 @@ module PerturbationTree2_3 (
                 newVec = evalAnsatzEpsilonVecListEig epsM evalM newAns
                 restList = tail epsL
                 output = case newVec of
-                                    Nothing         -> mk1stRankDataEpsilonEig symL restList epsM evalM
+                                    Nothing         -> if restList == [] then (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEig symL restList epsM evalM
                                     Just newVec'    -> (newAns,(newMat, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
@@ -960,6 +968,8 @@ module PerturbationTree2_3 (
 
 
     --finally reduce the ansatzList  
+
+    --IO version does not work for empty eval Lists yet !!
 
     reduceAnsatzEtaEigIO :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> IO (AnsatzForestEta,Sparse.SparseMatrixXd)
     reduceAnsatzEtaEigIO symL etaL evalM' =
@@ -978,12 +988,17 @@ module PerturbationTree2_3 (
                 return (finalForest, finalMat)
 
     reduceAnsatzEtaEig :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
-    reduceAnsatzEtaEig symL etaL evalM' = (finalForest, finalMat)
-            where
-                evalM = canonicalizeEvalMaps symL evalM'  
-                epsM = epsMap
-                (ans1,rDat1,restEtaL) = mk1stRankDataEtaEig symL etaL epsM evalM
-                (finalForest, (_,finalMat)) = foldl' (addOrDiscardEtaEig symL epsM evalM) (ans1,rDat1) restEtaL 
+    reduceAnsatzEtaEig symL etaL evalM' 
+            |  evalM == [] = (EmptyForest, Sparse.fromList 0 0 [])
+            | etaL == [] = (EmptyForest, Sparse.fromList 0 0 [])
+            | otherwise = (finalForest, finalMat)
+                where
+                    evalM = canonicalizeEvalMaps symL evalM'  
+                    epsM = epsMap
+                    (ans1,rDat1,restEtaL) = mk1stRankDataEtaEig symL etaL epsM evalM
+                    (finalForest, (_,finalMat)) = foldl' (addOrDiscardEtaEig symL epsM evalM) (ans1,rDat1) restEtaL 
+
+    --IO version does not work for empty eval Lists yet !!
 
     reduceAnsatzEpsilonEigIO :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> IO (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     reduceAnsatzEpsilonEigIO symL epsL evalM' =
@@ -1002,7 +1017,10 @@ module PerturbationTree2_3 (
                 return (finalForest, finalMat)
 
     reduceAnsatzEpsilonEig :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
-    reduceAnsatzEpsilonEig symL epsL evalM' = (finalForest, finalMat)
+    reduceAnsatzEpsilonEig symL epsL evalM'
+        | evalM == [] = (M.empty, Sparse.fromList 0 0 [])
+        | epsL == [] = (M.empty, Sparse.fromList 0 0 [])
+        | otherwise = (finalForest, finalMat)
             where
                 evalM = canonicalizeEvalMaps symL evalM'
                 epsM = epsMap
@@ -1012,25 +1030,37 @@ module PerturbationTree2_3 (
     --construct a basis ansatz forest 
 
     getEtaForestEigIO :: Int -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> IO (AnsatzForestEta,Sparse.SparseMatrixXd)
-    getEtaForestEigIO ord filters sym evalMs = reduceAnsatzEtaEigIO sym allEtaLists evalMs
+    getEtaForestEigIO ord filters sym [] = return (EmptyForest, Sparse.fromList 0 0 []) 
+    getEtaForestEigIO ord filters sym evalMs
+        | allEtaLists == [] = return (EmptyForest, Sparse.fromList 0 0 []) 
+        | otherwise = reduceAnsatzEtaEigIO sym allEtaLists evalMs
             where
                 allInds = getEtaInds [1..ord] filters sym
                 allEtaLists = map mkEtaList allInds
 
     getEtaForestEig :: Int -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
-    getEtaForestEig ord filters sym evalMs = reduceAnsatzEtaEig sym allEtaLists evalMs
+    getEtaForestEig ord filters sym [] = (EmptyForest, Sparse.fromList 0 0 []) 
+    getEtaForestEig ord filters sym evalMs 
+        | allEtaLists == [] = (EmptyForest, Sparse.fromList 0 0 []) 
+        | otherwise = reduceAnsatzEtaEig sym allEtaLists evalMs
             where
                 allInds = getEtaInds [1..ord] filters sym
                 allEtaLists = map mkEtaList allInds
 
     getEpsForestEigIO :: Int -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> IO (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
-    getEpsForestEigIO ord filters sym evalMs = reduceAnsatzEpsilonEigIO sym allEpsLists evalMs
+    getEpsForestEigIO ord filters sym [] = return (M.empty, Sparse.fromList 0 0 []) 
+    getEpsForestEigIO ord filters sym evalMs 
+        | allEpsLists == [] = return (M.empty, Sparse.fromList 0 0 []) 
+        | otherwise = reduceAnsatzEpsilonEigIO sym allEpsLists evalMs
             where
                 allInds = getEpsilonInds [1..ord] filters sym 
                 allEpsLists = map mkEpsilonList allInds
 
     getEpsForestEig :: Int -> [(Int,Int)] -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
-    getEpsForestEig ord filters sym evalMs = reduceAnsatzEpsilonEig sym allEpsLists evalMs
+    getEpsForestEig ord filters sym [] = (M.empty, Sparse.fromList 0 0 []) 
+    getEpsForestEig ord filters sym evalMs 
+        | allEpsLists == [] = (M.empty, Sparse.fromList 0 0 []) 
+        | otherwise =  reduceAnsatzEpsilonEig sym allEpsLists evalMs
             where
                 allInds = getEpsilonInds [1..ord] filters sym 
                 allEpsLists = map mkEpsilonList allInds
@@ -1630,6 +1660,12 @@ module PerturbationTree2_3 (
               trianMetric = trianMap2
               list = [ let a' = (I.!) trianMetric a in (a', iMult2 a', [(Empty, Empty, (singletonInd (Ind9 $ a-1)), Empty, Empty, Empty)]) | a <- [1..10] ]
    
+    metricList2IndsEps :: [(I.IntMap Int, Int, [IndTuple 0 0 1 0 0 0])]
+    metricList2IndsEps = mkEvalMapEps 2 list 
+          where 
+              trianMetric = trianMap2
+              list = [ let a' = (I.!) trianMetric a in (a', iMult2 a', [(Empty, Empty, (singletonInd (Ind9 $ a-1)), Empty, Empty, Empty)]) | a <- [1..10] ]
+   
    
     --AI ansatz (first metric indices)
 
@@ -1638,7 +1674,14 @@ module PerturbationTree2_3 (
           where 
               trianMetric = trianMap2
               list = [ let (a',i') = ((I.!) trianMetric a, (I.!) trianMetric i) in (a'++i', (iMult2 a') * (iMult2 i'), [(Empty, Empty, Append (Ind9 $ i-1) (singletonInd (Ind9 $ i-1)), Empty, Empty, Empty)]) | a <- [1..10], i <- [1..10] ]
+ 
+    metricList4_1IndsEps :: [(I.IntMap Int, Int, [IndTuple 0 0 2 0 0 0])]
+    metricList4_1IndsEps = mkEvalMapEps 4 list 
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',i') = ((I.!) trianMetric a, (I.!) trianMetric i) in (a'++i', (iMult2 a') * (iMult2 i'), [(Empty, Empty, Append (Ind9 $ i-1) (singletonInd (Ind9 $ i-1)), Empty, Empty, Empty)]) | a <- [1..10], i <- [1..10] ]
    
+ 
  
     --A:B ansatz
 
@@ -1647,6 +1690,13 @@ module PerturbationTree2_3 (
           where 
               trianMetric = trianMap2
               list = [ let (a',b') = ((I.!) trianMetric a, (I.!) trianMetric b) in  (a' ++ b', (iMult2 a') * (iMult2 b'), map (\[a,b] -> (Empty, Empty, Append (Ind9 $ a-1) $ singletonInd (Ind9 $ b-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] )  | a <- [1..10], b <- [a..10]]
+
+    metricList4_2IndsEps :: [(I.IntMap Int, Int, [IndTuple 0 0 2 0 0 0])]
+    metricList4_2IndsEps = mkEvalMapEps 4 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b') = ((I.!) trianMetric a, (I.!) trianMetric b) in  (a' ++ b', (iMult2 a') * (iMult2 b'), map (\[a,b] -> (Empty, Empty, Append (Ind9 $ a-1) $ singletonInd (Ind9 $ b-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] )  | a <- [1..10], b <- [a..10]]
+
 
 
     --Ap:Bq ansatz 
@@ -1672,6 +1722,13 @@ module PerturbationTree2_3 (
               trianMetric = trianMap2
               list = [ let (a',b',i') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric i) in  (a' ++ b' ++ i', (iMult2 a') * (iMult2 b') * (iMult2 i'), [ (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ i-1), Empty, Empty, Empty)] ) | a <- [1..10], b <- [1..10], i <- [1..10] ]
   
+    metricList6_2IndsEps :: [(I.IntMap Int, Int, [IndTuple 0 0 3 0 0 0])]
+    metricList6_2IndsEps = mkEvalMapEps 6 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',i') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric i) in  (a' ++ b' ++ i', (iMult2 a') * (iMult2 b') * (iMult2 i'), [ (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ i-1), Empty, Empty, Empty)] ) | a <- [1..10], b <- [1..10], i <- [1..10] ]
+  
+  
   
     --A:B:C ansatz 
     
@@ -1681,6 +1738,13 @@ module PerturbationTree2_3 (
               trianMetric = trianMap2
               list = [ let (a',b',c') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c) in  (a' ++ b' ++ c', (iMult2 a') * (iMult2 b') * (iMult2 c'), map (\[a,b,c] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ c-1), Empty, Empty, Empty)) $ nub $ permutations [a,b,c] )| a <- [1..10], b <- [a..10], c <- [b..10] ]
   
+    metricList6_3IndsEps ::  [(I.IntMap Int, Int, [IndTuple 0 0 3 0 0 0])]
+    metricList6_3IndsEps = mkEvalMapEps 6 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',c') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c) in  (a' ++ b' ++ c', (iMult2 a') * (iMult2 b') * (iMult2 c'), map (\[a,b,c] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ c-1), Empty, Empty, Empty)) $ nub $ permutations [a,b,c] )| a <- [1..10], b <- [a..10], c <- [b..10] ]
+  
+
     --A:Bp:Cq ansatz
 
     metricList8_1IndsEta :: [(I.IntMap Int, Int, [IndTuple 0 0 3 0 2 0])]
@@ -1699,6 +1763,12 @@ module PerturbationTree2_3 (
 
     metricList8_2IndsEta :: [(I.IntMap Int, Int, [IndTuple 0 0 4 0 0 0])]
     metricList8_2IndsEta = mkEvalMapEta 8 list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',c',i') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c, (I.!) trianMetric i) in ( a' ++ b' ++ c' ++ i', (iMult2 a') * (iMult2 b') * (iMult2 c') * (iMult2 i'), map (\[a,b] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ Append (Ind9 $ c-1) $ singletonInd (Ind9 $ i-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] ) | a <- [1..10], b <- [a..10], c <- [1..10], i <- [1..10] ]
+  
+    metricList8_2IndsEps :: [(I.IntMap Int, Int, [IndTuple 0 0 4 0 0 0])]
+    metricList8_2IndsEps = mkEvalMapEps 8 list
           where 
               trianMetric = trianMap2
               list = [ let (a',b',c',i') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c, (I.!) trianMetric i) in ( a' ++ b' ++ c' ++ i', (iMult2 a') * (iMult2 b') * (iMult2 c') * (iMult2 i'), map (\[a,b] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ Append (Ind9 $ c-1) $ singletonInd (Ind9 $ i-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] ) | a <- [1..10], b <- [a..10], c <- [1..10], i <- [1..10] ]

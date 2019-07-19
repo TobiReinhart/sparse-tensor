@@ -33,6 +33,8 @@ import Data.Ratio
 main = do 
 
     --mass term ansätze
+
+    let (_,_,ansTest') = mkAnsatzTensorEig 8 metricfilterList8_1 metricsymList8_1 metricList8_1IndsEta metricList8_1IndsEps  
     
     let (_,_,ans8') = mkAnsatzTensorEig 8 filterList8 symList8 areaList8IndsEta areaList8IndsEps 
 
@@ -44,7 +46,7 @@ main = do
 
     let (_,_,ans14') = mkAnsatzTensorFast 14 filterList14Rom symList14Rom areaList14IndsEtaRom areaList14IndsEpsRom
     
-    let r8 = tensorRank' ans8' 
+    let r8 = tensorRank' ansTest' 
 
     let r10 = tensorRank' ans10'
 
@@ -218,6 +220,4 @@ main = do
 
 
 
-    print $ toListShow6  interI2
-
-    print $ toListShow6  interJ2
+    print r8

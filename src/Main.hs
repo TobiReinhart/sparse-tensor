@@ -118,53 +118,12 @@ main = do
 
     let kList = eqn1AaBb &> eqn2ABb &> eqn3AB &> eqn1ABI &> eqn3A &> eqn2Aa &> eqn1AI &> (singletonTList eqn3) 
 
-    let kList' = eqn3A &> eqn2Aa &> eqn1AI &> (singletonTList eqn3) 
-
     let l = toMatList6 tList 
 
     let showfrac x = if denominator x == 1 then show (numerator x) else show (numerator x) ++ "/" ++ show (denominator x)
 
     let l' =  map (\(x,y) -> show x ++ "=" ++ showfrac y ++ "," ) l 
 
-    let lMass = toMatList6 mList
+    putStr $ unlines l' 
 
-    let lMass' =  map (\(x,y) -> show x ++ "=" ++ showfrac y ++ "," ) lMass
     
-    let lKin = toMatList6 kList'
-
-    let lKin' =  map (\(x,y) -> show x ++ "=" ++ showfrac y ++ "," ) lKin
-
-    --print $ tensorRank' eqn3
-
-    --print $ toListShowVar6 eqn3 
-
-    let l3 = toMatList6 $ singletonTList eqn3 
-
-    let l3' =  map (\(x,y) -> show x ++ "=" ++ showfrac y ++ "," ) l3 
-
-    --putStr $ unlines l3'
-
-    let l4 =  toMatList6' (eqn3Met ans4_1)
-
-    let l4' = map (\x -> tail $ concat $ map (\(a,b) -> "+" ++ show (numerator b) ++ "*x[" ++ show a ++ "]") x) l4
-
-    --putStr $ unlines l4'
-
-    print $ flattenForest eta4_1
-
-    let var1 = fromListT6' [(([],[],[],[],[],[]),AnsVar $I.fromList [(1,4)] )] :: ATens 0 0 0 0 0 0 (AnsVar Rational)
-
-    let var2 = fromListT6' [(([],[],[],[],[],[]),AnsVar $I.fromList [(2,2)] )] :: ATens 0 0 0 0 0 0 (AnsVar Rational)
-
-
-    let etaProd = invEta &* invEta
-
-    let etaTest = etaProd &* var1 &+ (tensorTrans5 (1,2) etaProd) &* var2 &+ (tensorTrans5 (1,3) $ tensorTrans5 (1,2) etaProd) &* var2
-
-    let etaAbsTest = contrATens3  (0,0) $ contrATens3 (1,1) $ contrATens3 (2,2) $ contrATens3 (3,3) $ etaTest &* interI2 &* interI2
-
-    print $ tensorRank' (eqn3Met ans4_1)
-
-    --print $ toListShowVar6 (etaAbsTest &- ans4_1)
-
-    --check this 

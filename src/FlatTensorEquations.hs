@@ -487,4 +487,4 @@ module FlatTensorEquations (
                 block1 = tensorTrans5 (1,2) $ contrATens2 (0,0) $ ans8 &* flatInterMetric 
                 block2 = contrATens2 (0,0) $ contrATens3 (0,1) $ ans6 &* interEqn2Metric 
                 block3 = tensorTrans3 (0,1) $ tensorTrans5 (0,2) block2
-                block4 = ans6 &* delta3
+                block4 = tensorTrans5 (1,2) $ ans6 &* delta3

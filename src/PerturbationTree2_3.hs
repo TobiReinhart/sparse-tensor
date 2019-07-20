@@ -425,16 +425,18 @@ module PerturbationTree2_3 (
     --get one representative for each Var Label
 
     forestEtaList :: AnsatzForestEta -> [[Eta]]
-    forestEtaList f = map (\(a,b) -> a) fList' 
+    forestEtaList f = map (\(a,b) -> a) fList''
             where 
                 fList = flattenForest f 
-                fList' = nubBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> y1 == y2) fList 
+                fList' = sortBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> compare y1 y2) fList 
+                fList'' = nubBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
 
     forestEpsList :: AnsatzForestEpsilon -> [(Epsilon,[Eta])]
-    forestEpsList f = map (\(a,b,c) -> (a,b)) fList' 
+    forestEpsList f = map (\(a,b,c) -> (a,b)) fList'' 
             where 
                 fList = flattenForestEpsilon f 
-                fList' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList 
+                fList' = sortBy (\(e1, e', Var x1 y1 ) ((e2, e2',  Var x2 y2)) -> compare y1 y2) fList 
+                fList'' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
 
 
     --construct a forest of a given asclist 

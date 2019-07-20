@@ -449,13 +449,13 @@ module FlatTensorEquations (
     eqn2AaMet ans4 ans6 = block1 &+ block2
                 where 
                     block1 = symATens5 (1,2) $ contrATens2 (1,0) $ ans6 &* flatInterMetric 
-                    block2 = symATens5 (1,2) $ contrATens2 (0,0) $ contrATens2 (0,1) $ ans4 &* interEqn4Metric 
+                    block2 = symATens5 (1,2) $ contrATens2 (0,0) $ contrATens2 (1,0) $ ans4 &* interEqn4Metric 
 
     eqn3AMet :: ATens 0 0 2 0 0 0 (AnsVar Rational) -> ATens  0 0 3 0 0 0 (AnsVar Rational) -> ATens 0 0 1 0 3 1 (AnsVar Rational) 
     eqn3AMet ans4 ans6 = block1 &+ block2 
             where 
                 block1 = contrATens2 (0,0) $ contrATens2 (1,0) $ ans4 &* interEqn5Metric 
-                block2 = contrATens2 (0,0) $ contrATens2 (2,0) $ ans6 &* (contrATens2 (0,2) $ interEqn5Metric &* etaA)  
+                block2 = contrATens2 (1,0) $ contrATens2 (2,0) $ ans6 &* (contrATens2 (0,2) $ interEqn5Metric &* etaA)  
 
     --order 2
 
@@ -470,8 +470,8 @@ module FlatTensorEquations (
     eqn3ABMet :: ATens 0 0 3 0 0 0 (AnsVar Rational) -> ATens 0 0 4 0 0 0 (AnsVar Rational) -> ATens 0 0 2 0 3 1 (AnsVar Rational)
     eqn3ABMet ans6 ans8 = block1 &+ block2
             where 
-                block1 = symATens3 (0,1) $ contrATens2 (0,0) $ contrATens2 (1,0) $ ans6 &* interEqn5Metric
-                block2 = contrATens2 (0,0) $ contrATens2 (3,0) $ ans8 &* (contrATens2 (0,2) $ interEqn5Metric &* etaA) 
+                block1 = symATens3 (0,1) $ contrATens2 (1,0) $ contrATens2 (2,0) $ ans6 &* interEqn5Metric
+                block2 = contrATens2 (2,0) $ contrATens2 (3,0) $ ans8 &* (contrATens2 (0,2) $ interEqn5Metric &* etaA) 
 
     eqn2ABbMet :: ATens 0 0 2 0 2 0 (AnsVar Rational) -> ATens 0 0 3 0 0 0 (AnsVar Rational) -> ATens 0 0 3 0 2 0 (AnsVar Rational) -> ATens 0 0 2 0 3 1 (AnsVar Rational)
     eqn2ABbMet ans6_1 ans6_2 ans8 = block1 &+ block2 &+ block3

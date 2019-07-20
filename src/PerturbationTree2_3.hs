@@ -39,7 +39,8 @@ module PerturbationTree2_3 (
     metricList2IndsEta, metricList2IndsEps, metricList4_1IndsEta, metricList4_1IndsEps, metricList4_2IndsEta, metricList4_2IndsEps, metricList6_1IndsEps, metricList6_1IndsEta, metricList6_2IndsEps,
     metricList6_2IndsEta, metricList6_3IndsEta, metricList6_3IndsEps, metricList8_1IndsEps, metricList8_1IndsEta, metricList8_2IndsEta, metricList8_2IndsEps,
     metricfilterList2, metricfilterList4_1, metricfilterList4_2, metricfilterList6_1, metricfilterList6_2, metricfilterList6_3, metricfilterList8_1, metricfilterList8_2,
-    metricsymList2, metricsymList4_1, metricsymList4_2, metricsymList6_1, metricsymList6_2, metricsymList6_3, metricsymList8_1, metricsymList8_2
+    metricsymList2, metricsymList4_1, metricsymList4_2, metricsymList6_1, metricsymList6_2, metricsymList6_3, metricsymList8_1, metricsymList8_2,
+    forestEtaList, forestEpsList
 
     
 ) where
@@ -259,8 +260,9 @@ module PerturbationTree2_3 (
     getEpsSign (Epsilon i j k l) = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
     {-# INLINEABLE getEpsSign #-}
 
+
     addVars :: Var -> Var -> Var 
-    addVars (Var x y) (Var x' y') = Var (x + x') y
+    addVars (Var x y) (Var x' y') = if y == y' then Var (x + x') y else error "should not add different vars"
     {-# INLINEABLE addVars #-}
 
     multVar :: Int -> Var -> Var
@@ -418,6 +420,22 @@ module PerturbationTree2_3 (
                 where
                     mPairs = M.assocs m 
                     l = fmap (\(k,v) -> map (\(i,j) -> (k, i, j)) $ flattenForest v) mPairs
+
+
+    --get one representative for each Var Label
+
+    forestEtaList :: AnsatzForestEta -> [[Eta]]
+    forestEtaList f = map (\(a,b) -> a) fList' 
+            where 
+                fList = flattenForest f 
+                fList' = nubBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> y1 == y2) fList 
+
+    forestEpsList :: AnsatzForestEpsilon -> [(Epsilon,[Eta])]
+    forestEpsList f = map (\(a,b,c) -> (a,b)) fList' 
+            where 
+                fList = flattenForestEpsilon f 
+                fList' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList 
+
 
     --construct a forest of a given asclist 
                 
@@ -1673,13 +1691,13 @@ module PerturbationTree2_3 (
     metricList4_1IndsEta = mkEvalMapEta 4 list 
           where 
               trianMetric = trianMap2
-              list = [ let (a',i') = ((I.!) trianMetric a, (I.!) trianMetric i) in (a'++i', (iMult2 a') * (iMult2 i'), [(Empty, Empty, Append (Ind9 $ i-1) (singletonInd (Ind9 $ i-1)), Empty, Empty, Empty)]) | a <- [1..10], i <- [1..10] ]
+              list = [ let (a',i') = ((I.!) trianMetric a, (I.!) trianMetric i) in (a'++i', (iMult2 a') * (iMult2 i'), [(Empty, Empty, Append (Ind9 $ a-1) (singletonInd (Ind9 $ i-1)), Empty, Empty, Empty)]) | a <- [1..10], i <- [1..10] ]
  
     metricList4_1IndsEps :: [(I.IntMap Int, Int, [IndTuple 0 0 2 0 0 0])]
     metricList4_1IndsEps = mkEvalMapEps 4 list 
           where 
               trianMetric = trianMap2
-              list = [ let (a',i') = ((I.!) trianMetric a, (I.!) trianMetric i) in (a'++i', (iMult2 a') * (iMult2 i'), [(Empty, Empty, Append (Ind9 $ i-1) (singletonInd (Ind9 $ i-1)), Empty, Empty, Empty)]) | a <- [1..10], i <- [1..10] ]
+              list = [ let (a',i') = ((I.!) trianMetric a, (I.!) trianMetric i) in (a'++i', (iMult2 a') * (iMult2 i'), [(Empty, Empty, Append (Ind9 $ a-1) (singletonInd (Ind9 $ i-1)), Empty, Empty, Empty)]) | a <- [1..10], i <- [1..10] ]
    
  
  
@@ -2030,7 +2048,7 @@ module PerturbationTree2_3 (
     --Ap:Bq ansatz 
 
     metricfilterList6_1 :: [(Int,Int)]
-    metricfilterList6_1 = [(1,2),(4,5), (1,3)]
+    metricfilterList6_1 = [(1,2),(4,5),(1,3)]
 
     metricsymList6_1 :: Symmetry  
     metricsymList6_1 = ([(1,2),(4,5)], [], [([1,2,3],[4,5,6])], [], [])
@@ -2046,7 +2064,7 @@ module PerturbationTree2_3 (
     --A:B:C ansatz 
 
     metricfilterList6_3 :: [(Int,Int)]
-    metricfilterList6_3 = [(1,2),(3,4), (5,6), (1,3), (3,5)]
+    metricfilterList6_3 = [(1,2),(3,4),(5,6),(1,3),(3,5)]
 
     metricsymList6_3 :: Symmetry  
     metricsymList6_3 = ([(1,2),(3,4),(5,6)], [], [], [], [[[1,2],[3,4],[5,6]]])

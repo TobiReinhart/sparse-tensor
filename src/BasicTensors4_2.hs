@@ -303,7 +303,7 @@ module BasicTensors4_2 (
     interEqn3Metric = int1 &+ int2 
             where
                 int1 = interMetric &* delta9
-                int2 = tensorTrans3 (0,1) $ tensorTrans4 (0,1) int1
+                int2 = delta9 &* interMetric 
 
     interEqn4 :: ATens 1 1 0 1 3 1 Rational
     interEqn4 = block1 &- block2 

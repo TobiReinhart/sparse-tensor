@@ -40,7 +40,7 @@ module PerturbationTree2_3 (
     metricList6_2IndsEta, metricList6_3IndsEta, metricList6_3IndsEps, metricList8_1IndsEps, metricList8_1IndsEta, metricList8_2IndsEta, metricList8_2IndsEps,
     metricfilterList2, metricfilterList4_1, metricfilterList4_2, metricfilterList6_1, metricfilterList6_2, metricfilterList6_3, metricfilterList8_1, metricfilterList8_2,
     metricsymList2, metricsymList4_1, metricsymList4_2, metricsymList6_1, metricsymList6_2, metricsymList6_3, metricsymList8_1, metricsymList8_2,
-    forestEtaList, forestEpsList
+    forestEtaList, forestEpsList, forestEtaListLatex, forestEpsListLatex, relabelAnsatzForest, relabelAnsatzForestEpsilon
 
     
 ) where
@@ -431,12 +431,36 @@ module PerturbationTree2_3 (
                 fList' = sortBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> compare y1 y2) fList 
                 fList'' = nubBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
 
+    mkEtasLatex :: String -> Eta -> String 
+    mkEtasLatex inds (Eta i j) = "eta^{" ++ etaI : etaJ : "}"
+            where
+                (etaI,etaJ) = (inds !! (i-1), inds !! (j-1)  ) 
+
+    forestEtaListLatex :: AnsatzForestEta -> String -> Char -> String 
+    forestEtaListLatex f inds var =  tail $ concat etaL'' 
+            where 
+                etaL = sortBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> compare y1 y2) $ flattenForest f 
+                etaL' = nubBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) etaL 
+                etaL'' = map (\(a,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}cdot" ++ (concat $ map (mkEtasLatex inds) a)) etaL' 
+
     forestEpsList :: AnsatzForestEpsilon -> [(Epsilon,[Eta])]
     forestEpsList f = map (\(a,b,c) -> (a,b)) fList'' 
             where 
                 fList = flattenForestEpsilon f 
                 fList' = sortBy (\(e1, e', Var x1 y1 ) ((e2, e2',  Var x2 y2)) -> compare y1 y2) fList 
                 fList'' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
+
+    mkEpsLatex :: String -> Epsilon -> String 
+    mkEpsLatex inds (Epsilon i j k l) =  "epsilon^{" ++ epsi : epsj : epsk : epsl : "}"
+            where 
+                (epsi, epsj, epsk, epsl) = (inds !! (i-1), inds !! (j-1), inds !! (k-1), inds !! (l-1))
+
+    forestEpsListLatex :: AnsatzForestEpsilon -> String -> Char -> String 
+    forestEpsListLatex f inds var = tail $ concat epsL''
+            where 
+                epsL = sortBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> compare y1 y2) $ flattenForestEpsilon f 
+                epsL' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) epsL 
+                epsL'' = map (\(a,b,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}cdot" ++ mkEpsLatex inds a ++ (concat $ map (mkEtasLatex inds) b)) epsL' 
 
 
     --construct a forest of a given asclist 

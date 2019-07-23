@@ -36,87 +36,85 @@ main = do
 
     let ans0 = fromListT6' [(([],[],[],[],[],[]),AnsVar $I.fromList [(1,1)] )] :: ATens 0 0 0 0 0 0 (AnsVar Rational)
 
-    let (eta2,eps2,ans2) = mkAnsatzTensorEig 2 metricfilterList2 metricsymList2 metricList2IndsEta metricList2IndsEps  
+    let (eta4,eps4,ans4) = mkAnsatzTensorEig 4 filterList4 symList4 areaList4IndsEta areaList4IndsEps  
     
-    let (eta4_1,eps4_1,ans4_1) = mkAnsatzTensorEig 4 metricfilterList4_1 metricsymList4_1 metricList4_1IndsEta metricList4_1IndsEps 
+    let (eta6,eps6,ans6) = mkAnsatzTensorEig 6 filterList6 symList6 areaList6IndsEta areaList6IndsEps 
     
-    let (eta4_1Fast,eps4_1Fast,ans4_1Fast) = mkAnsatzTensorFast 4 metricfilterList4_1 metricsymList4_1 metricList4_1IndsEta metricList4_1IndsEps  
+    let (eta8,eps8,ans8) = mkAnsatzTensorFast 8 filterList8 symList8 areaList8IndsEta areaList8IndsEps  
 
-    let (eta4_2,eps4_2,ans4_2) = mkAnsatzTensorEig 4 metricfilterList4_2 metricsymList4_2 metricList4_2IndsEta metricList4_2IndsEps  
+    let (eta10_1,eps10_1,ans10_1) = mkAnsatzTensorEig 10 filterList10_1 symList10_1 areaList10_1IndsEta areaList10_1IndsEps  
 
-    let (eta6_1,eps6_1,ans6_1) = mkAnsatzTensorEig 6 metricfilterList6_1 metricsymList6_1 metricList6_1IndsEta metricList6_1IndsEps  
+    let (eta10_2,eps10_2,ans10_2) = mkAnsatzTensorEig 10 filterList10_2 symList10_2 areaList10_2IndsEta areaList10_2IndsEps  
 
-    let (eta6_2,eps6_2,ans6_2) = mkAnsatzTensorEig 6 metricfilterList6_2 metricsymList6_2 metricList6_2IndsEta metricList6_2IndsEps  
+    let (eta12,eps12,ans12) = mkAnsatzTensorEig 12 filterList12 symList12 areaList12IndsEta areaList12IndsEps  
 
-    let (eta6_3,eps6_3,ans6_3) = mkAnsatzTensorEig 6 metricfilterList6_3 metricsymList6_3 metricList6_3IndsEta metricList6_3IndsEps  
+    let (eta14_1,eps14_1,ans14_1) = mkAnsatzTensorEig 14 filterList14_1 symList14_1 areaList14_1IndsEta areaList14_1IndsEps  
 
-    let (eta8_1,eps8_1,ans8_1) = mkAnsatzTensorEig 8 metricfilterList8_1 metricsymList8_1 metricList8_1IndsEta metricList8_1IndsEps  
-
-    let (eta8_2,eps8_2,ans8_2) = mkAnsatzTensorEig 8 metricfilterList8_2 metricsymList8_2 metricList8_2IndsEta metricList8_2IndsEps  
+    let (eta14_2,eps14_2,ans14_2) = mkAnsatzTensorEig 14 filterList14_2 symList14_2 areaList14_2IndsEta areaList14_2IndsEps  
 
     let r0 = tensorRank' ans0
 
-    let r2 = tensorRank' ans2 
+    let r4 = tensorRank' ans4 
 
-    let r4_1 = tensorRank' ans4_1 
+    let r6 = tensorRank' ans6 
 
-    let r4_2 = tensorRank' ans4_2
+    let r8 = tensorRank' ans8
     
-    let r6_1 = tensorRank' ans6_1
+    let r10_1 = tensorRank' ans10_1
     
-    let r6_2 = tensorRank' ans6_2
+    let r10_2 = tensorRank' ans10_2
     
-    let r6_3 = tensorRank' ans6_3
+    let r12 = tensorRank' ans12
     
-    let r8_1 = tensorRank' ans8_1
+    let r14_1 = tensorRank' ans14_1
     
-    let r8_2 = tensorRank' ans8_2
+    let r14_2 = tensorRank' ans14_2
 
-    let ans8_2' = ans8_2
+    let ans14_2' = ans14_2
 
-    let ans8_1' = shiftLabels6 r8_2 ans8_1 
+    let ans14_1' = shiftLabels6 r14_2 ans14_1 
     
-    let ans6_3' = shiftLabels6 (r8_2 + r8_1) ans6_3
+    let ans12' = shiftLabels6 (r14_2 + r14_1) ans12
 
-    let ans6_2' = shiftLabels6 (r8_2 + r8_1+ r6_3) ans6_2
+    let ans10_2' = shiftLabels6 (r14_2 + r14_1+ r12) ans10_2
 
-    let ans6_1' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2) ans6_1
+    let ans10_1' = shiftLabels6 (r14_2 + r14_1+ r12+ r10_2) ans10_1
 
-    let ans4_2' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2+ r6_1) ans4_2
+    let ans8' = shiftLabels6 (r14_2 + r14_1+ r12+ r10_2+ r10_1) ans8
 
-    let ans4_1' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2+ r6_1+ r4_2) ans4_1
+    let ans6' = shiftLabels6 (r14_2 + r14_1+ r12+ r10_2+ r10_1+ r8) ans6
 
-    let ans2' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2+ r6_1+ r4_2 +r4_1) ans2
+    let ans4' = shiftLabels6 (r14_2 + r14_1+ r12+ r10_2+ r10_1+ r8 +r6) ans4
 
-    let ans0' = shiftLabels6 (r8_2 + r8_1+ r6_3+ r6_2+ r6_1+ r4_2 +r4_1 +r2) ans0
+    let ans0' = shiftLabels6 (r14_2 + r14_1+ r12+ r10_2+ r10_1+ r8 +r6 + r4) ans0
 
-    let eqn1 = eqn1Met ans0' ans2' 
+    let eqn1Area = eqn1 ans0' ans4' 
 
-    let eqn3 = eqn3Met ans4_1' 
+    let eqn3Area = eqn3 ans6' 
 
-    let eqn1A = eqn1AMet ans2' ans4_2' 
+    let eqn1AArea = eqn1A ans4' ans8' 
 
-    let eqn1AB = eqn1ABMet ans4_2' ans6_3'
+    let eqn1ABArea = eqn1AB ans8' ans12'
 
-    let eqn1AI = eqn1AIMet ans4_1' ans6_2' 
+    let eqn1AIArea = eqn1AI ans6' ans10_2' 
 
-    let eqn2Aa = eqn2AaMet ans4_1' ans6_1' 
+    let eqn2AaArea = eqn2Aa ans6' ans10_1' 
 
-    let eqn3A = eqn3AMet ans4_1' ans6_2'
+    let eqn3AArea = eqn3A ans6' ans10_2'
 
-    let eqn1ABI = eqn1ABIMet ans6_2' ans8_2'
+    let eqn1ABIArea = eqn1ABI ans10_2' ans14_2'
 
-    let eqn3AB = eqn3ABMet ans6_2' ans8_2' 
+    let eqn3ABArea = eqn3AB ans10_2' ans14_2' 
 
-    let eqn2ABb = eqn2ABbMet ans6_1' ans6_2' ans8_1' 
+    let eqn2ABbArea = eqn2ABb ans10_1' ans10_2' ans14_1' 
 
-    let eqn1AaBb = eqn1AaBbMet ans6_1' ans8_1' 
+    let eqn1AaBbArea = eqn1AaBb ans10_1' ans14_1' 
     
-    let tList = eqn1AaBb &> eqn2ABb &> eqn3AB &> eqn1ABI &> eqn3A &> eqn2Aa &> eqn1AI &> eqn1AB &> eqn1A &> eqn3 &> (singletonTList eqn1) 
+    let tList = eqn1AaBbArea &> eqn2ABbArea &> eqn3ABArea&> eqn1ABIArea &> eqn3AArea &> eqn2AaArea &> eqn1AIArea &> eqn1ABArea &> eqn1AArea &> eqn3AArea &> (singletonTList eqn1AArea) 
 
-    let mList = eqn1AB &> eqn1A &> (singletonTList eqn1)
+    let mList = eqn1ABArea &> eqn1AArea &> (singletonTList eqn1AArea)
 
-    let kList = eqn1AaBb &> eqn2ABb &> eqn3AB &> eqn1ABI &> eqn3A &> eqn2Aa &> eqn1AI &> (singletonTList eqn3) 
+    let kList = eqn1AaBbArea &> eqn2ABbArea &> eqn3ABArea &> eqn1ABIArea &> eqn3AArea &> eqn2AaArea &> eqn1AIArea &> (singletonTList eqn3AArea) 
 
     let l = toMatList6 tList 
 
@@ -124,6 +122,14 @@ main = do
 
     let l' =  map (\(x,y) -> show x ++ "=" ++ showfrac y ++ "," ) l 
 
-    putStr $ unlines l' 
+    --putStr $ unlines l' 
+
+    print (r0,r4,r6,r8,r10_1,r10_2,r12,r14_1,r14_2)
+
+    print $ tensorRank tList
+
+    --print $ forestEpsListLatex (relabelAnsatzForestEpsilon 47 eps8_2) "abcdefpq" 'm' 
+    
+    --print $ flattenForest eta4_2
 
     

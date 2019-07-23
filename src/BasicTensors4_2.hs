@@ -42,7 +42,7 @@ module BasicTensors4_2 (
     randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, delta20, delta9, delta3,
     lorentzJ1, lorentzJ2, lorentzJ3, lorentzK1, lorentzK2, lorentzK3, interMetricArea, etaA, randMetric, genericMetric,
     interMetric, interI2, randAxon, genericAxon, eta, interI2Fac, interJ2, interJ2NoFac,
-    delta3Fac, delta9Fac, delta20Fac, interIAreaFac, interJAreaNoFac, interArea2, interIArea, epsilonInv, epsilon, flatInterMetric,
+    delta3Fac, delta9Fac, delta20Fac, interIAreaFac, interJAreaNoFac, interArea2, interIArea, interJArea, epsilonInv, epsilon, flatInterMetric,
     interEqn5Metric, interEqn4Metric, interEqn3Metric, interEqn2Metric
 
 ) where 

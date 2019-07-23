@@ -56,24 +56,26 @@ module FlatTensorEquations (
 
     --order 0
 
-    eqn1 :: ATens 1 0 0 0 0 0 (AnsVar Rational) -> ATens 0 0 0 0 1 1 (AnsVar Rational)
-    eqn1 ans4 = contrATens1 (0,0) $ ans4 &* flatInter
+    eqn1 :: ATens 0 0 0 0 0 0 (AnsVar Rational) -> ATens 1 0 0 0 0 0 (AnsVar Rational) -> ATens 0 0 0 0 1 1 (AnsVar Rational)
+    eqn1 ans0 ans4 = (contrATens1 (0,0) $ ans4 &* flatInter) &+ (ans0 &* delta3)
 
     --order 1
 
     eqn1A :: ATens 1 0 0 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 0 0 (AnsVar Rational) -> ATens 1 0 0 0 1 1 (AnsVar Rational)
-    eqn1A ans4 ans8 = block1 &+ block2 
+    eqn1A ans4 ans8 = block1 &+ block2 &+ block3
             where
                 block1 = contrATens1 (0,0) $ ans4 &* interArea 
                 block2 = contrATens1 (0,0) $ ans8 &* flatInter 
+                block3 = ans4 &* delta3
 
     --order 2
 
     eqn1AB :: ATens 2 0 0 0 0 0 (AnsVar Rational) -> ATens 3 0 0 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 1 1 (AnsVar Rational) 
-    eqn1AB ans8 ans12 = block1 &+ block2 
+    eqn1AB ans8 ans12 = block1 &+ block2 &+  block3
             where
                 block1 = symATens1 (0,1) $ contrATens1 (0,0) $ ans8 &* interArea 
                 block2 = contrATens1 (0,0) $ ans12 &* flatInter
+                block3 = ans8 &* delta3
 
     --order 3
 
@@ -95,10 +97,11 @@ module FlatTensorEquations (
     --order 1
 
     eqn1AI :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 1 0 1 0 1 1 (AnsVar Rational) 
-    eqn1AI ans6 ans10_2 = block1 &+ block2 
+    eqn1AI ans6 ans10_2 = block1 &+ block2 &+ block3
             where 
                 block1 = contrATens1 (0,0) $ ans10_2 &* flatInter 
                 block2 = contrATens2 (0,0) $ contrATens1 (0,0) $ ans6 &* interEqn3
+                block3 = ans6 &* delta3
 
     eqn2Aa :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 1 0 0 0 3 1 (AnsVar Rational) 
     eqn2Aa ans6 ans10_1 = block1 &+ block2
@@ -115,11 +118,12 @@ module FlatTensorEquations (
     --order 2
 
     eqn1ABI :: ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 3 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 1 0 1 1 (AnsVar Rational) 
-    eqn1ABI ans10_2 ans14_2 = block1 &+ block2 &+ block3  
+    eqn1ABI ans10_2 ans14_2 = block1 &+ block2 &+ block3 &+ block4 
             where 
                 block1 = contrATens1 (0,0) $ ans14_2 &* flatInter 
                 block2 = contrATens1 (1,0) $ interArea &* ans10_2
                 block3 = contrATens2 (0,0) $ contrATens1 (1,0) $ ans10_2 &* interEqn3 
+                block4 = ans10_2 &* delta3
 
     eqn3AB :: ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 3 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
     eqn3AB ans10_2 ans14_2 = block1 &+ block2

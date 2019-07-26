@@ -110,11 +110,11 @@ main = do
 
     let eqn1AaBbArea = eqn1AaBb ans10_1' ans14_1' 
     
-    let tList = eqn1AaBbArea &> eqn2ABbArea &> eqn3ABArea&> eqn1ABIArea &> eqn3AArea &> eqn2AaArea &> eqn1AIArea &> eqn1ABArea &> eqn1AArea &> eqn3AArea &> (singletonTList eqn1AArea) 
+    let tList = eqn1AaBbArea &> eqn2ABbArea &> eqn3ABArea&> eqn1ABIArea &> eqn3AArea &> eqn2AaArea &> eqn1AIArea &> eqn1ABArea &> eqn1AArea &> eqn3Area &> (singletonTList eqn1Area) 
 
-    let mList = eqn1ABArea &> eqn1AArea &> (singletonTList eqn1AArea)
+    let mList = eqn1ABArea &> eqn1AArea &> (singletonTList eqn1Area)
 
-    let kList = eqn1AaBbArea &> eqn2ABbArea &> eqn3ABArea &> eqn1ABIArea &> eqn3AArea &> eqn2AaArea &> eqn1AIArea &> (singletonTList eqn3AArea) 
+    let kList = eqn1AaBbArea &> eqn2ABbArea &> eqn3ABArea &> eqn1ABIArea &> eqn3AArea &> eqn2AaArea &> eqn1AIArea &> (singletonTList eqn3Area) 
 
     let l = toMatList6 tList 
 
@@ -124,12 +124,24 @@ main = do
 
     --putStr $ unlines l' 
 
-    print (r0,r4,r6,r8,r10_1,r10_2,r12,r14_1,r14_2)
+    --print (r0,r4,r6,r8,r10_1,r10_2,r12,r14_1,r14_2)
 
-    print $ tensorRank tList
+    --print $ tensorRank tList
 
-    --print $ forestEpsListLatex (relabelAnsatzForestEpsilon 47 eps8_2) "abcdefpq" 'm' 
+    --print $ tensorRank kList
+
+    --print $ tensorRank mList
+
+
+
+    --print $ forestEtaListLatex (relabelAnsatzForest 145 eta14_2) "abcdefghijklpq" 'v' 
+
+    --print $ forestEpsListLatex (relabelAnsatzForestEpsilon 184 eps14_2) "abcdefghijklpq" 'v' 
     
     --print $ flattenForest eta4_2
 
+    --print $ tensorRank' eqn3Area 
+
+    let kList' = eqn3AArea &> eqn2AaArea &> eqn1AIArea &> (singletonTList eqn3Area) 
     
+    print $tensorRank kList'

@@ -71,7 +71,7 @@ module FlatTensorEquations (
     --order 2
 
     eqn1AB :: ATens 2 0 0 0 0 0 (AnsVar Rational) -> ATens 3 0 0 0 0 0 (AnsVar Rational) -> ATens 2 0 0 0 1 1 (AnsVar Rational) 
-    eqn1AB ans8 ans12 = block1 &+ block2 &+  block3
+    eqn1AB ans8 ans12 = block1 &+ block2 &+ block3
             where
                 block1 = symATens1 (0,1) $ contrATens1 (0,0) $ ans8 &* interArea 
                 block2 = contrATens1 (0,0) $ ans12 &* flatInter
@@ -140,11 +140,12 @@ module FlatTensorEquations (
                 block3 = tensorTrans1 (0,1) $ symATens5 (0,2) $ contrATens1 (0,0) $ ans10_1 &* interArea
 
     eqn1AaBb :: ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
-    eqn1AaBb ans10_1 ans14_1 = block1 &+ block2 &+ block3 
+    eqn1AaBb ans10_1 ans14_1 = block1 &+ block2 &+ block3 &+ block4
             where 
                 block1 = tensorTrans5 (1,2) $ contrATens1 (0,0) $ ans14_1 &* flatInter 
                 block2 = contrATens1 (0,0) $ contrATens3 (0,1) $ ans10_1 &* interEqn2 
                 block3 = tensorTrans1 (0,1) $ tensorTrans5 (0,2) block2
+                block4 = tensorTrans5 (1,2) $ ans10_1 &* delta3
 
     --order 2
 

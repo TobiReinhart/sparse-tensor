@@ -95,10 +95,18 @@ module LorentzGenerator (
     getExtraSyms1 [] syms = ([],[],[],[],[]) 
     getExtraSyms1 (a:b:xs) (pairs,aPairs,blocks,cycles,blockCycles) = addSym (newPairs, [],  newBlocks, [], []) (getExtraSyms1 xs newSyms)  
             where 
-                newBlocks' = map (\(x,y) -> unzip $ filter (\(c,d) -> not $ (c,d) == (a,b)) $ zip x y) blocks 
+                allBlocks = blocks ++ (concat $ map mkBlocksFromBlockCycle blockCycles) 
+                newBlocks' = map (\(x,y) -> unzip $ filter (\(c,d) -> not $ (c,d) == (a,b)) $ zip x y) allBlocks 
                 (newBlocks, newPairs') = partition (\(a,b) -> length a > 1) newBlocks'  
                 newPairs = map (\([a],[b]) -> (a,b)) newPairs' 
                 newSyms = addSym (pairs,aPairs,blocks,cycles,blockCycles) (newPairs, [],  newBlocks, [], [])
+
+    mkBlocksFromBlockCycle :: [[Int]] -> [([Int],[Int])]  
+    mkBlocksFromBlockCycle [x,y] = [(x,y)] 
+    mkBlocksFromBlockCycle (x:xs) = l ++ (mkBlocksFromBlockCycle xs)
+            where 
+                l = map (\y -> (x,y)) xs
+
 
     --furthermore distributing a symmetric or antisymmetric pair over 2 etas yields an additinal symmetry: for instance consider the < <-> b symmetry,
     --writing eta[ac] eta[bd] yields an additional c <-> d symmetry.
@@ -106,6 +114,7 @@ module LorentzGenerator (
     get2nd :: [Int] -> Symmetry -> (Maybe [(Int,Int)], Maybe [(Int,Int)]) 
     get2nd [a,b] (pairs,aPairs,blocks,cycles,blockCycles) = (sndPairs, sndAPairs)
             where 
+                allPairs = pairs ++ (concat $ map mkSymsFromCycle cycles)
                 aPair = lookup a pairs 
                 bPair = lookup b  (map swap pairs) 
                 aAPair = lookup a aPairs
@@ -128,6 +137,12 @@ module LorentzGenerator (
         where 
             get2ndInd l (i,j) = mapMaybe (\[a,b] -> if j == a then Just (i,b) else if j == b then Just (i,a) else Nothing) l
             newPairs = concat $ map (get2ndInd etas) i 
+
+    mkSymsFromCycle :: [Int] -> [(Int,Int)]
+    mkSymsFromCycle [x,y] = [(x,y)] 
+    mkSymsFromCycle (x:xs) = l ++ (mkSymsFromCycle xs)
+            where 
+                l = map (\y -> (x,y)) xs
 
 
     get2ndASyms :: Maybe [(Int,Int)] -> Symmetry -> [[Int]] -> Symmetry 
@@ -158,7 +173,7 @@ module LorentzGenerator (
                 where 
                     allSyms1 = addSym (getExtraSyms1 etas syms) syms 
                     allSyms2 = addSym (getExtraSyms2 etas allSyms1) allSyms1 
-                                     
+                    
 
     getAllIndsEta :: [Int] -> [(Int,Int)] -> [[Int]]
     getAllIndsEta [a,b] aSyms = [[a,b]]

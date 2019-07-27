@@ -100,7 +100,6 @@ module PerturbationTree2_3 (
                 l = mapMaybe (\y -> if not $ elem [x,y] aSyms then Just ([x,y],delete y xs) else Nothing) xs 
                 res (a,b) = (++) a <$> (getAllIndsEta b aSyms)
     getAllIndsEta [] aSyms = [[]]
-    getAllInds x aSmys = error "wrong list length"
 
     --a symmetric or antisymmetric pair contracted against 2 etas yields another symmetric or antisymmetric pair 
 

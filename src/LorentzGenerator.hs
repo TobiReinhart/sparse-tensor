@@ -19,7 +19,9 @@
 
 
 module LorentzGenerator (
-    mkAnsatzTensorEig, mkAnsatzTensorEigIO, mkAnsatzTensorFast, mkAnsatzTensorEig', mkAnsatzTensorEigIO', mkAnsatzTensorFast'
+    getEtaInds, getEpsilonInds, flattenForest, flattenForestEpsilon, 
+    mkAnsatzTensorEig, mkAnsatzTensorEigIO, mkAnsatzTensorFast, mkAnsatzTensorEig', mkAnsatzTensorEigIO', mkAnsatzTensorFast', allList,
+    epsilonRedList, etaRedList, epsilonAllList, etaAllList, AnsatzForestEpsilon, AnsatzForestEta
 
 ) where
 
@@ -78,7 +80,7 @@ module LorentzGenerator (
     mkFilters :: Symmetry -> [(Int,Int)]
     mkFilters (pairs,aPairs,blocks,cycles,blockCycles) = map sortPair $ union f1 (union f2 (union f3 f4))
         where 
-            sortPair (a,b) = if a < b then (a,b) else (b,a)
+            sortPair (a,b) = if a < b then (a,b) else (b,a)            
             f1 =  pairs ++ aPairs 
             f2 = map (\(a,b) -> (head a, head b)) blocks 
             getPairs [a,b] = [(a,b)]
@@ -223,6 +225,7 @@ module LorentzGenerator (
     --construct a pre-reduced list of eta indices
             
     getEtaInds :: [Int] -> Symmetry -> [[Int]]
+    getEtaInds [] sym = [[]]
     getEtaInds inds (p,ap,b,c,bc) = filter (\x -> filterEta x (p,ap,b,c,bc) filters1) allInds 
             where 
                 filters1 = mkFilters (p,ap,b,c,bc) 
@@ -1307,21 +1310,47 @@ module LorentzGenerator (
             where 
                 boolL = map (\(i,j) -> l!!(i-1) /= l!!(j-1)) ap
 
-    
-    filter1SymEval :: [Int] -> (Int,Int) -> Bool 
-    filter1SymEval l (i,j) = case (iPos,jPos) of  
-                            (Just i', Just j')   ->  if i' <= j' then True else False
-                            x   -> True  
-             where
-               (iPos,jPos) = (elemIndex i l, elemIndex j l)
 
-    filterSymEval :: [Int] -> [(Int,Int)] -> Bool
-    filterSymEval l inds = and boolList 
-            where
-               boolList = map (filter1SymEval l) inds 
+    filterPSym :: [Int] -> (Int,Int) -> Bool 
+    filterPSym inds (i,j) = (inds !! (i-1)) <= (inds !! (j-1))
 
-    isSymRep :: [Int] -> Symmetry -> Bool 
-    isSymRep l sym = filterSymEval l (mkFilters sym) 
+    filterASym :: [Int] -> (Int,Int) -> Bool 
+    filterASym inds (i,j) = (inds !! (i-1)) < (inds !! (j-1))
+
+    filterCSym :: [Int] -> [Int] -> Bool 
+    filterCSym inds i =  and boolL 
+            where 
+                getPairs [a,b] = [(a,b)]
+                getPairs (x:xs) = (x, head xs) : getPairs xs 
+                pairL =  getPairs i 
+                boolL = map (filterPSym inds) pairL
+
+    filterBSym :: [Int] -> ([Int],[Int]) -> Bool 
+    filterBSym inds ([],[]) = True
+    filterBSym inds ((x:xs),(y:ys))
+                | xVal < yVal = True 
+                | xVal == yVal = filterBSym inds (xs,ys)
+                | otherwise = False 
+                 where
+                    xVal = inds !! (x-1)
+                    yVal = inds !! (y-1)
+
+    filterBCSym :: [Int] -> [[Int]] -> Bool 
+    filterBCSym inds i =  and boolL 
+            where 
+                getPairs [a,b] = [(a,b)]
+                getPairs (x:xs) = (x, head xs) : getPairs xs 
+                pairL =  getPairs i 
+                boolL = map (filterBSym inds) pairL
+
+    filterAllSym :: [Int] -> Symmetry -> Bool
+    filterAllSym inds (p,ap,b,c,bc) = and (p' ++ ap' ++ c' ++ b' ++ bc')
+            where 
+                p' = map (filterPSym inds) p
+                ap' = map (filterASym inds) ap 
+                c' = map (filterCSym inds) c 
+                b' = map (filterBSym inds) b 
+                bc' = map (filterBCSym inds) bc
 
     isLorentzEvalL :: [Int] -> Bool 
     isLorentzEvalL l 
@@ -1334,14 +1363,14 @@ module LorentzGenerator (
                 s = length inds
 
     allList :: Int -> [[Int]]
-    allList 0 = []
+    allList 1 = [[0],[1],[2],[3]]
     allList i = (:) <$> [0,1,2,3] <*> (allList (i-1))
 
     epsilonRedList :: [[Int]] -> Symmetry -> [[Int]]
-    epsilonRedList s sym = filter (\x -> and [isEpsilonList x, isLorentzEvalL x, isSymRep x sym, isZeroList x sym]) s 
+    epsilonRedList s sym = filter (\x -> and [isEpsilonList x, isLorentzEvalL x, filterAllSym x sym]) s 
 
     etaRedList :: [[Int]] -> Symmetry -> [[Int]]
-    etaRedList s sym = filter (\x -> and [isEtaList x, isLorentzEvalL x, isSymRep x sym, isZeroList x sym]) s 
+    etaRedList s sym = filter (\x -> and [isEtaList x, isLorentzEvalL x, filterAllSym x sym]) s 
 
     epsilonAllList :: [[Int]] -> Symmetry -> [[Int]]
     epsilonAllList s sym = filter (\x -> and [isEpsilonList x, isZeroList x sym]) s 

@@ -271,7 +271,7 @@ module LorentzGenerator (
     getExtraASymsEps :: [Int] -> Symmetry -> Symmetry 
     getExtraASymsEps eps (p,ap,blo,cyc,cb) = ([],newASyms, [], [], [])
             where 
-                allBlocks = blocks ++ (concat $ map mkBlocksFromBlockCycle blockCycles) 
+                allBlocks = blo ++ (concat $ map mkBlocksFromBlockCycle cb) 
                 blocks2 = filter (\(a,b) -> length a == 2) allBlocks
                 newASyms = mapMaybe (\([i,j],[k,l]) -> if (length $ intersect [i,k] eps) == 2 then Just (j,l) else if (length $ intersect [j,l] eps) == 2  then Just (i,k) else Nothing) blocks2
 

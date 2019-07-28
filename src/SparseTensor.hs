@@ -26,7 +26,9 @@
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
 
- module SparseTensor ( (&+), (&*), (&-), (&.), Tensor(..), AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8, TScalar, TAlgebra,
+ module SparseTensor (
+ fromList',  Ind3(..), IndTuple, STTens, IndList(..),
+ (&+), (&*), (&-), (&.), Tensor(..), AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8, TScalar, TAlgebra,
  removeZeros1, removeZeros2, removeZeros3, removeZeros4, removeZeros5, removeZeros6, removeZeros7, removeZeros8, 
  tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6, tensorTrans7, tensorTrans8, 
  tensorBlockTrans1, tensorBlockTrans2, tensorBlockTrans3, tensorBlockTrans4, tensorBlockTrans5, tensorBlockTrans6, tensorBlockTrans7, tensorBlockTrans8,
@@ -44,11 +46,12 @@
  cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6, cyclicSymATensFac7, cyclicSymATensFac8,
  cyclicASymATens1, cyclicASymATens2, cyclicASymATens3, cyclicASymATens4, cyclicASymATens5, cyclicASymATens6, cyclicASymATens7, cyclicASymATens8,
  cyclicASymATensFac1, cyclicASymATensFac2, cyclicASymATensFac3, cyclicASymATensFac4, cyclicASymATensFac5, cyclicASymATensFac6, cyclicASymATensFac7, cyclicASymATensFac8,
+ fromListT1, fromListT2, fromListT3, fromListT4, fromListT5, fromListT6, fromListT7, fromListT8,
  fromListT1', fromListT2', fromListT3', fromListT4', fromListT5', fromListT6', fromListT7', fromListT8',
  toListShow1, toListShow2, toListShow3, toListShow4, toListShow5, toListShow6, toListShow7, toListShow8,
- AnsVar, shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabels6, shiftLabels7, shiftLabels8,
+ AnsVar(..), shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabels6, shiftLabels7, shiftLabels8,
  showAnsVar, toListShowVar1, toListShowVar2, toListShowVar3, toListShowVar4, toListShowVar5, toListShowVar6, toListShowVar7, toListShowVar8,
- TensList1, TensList2, TensList3, TensList4, TensList5, TensList6, TensList7, TensList8, 
+ TensList1(..), TensList2(..), TensList3(..), TensList4(..), TensList5(..), TensList6(..), TensList7(..), TensList8(..), 
  singletonTList1, singletonTList2, singletonTList3, singletonTList4, singletonTList5, singletonTList6, singletonTList7, singletonTList8,
  (...>), (..&>), (.&.>), (.&&>), (&..>), (&.&>), (&&.>), (&&&>), (...+), (..&+), (.&.+), (.&&+), (&..+), (&.&+), (&&.+), (&&&+),
  toEMatrix1, toEMatrix2, toEMatrix3, toEMatrix4, toEMatrix5, toEMatrix6, toEMatrix7, toEMatrix8,
@@ -1852,3 +1855,20 @@
     tensorRank8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 (AnsVar Rational) -> Int 
     tensorRank8 t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix8 t
 
+
+    --finally explicitly provide the necessary instances for standard spacetime tensors
+
+    data Ind3 =  Ind3 {indVal3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+
+    instance TIndex Ind3 where
+        indRange = 4
+
+    instance Enum Ind3 where 
+        toEnum = Ind3 
+        fromEnum = indVal3 
+
+    type STTens n1 n2 v = AbsTensor2 n1 n2 Ind3 v 
+
+    --construct ATens6s from assoc lists 
+
+    type IndTuple n1 n2 = (IndList n1 Ind3, IndList n2 Ind3)

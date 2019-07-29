@@ -21,7 +21,7 @@
 module LorentzGenerator (
     getEtaInds, getEpsilonInds, flattenForest, flattenForestEpsilon, getForestLabels, getForestLabelsEpsilon,
     mkAnsatzTensorEig, mkAnsatzTensorEigIO, mkAnsatzTensorFast, mkAnsatzTensorEig', mkAnsatzTensorEigIO', mkAnsatzTensorFast',
-    AnsatzForestEpsilon, AnsatzForestEta, allList, filterAllSym, isLorentzEval, isEtaList, isEpsilonList, canonicalizeList
+    AnsatzForestEpsilon, AnsatzForestEta, allList, filterAllSym, isLorentzEval, isEtaList, isEpsilonList, canonicalizeList, mkAnsatzTensorEigSym'
 
 ) where
 
@@ -1502,19 +1502,16 @@ module LorentzGenerator (
                         | x == j = i 
                         | otherwise = x
     canonicalizeBlockPair (i:is,j:js) iMap 
-                | iVal <= jVal = iMap
-                | iVal >= jVal = I.mapKeys (swapBlocks (i:is,j:js)) iMap
-                | iVal == jVal = if newMap == iMap then iMap else I.mapKeys swapKeys iMap 
+                | iVal < jVal = iMap
+                | iVal > jVal = I.mapKeys (swapBlocks (i:is,j:js)) iMap
+                | iVal == jVal = newMap 
                 where 
                     iVal = (I.!) iMap i
                     jVal = (I.!) iMap j
                     swapBlocks (m1,m2) x = let m = I.fromList $ (zip m1 m2) ++ (zip m2 m1) 
                                          in  fromMaybe x $ I.lookup x m
                     newMap = canonicalizeBlockPair (is,js) iMap 
-                    swapKeys x 
-                        | x == i = j
-                        | x == j = i 
-                        | otherwise = x
+                    
 
     canonicalizeIntMap :: Symmetry -> I.IntMap Int -> I.IntMap Int 
     canonicalizeIntMap (p,ap,b,c,bc) iMap = iMap2

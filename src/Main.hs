@@ -43,7 +43,7 @@ module Main (main
 
     let (eta14_1,eps14_1,ans14_1) = mkAnsatzTensorEig' 14 sym14_1 :: (AnsatzForestEta, AnsatzForestEpsilon, STTens 14 0 (AnsVar Rational))
     
-    let (eta14_2,eps14_2,ans14_2) = mkAnsatzTensorEig' 14 sym14_2 :: (AnsatzForestEta, AnsatzForestEpsilon, STTens 14 0 (AnsVar Rational))
+    let (eta14_2,eps14_2,ans14_2) = mkAnsatzTensorEigSym' 14 sym14_2 :: (AnsatzForestEta, AnsatzForestEpsilon, STTens 14 0 (AnsVar Rational))
 
 
     let l = filter (\x -> filterAllSym x sym14_1) $ allList 14 sym14_1
@@ -70,23 +70,7 @@ module Main (main
     --}
     
 
-    print $ getForestLabelsEpsilon eps4 
-
-    print $ getForestLabelsEpsilon eps6
-
-    print $ getForestLabelsEpsilon eps8
-
-    print $ getForestLabelsEpsilon eps10_1
-
-    print $ getForestLabelsEpsilon eps10_2 
-
-    print $ getForestLabelsEpsilon eps12
-
-    print $ getForestLabelsEpsilon eps14_1
-
-    print $ getForestLabelsEpsilon eps14_2
-
-
+    print $ toListShowVar2 ans14_2 
 
 
 

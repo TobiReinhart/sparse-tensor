@@ -21,7 +21,7 @@
 module LorentzGenerator (
     getEtaInds, getEpsilonInds, flattenForest, flattenForestEpsilon, 
     mkAnsatzTensorEig, mkAnsatzTensorEigIO, mkAnsatzTensorFast, mkAnsatzTensorEig', mkAnsatzTensorEigIO', mkAnsatzTensorFast', allList,
-    epsilonRedList, etaRedList, epsilonAllList, etaAllList, AnsatzForestEpsilon, AnsatzForestEta
+    AnsatzForestEpsilon, AnsatzForestEta
 
 ) where
 
@@ -264,10 +264,12 @@ module LorentzGenerator (
                         isSymCyc (x:xs) [i,j,k,l]
                             | isSymCyc [x] [i,j,k,l] = True 
                             | otherwise = isSymCyc xs [i,j,k,l]
+                        is3Area [] i = False 
                         is3Area [[a,b,c,d]] [i,j,k,l] = length (intersect [a,b,c,d] [i,j,k,l]) == 3
                         is3Area (x:xs) [i,j,k,l]
                             | is3Area [x] [i,j,k,l] = True 
                             | otherwise = is3Area xs [i,j,k,l]
+                        isValid2Area [] i = True
                         isValid2Area [[a,b,c,d]] [i,j,k,l] 
                             | length inter == 2 = inter == [a,b]
                             | otherwise = True 
@@ -276,6 +278,7 @@ module LorentzGenerator (
                         isValid2Area (x:xs) [i,j,k,l] 
                             | isValid2Area [x] [i,j,k,l] = isValid2Area xs [i,j,k,l]
                             | otherwise = False 
+                        is1Area [] i = False
                         is1Area list [i,j,k,l] = (maximum $ map (\x -> length $ intersect [i,j,k,l] x) list) == 1 
 
     --a 2-block symmetry with the respectively first indices at an epsilon yields an additional antisymmetry (note that we did not include higher block antisymmmetries)
@@ -1198,37 +1201,64 @@ module LorentzGenerator (
 
     --Finally we can evaluated the ansatz trees to a contravariant tensor with spacetime indices
 
-    evalToTens ::  M.Map [Int] Int -> [(I.IntMap Int, IndTuple n1 0)] -> [(I.IntMap Int, IndTuple n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational) 
-    evalToTens epsM evalEta evalEps ansEta ansEps = (fromListT2 etaRmL) &+ (fromListT2 epsRmL)
+    evalToTensSym :: Symmetry -> M.Map [Int] Int -> [(I.IntMap Int, IndTuple n1 0)] -> [(I.IntMap Int, IndTuple n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational) 
+    evalToTensSym (p,ap,b,c,bc) epsM evalEta evalEps ansEta ansEps = symTens
                 where 
+                    p' = map (\(x,y) -> (x-1,y-1)) p 
+                    ap' = map (\(x,y) -> (x-1,y-1)) ap 
+                    b' = map (\(x,y) -> (map (\z -> z-1) x, map (\z' -> z'-1) y) ) b
+                    c' = map (\l -> map (\l' -> l' -1) l) c 
+                    bc' = map (\l -> map (\k -> map (\m -> m-1) k) l) bc 
                     etaL = evalAllTensorEta epsM evalEta ansEta 
                     epsL = evalAllTensorEpsilon epsM evalEps ansEps 
                     etaL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral r)) x)) etaL
                     epsL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral r)) x)) epsL
                     etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) etaL'
                     epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) epsL'
+                    tens = (fromListT2 etaRmL) &+ (fromListT2 epsRmL)
+                    symTens = foldr cyclicBlockSymATens1 (
+                                foldr cyclicSymATens1 (
+                                    foldr symBlockATens1 (
+                                        foldr aSymATens1 (
+                                            foldr symATens1 tens p'
+                                            ) ap'
+                                        ) b'
+                                    ) c'
+                                ) bc'  
     
    
-    --the 2 final functions, constructing the 2 AnsatzForests and the AnsatzTensor (currently the eval Lists must be specified by hand -> this can also yield a performance advantage)
+    --the 2 final functions, constructing the 2 AnsatzForests and the AnsatzTensor (currently the list of symmetry DOFs must be specified by hand -> this can also yield a performance advantage)
 
-    mkAnsatzTensorEigIO :: Int -> Symmetry -> [(I.IntMap Int, IndTuple n1 0)] -> [(I.IntMap Int, IndTuple n1 0)] -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n1 0 (AnsVar Rational)) 
-    mkAnsatzTensorEigIO ord symmetries evalMEta evalMEps =
+    mkAnsatzTensorEigIO :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
+    mkAnsatzTensorEigIO ord symmetries evalL =
               do
                 let epsM = epsMap
-                let evalMapsEta = map (\(x,z) -> x) evalMEta
-                let evalMapsEps = map (\(x,z) -> x) evalMEps  
-                (ansEta, ansEps, _, _) <- getFullForestEigIO ord symmetries evalMapsEta evalMapsEps
-                let tens = evalToTens epsM evalMEta evalMEps ansEta ansEps 
+                let evalLEta = filter isEtaList evalL 
+                let evalLEps = filter isEpsilonList evalL 
+                let evalLEtaRed = filter isLorentzEval evalLEta
+                let evalLEpsRed = filter isLorentzEval evalLEps
+                let evalMEtaRed = mkEvalMaps ord evalLEtaRed
+                let evalMEpsRed = mkEvalMaps ord evalLEpsRed
+                let evalMEtaInds = mkEvalMapsInds ord evalLEta
+                let evalMEpsInds = mkEvalMapsInds ord evalLEps
+                (ansEta, ansEps, _, _) <- getFullForestEigIO ord symmetries evalMEtaRed evalMEpsRed
+                let tens = evalToTensSym symmetries epsM evalMEtaInds evalMEpsInds ansEta ansEps 
                 return (ansEta, ansEps, tens)
 
-    mkAnsatzTensorEig :: Int -> Symmetry -> [(I.IntMap Int, IndTuple n1 0)] -> [(I.IntMap Int, IndTuple n1 0)] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n1 0 (AnsVar Rational)) 
-    mkAnsatzTensorEig ord symmetries evalMEta evalMEps = (ansEta, ansEps, tens)
+    mkAnsatzTensorEig :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
+    mkAnsatzTensorEig ord symmetries evalL = (ansEta, ansEps, tens)
             where
                 epsM = epsMap
-                evalMapsEta = map (\(x,z) -> x) evalMEta
-                evalMapsEps = map (\(x,z) -> x) evalMEps  
-                (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMapsEta evalMapsEps
-                tens = evalToTens epsM evalMEta evalMEps ansEta ansEps 
+                evalLEta = filter isEtaList evalL 
+                evalLEps = filter isEpsilonList evalL 
+                evalLEtaRed = filter isLorentzEval evalLEta
+                evalLEpsRed = filter isLorentzEval evalLEps
+                evalMEtaRed = mkEvalMaps ord evalLEtaRed
+                evalMEpsRed = mkEvalMaps ord evalLEpsRed
+                evalMEtaInds = mkEvalMapsInds ord evalLEta
+                evalMEpsInds = mkEvalMapsInds ord evalLEps
+                (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
+                tens = evalToTensSym symmetries epsM evalMEtaInds evalMEpsInds ansEta ansEps 
 
 
     --now we start with the second way 
@@ -1268,24 +1298,34 @@ module LorentzGenerator (
                 remVarsEps =  allEpsVars \\ epsVars
                 newEpsAns = relabelAnsatzForestEpsilon 1 $ removeVarsEps remVarsEps ansEps
 
-    --final function, fast way of constructing the ansatztrees and the 2 tensors (again eval list bust be specified but this can yield a performance advantage)
+    --final function, fast way of constructing the ansatztrees and the 2 tensors (again the list of symmetry DOFs bust be specified but this can yield a performance advantage)
                 
-    mkAnsatzTensorFast :: Int -> Symmetry -> [(I.IntMap Int, IndTuple n1 0)] -> [(I.IntMap Int, IndTuple n1 0)] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n1 0 (AnsVar Rational)) 
-    mkAnsatzTensorFast ord symmetries evalMEta evalMEps = (ansEtaRed, ansEpsRed, tens) 
+    mkAnsatzTensorFast :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
+    mkAnsatzTensorFast ord symmetries evalL = (ansEtaRed, ansEpsRed, tens) 
             where
                 epsM = epsMap
+                evalLEta = filter isEtaList evalL 
+                evalLEps = filter isEpsilonList evalL 
+                evalLEtaRed = filter isLorentzEval evalLEta
+                evalLEpsRed = filter isLorentzEval evalLEps
+                evalMEtaRed = mkEvalMaps ord evalLEtaRed
+                evalMEpsRed = mkEvalMaps ord evalLEpsRed
+                evalMEtaInds = mkEvalMapsInds ord evalLEta
+                evalMEpsInds = mkEvalMapsInds ord evalLEps
                 ansEta = getEtaForestFast ord symmetries 
                 ansEpsilon = getEpsForestFast ord symmetries  
-                ansEtaRed = reduceLinDepsFastEta epsM (map (\(x,_) -> x) evalMEta) symmetries ansEta
-                ansEpsRed' = reduceLinDepsFastEps epsM (map (\(x,_) -> x) evalMEps) symmetries ansEpsilon
+                ansEtaRed = reduceLinDepsFastEta epsM evalMEtaRed symmetries ansEta
+                ansEpsRed' = reduceLinDepsFastEps epsM evalMEpsRed symmetries ansEpsilon
                 ansEpsRed = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEtaRed)) ansEpsRed'
-                tens = evalToTens epsM evalMEta evalMEps ansEtaRed ansEpsRed 
+                tens = evalToTensSym symmetries epsM evalMEtaInds evalMEpsInds ansEtaRed ansEpsRed 
 
     {--
     The last step consits of computing the evaluation list from the present symmetries. To that end it is important to note
     that for epsilon tensors only index combinations that contain each value 0,...,3 an odd number of times and for eta tensors we need an even number.
     Further note that due to the Lorentz infvariance of such expressions when computing linear dependencies we are free to relabel the coordinate axis,
-    i.e. interchange for instance 1 and 0 as this is precisely the effect of a Lorentztransformation (at least up to a sign). 
+    i.e. interchange for instance 1 and 0 as this is precisely the effect of a Lorentztransformation (at least up to a sign).
+    Computing the eval Lists is actually the most expensive step and we can thus get a huge performance improvement if we explicitly provide the 
+    eval maps by and and furthermore only evaluate index combinations that belong different symmetry equivalence classes.  
     --}
 
     countEqualInds :: [Int] -> (Int,Int,Int,Int)
@@ -1304,11 +1344,6 @@ module LorentzGenerator (
 
     isEpsilonList :: [Int] -> Bool 
     isEpsilonList l = let (a,b,c,d) = countEqualInds l in odd a && odd b && odd c && odd d 
-
-    isZeroList :: [Int] -> Symmetry -> Bool 
-    isZeroList l (p,ap,b,c,bc) = and boolL 
-            where 
-                boolL = map (\(i,j) -> l!!(i-1) /= l!!(j-1)) ap
 
 
     filterPSym :: [Int] -> (Int,Int) -> Bool 
@@ -1352,8 +1387,8 @@ module LorentzGenerator (
                 b' = map (filterBSym inds) b 
                 bc' = map (filterBCSym inds) bc
 
-    isLorentzEvalL :: [Int] -> Bool 
-    isLorentzEvalL l 
+    isLorentzEval :: [Int] -> Bool 
+    isLorentzEval l 
             | s == 1 = inds == [0]
             | s == 2 = inds == [0,1]
             | s == 3 = inds == [0,1,2]
@@ -1365,18 +1400,6 @@ module LorentzGenerator (
     allList :: Int -> [[Int]]
     allList 1 = [[0],[1],[2],[3]]
     allList i = (:) <$> [0,1,2,3] <*> (allList (i-1))
-
-    epsilonRedList :: [[Int]] -> Symmetry -> [[Int]]
-    epsilonRedList s sym = filter (\x -> and [isEpsilonList x, isLorentzEvalL x, filterAllSym x sym]) s 
-
-    etaRedList :: [[Int]] -> Symmetry -> [[Int]]
-    etaRedList s sym = filter (\x -> and [isEtaList x, isLorentzEvalL x, filterAllSym x sym]) s 
-
-    epsilonAllList :: [[Int]] -> Symmetry -> [[Int]]
-    epsilonAllList s sym = filter (\x -> and [isEpsilonList x, isZeroList x sym]) s 
-
-    etaAllList :: [[Int]] -> Symmetry -> [[Int]]
-    etaAllList s sym = filter (\x -> and [isEtaList x, isZeroList x sym]) s 
 
     mkEvalMaps :: Int -> [[Int]] -> [I.IntMap Int] 
     mkEvalMaps i l = map (\x -> I.fromList $ zip [1..i] x) l 
@@ -1390,40 +1413,15 @@ module LorentzGenerator (
     mkAnsatzTensorEigIO' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
     mkAnsatzTensorEigIO' ord symmetries =
               do
-                let epsM = epsMap
-                let evalL = allList ord 
-                let evalMapsEta = mkEvalMaps ord $ etaRedList evalL symmetries
-                let evalMapsEps = mkEvalMaps ord $ epsilonRedList evalL symmetries  
-                (ansEta, ansEps, _, _) <- getFullForestEigIO ord symmetries evalMapsEta evalMapsEps
-                let evalMEta = mkEvalMapsInds ord $ etaAllList evalL symmetries 
-                let evalMEps = mkEvalMapsInds ord $ epsilonAllList evalL symmetries 
-                let tens = evalToTens epsM evalMEta evalMEps ansEta ansEps 
-                return (ansEta, ansEps, tens)
+                let evalL = filter (\x -> filterAllSym x symmetries) $ allList ord 
+                mkAnsatzTensorEigIO ord symmetries evalL   
 
     mkAnsatzTensorEig' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
-    mkAnsatzTensorEig' ord symmetries  = (ansEta, ansEps, tens)
+    mkAnsatzTensorEig' ord symmetries = mkAnsatzTensorEig ord symmetries evalL
             where
-                epsM = epsMap
-                evalL = allList ord 
-                evalMapsEta = mkEvalMaps ord $ etaRedList evalL symmetries
-                evalMapsEps = mkEvalMaps ord $ epsilonRedList evalL symmetries  
-                (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMapsEta evalMapsEps
-                evalMEta = mkEvalMapsInds ord $ etaAllList evalL symmetries 
-                evalMEps = mkEvalMapsInds ord $ epsilonAllList evalL symmetries
-                tens = evalToTens epsM evalMEta evalMEps ansEta ansEps 
+                evalL = filter (\x -> filterAllSym x symmetries) $ allList ord
 
     mkAnsatzTensorFast' :: forall (n :: Nat). SingI n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
-    mkAnsatzTensorFast' ord symmetries = (ansEtaRed, ansEpsRed, tens) 
+    mkAnsatzTensorFast' ord symmetries = mkAnsatzTensorFast ord symmetries evalL
             where
-                epsM = epsMap
-                evalL = allList ord 
-                evalMapsEta = mkEvalMaps ord $ etaRedList evalL symmetries
-                evalMapsEps = mkEvalMaps ord $ epsilonRedList evalL symmetries  
-                ansEta = getEtaForestFast ord symmetries 
-                ansEpsilon = getEpsForestFast ord symmetries  
-                ansEtaRed = reduceLinDepsFastEta epsM (map (\(x,_) -> x) evalMEta) symmetries ansEta
-                ansEpsRed' = reduceLinDepsFastEps epsM (map (\(x,_) -> x) evalMEps) symmetries ansEpsilon
-                ansEpsRed = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEtaRed)) ansEpsRed'
-                evalMEta = mkEvalMapsInds ord $ etaAllList evalL symmetries 
-                evalMEps = mkEvalMapsInds ord $ epsilonAllList evalL symmetries
-                tens = evalToTens epsM evalMEta evalMEps ansEtaRed ansEpsRed 
+                evalL = filter (\x -> filterAllSym x symmetries) $ allList ord

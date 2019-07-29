@@ -46,6 +46,8 @@
  cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6, cyclicSymATensFac7, cyclicSymATensFac8,
  cyclicASymATens1, cyclicASymATens2, cyclicASymATens3, cyclicASymATens4, cyclicASymATens5, cyclicASymATens6, cyclicASymATens7, cyclicASymATens8,
  cyclicASymATensFac1, cyclicASymATensFac2, cyclicASymATensFac3, cyclicASymATensFac4, cyclicASymATensFac5, cyclicASymATensFac6, cyclicASymATensFac7, cyclicASymATensFac8,
+ cyclicBlockSymATens1, cyclicBlockSymATens2, cyclicBlockSymATens3, cyclicBlockSymATens4, cyclicBlockSymATens5, cyclicBlockSymATens6, cyclicBlockSymATens7, cyclicBlockSymATens8,
+ cyclicBlockSymATensFac1,  cyclicBlockSymATensFac2, cyclicBlockSymATensFac3, cyclicBlockSymATensFac4, cyclicBlockSymATensFac5, cyclicBlockSymATensFac6, cyclicBlockSymATensFac7, cyclicBlockSymATensFac8,
  fromListT1, fromListT2, fromListT3, fromListT4, fromListT5, fromListT6, fromListT7, fromListT8,
  fromListT1', fromListT2', fromListT3', fromListT4', fromListT5', fromListT6', fromListT7', fromListT8',
  toListShow1, toListShow2, toListShow3, toListShow4, toListShow5, toListShow6, toListShow7, toListShow8,
@@ -525,6 +527,14 @@
                 lNew = map (\x -> [x]) l
                 l' = getAllSwaps xs 
 
+    getAllBlockSwaps :: [[Int]] -> [[([Int],[Int])]]
+    getAllBlockSwaps [x,y] = [[(x,y)]] 
+    getAllBlockSwaps (x:xs) = lNew ++ l' ++ ((:) <$> l <*> l')
+            where 
+                l = zip (repeat x) xs 
+                lNew = map (\x -> [x]) l
+                l' = getAllBlockSwaps xs 
+
     factorial :: Int -> Int 
     factorial 1 = 1
     factorial n = n*(factorial (n-1))
@@ -547,6 +557,13 @@
                 tensList = zipWith (&.) signList tensList' 
                 newTens = foldr (&+) t tensList
 
+    cyclicBlockSymTens :: (TIndex k, TScalar v) => [[Int]] -> Tensor n k v -> Tensor n k v 
+    cyclicBlockSymTens inds t = newTens
+            where
+                swapList = getAllBlockSwaps inds 
+                tensList = map (foldr tensorBlockTrans t) swapList
+                newTens = foldr (&+) t tensList
+
     cyclicSymTensFac :: (TIndex k, TScalar v) => [Int] -> Tensor n k v -> Tensor n k v 
     cyclicSymTensFac inds t = fac &. (cyclicSymTens inds t)
             where 
@@ -554,6 +571,11 @@
 
     cyclicASymTensFac :: (TIndex k, TScalar v) => [Int] -> Tensor n k v -> Tensor n k v 
     cyclicASymTensFac inds t = fac &. (cyclicASymTens inds t)
+            where 
+                fac = 1%(fromIntegral $ factorial $ length inds)
+
+    cyclicBlockSymTensFac :: (TIndex k, TScalar v) => [[Int]] -> Tensor n k v -> Tensor n k v 
+    cyclicBlockSymTensFac inds t = fac &. (cyclicBlockSymTens inds t)
             where 
                 fac = 1%(fromIntegral $ factorial $ length inds)
 
@@ -1047,6 +1069,58 @@
     cyclicASymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     cyclicASymATensFac8 inds = mapTo7 (cyclicASymTensFac inds)    
 
+
+    --cyclic block symmetrization
+
+    cyclicBlockSymATens1 :: (TIndex k1, TScalar v) => [[Int]] -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
+    cyclicBlockSymATens1 inds = cyclicBlockSymTens inds
+    
+    cyclicBlockSymATens2 :: (TIndex k1, TScalar v) => [[Int]] -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    cyclicBlockSymATens2 inds = mapTo1 (cyclicBlockSymTens inds) 
+
+    cyclicBlockSymATens3 :: (TIndex k1, TIndex k2, TScalar v) => [[Int]] -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    cyclicBlockSymATens3 inds = mapTo2 (cyclicBlockSymTens inds) 
+
+    cyclicBlockSymATens4 :: (TIndex k1, TIndex k2, TScalar v) => [[Int]] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    cyclicBlockSymATens4 inds = mapTo3 (cyclicBlockSymTens inds) 
+
+    cyclicBlockSymATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [[Int]] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    cyclicBlockSymATens5 inds = mapTo4 (cyclicBlockSymTens inds) 
+
+    cyclicBlockSymATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [[Int]] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    cyclicBlockSymATens6 inds = mapTo5 (cyclicBlockSymTens inds)
+    
+    cyclicBlockSymATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [[Int]] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    cyclicBlockSymATens7 inds = mapTo6 (cyclicBlockSymTens inds)
+
+    cyclicBlockSymATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [[Int]] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    cyclicBlockSymATens8 inds = mapTo7 (cyclicBlockSymTens inds)
+
+    --with factor
+
+    cyclicBlockSymATensFac1 :: (TIndex k1, TScalar v) => [[Int]] -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
+    cyclicBlockSymATensFac1 inds = cyclicBlockSymTensFac inds
+    
+    cyclicBlockSymATensFac2 :: (TIndex k1, TScalar v) => [[Int]] -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    cyclicBlockSymATensFac2 inds = mapTo1 (cyclicBlockSymTensFac inds) 
+
+    cyclicBlockSymATensFac3 :: (TIndex k1, TIndex k2, TScalar v) => [[Int]] -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    cyclicBlockSymATensFac3 inds = mapTo2 (cyclicBlockSymTensFac inds) 
+
+    cyclicBlockSymATensFac4 :: (TIndex k1, TIndex k2, TScalar v) => [[Int]] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    cyclicBlockSymATensFac4 inds = mapTo3 (cyclicBlockSymTensFac inds) 
+
+    cyclicBlockSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [[Int]] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    cyclicBlockSymATensFac5 inds = mapTo4 (cyclicBlockSymTensFac inds) 
+
+    cyclicBlockSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [[Int]] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    cyclicBlockSymATensFac6 inds = mapTo5 (cyclicBlockSymTensFac inds)
+    
+    cyclicBlockSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [[Int]] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    cyclicBlockSymATensFac7 inds = mapTo6 (cyclicBlockSymTensFac inds)
+
+    cyclicBlockSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [[Int]] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    cyclicBlockSymATensFac8 inds = mapTo7 (cyclicBlockSymTensFac inds)
 
     --contraction for general tensors 
 

@@ -33,6 +33,7 @@
  tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6, tensorTrans7, tensorTrans8, 
  tensorBlockTrans1, tensorBlockTrans2, tensorBlockTrans3, tensorBlockTrans4, tensorBlockTrans5, tensorBlockTrans6, tensorBlockTrans7, tensorBlockTrans8,
  resortTens1, resortTens2, resortTens3, resortTens4, resortTens5, resortTens6, resortTens7, resortTens8,
+ evalTens1, evalTens2, evalTens3, evalTens4, evalTens5, evalTens6, evalTens7, evalTens8,
  contrATens1, contrATens2, contrATens3, contrATens4,
  symATens1, symATens2, symATens3, symATens4, symATens5, symATens6, symATens7, symATens8,
  symATensFac1, symATensFac2, symATensFac3, symATensFac4, symATensFac5, symATensFac6, symATensFac7, symATensFac8,
@@ -257,7 +258,7 @@
     --furthermore the indices of tensors should satisfy
 
     class (Eq a, Ord a, Enum a) => TIndex a where 
-        indRange :: Int 
+        indRange :: a -> Int 
     
     type TMap k v = [(k,v)]
 
@@ -293,7 +294,7 @@
         Tensor :: TMap k (Tensor n k v) -> Tensor (n+1) k v
         ZeroTensor :: Tensor n k v
 
-    --remove possible zero values in a given Tensor  
+    --remove zero values in a given Tensor that might be generated during computations  
 
     removeZeros :: (TScalar v, TIndex k) => Tensor n k v -> Tensor n k v
     removeZeros (Scalar x) = if x == scaleZero then ZeroTensor else Scalar x 
@@ -381,11 +382,13 @@
         scaleS = (*)
         scaleZero = 0
 
+    --for the double instance scaleZero should be the maschine epsilon     
+
     instance TScalar Double where 
         addS = (+)
         subS = (-)
         scaleS r b = (fromRational r) * b  
-        scaleZero = 0
+        scaleZero = 2.2e-16
 
     instance TAlgebra Rational Rational where 
         type TAlg Rational Rational = Rational
@@ -404,6 +407,12 @@
             where
                 appendF = \i l2 -> map (\(l,val) -> (Append i l ,val)) l2
     toListT ZeroTensor = []
+
+    toListShow :: (TIndex k, TScalar v) => Tensor n k v -> [([Int],v)]
+    toListShow t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
+            where
+                l = toListT t 
+                showInd i1 = (map fromEnum $ toList i1) 
 
     mkTens :: (IndList n k, v) -> Tensor n k v
     mkTens (Empty, a) = Scalar a
@@ -488,6 +497,18 @@
 
     resortTens :: (SingI n, TIndex k, TScalar v) => [Int] -> Tensor n k v -> Tensor n k v 
     resortTens perm t = fromListT $ map (\(x,y) -> (resortInd perm x, y)) $ toListT t
+
+    --evaluation of a tensor for a specific index value returning a subtensor 
+
+    evalTens :: (SingI (n+1), TIndex k, TScalar v) => Int -> k -> Tensor (n+1) k v -> Tensor n k v 
+    evalTens ind indVal (Tensor m)
+                | ind > size -1 || ind < 0 = error "wrong index to evaluate" 
+                | ind == 0 = fromMaybe ZeroTensor $ lookup indVal m
+                | otherwise = fromMaybe ZeroTensor $ lookup indVal (getTensorMap newTens)
+                where 
+                    size = length $ fst $ head $ toListShow (Tensor m)
+                    l = [1..ind] ++ 0 : [ind+1..size -1]
+                    newTens = resortTens l (Tensor m)
 
     --symmetrization of a given Tensor
 
@@ -755,9 +776,32 @@
     resortTens8 :: (SingI n1, SingI n2, SingI n3, SingI n4, SingI n5, SingI n6, SingI n7, SingI n8, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     resortTens8 inds = mapTo7 (resortTens inds)
 
-    --in total these functions allow to build the symmetrizer and contraction functions for generic tensors 
 
-    --symmetrizer
+    evalTens1 :: (SingI (n1+1), TIndex k1, TScalar v) => Int -> k1 -> AbsTensor1 (n1+1) k1 v -> AbsTensor1 n1 k1 v
+    evalTens1 = evalTens 
+
+    evalTens2 :: (SingI (n2+1), TIndex k1, TScalar v) => Int -> k1 -> AbsTensor2 n1 (n2+1) k1 v  -> AbsTensor2 n1 n2 k1 v
+    evalTens2 ind indVal = mapTo1 (evalTens ind indVal) 
+
+    evalTens3 :: (SingI (n3+1), TIndex k1, TIndex k2, TScalar v) => Int -> k2 -> AbsTensor3 n1 n2 (n3+1) k1 k2 v  -> AbsTensor3 n1 n2 n3 k1 k2 v
+    evalTens3 ind indVal = mapTo2 (evalTens ind indVal) 
+            
+    evalTens4 :: (SingI (n4+1), TIndex k1, TIndex k2, TScalar v) => Int -> k2 -> AbsTensor4 n1 n2 n3 (n4+1) k1 k2 v  -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    evalTens4 ind indVal = mapTo3 (evalTens ind indVal) 
+          
+    evalTens5 :: (SingI (n5+1), TIndex k1, TIndex k2, TIndex k3, TScalar v) => Int -> k3 -> AbsTensor5 n1 n2 n3 n4 (n5+1) k1 k2 k3 v  -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    evalTens5 ind indVal = mapTo4 (evalTens ind indVal) 
+          
+    evalTens6 :: (SingI (n6+1), TIndex k1, TIndex k2, TIndex k3, TScalar v) => Int -> k3 -> AbsTensor6 n1 n2 n3 n4 n5 (n6+1) k1 k2 k3 v  -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    evalTens6 ind indVal = mapTo5 (evalTens ind indVal) 
+          
+    evalTens7 :: (SingI (n7+1), TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => Int -> k4 -> AbsTensor7 n1 n2 n3 n4 n5 n6 (n7+1) k1 k2 k3 k4 v  -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    evalTens7 ind indVal = mapTo6 (evalTens ind indVal) 
+          
+    evalTens8 :: (SingI (n8+1), TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => Int -> k4 -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 (n8+1) k1 k2 k3 k4 v  -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    evalTens8 ind indVal = mapTo7 (evalTens ind indVal) 
+          
+    --symmetrizer functions 
 
     symATens1 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
     symATens1 inds = symTens inds
@@ -1343,10 +1387,7 @@
     --convert to non type safe assocs list, all indices regardeless of their type are collected in the [Int] list 
 
     toListShow1 :: (TIndex k1, TScalar v) => AbsTensor1 n1 k1 v -> [([Int],v)]
-    toListShow1 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
-            where
-                l = toListT1 t 
-                showInd i1 = (map fromEnum $ toList i1) 
+    toListShow1 = toListShow
 
     toListShow2 :: (TIndex k1, TScalar v) => AbsTensor2 n1 n2 k1 v -> [([Int],v)]
     toListShow2 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
@@ -1935,7 +1976,7 @@
     data Ind3 =  Ind3 {indVal3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
     instance TIndex Ind3 where
-        indRange = 4
+        indRange x = 4
 
     instance Enum Ind3 where 
         toEnum = Ind3 

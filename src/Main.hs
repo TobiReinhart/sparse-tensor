@@ -70,7 +70,7 @@ module Main (main
     --}
     
 
-    print $ toListShowVar2 ans14_2 
+    print $ [1..3] ++ 0 : [3+1..10 -1]
 
 
 

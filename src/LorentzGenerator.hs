@@ -531,8 +531,6 @@ module LorentzGenerator (
             | M.size m == 0 = [] 
             | otherwise = unlines $ map (\(x,y) -> unlines $ drawEpsilonTree x y) $ M.assocs m 
 
-
-
     --get one representative for each Var Label
 
     forestEtaList :: AnsatzForestEta -> [[Eta]]
@@ -542,8 +540,17 @@ module LorentzGenerator (
                 fList' = sortBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> compare y1 y2) fList 
                 fList'' = nubBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
 
+    forestEpsList :: AnsatzForestEpsilon -> [(Epsilon,[Eta])]
+    forestEpsList f = map (\(a,b,c) -> (a,b)) fList'' 
+            where 
+                fList = flattenForestEpsilon f 
+                fList' = sortBy (\(e1, e', Var x1 y1 ) ((e2, e2',  Var x2 y2)) -> compare y1 y2) fList 
+                fList'' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
+
+    --output in latex format 
+
     mkEtasLatex :: String -> Eta -> String 
-    mkEtasLatex inds (Eta i j) = "eta^{" ++ etaI : etaJ : "}"
+    mkEtasLatex inds (Eta i j) = "\\eta^{" ++ etaI : etaJ : "}"
             where
                 (etaI,etaJ) = (inds !! (i-1), inds !! (j-1)  ) 
 
@@ -552,17 +559,10 @@ module LorentzGenerator (
             where 
                 etaL = sortBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> compare y1 y2) $ flattenForest f 
                 etaL' = nubBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) etaL 
-                etaL'' = map (\(a,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}cdot" ++ (concat $ map (mkEtasLatex inds) a)) etaL' 
-
-    forestEpsList :: AnsatzForestEpsilon -> [(Epsilon,[Eta])]
-    forestEpsList f = map (\(a,b,c) -> (a,b)) fList'' 
-            where 
-                fList = flattenForestEpsilon f 
-                fList' = sortBy (\(e1, e', Var x1 y1 ) ((e2, e2',  Var x2 y2)) -> compare y1 y2) fList 
-                fList'' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
+                etaL'' = map (\(a,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}\\cdot" ++ (concat $ map (mkEtasLatex inds) a)) etaL' 
 
     mkEpsLatex :: String -> Epsilon -> String 
-    mkEpsLatex inds (Epsilon i j k l) =  "epsilon^{" ++ epsi : epsj : epsk : epsl : "}"
+    mkEpsLatex inds (Epsilon i j k l) =  "\\epsilon^{" ++ epsi : epsj : epsk : epsl : "}"
             where 
                 (epsi, epsj, epsk, epsl) = (inds !! (i-1), inds !! (j-1), inds !! (k-1), inds !! (l-1))
 
@@ -571,8 +571,7 @@ module LorentzGenerator (
             where 
                 epsL = sortBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> compare y1 y2) $ flattenForestEpsilon f 
                 epsL' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) epsL 
-                epsL'' = map (\(a,b,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}cdot" ++ mkEpsLatex inds a ++ (concat $ map (mkEtasLatex inds) b)) epsL' 
-
+                epsL'' = map (\(a,b,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}\\cdot" ++ mkEpsLatex inds a ++ (concat $ map (mkEtasLatex inds) b)) epsL' 
 
     --construct a forest of a given asclist 
                 
@@ -604,8 +603,6 @@ module LorentzGenerator (
     sortForestEpsilon f = foldl' addList2ForestEpsilon M.empty fList 
                  where
                     fList = flattenForestEpsilon f
-
-    --the next step is symmetrizing the AnsatzForest 
 
     --swap functions for the symmetrization
 
@@ -909,7 +906,7 @@ module LorentzGenerator (
                 vecList = let vec = Sparse.fromList 1 n l in
                                     if l == [] then Nothing else Just $ Sparse.scale (1/max) vec
 
-    --eval a given Forest for all inds, assocsList stores (list of scalar*var assocs, multiplicity, tensorInds) 
+    --eval a given Forest for all inds
 
     type AssocsList a = [([(Int,Int)],a)]
 
@@ -956,11 +953,6 @@ module LorentzGenerator (
     We start with the first way.
     --}
     
-
-    --function takes as arguments: current determinant of upper left block, current upper left block, the corresponding matrix inverse, current Sparse Ansatz Matrix, new Ansatz rowVector (stored as a sparse matrix)
-    
-    --function returns: (Det, newMatA, newMatAInv, newfullMat)
-
     type RankDataEig = (Mat.MatrixXd, Sparse.SparseMatrixXd)
 
     getVarNrEig :: RankDataEig -> Int 
@@ -1068,7 +1060,7 @@ module LorentzGenerator (
                     sumAns = addForestsEpsilon ans newAns
 
 
-    --construct the RankData from the first Ansatz 
+    --construct the RankData from the first nonzero Ansatz 
 
     mk1stRankDataEtaEigIO :: Symmetry -> Int -> [(Int,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> IO (AnsatzForestEta,RankDataEig,[(Int,[Eta])])
     mk1stRankDataEtaEigIO symL numEta etaL epsM evalM =
@@ -1235,7 +1227,13 @@ module LorentzGenerator (
                 (epsAns',epsMat) = getEpsForestEig ord sym evalMEps
                 epsAns = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels etaAns)) epsAns'
 
-    --Finally we can evaluated the ansatz trees to a contravariant tensor with spacetime indices
+    {--
+    Finally we can evaluated the ansatz trees to a contravariant tensor with spacetime indices
+    Sym version outputs the fully symmetriized ansatz tensor, this is however expensive, non Sym version computes the non symmetrized ansatz
+    tensor, i.e. only 1 representative out of each symmetry equivalence class is non zero. It is important to note that when constracting the non symmetrized
+    tensor with another tensor with given symmetry one needs to account for the now missing muliplicities from the symmetries as in the construction of ansätze 
+    we used factor less symmetriser functions. 
+    --}
 
     evalToTensSym :: Symmetry -> M.Map [Int] Int -> [(I.IntMap Int, IndTuple n1 0)] -> [(I.IntMap Int, IndTuple n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational) 
     evalToTensSym (p,ap,b,c,bc) epsM evalEta evalEps ansEta ansEps = symTens

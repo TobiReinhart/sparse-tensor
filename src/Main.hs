@@ -9,6 +9,7 @@ module Main (main
   --import TensorTreeNumeric4_2
   --import PerturbationTree2_3 
   import qualified Data.IntMap.Strict as I
+  import Data.Char 
   
   main = do
 
@@ -69,9 +70,7 @@ module Main (main
 
     --}
     
-
-    putStr $ drawAnsatzEpsilon eps14_1 
-
+    print 1
 
 
     

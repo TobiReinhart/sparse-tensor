@@ -13,6 +13,7 @@ module Main (main
   
   main = do
 
+    {--
     
     let sym4 = ([], [(1,2),(3,4)], [([1,2],[3,4])], [], [])
 
@@ -68,6 +69,7 @@ module Main (main
 
     let epsLRed = canonicalizeEvalMaps symList10_1 epsL 
 
+    --}
     --}
     
     print 1

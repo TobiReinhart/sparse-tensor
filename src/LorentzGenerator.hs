@@ -20,11 +20,10 @@
 
 module LorentzGenerator (
     AnsatzForestEpsilon(..), AnsatzForestEta(..), Eta(..), Epsilon(..), Var(..), flattenForest, flattenForestEpsilon, drawAnsatzEta, drawAnsatzEpsilon,
-    getForestLabels, getForestLabelsEpsilon,
     mkAnsatzTensorEig, mkAnsatzTensorEigIO, mkAnsatzTensorFast, mkAnsatzTensorEig', mkAnsatzTensorEigIO', mkAnsatzTensorFast',
     mkAnsatzTensorEigSym, mkAnsatzTensorEigIOSym, mkAnsatzTensorFastSym, mkAnsatzTensorEigSym', mkAnsatzTensorEigIOSym', mkAnsatzTensorFastSym',
     getForestLabels, getForestLabelsEpsilon, removeVarsEta, removeVarsEps, relabelAnsatzForest, relabelAnsatzForestEpsilon, mapVars, mapVarsEpsilon, 
-    forestEtaList, forestEpsList, forestEtaListLatex, forestEpsListLatex, 
+    forestEtaList, forestEpsList, forestEtaListLatex, forestEpsListLatex, ansatzRank, ansatzRankEpsilon
 
     --what else should be exported ??
 
@@ -424,11 +423,11 @@ module LorentzGenerator (
     getForestLabelsEpsilon :: AnsatzForestEpsilon -> [Int]
     getForestLabelsEpsilon m = nub $ map getVarLabels $ getLeafValsEpsilon m
 
-    ansatzRank :: AnsatzForest -> Int
+    ansatzRank :: AnsatzForestEta -> Int
     ansatzRank ans = length $ getForestLabels ans 
 
     ansatzRankEpsilon :: AnsatzForestEpsilon -> Int 
-    AnsatzForestEpsilon ans = lenght $ getForestLabelsEpsilon ans 
+    ansatzRankEpsilon ans = length $ getForestLabelsEpsilon ans 
 
     relabelVar :: (Int -> Int) -> Var -> Var
     relabelVar f (Var i j) = Var i (f j)

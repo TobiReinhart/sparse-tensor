@@ -70,7 +70,7 @@ module Main (main
     --}
     
 
-    print $ [1..3] ++ 0 : [3+1..10 -1]
+    putStr $ drawAnsatzEpsilon eps14_1 
 
 
 

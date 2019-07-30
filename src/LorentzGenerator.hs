@@ -1,4 +1,4 @@
---Generation of Lorentz invariant basis fromgiven valence and symmetry
+--Generation of Lorentz invariant basis from given valence and symmetry
 
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GADTs #-}
@@ -19,7 +19,8 @@
 
 
 module LorentzGenerator (
-    getEtaInds, getEpsilonInds, flattenForest, flattenForestEpsilon, getForestLabels, getForestLabelsEpsilon,
+    getEtaInds, getEpsilonInds, flattenForest, flattenForestEpsilon, drawAnsatzEta, drawAnsatzEpsilon,
+    getForestLabels, getForestLabelsEpsilon,
     mkAnsatzTensorEig, mkAnsatzTensorEigIO, mkAnsatzTensorFast, mkAnsatzTensorEig', mkAnsatzTensorEigIO', mkAnsatzTensorFast',
     AnsatzForestEpsilon, AnsatzForestEta, allList, filterAllSym, isLorentzEval, isEtaList, isEpsilonList, canonicalizeList, mkAnsatzTensorEigSym'
 
@@ -63,7 +64,7 @@ module LorentzGenerator (
 
     {--
     The first step consist of pre-reducing the index list for the eta and epsilon trees as much as possible.
-    This is done by using the symmetries inthe sense that we try to select exactly one representative out of each class of indices
+    This is done by using the symmetries in the sense that we try to select exactly one representative out of each class of indices
     that are equivalent under the symmetries. 
     Note that the prereduction is not necessary but increases performance.
     --}
@@ -149,10 +150,10 @@ module LorentzGenerator (
                                 (Nothing, Just y)   -> Just [(a,y)] 
                                 (Just x, Just y)    -> if x == b then Nothing else Just [(b,x),(a,y)]
                 sndAPairs = case (aAPair, bAPair) of 
-                                (Nothing, Nothing)  ->  Nothing 
-                                (Just x, Nothing)   -> Just [(b,x)] 
-                                (Nothing, Just y)   -> Just [(a,y)] 
-                                (Just x, Just y)    -> if x == b then Nothing else  Just [(b,x),(a,y)]
+                                 (Nothing, Nothing)  ->  Nothing 
+                                 (Just x, Nothing)   -> Just [(b,x)] 
+                                 (Nothing, Just y)   -> Just [(a,y)] 
+                                 (Just x, Just y)    -> if x == b then Nothing else  Just [(b,x),(a,y)]
 
 
     --find the eta that contains the computed second pair index and return the other indices of this eta
@@ -495,6 +496,41 @@ module LorentzGenerator (
                 where
                     mPairs = M.assocs m 
                     l = fmap (\(k,v) -> map (\(i,j) -> (k, i, j)) $ flattenForest v) mPairs
+
+    --draw the forests as ASCII picture
+
+    drawEtaTree :: Eta -> AnsatzForestEta -> [String]
+    drawEtaTree (Eta i j) (Leaf (Var a b)) =  ["(" ++ show i ++  "," ++ show j ++ ") * (" ++ show a ++ ") * x[" ++ show b ++ "]"]
+    drawEtaTree (Eta i j) (ForestEta m) = lines ("(" ++ show i ++ "," ++ show j ++ ")") ++ (drawSubTrees m)
+            where 
+                drawSubTrees x
+                    | x == M.empty = []
+                    | M.size x == 1 = let [(a,b)] = M.assocs x in  "|" : shift "`---- " "   " (drawEtaTree a b)
+                    | otherwise =  let  (a,b) = head $ M.assocs x in "|" : shift "+---- " "|  " (drawEtaTree a b) ++ (drawSubTrees $ M.delete a x)
+                shift first other = zipWith (++) (first : repeat other)
+    drawEtaTree eta EmptyForest = []
+
+    drawEpsilonTree :: Epsilon -> AnsatzForestEta -> [String]
+    drawEpsilonTree (Epsilon i j k l) (Leaf (Var a b)) = ["(" ++ show i ++ "," ++ show j ++ "," ++ show k ++ "," ++ show l ++ ") * (" ++ show a ++ ") * x[" ++ show b ++ "]"]
+    drawEpsilonTree (Epsilon i j k l) (ForestEta m) = lines ("(" ++ show i ++ "," ++ show j ++ "," ++ show k ++ "," ++ show l ++ ")") ++ (drawSubTrees m)
+            where 
+                drawSubTrees x
+                    | x == M.empty = []
+                    | M.size x == 1 = let [(a,b)] = M.assocs x in  "|" : shift "`---- " "   " (drawEtaTree a b)
+                    | otherwise =  let  (a,b) = head $ M.assocs x in "|" : shift "+---- " "|  " (drawEtaTree a b) ++ (drawSubTrees $ M.delete a x)
+                shift first other = zipWith (++) (first : repeat other)
+    drawEpsilonTree eps EmptyForest = []
+
+    drawAnsatzEta :: AnsatzForestEta -> String 
+    drawAnsatzEta (Leaf (Var a b)) = show a ++ "x[" ++ show b ++ "]"
+    drawAnsatzEta (ForestEta m) = unlines $ map (\(x,y) -> unlines $ drawEtaTree x y) $ M.assocs m 
+    drawAnsatzEta EmptyForest = [] 
+    
+    drawAnsatzEpsilon :: AnsatzForestEpsilon -> String 
+    drawAnsatzEpsilon m 
+            | M.size m == 0 = [] 
+            | otherwise = unlines $ map (\(x,y) -> unlines $ drawEpsilonTree x y) $ M.assocs m 
+
 
 
     --get one representative for each Var Label

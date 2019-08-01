@@ -27,7 +27,7 @@
 
 
  module SparseTensor (
- fromList', singletonInd, sortInd,  Ind1(..), Ind2(..),  Ind3(..), Ind9(..), Ind20(..), IndTuple, STTens, ATens,  IndList(..), 
+ fromList', singletonInd, sortInd,  Ind1(..), Ind2(..),  Ind3(..), Ind9(..), Ind20(..), STTens, IndTupleST, ATens, IndTupleAbs,  IndList(..), 
  (&+), (&*), (&-), (&.), Tensor(..), AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8, TScalar, TAlgebra,
  removeZeros1, removeZeros2, removeZeros3, removeZeros4, removeZeros5, removeZeros6, removeZeros7, removeZeros8, 
  tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6, tensorTrans7, tensorTrans8, 
@@ -2072,7 +2072,9 @@
 
     type STTens n1 n2 v = AbsTensor2 n1 n2 Ind3 v 
 
-    type IndTuple n1 n2 = (IndList n1 Ind3, IndList n2 Ind3)
+    type IndTupleST n1 n2 = (IndList n1 Ind3, IndList n2 Ind3)
 
     type ATens n1 n2 n3 n4 n5 n6 v = AbsTensor6 n1 n2 n3 n4 n5 n6 Ind20 Ind9 Ind3 v 
+
+    type IndTupleAbs n1 n2 n3 n4 n5 n6 = (IndList n1 Ind20, IndList n2 Ind20 , IndList n3 Ind9, IndList n4 Ind9, IndList n5 Ind3, IndList n6 Ind3)
 

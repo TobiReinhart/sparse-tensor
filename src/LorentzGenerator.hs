@@ -20,7 +20,7 @@
 
 module LorentzGenerator (
     AnsatzForestEpsilon(..), AnsatzForestEta(..), Eta(..), Epsilon(..), Var(..), flattenForest, flattenForestEpsilon, drawAnsatzEta, drawAnsatzEpsilon,
-    mkAnsatzTensorEig, mkAnsatzTensorEigIO, mkAnsatzTensorFast, mkAnsatzTensorEig', mkAnsatzTensorEigIO', mkAnsatzTensorFast',
+    mkAnsatzTensorEig, mkAnsatzTensorEigIO, mkAnsatzTensorEigAbs, mkAnsatzTensorEigAbsIO, mkAnsatzTensorFast, mkAnsatzTensorFastAbs, mkAnsatzTensorEig', mkAnsatzTensorEigIO', mkAnsatzTensorFast',
     mkAnsatzTensorEigSym, mkAnsatzTensorEigIOSym, mkAnsatzTensorFastSym, mkAnsatzTensorEigSym', mkAnsatzTensorEigIOSym', mkAnsatzTensorFastSym',
     getForestLabels, getForestLabelsEpsilon, removeVarsEta, removeVarsEps, relabelAnsatzForest, relabelAnsatzForestEpsilon, mapVars, mapVarsEpsilon, 
     forestEtaList, forestEpsList, forestEtaListLatex, forestEpsListLatex, ansatzRank, ansatzRankEpsilon
@@ -920,6 +920,9 @@ module LorentzGenerator (
 
     type AssocsList a = [([(Int,Int)],a)]
 
+    type AssocsListAbs a = [([(Int,Int)],Int,a)]
+
+
     evalAllEta :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEta -> [[(Int,Int)]]
     evalAllEta epsM [] f = []
     evalAllEta epsM evalMs EmptyForest = [] 
@@ -948,6 +951,21 @@ module LorentzGenerator (
     evalAllTensorEpsilon epsM evalMs f = if f == M.empty then [] else l'
                 where
                     l = map (\(x,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f,z)) evalMs
+                    l' = runEval $ parListChunk 500 rdeepseq l
+
+    evalAllTensorEtaAbs :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> AssocsListAbs a
+    evalAllTensorEtaAbs epsM [] f = []
+    evalAllTensorEtaAbs epsM evalMs EmptyForest = [] 
+    evalAllTensorEtaAbs epsM evalMs f = l'
+                where
+                    l = map (\(x,y,z) -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
+                    l' = runEval $ parListChunk 500 rdeepseq l
+
+    evalAllTensorEpsilonAbs :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> AssocsListAbs a
+    evalAllTensorEpsilonAbs epsM [] f = []
+    evalAllTensorEpsilonAbs epsM evalMs f = if f == M.empty then [] else l'
+                where
+                    l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
                     l' = runEval $ parListChunk 500 rdeepseq l
 
 
@@ -1245,7 +1263,7 @@ module LorentzGenerator (
     we used factor less symmetriser functions. 
     --}
 
-    evalToTensSym :: Symmetry -> M.Map [Int] Int -> [(I.IntMap Int, IndTuple n1 0)] -> [(I.IntMap Int, IndTuple n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational) 
+    evalToTensSym :: Symmetry -> M.Map [Int] Int -> [(I.IntMap Int, IndTupleST n1 0)] -> [(I.IntMap Int, IndTupleST n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational) 
     evalToTensSym (p,ap,b,c,bc) epsM evalEta evalEps ansEta ansEps = symTens
                 where 
                     p' = map (\(x,y) -> (x-1,y-1)) p 
@@ -1270,7 +1288,7 @@ module LorentzGenerator (
                                     ) c'
                                 ) bc'  
 
-    evalToTens :: M.Map [Int] Int -> [(I.IntMap Int, IndTuple n1 0)] -> [(I.IntMap Int, IndTuple n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational) 
+    evalToTens :: M.Map [Int] Int -> [(I.IntMap Int, IndTupleST n1 0)] -> [(I.IntMap Int, IndTupleST n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational) 
     evalToTens epsM evalEta evalEps ansEta ansEps = tens
                 where 
                     etaL = evalAllTensorEta epsM evalEta ansEta 
@@ -1280,7 +1298,18 @@ module LorentzGenerator (
                     etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) etaL'
                     epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) epsL'
                     tens = (fromListT2 etaRmL) &+ (fromListT2 epsRmL)
-                    
+
+    --eval to abstract tensor type taling into account possible blocksymmetries and multiplicity of the ansätze 
+
+    evalToTensAbs :: M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> AnsatzForestEta -> AnsatzForestEpsilon -> ATens n1 0 n2 0 n3 0 (AnsVar Rational) 
+    evalToTensAbs epsM evalEta evalEps ansEta ansEps = (fromListT6 etaRmL) &+ (fromListT6 epsRmL)
+                where 
+                    etaL = evalAllTensorEtaAbs epsM evalEta ansEta 
+                    epsL = evalAllTensorEpsilonAbs epsM evalEps ansEps 
+                    etaL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) etaL
+                    epsL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) epsL
+                    etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) etaL'
+                    epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) epsL'
     
    
     --the 2 final functions, constructing the 2 AnsatzForests and the AnsatzTensor (currently the list of symmetry DOFs must be specified by hand -> this can also yield a performance advantage)
@@ -1349,6 +1378,40 @@ module LorentzGenerator (
                 evalMEpsInds = mkEvalMapsInds ord evalLEps
                 (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
                 tens = evalToTens epsM evalMEtaInds evalMEpsInds ansEta ansEps 
+
+
+    --return tensor as abstract tensor type
+
+    mkAnsatzTensorEigAbsIO :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> IO (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 (AnsVar Rational)) 
+    mkAnsatzTensorEigAbsIO ord symmetries evalL = 
+            do
+                let epsM = epsMap
+                let evalLEta = filter (\(x,_,_) -> isEtaList x) evalL 
+                let evalLEps = filter (\(x,_,_) -> isEpsilonList x) evalL
+                let evalLEtaRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEta
+                let evalLEpsRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEps
+                let evalMEtaRed = mkEvalMaps ord evalLEtaRed
+                let evalMEpsRed = mkEvalMaps ord evalLEpsRed
+                let evalMEtaInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z))  evalLEta
+                let evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z))  evalLEps
+                let (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
+                let tens = evalToTensAbs epsM evalMEtaInds evalMEpsInds ansEta ansEps 
+                return (ansEta, ansEps, tens)
+
+    mkAnsatzTensorEigAbs :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 (AnsVar Rational)) 
+    mkAnsatzTensorEigAbs ord symmetries evalL = (ansEta, ansEps, tens)
+            where
+                epsM = epsMap
+                evalLEta = filter (\(x,_,_) -> isEtaList x) evalL 
+                evalLEps = filter (\(x,_,_) -> isEpsilonList x) evalL
+                evalLEtaRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEta
+                evalLEpsRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEps
+                evalMEtaRed = mkEvalMaps ord evalLEtaRed
+                evalMEpsRed = mkEvalMaps ord evalLEpsRed
+                evalMEtaInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z))  evalLEta
+                evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z))  evalLEps
+                (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
+                tens = evalToTensAbs epsM evalMEtaInds evalMEpsInds ansEta ansEps 
 
 
     --now we start with the second way 
@@ -1442,6 +1505,27 @@ module LorentzGenerator (
                 ansEpsRed' = reduceLinDepsFastEps epsM evalMEpsRed symmetries ansEpsilon
                 ansEpsRed = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEtaRed)) ansEpsRed'
                 tens = evalToTens epsM evalMEtaInds evalMEpsInds ansEtaRed ansEpsRed 
+
+    --eval to abstract tensor
+
+    mkAnsatzTensorFastAbs :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 (AnsVar Rational)) 
+    mkAnsatzTensorFastAbs ord symmetries evalL = (ansEtaRed, ansEpsRed, tens) 
+            where
+                epsM = epsMap
+                evalLEta = filter (\(x,_,_) -> isEtaList x) evalL
+                evalLEps = filter (\(x,_,_) -> isEpsilonList x) evalL
+                evalLEtaRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEta
+                evalLEpsRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEps
+                ansEta = getEtaForestFast ord symmetries 
+                ansEpsilon = getEpsForestFast ord symmetries
+                evalMEtaRed = mkEvalMaps ord evalLEtaRed
+                evalMEpsRed = mkEvalMaps ord evalLEpsRed  
+                evalMEtaInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEta
+                evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEps
+                ansEtaRed = reduceLinDepsFastEta epsM evalMEtaRed symmetries ansEta
+                ansEpsRed' = reduceLinDepsFastEps epsM evalMEpsRed symmetries ansEpsilon
+                ansEpsRed = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEtaRed)) ansEpsRed'
+                tens = evalToTensAbs epsM evalMEtaInds evalMEpsInds ansEtaRed ansEpsRed 
 
 
     {--
@@ -1621,7 +1705,11 @@ module LorentzGenerator (
     mkEvalMaps :: Int -> [[Int]] -> [I.IntMap Int] 
     mkEvalMaps i l = map (\x -> I.fromList $ zip [1..i] x) l 
 
-    mkEvalMapsInds :: forall (n :: Nat). SingI n => Int -> [[Int]] -> [(I.IntMap Int, IndTuple n 0)]
+    mkEvalMap :: Int -> [Int] -> I.IntMap Int 
+    mkEvalMap i l = I.fromList $ zip [1..i] l 
+
+
+    mkEvalMapsInds :: forall (n :: Nat). SingI n => Int -> [[Int]] -> [(I.IntMap Int, IndTupleST n 0)]
     mkEvalMapsInds i l = map (\x -> (I.fromList $ zip [1..i] x, (fromList' $ map toEnum x, Empty))) l 
 
 
@@ -1660,3 +1748,368 @@ module LorentzGenerator (
     mkAnsatzTensorFast' ord symmetries = mkAnsatzTensorFast ord symmetries evalL
             where
                 evalL = filter (\x -> filterAllSym x symmetries) $ allList ord symmetries
+
+    --abstract tensor evaluation lists 
+
+    --finally the lists for the evaluation 
+
+    --trianglemaps converting from abstract indices to spacetime indices 
+
+    trianMapArea :: I.IntMap [Int]
+    trianMapArea = I.fromList $ zip [1..21] list 
+            where 
+                list = [ [a,b,c,d] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], (isAreaSorted a b c d)]
+
+    trianMap2 :: I.IntMap [Int] 
+    trianMap2 = I.fromList $ zip [1..10] list 
+            where
+                list = [ [p,q] | p <- [0..3], q <- [p..3]]
+
+    isAreaSorted :: Int -> Int -> Int -> Int -> Bool
+    isAreaSorted a b c d 
+             | a < c || (a == c && b <= d) = True
+             | otherwise = False 
+
+    --computing the muliplicities that result from the use of the area metric inter twiner
+    
+    areaMult :: [Int] -> Int
+    areaMult [a,b,c,d] 
+             | a == c && b == d = 4
+             | otherwise = 8
+ 
+    iMult2 :: [Int] -> Int 
+    iMult2 [p,q] = if p == q then 1 else 2 
+
+    --Area metric eval lists
+
+    --A
+    areaList4 :: [([Int], Int, [IndTupleAbs 1 0 0 0 0 0])]
+    areaList4 = list 
+          where 
+              trianArea = trianMapArea
+              list = [ let a' = (I.!) trianArea a in (a', areaMult a', [(singletonInd (Ind20 $ a-1), Empty, Empty, Empty, Empty, Empty)]) | a <- [1..21] ]
+    
+    --AI
+    areaList6 :: [([Int], Int, [IndTupleAbs 1 0 1 0 0 0])]
+    areaList6 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',i') = ((I.!) trianArea a, (I.!) trian2 i) in  (a' ++ i', (areaMult a') * (iMult2 i'), [(singletonInd (Ind20 $ a-1), Empty, singletonInd (Ind9 $ i-1), Empty, Empty, Empty)]) | a <- [1..21], i <- [1..10]]
+ 
+    --A:B
+    areaList8 :: [([Int], Int, [IndTupleAbs 2 0 0 0 0 0])]
+    areaList8 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ b', (areaMult a') * (areaMult b'), map (\[a,b] -> (Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b] )  | a <- [1..21], b <- [a..21]]
+  
+    --Ap:Bq
+    areaList10_1 :: [([Int], Int, [IndTupleAbs 2 0 0 0 2 0])]
+    areaList10_1 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ p : b' ++ [q], (areaMult a') * (areaMult b'), map (\[[a,p],[b,q]] -> (Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], p <- [0..3], q <- [0..3],  not (a==b && p>q)]
+  
+    --A:BI   
+    areaList10_2 :: [([Int], Int, [IndTupleAbs 2 0 1 0 0 0])]
+    areaList10_2 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trian2 i) in  (a' ++ b' ++ i', (areaMult a') * (areaMult b') * (iMult2 i'), [ (Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, singletonInd (Ind9 $ i-1), Empty, Empty, Empty)] ) | a <- [1..21], b <- [1..21], i <- [1..10] ]
+  
+    --A:B:C
+    areaList12 ::  [([Int], Int, [IndTupleAbs 3 0 0 0 0 0])]
+    areaList12 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ b' ++ c', (areaMult a') * (areaMult b') * (areaMult c'), map (\[a,b,c] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c] )| a <- [1..21], b <- [a..21], c <- [b..21] ]
+  
+    --AI:BJ
+    areaList12_1 ::  [([Int], Int, [IndTupleAbs 2 0 2 0 0 0])]
+    areaList12_1 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',i',b',j') = ((I.!) trianArea a, (I.!) trian2 i, (I.!) trianArea b, (I.!) trian2 j) in  (a' ++ i' ++ b' ++ j' , (areaMult a') * (areaMult b') * (iMult2 i') * (iMult2 j'), map (\[[a,i],[b,j]] ->  (Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Append (Ind9 $ i-1) $ singletonInd (Ind9 $ j-1), Empty, Empty, Empty)) $ nub $ permutations [[a,i],[b,j]] ) | a <- [1..21], b <- [a..21], i <- [1..10], j <- [1..10], not (a==b && i>j) ]
+  
+    --A:Bp:Cq
+    areaList14_1 :: [([Int], Int, [IndTupleAbs 3 0 0 0 2 0])]
+    areaList14_1 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ b' ++ p : c' ++ [q], (areaMult a') * (areaMult b') * (areaMult c'), map (\[[b,p],[c,q]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[b,p],[c,q]]) | a <- [1..21], b <- [1..21], c <- [b..21], p <- [0..3], q <- [0..3], not (b==c && p>q) ]
+  
+    --A:B:CI
+    areaList14_2 :: [([Int], Int, [IndTupleAbs 3 0 1 0 0 0])]
+    areaList14_2 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in ( a' ++ b' ++ c' ++ i', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), map (\[a,b] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, singletonInd (Ind9 $ i-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] ) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10] ]
+  
+    --Ap:Bq:CI
+    areaList16_1 :: [([Int], Int, [IndTupleAbs 3 0 1 0 2 0])]
+    areaList16_1 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i) in (a' ++ p : b' ++ q : c' ++ i' , (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i'), map (\[[a,p],[b,q]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, singletonInd (Ind9 $ i-1), Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], c <- [1..21], i <- [1..10], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
+  
+    --A:BI:CJ
+    areaList16_2 :: [([Int], Int, [IndTupleAbs 3 0 2 0 0 0])]
+    areaList16_2 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [let (a',b',c',i', j') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j) in  (a' ++ b' ++ i' ++ c' ++ j', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j'), map (\[[b,i],[c,j]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Append (Ind9 $ i-1) $ singletonInd (Ind9 $ j-1), Empty, Empty, Empty) ) $ nub $ permutations [[b,i],[c,j]])| a <- [1..21], b <- [1..21], c <- [b..21], i <- [1..10], j <- [1..10], not (b==c && i>j)]
+  
+    --AI:BJ:CK
+    areaList18 :: [([Int], Int, [IndTupleAbs 3 0 3 0 0 0])]
+    areaList18 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', (areaMult a') * (areaMult b') * (areaMult c') * (iMult2 i') * (iMult2 j') * (iMult2 k'), map (\[[a,i],[b,j],[c,k]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Append (Ind9 $ i-1) $ Append (Ind9 $ j-1) $ singletonInd (Ind9 $ k-1), Empty, Empty, Empty) ) $ nub $ permutations [[a,i],[b,j],[c,k]]) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
+     
+    --order 4 
+ 
+    --A:B:C_D
+    areaList16 ::  [([Int], Int, [IndTupleAbs 4 0 0 0 0 0])]
+    areaList16 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c', d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c' ++ d', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), map (\[a,b,c,d] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ Append (Ind20 $ c-1) $ singletonInd (Ind20 $ d-1), Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c,d] )| a <- [1..21], b <- [a..21], c <- [b..21], d <- [c..21] ]
+ 
+    --A:B:C:DI
+    areaList18_2 ::  [( [Int], Int, [IndTupleAbs 4 0 1 0 0 0])]
+    areaList18_2 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',d',i') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trian2 i) in  (a' ++ b' ++ c'++d'++i', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (iMult2 i'), map (\[a,b,c] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ Append (Ind20 $ c-1) (singletonInd (Ind20 $ d-1)), Empty, singletonInd (Ind9 $ i-1), Empty, Empty, Empty) ) $ nub $ permutations [a,b,c] ) | a <- [1..21], b <- [a..21], c <- [b..21], d <- [1..21], i <- [1..10] ]
+  
+    --A:B:Cp:Dq
+    areaList18_3 ::  [([Int], Int, [IndTupleAbs 4 0 0 0 2 0])]
+    areaList18_3 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c',d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c'++ p : d'++[q], (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d'), map ( \(a,b,c,p,d,q) -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ Append (Ind20 $ c-1) (singletonInd (Ind20 $ d-1)), Empty, Empty, Empty, Append (Ind3 p) (singletonInd (Ind3 q)), Empty) ) $ nub [(a,b,c,p,d,q),(b,a,c,p,d,q),(a,b,d,q,c,p),(b,a,d,q,c,p)] ) | a <- [1..21], b <- [a..21], c <- [1..21], d <- [c..21], p <- [0..3], q <- [0..3] , not (c == d && p > q) ]
+  
+    --order 5 
+ 
+    areaList20 ::  [( [Int], Int, [IndTupleAbs 5 0 0 0 0 0])]
+    areaList20 = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c', d', e') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d, (I.!) trianArea e) in  (a' ++ b' ++ c' ++ d' ++ e', (areaMult a') * (areaMult b') * (areaMult c') * (areaMult d') * (areaMult e'), map (\[a,b,c,d,e] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ Append (Ind20 $ c-1) $ Append (Ind20 $ d-1) $ singletonInd (Ind20 $ e-1), Empty, Empty, Empty, Empty, Empty)) $ nub $ permutations [a,b,c,d,e] )| a <- [1..21], b <- [a..21], c <- [b..21], d <- [c..21], e <- [d..21] ]
+
+    --for the kinetic Anssätze for the Rom calculations -> extra symmetry
+
+    --Ap:Bq
+    areaList10Rom :: [( [Int], Int, [IndTupleAbs 2 0 0 0 2 0])]
+    areaList10Rom = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b') = ((I.!) trianArea a, (I.!) trianArea b) in  (a' ++ p : b' ++ [q], (areaMult a') * (areaMult b'), map (\[a,p,b,q] -> (Append (Ind20 $ a-1) $ singletonInd (Ind20 $ b-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ [[a,p,b,q], [a,q,b,p], [b,p,a,q], [b,q,a,p]]) | a <- [1..21], b <- [a..21], p <- [0..3], q <- [p..3]]
+  
+    --Ap:Bq:C
+
+    areaList14Rom :: [( [Int], Int, [IndTupleAbs 3 0 0 0 2 0])]
+    areaList14Rom = list
+          where 
+              trian2 = trianMap2
+              trianArea = trianMapArea
+              list = [ let (a',b',c') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c) in  (a' ++ p : b' ++ q : c' , (areaMult a') * (areaMult b') * (areaMult c'), map (\[[a,p],[b,q]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Empty, Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..21], b <- [a..21], c <- [1..21], p <- [0..3], q <- [0..3], not (a==b && p>q) ]
+  
+   
+    --now the same for the metric ansätze 
+
+    --A ansatz
+
+    metricList2 :: [( [Int], Int, [IndTupleAbs 0 0 1 0 0 0])]
+    metricList2 = list 
+          where 
+              trianMetric = trianMap2
+              list = [ let a' = (I.!) trianMetric a in (a', iMult2 a', [(Empty, Empty, (singletonInd (Ind9 $ a-1)), Empty, Empty, Empty)]) | a <- [1..10] ]
+   
+   
+    --AI ansatz (first metric indices)
+
+    metricList4_1 :: [( [Int], Int, [IndTupleAbs 0 0 2 0 0 0])]
+    metricList4_1 =  list 
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',i') = ((I.!) trianMetric a, (I.!) trianMetric i) in (a'++i', (iMult2 a') * (iMult2 i'), [(Empty, Empty, Append (Ind9 $ a-1) (singletonInd (Ind9 $ i-1)), Empty, Empty, Empty)]) | a <- [1..10], i <- [1..10] ]
+ 
+   
+    --A:B ansatz
+
+    metricList4_2 :: [( [Int], Int, [IndTupleAbs 0 0 2 0 0 0])]
+    metricList4_2 = list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b') = ((I.!) trianMetric a, (I.!) trianMetric b) in  (a' ++ b', (iMult2 a') * (iMult2 b'), map (\[a,b] -> (Empty, Empty, Append (Ind9 $ a-1) $ singletonInd (Ind9 $ b-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] )  | a <- [1..10], b <- [a..10]]
+
+
+    --Ap:Bq ansatz 
+
+    metricList6_1 :: [( [Int], Int, [IndTupleAbs 0 0 2 0 2 0])]
+    metricList6_1 = list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b') = ((I.!) trianMetric a, (I.!) trianMetric b) in  (a' ++ p : b' ++ [q], (iMult2 a') * (iMult2 b'), map (\[[a,p],[b,q]] -> (Empty, Empty, Append (Ind9 $ a-1) $ singletonInd (Ind9 $ b-1), Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[a,p],[b,q]]) | a <- [1..10], b <- [a..10], p <- [0..3], q <- [0..3],  not (a==b && p>q)]
+  
+
+    --A:BI ansatz
+
+    metricList6_2 :: [( [Int], Int, [IndTupleAbs 0 0 3 0 0 0])]
+    metricList6_2 = list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',i') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric i) in  (a' ++ b' ++ i', (iMult2 a') * (iMult2 b') * (iMult2 i'), [ (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ i-1), Empty, Empty, Empty)] ) | a <- [1..10], b <- [1..10], i <- [1..10] ]
+  
+
+    --A:B:C ansatz 
+    
+    metricList6_3 ::  [( [Int], Int, [IndTupleAbs 0 0 3 0 0 0])]
+    metricList6_3 = list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',c') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c) in  (a' ++ b' ++ c', (iMult2 a') * (iMult2 b') * (iMult2 c'), map (\[a,b,c] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ c-1), Empty, Empty, Empty)) $ nub $ permutations [a,b,c] )| a <- [1..10], b <- [a..10], c <- [b..10] ]
+  
+
+    --A:Bp:Cq ansatz
+
+    metricList8_1 :: [( [Int], Int, [IndTupleAbs 0 0 3 0 2 0])]
+    metricList8_1 = list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',c') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c) in  (a' ++ b' ++ p : c' ++ [q], (iMult2 a') * (iMult2 b') * (iMult2 c'), map (\[[b,p],[c,q]] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ singletonInd (Ind9 $ c-1), Empty, Append (Ind3 $ p) $ singletonInd (Ind3 $ q), Empty)) $ nub $ permutations [[b,p],[c,q]]) | a <- [1..10], b <- [1..10], c <- [b..10], p <- [0..3], q <- [0..3], not (b==c && p>q) ]
+  
+
+    --A:B:CI ansatz 
+
+    metricList8_2 :: [( [Int], Int, [IndTupleAbs 0 0 4 0 0 0])]
+    metricList8_2 = list
+          where 
+              trianMetric = trianMap2
+              list = [ let (a',b',c',i') = ((I.!) trianMetric a, (I.!) trianMetric b, (I.!) trianMetric c, (I.!) trianMetric i) in ( a' ++ b' ++ c' ++ i', (iMult2 a') * (iMult2 b') * (iMult2 c') * (iMult2 i'), map (\[a,b] -> (Empty, Empty, Append (Ind9 $ a-1) $ Append (Ind9 $ b-1) $ Append (Ind9 $ c-1) $ singletonInd (Ind9 $ i-1), Empty, Empty, Empty)) $ nub $ permutations [a,b] ) | a <- [1..10], b <- [a..10], c <- [1..10], i <- [1..10] ]
+  
+    --symLists for the ansätze
+
+    symList4 :: Symmetry  
+    symList4 = ([], [(1,2),(3,4)], [([1,2],[3,4])], [], [])
+
+    symList6 :: Symmetry  
+    symList6 = ([(5,6)], [(1,2),(3,4)], [([1,2],[3,4])], [], [])
+
+    symList8 :: Symmetry  
+    symList8 = ([], [(1,2),(3,4),(5,6),(7,8)], [([1,2],[3,4]),([5,6],[7,8]),([1,2,3,4],[5,6,7,8])], [], [])
+
+    symList10_1 :: Symmetry  
+    symList10_1 = ([], [(1,2),(3,4),(6,7),(8,9)], [([1,2],[3,4]),([6,7],[8,9]),([1,2,3,4,5],[6,7,8,9,10])], [], [])
+
+    symList10_2 :: Symmetry  
+    symList10_2 = ([(9,10)], [(1,2),(3,4),(5,6),(7,8)], [([1,2],[3,4]),([5,6],[7,8])], [], [])
+
+    symList12 :: Symmetry  
+    symList12 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12])], [], [[[1,2,3,4],[5,6,7,8],[9,10,11,12]]])
+
+    symList12_1 :: Symmetry  
+    symList12_1 = ([(5,6),(11,12)], [(1,2),(3,4),(7,8),(9,10)], [([1,2],[3,4]),([7,8],[9,10]),([1,2,3,4,5,6],[7,8,9,10,11,12])], [], [])
+
+    symList14_1 :: Symmetry  
+    symList14_1 = ([], [(1,2),(3,4),(5,6),(7,8),(10,11),(12,13)], [([1,2],[3,4]),([5,6],[7,8]),([10,11],[12,13]),([5,6,7,8,9],[10,11,12,13,14])], [], [])
+
+    symList14_2 :: Symmetry  
+    symList14_2 = ([(13,14)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([1,2,3,4],[5,6,7,8])], [], [])
+
+    symList16_1 :: Symmetry  
+    symList16_1 = ([(15,16)], [(1,2),(3,4),(6,7),(8,9),(11,12),(13,14)], [([1,2],[3,4]),([6,7],[8,9]),([11,12],[13,14]),([1,2,3,4,5],[6,7,8,9,10])], [], [])
+
+    symList16_2 :: Symmetry  
+    symList16_2 = ([(9,10),(15,16)], [(1,2),(3,4),(5,6),(7,8),(11,12),(13,14)], [([1,2],[3,4]),([5,6],[7,8]),([11,12],[13,14]),([5,6,7,8,9,10],[11,12,13,14,15,16])], [], [])
+
+    symList18 :: Symmetry  
+    symList18 = ([(5,6),(11,12),(17,18)], [(1,2),(3,4),(7,8),(9,10),(13,14),(15,16)], [([1,2],[3,4]),([7,8],[9,10]),([13,14],[15,16])], [], [[[1,2,3,4,5,6],[7,8,9,10,11,12],[13,14,15,16,17,18]]])
+
+    --order 4
+
+    symList16 :: Symmetry  
+    symList16 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16])], [], [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]])
+
+    symList18_2 :: Symmetry  
+    symList18_2 = ([(17,18)], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16])], [], [[[1,2,3,4],[5,6,7,8],[9,10,11,12]]])
+
+    symList18_3 :: Symmetry  
+    symList18_3 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(14,15),(16,17)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([14,15],[16,17]),([1,2,3,4],[5,6,7,8]),([9,10,11,12,13],[14,15,16,17,18])], [], [])
+
+    --order 5
+
+    symList20 :: Symmetry  
+    symList20 = ([], [(1,2),(3,4),(5,6),(7,8),(9,10),(11,12),(13,14),(15,16),(17,18),(19,20)], [([1,2],[3,4]),([5,6],[7,8]),([9,10],[11,12]),([13,14],[15,16]),([17,18],[19,20])], [], [[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]])
+
+    --lists for rom ansätze 
+
+    symList10Rom :: Symmetry  
+    symList10Rom = ([(5,10)], [(1,2),(3,4),(6,7),(8,9)], [([1,2],[3,4]),([6,7],[8,9]),([1,2,3,4],[6,7,8,9])], [], [])
+
+    symList14Rom :: Symmetry 
+    symList14Rom = ([], [(1,2),(3,4),(6,7),(8,9),(11,12),(13,14)], [([1,2],[3,4]),([6,7],[8,9]),([11,12],[13,14]),([1,2,3,4,5],[6,7,8,9,10])], [], [])
+
+
+    --extra symLists for the metric ansätze 
+
+    --A ansatz
+
+    metricsymList2 :: Symmetry  
+    metricsymList2 = ([(1,2)], [], [], [], [])
+
+    --AI ansatz 
+
+    metricsymList4_1 :: Symmetry  
+    metricsymList4_1 = ([(1,2),(3,4)], [], [], [], [])
+
+
+    --A:B ansatz
+
+    metricsymList4_2 :: Symmetry  
+    metricsymList4_2 = ([(1,2),(3,4)], [], [([1,2],[3,4])], [], [])
+
+
+    --Ap:Bq ansatz 
+
+    metricsymList6_1 :: Symmetry  
+    metricsymList6_1 = ([(1,2),(4,5)], [], [([1,2,3],[4,5,6])], [], [])
+
+    --A:BI ansatz 
+
+    metricsymList6_2 :: Symmetry  
+    metricsymList6_2 = ([(1,2),(3,4),(5,6)], [], [], [], [])
+
+    --A:B:C ansatz 
+
+    metricsymList6_3 :: Symmetry  
+    metricsymList6_3 = ([(1,2),(3,4),(5,6)], [], [], [], [[[1,2],[3,4],[5,6]]])
+
+    --A:Bp:Cq ansatz 
+
+    metricsymList8_1 :: Symmetry  
+    metricsymList8_1 = ([(1,2),(3,4),(6,7)], [], [([3,4,5],[6,7,8])], [], [])
+
+    --A:B:CI ansatz 
+
+    metricsymList8_2 :: Symmetry  
+    metricsymList8_2 = ([(1,2),(3,4),(5,6),(7,8)], [], [([1,2],[3,4])], [], [])
+
+    

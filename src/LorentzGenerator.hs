@@ -23,7 +23,9 @@ module LorentzGenerator (
     mkAnsatzTensorEig, mkAnsatzTensorEigIO, mkAnsatzTensorEigAbs, mkAnsatzTensorEigAbsIO, mkAnsatzTensorFast, mkAnsatzTensorFastAbs, mkAnsatzTensorEig', mkAnsatzTensorEigIO', mkAnsatzTensorFast',
     mkAnsatzTensorEigSym, mkAnsatzTensorEigIOSym, mkAnsatzTensorFastSym, mkAnsatzTensorEigSym', mkAnsatzTensorEigIOSym', mkAnsatzTensorFastSym',
     getForestLabels, getForestLabelsEpsilon, removeVarsEta, removeVarsEps, relabelAnsatzForest, relabelAnsatzForestEpsilon, mapVars, mapVarsEpsilon, 
-    forestEtaList, forestEpsList, forestEtaListLatex, forestEpsListLatex, ansatzRank, ansatzRankEpsilon
+    forestEtaList, forestEpsList, forestEtaListLatex, forestEpsListLatex, ansatzRank, ansatzRankEpsilon,
+    areaList4, areaList6, areaList8, areaList10_1, areaList10_2, areaList12, areaList12_1, areaList14_1, areaList14_2,
+    symList4, symList6, symList8, symList10_1, symList10_2, symList12, symList12_1, symList14_1, symList14_2
 
     --what else should be exported ??
 

@@ -27,7 +27,7 @@
 
 
  module SparseTensor (
- fromList', Ind1(..), Ind2(..),  Ind3(..), Ind9(..), Ind20(..), IndTuple, STTens, IndList(..),
+ fromList', singletonInd, sortInd,  Ind1(..), Ind2(..),  Ind3(..), Ind9(..), Ind20(..), IndTuple, STTens, ATens,  IndList(..), 
  (&+), (&*), (&-), (&.), Tensor(..), AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8, TScalar, TAlgebra,
  removeZeros1, removeZeros2, removeZeros3, removeZeros4, removeZeros5, removeZeros6, removeZeros7, removeZeros8, 
  tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6, tensorTrans7, tensorTrans8, 
@@ -1961,7 +1961,7 @@
                 m = maximum $ map (fst.fst) l
                 n = maximum $ map (snd.fst) l 
 
-    --rank of the tensor can be computed with rank Sol.FullPivLU or Sol.JakobySVD
+    --rank of the tensor can be computed with rank Sol.FullPivLU or Sol.JakobiSVD
 
     tensorRank1' :: (TIndex k1) => AbsTensor1 n1 k1 (AnsVar Rational) -> Int 
     tensorRank1' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrix1 (singletonTList1 t)
@@ -2073,3 +2073,6 @@
     type STTens n1 n2 v = AbsTensor2 n1 n2 Ind3 v 
 
     type IndTuple n1 n2 = (IndList n1 Ind3, IndList n2 Ind3)
+
+    type ATens n1 n2 n3 n4 n5 n6 v = AbsTensor6 n1 n2 n3 n4 n5 n6 Ind20 Ind9 Ind3 v 
+

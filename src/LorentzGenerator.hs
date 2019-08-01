@@ -112,7 +112,7 @@ module LorentzGenerator (
     Note that writing specific indices from a block symmetry at an eta yields additional symmetries: for instance consider the block symmetry 
     [ab] <-> [cd] writing eta[ac] yields the new symmetry b <-> d. The 2-block symmetry is thus reduced to a 1-block symmetry. In the same way 
     etas reduce n-block symmetries to (n-1)-block symmetries. To compute these we also need to include all possible block symmetries that are specified
-    in ters of a cyclic block symmetry.
+    in terms of a cyclic block symmetry.
     --}
 
     getExtraSyms1 :: [Int] -> Symmetry -> Symmetry 
@@ -1361,12 +1361,25 @@ module LorentzGenerator (
             m = (maximum $ map (\(_,x,_) -> x) l') + 1
 
     --filter the lin. dependant vars from the Assocs List 
+{-
+    optimized version, requires custom eigen build
 
-    getPivots :: [[(Int,Int)]]  -> [Int]
-    getPivots l = map (1+) p
+    getPivots' :: [[(Int,Int)]]  -> [Int]
+    getPivots' l = map (1+) p
             where
                 mat = assocsToEig l 
                 p = Sol.pivots Sol.FullPivLU mat
+-}
+
+    getPivots :: [[(Int,Int)]]  -> [Int]
+    getPivots l = map (1+) p 
+            where
+                mat = assocsToEig l 
+                pMatTr = Mat.toList $ Mat.transpose $ Sol.image Sol.FullPivLU mat 
+                matTr = Mat.toList $ Mat.transpose mat 
+                p = mapMaybe (\x -> elemIndex x matTr) pMatTr
+
+
 
     --reduce linear deps in the ansätze
 

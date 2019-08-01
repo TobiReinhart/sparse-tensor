@@ -18,6 +18,6 @@ executable HaskellTensor
   main-is:             Main.hs
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5, containers, tf-random, split, ghc-typelits-natnormalise, ghc-typelits-knownnat, eigen, parallel, deepseq, cereal, singletons, bytestring, zlib, criterion
-  other-modules:       TensorTreeNumeric4_2, BasicTensors4_2, PerturbationTree2_3, FlatTensorEquations, GenericTensorEquations, SparseTensor, LorentzGenerator
+  other-modules:       BasicTens, FlatEqns, SparseTensor, LorentzGenerator
   ghc-options:         -j -O2 -threaded -rtsopts -with-rtsopts=-N -funbox-strict-fields
   

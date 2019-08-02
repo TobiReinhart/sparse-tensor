@@ -2,8 +2,6 @@
 
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeFamilyDependencies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TypeOperators #-}
@@ -14,10 +12,9 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE FlexibleContexts #-}
 
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver   #-}
@@ -26,7 +23,7 @@
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
 
- module Tensor (
+ module Math.Tensor (
  fromList', singletonInd, sortInd,  Ind1(..), Ind2(..),  Ind3(..), Ind9(..), Ind20(..), STTens, IndTupleST, ATens, IndTupleAbs,  IndList(..), 
  (&+), (&*), (&-), (&.), Tensor(..), AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8, TScalar, TAlgebra,
  removeZeros1, removeZeros2, removeZeros3, removeZeros4, removeZeros5, removeZeros6, removeZeros7, removeZeros8, 
@@ -111,7 +108,7 @@
     infixr 5 +>
 
     (+>) :: (Enum a) => Int -> IndList (n-1) a -> IndList n a 
-    (+>) i l = Append (toEnum i) l 
+    (+>) i = Append (toEnum i)
 
     singletonInd :: a -> IndList 1 a
     singletonInd x = Append x Empty
@@ -122,7 +119,7 @@
     deriving instance Show (IsZero n)
     
     isZero :: forall (n :: Nat). SNat n -> IsZero n
-    isZero n = case n %~ (SNat @0)
+    isZero n = case n %~ SNat @0
                  of Proved Refl -> Zero
                     Disproved _ -> unsafeCoerce (NonZero @1)
 
@@ -157,8 +154,8 @@
     deriving instance (KnownNat n, Generic a, Serialize a) => Serialize (IndList n a)
 
     instance (NFData a) => NFData (IndList n a) where
-        rnf (Empty) = ()
-        rnf (Append a i) = (rnf a) `seq` (rnf i)
+        rnf Empty = ()
+        rnf (Append a i) = rnf a `seq` rnf i
 
     deriving instance (Eq a) => Eq (IndList n a)
 
@@ -167,11 +164,11 @@
     deriving instance (Show a) => Show (IndList n a)
 
     instance Functor (IndList n) where
-        fmap f (Empty) = Empty 
+        fmap f Empty = Empty 
         fmap f (Append x xs) = Append (f x) (fmap f xs)
 
     instance Foldable (IndList n) where
-        foldr f y (Empty) = y
+        foldr f y Empty = y
         foldr f y (Append x xs) = f x (foldr f y xs) 
 
     --list operations on length typed lists 
@@ -214,11 +211,11 @@
             val = indexInd (i-1) xs
             newL = updateInd (i-1) x xs 
 
-    removeContractionInd :: (Eq a) => Int -> a -> (IndList n a, c) -> Maybe ((IndList (n-1) a),c)
-    removeContractionInd 0 ind1 ((Append x xs), t)
-            | ind1 == x = Just $ (xs,t) 
+    removeContractionInd :: (Eq a) => Int -> a -> (IndList n a, c) -> Maybe (IndList (n-1) a,c)
+    removeContractionInd 0 ind1 (Append x xs, t)
+            | ind1 == x = Just (xs,t) 
             | otherwise = Nothing 
-    removeContractionInd i ind1 ((Append x xs),t) = fmap (\(m,n) -> (Append x m, n)) $ removeContractionInd (i-1) ind1 (xs,t)
+    removeContractionInd i ind1 (Append x xs,t) = (\(m,n) -> (Append x m, n)) <$> removeContractionInd (i-1) ind1 (xs,t)
 
     {--
     resort inds in IndList accroding to the permutation given by [Int], length of [Int] must be n
@@ -269,7 +266,7 @@
     --check if the list is sorted
 
     isValidTMap :: (Ord k, Eq v) => TMap k v -> Bool 
-    isValidTMap l = l == (sortOn fst l)
+    isValidTMap l = l == sortOn fst l
 
     --insert a new key value pair in the list, if already present the function (v -> v -> v) determines the new value at the ind 
 
@@ -278,7 +275,7 @@
     insertWithTMap f key val ((k1,v1):xs) 
             | key < k1 = (key,val) : ((k1,v1):xs)
             | key == k1 = (k1,f val v1) : xs 
-            | otherwise = (k1,v1) : (insertWithTMap f key val xs)
+            | otherwise = (k1,v1) : insertWithTMap f key val xs
 
     --combine two sorted lists with combiner function
 
@@ -286,15 +283,15 @@
     addTMaps f m1 [] = m1 
     addTMaps f [] m2 = m2 
     addTMaps f ((k1,v1):xs) ((k2,v2):ys) 
-            | k1 < k2 = (k1,v1) : (addTMaps f xs ((k2,v2):ys))
-            | k2 < k1 = (k2,v2) : (addTMaps f ((k1,v1):xs) ys)
-            | k1 == k2 = (k1, f v1 v2) : (addTMaps f xs ys)
+            | k1 < k2 = (k1,v1) : addTMaps f xs ((k2,v2):ys)
+            | k2 < k1 = (k2,v2) : addTMaps f ((k1,v1):xs) ys
+            | k1 == k2 = (k1, f v1 v2) : addTMaps f xs ys
 
     mapTMap :: (v -> v') -> TMap k v -> TMap k v' 
-    mapTMap f m = map (\(k,v) -> (k,f v)) m  
+    mapTMap f = map (\(k,v) -> (k,f v)) 
 
     filterTMap :: (v -> Bool) -> TMap k v -> TMap k v 
-    filterTMap f m = filter (\(_,v) -> f v) m 
+    filterTMap f = filter (\(_,v) -> f v)
 
     --finally the tensor data type for a single (contravariant) tensor with n indices is either either identical 0, simply given by a scalar for n=0,
     --or a list of pairs (Index,SubTensor)
@@ -308,7 +305,7 @@
 
     removeZeros :: (TScalar v, TIndex k) => Tensor n k v -> Tensor n k v
     removeZeros (Scalar x) = if x == scaleZero then ZeroTensor else Scalar x 
-    removeZeros (Tensor m) = let newMap = filterTMap (/=ZeroTensor) $ mapTMap removeZeros m in if newMap == [] then ZeroTensor else Tensor newMap
+    removeZeros (Tensor m) = let newMap = filterTMap (/=ZeroTensor) $ mapTMap removeZeros m in if null newMap then ZeroTensor else Tensor newMap
     removeZeros ZeroTensor = ZeroTensor 
 
     --for converting tensors to bytestrings for saving and loading from file we need a non typesafe data type as intermediate type
@@ -322,9 +319,9 @@
 
     toRep :: forall n k v. KnownNat n => Tensor n k v -> TensorRep k v
     toRep (Scalar v) = ScalarR v
-    toRep (Tensor m) = case isZero (SNat @n)
-                    of Zero -> undefined
-                       NonZero ->
+    toRep (Tensor m) = -- case isZero (SNat @n)  n == 0 is not possible, because types
+                       -- of Zero -> undefined
+                       -- NonZero ->
                             case lemma @n Refl
                             of Refl ->
                                 let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
@@ -341,7 +338,7 @@
                                             of SomeNat (_ :: Proxy x) -> case isZero (SNat @x)
                                                                             of NonZero -> case sameNat (Proxy @x) (Proxy @n)
                                                                                             of Nothing   -> undefined
-                                                                                               Just Refl -> Tensor (mapTMap (\t -> (fromRep t) :: Tensor (x-1) k v) m)
+                                                                                               Just Refl -> Tensor (mapTMap (\t -> fromRep t :: Tensor (x-1) k v) m)
                                                                                Zero    -> undefined
                                Nothing -> undefined
     fromRep (ZeroR r) = case someNatVal (fromIntegral r)
@@ -365,7 +362,7 @@
     instance Functor (Tensor n k) where 
         fmap f (Scalar x) = Scalar (f x)
         fmap f (Tensor m) = Tensor (mapTMap (fmap f) m)
-        fmap f (ZeroTensor) = ZeroTensor
+        fmap f ZeroTensor = ZeroTensor
 
     deriving instance (Show a, Show k) => Show (Tensor n k a)
 
@@ -395,7 +392,7 @@
     instance TScalar Double where 
         addS = (+)
         subS = (-)
-        scaleS r b = (fromRational r) * b  
+        scaleS r b = fromRational r * b  
         scaleZero = 2.2e-16
 
     instance TAlgebra Rational Rational where 
@@ -413,16 +410,16 @@
 
     toListT :: Tensor n k v -> [(IndList n k, v)]
     toListT (Scalar x) = [(Empty, x)]
-    toListT (Tensor m) =  concat $ map (\(i,t) -> appendF i $ toListT t) m
+    toListT (Tensor m) =  concatMap (\(i,t) -> appendF i $ toListT t) m
             where
-                appendF = \i l2 -> map (\(l,val) -> (Append i l ,val)) l2
+                appendF i = map (\(l,val) -> (Append i l ,val))
     toListT ZeroTensor = []
 
     toListShow :: (TIndex k, TScalar v) => Tensor n k v -> [([Int],v)]
     toListShow t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT t 
-                showInd i1 = (map fromEnum $ toList i1) 
+                showInd i1 = map fromEnum $ toList i1
 
     --construct from typed list        
 
@@ -466,7 +463,7 @@
     infix 8 &. 
 
     (&.) :: (TIndex k, TScalar v) => Rational -> Tensor n k v -> Tensor n k v 
-    (&.) scalar t = fmap (scaleS scalar) t 
+    (&.) scalar = fmap (scaleS scalar)
 
     --subtraction for tensors
 
@@ -482,7 +479,7 @@
     (&*) :: (TIndex k, TAlgebra v v', TScalar v, TScalar v', TScalar (TAlg v v')) => Tensor n k v -> Tensor m k v' -> Tensor (n+m) k (TAlg v v') 
     (&*) (Scalar x) (Scalar y) = let newVal = prodA x y in if newVal == scaleZero then ZeroTensor else Scalar newVal 
     (&*) (Scalar x) t2 = fmap (prodA x) t2 
-    (&*) (Tensor m) t2 = Tensor $ mapTMap (\t1 -> (&*) t1 t2) m 
+    (&*) (Tensor m) t2 = Tensor $ mapTMap (&* t2) m 
     (&*) t1 ZeroTensor = ZeroTensor 
     (&*) ZeroTensor t2 = ZeroTensor 
 
@@ -491,7 +488,7 @@
     tensorTrans :: (TIndex k, TScalar v) => (Int,Int) -> Tensor n k v -> Tensor n k v
     tensorTrans (0, j) t = fromListT l
                     where 
-                        l = (map (\(x,y) -> (swapHead j x, y)) $ toListT t)
+                        l = map (\(x,y) -> (swapHead j x, y)) $ toListT t
     tensorTrans (i, j) (Tensor m) = Tensor $ mapTMap (tensorTrans (i-1, j-1)) m 
     tensorTrans (i ,j) ZeroTensor = ZeroTensor
 
@@ -500,7 +497,7 @@
     tensorBlockTrans :: (TIndex k, TScalar v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k v
     tensorBlockTrans (l1,l2) t = foldr tensorTrans t indList
             where
-                indList = if (intersect l1 l2 == []) then zip l1 l2 else error "at least one indexin the list occurs several times"
+                indList = if null $ intersect l1 l2 then zip l1 l2 else error "at least one index in the list occurs several times"
 
     --generic resorting of the indices of a given tensor according to permutation given by [Int] -> the most expensive as the whole tensor is flattened to a list
     --input is current ordering of tesnor w.r.t. goal orderig, i.e. resorting [A,B,C,D] to [B,C,D,A] is achieved by [3,0,2,1]  
@@ -523,30 +520,30 @@
     --symmetrization of a given Tensor
 
     symTens :: (TIndex k, TScalar v) => (Int,Int) -> Tensor n k v -> Tensor n k v 
-    symTens inds t = t &+ (tensorTrans inds t) 
+    symTens inds t = t &+ tensorTrans inds t 
 
     aSymTens :: (TIndex k, TScalar v) => (Int,Int) -> Tensor n k v -> Tensor n k v 
-    aSymTens inds t = t &- (tensorTrans inds t) 
+    aSymTens inds t = t &- tensorTrans inds t
 
     symTensFac :: (TIndex k, TScalar v) => (Int,Int) -> Tensor n k v -> Tensor n k v 
-    symTensFac inds t = (1%2) &. (symTens inds t)
+    symTensFac inds t = (1%2) &. symTens inds t
 
     aSymTensFac :: (TIndex k, TScalar v) => (Int,Int) -> Tensor n k v -> Tensor n k v 
-    aSymTensFac inds t = (1%2) &. (aSymTens inds t)
+    aSymTensFac inds t = (1%2) &. aSymTens inds t
 
     --block symmetrization 
 
     symBlockTens :: (TIndex k, TScalar v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k v 
-    symBlockTens inds t = t &+ (tensorBlockTrans inds t) 
+    symBlockTens inds t = t &+ tensorBlockTrans inds t 
 
     aSymBlockTens :: (TIndex k, TScalar v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k v 
-    aSymBlockTens inds t = t &- (tensorBlockTrans inds t) 
+    aSymBlockTens inds t = t &- tensorBlockTrans inds t
 
     symBlockTensFac :: (TIndex k, TScalar v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k v 
-    symBlockTensFac inds t = (1%2) &. (symBlockTens inds t)
+    symBlockTensFac inds t = (1%2) &. symBlockTens inds t
 
     aSymBlockTensFac :: (TIndex k, TScalar v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k v 
-    aSymBlockTensFac inds t = (1%2) &. (aSymBlockTens inds t)
+    aSymBlockTensFac inds t = (1%2) &. aSymBlockTens inds t
 
     --helper function for cyclic symmetrization: convert all permutations of a given list of indices into an equivalent lists of lists of Swaps of 2 indices 
 
@@ -555,7 +552,7 @@
     getAllSwaps (x:xs) = lNew ++ l' ++ ((:) <$> l <*> l')
             where 
                 l = zip (repeat x) xs 
-                lNew = map (\x -> [x]) l
+                lNew = map pure l
                 l' = getAllSwaps xs 
 
     getAllBlockSwaps :: [[Int]] -> [[([Int],[Int])]]
@@ -563,12 +560,12 @@
     getAllBlockSwaps (x:xs) = lNew ++ l' ++ ((:) <$> l <*> l')
             where 
                 l = zip (repeat x) xs 
-                lNew = map (\x -> [x]) l
+                lNew = map pure l
                 l' = getAllBlockSwaps xs 
 
     factorial :: Int -> Int 
     factorial 1 = 1
-    factorial n = n*(factorial (n-1))
+    factorial n = n * factorial (n-1)
 
     --cyclic symmetrization
 
@@ -583,7 +580,7 @@
     cyclicASymTens inds t = newTens
             where
                 swapList = getAllSwaps inds 
-                signList = map (\x -> (-1)^(length x)) swapList
+                signList = map (\x -> (-1) ^ length x) swapList
                 tensList' = map (foldr tensorTrans t) swapList
                 tensList = zipWith (&.) signList tensList' 
                 newTens = foldr (&+) t tensList
@@ -596,19 +593,19 @@
                 newTens = foldr (&+) t tensList
 
     cyclicSymTensFac :: (TIndex k, TScalar v) => [Int] -> Tensor n k v -> Tensor n k v 
-    cyclicSymTensFac inds t = fac &. (cyclicSymTens inds t)
+    cyclicSymTensFac inds t = fac &. cyclicSymTens inds t
             where 
-                fac = 1%(fromIntegral $ factorial $ length inds)
+                fac = 1 % fromIntegral (factorial $ length inds)
 
     cyclicASymTensFac :: (TIndex k, TScalar v) => [Int] -> Tensor n k v -> Tensor n k v 
-    cyclicASymTensFac inds t = fac &. (cyclicASymTens inds t)
+    cyclicASymTensFac inds t = fac &. cyclicASymTens inds t
             where 
-                fac = 1%(fromIntegral $ factorial $ length inds)
+                fac = 1 % fromIntegral (factorial $ length inds)
 
     cyclicBlockSymTensFac :: (TIndex k, TScalar v) => [[Int]] -> Tensor n k v -> Tensor n k v 
-    cyclicBlockSymTensFac inds t = fac &. (cyclicBlockSymTens inds t)
+    cyclicBlockSymTensFac inds t = fac &. cyclicBlockSymTens inds t
             where 
-                fac = 1%(fromIntegral $ factorial $ length inds)
+                fac = 1 % fromIntegral (factorial $ length inds)
 
     --for contraction we need a tensor with upper and lower indices: upper indices always come first
 
@@ -618,8 +615,8 @@
     tensorContr (0,j) t = fromListT tensList 
         where
             l = map (\(x,y) -> (x, toListT y)) $ toListT t
-            l2 = map (\(x,y) -> (tailInd x,(mapMaybe (removeContractionInd j (headInd x)) y))) l
-            l3 = filter (\(_,y) -> length y >= 1) l2 
+            l2 = map (\(x,y) -> (tailInd x,mapMaybe (removeContractionInd j (headInd x)) y)) l
+            l3 = filter (\(_,y) -> not (null y)) l2 
             tensList = map (\(x,y) -> (x, fromListT y)) l3
     tensorContr (i,j) (Tensor m) = Tensor $ mapTMap (tensorContr (i-1,j)) m
     tensorContr inds ZeroTensor = ZeroTensor 
@@ -631,7 +628,7 @@
     encodeTensor = compress . encodeLazy 
 
     decodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => BS.ByteString -> Tensor n k v 
-    decodeTensor bs = (fromRight undefined $ decodeLazy $ decompress bs)
+    decodeTensor bs = either error id $ decodeLazy $ decompress bs
 
     --now a generic abstract Tensor "consists of several" Tensor2s that represent contravariant and covariant tensors in the several abstract indices
 
@@ -688,25 +685,25 @@
     removeZeros1 = removeZeros 
 
     removeZeros2 :: (TScalar v, TIndex k) => AbsTensor2 n1 n2 k v -> AbsTensor2 n1 n2 k v 
-    removeZeros2 = removeZeros . (mapTo1 removeZeros) 
+    removeZeros2 = removeZeros . mapTo1 removeZeros 
 
     removeZeros3 :: (TScalar v, TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v 
-    removeZeros3 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros)
+    removeZeros3 = removeZeros . mapTo1 removeZeros . mapTo2 removeZeros
 
     removeZeros4 :: (TScalar v, TIndex k1, TIndex k2) => AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v 
-    removeZeros4 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros)
+    removeZeros4 = removeZeros . mapTo1 removeZeros . mapTo2 removeZeros . mapTo3 removeZeros
 
     removeZeros5 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v 
-    removeZeros5 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros)
+    removeZeros5 = removeZeros . mapTo1 removeZeros . mapTo2 removeZeros . mapTo3 removeZeros . mapTo4 removeZeros
 
     removeZeros6 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v 
-    removeZeros6 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros) . (mapTo5 removeZeros)
+    removeZeros6 = removeZeros . mapTo1 removeZeros . mapTo2 removeZeros . mapTo3 removeZeros . mapTo4 removeZeros . mapTo5 removeZeros
 
     removeZeros7 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v 
-    removeZeros7 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros) . (mapTo5 removeZeros) . (mapTo6 removeZeros)
+    removeZeros7 = removeZeros . mapTo1 removeZeros . mapTo2 removeZeros . mapTo3 removeZeros . mapTo4 removeZeros . mapTo5 removeZeros . mapTo6 removeZeros
 
     removeZeros8 :: (TScalar v, TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v 
-    removeZeros8 = removeZeros . (mapTo1 removeZeros) . (mapTo2 removeZeros) . (mapTo3 removeZeros) . (mapTo4 removeZeros) . (mapTo5 removeZeros) . (mapTo6 removeZeros) . (mapTo7 removeZeros)
+    removeZeros8 = removeZeros . mapTo1 removeZeros . mapTo2 removeZeros . mapTo3 removeZeros . mapTo4 removeZeros . mapTo5 removeZeros . mapTo6 removeZeros . mapTo7 removeZeros
 
     --transpose a general absatract tensor 
 
@@ -814,366 +811,702 @@
           
     --symmetrizer functions 
 
-    symATens1 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    symATens1 inds = symTens inds
+    symATens1 :: (TIndex k1, TScalar v) =>
+                 (Int,Int) ->
+                 AbsTensor1 n1 k1 v ->
+                 AbsTensor1 n1 k1 v
+    symATens1 = symTens
     
-    symATens2 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    symATens2 :: (TIndex k1, TScalar v) =>
+                 (Int,Int) ->
+                 AbsTensor2 n1 n2 k1 v ->
+                 AbsTensor2 n1 n2 k1 v
     symATens2 inds = mapTo1 (symTens inds) 
 
-    symATens3 :: (TIndex k1, TIndex k2, TScalar v) => (Int,Int) -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    symATens3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                 (Int,Int) ->
+                 AbsTensor3 n1 n2 n3 k1 k2 v ->
+                 AbsTensor3 n1 n2 n3 k1 k2 v
     symATens3 inds = mapTo2 (symTens inds) 
 
-    symATens4 :: (TIndex k1, TIndex k2, TScalar v) => (Int,Int) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    symATens4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                 (Int,Int) ->
+                 AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                 AbsTensor4 n1 n2 n3 n4 k1 k2 v
     symATens4 inds = mapTo3 (symTens inds) 
 
-    symATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    symATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                 (Int,Int) ->
+                 AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                 AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     symATens5 inds = mapTo4 (symTens inds) 
 
-    symATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    symATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                 (Int,Int) ->
+                 AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                 AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     symATens6 inds = mapTo5 (symTens inds)
     
-    symATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    symATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                 (Int,Int) ->
+                 AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                 AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     symATens7 inds = mapTo6 (symTens inds)
 
-    symATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    symATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                 (Int,Int) ->
+                 AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                 AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     symATens8 inds = mapTo7 (symTens inds)
 
     --with factor 
 
-    symATensFac1 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    symATensFac1 inds = symTensFac inds
+    symATensFac1 :: (TIndex k1, TScalar v) =>
+                    (Int,Int) ->
+                    AbsTensor1 n1 k1 v ->
+                    AbsTensor1 n1 k1 v
+    symATensFac1 = symTensFac
     
-    symATensFac2 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    symATensFac2 :: (TIndex k1, TScalar v) =>
+                    (Int,Int) ->
+                    AbsTensor2 n1 n2 k1 v ->
+                    AbsTensor2 n1 n2 k1 v
     symATensFac2 inds = mapTo1 (symTensFac inds) 
 
-    symATensFac3 :: (TIndex k1,TIndex k2, TScalar v) => (Int,Int) -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    symATensFac3 :: (TIndex k1,TIndex k2, TScalar v) =>
+                    (Int,Int) ->
+                    AbsTensor3 n1 n2 n3 k1 k2 v ->
+                    AbsTensor3 n1 n2 n3 k1 k2 v
     symATensFac3 inds = mapTo2 (symTensFac inds) 
 
-    symATensFac4 :: (TIndex k1, TIndex k2, TScalar v) => (Int,Int) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    symATensFac4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                    (Int,Int) ->
+                    AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                    AbsTensor4 n1 n2 n3 n4 k1 k2 v
     symATensFac4 inds = mapTo3 (symTensFac inds) 
 
-    symATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    symATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                    (Int,Int) ->
+                    AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                    AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     symATensFac5 inds = mapTo4 (symTensFac inds) 
 
-    symATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    symATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                    (Int,Int) ->
+                    AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                    AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     symATensFac6 inds = mapTo5 (symTensFac inds)
     
-    symATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    symATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                    (Int,Int) ->
+                    AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                    AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     symATensFac7 inds = mapTo6 (symTensFac inds)
 
-    symATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    symATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                    (Int,Int) ->
+                    AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                    AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     symATensFac8 inds = mapTo7 (symTensFac inds)
 
     --antisymmetrization
 
-    aSymATens1 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    aSymATens1 inds = aSymTens inds
+    aSymATens1 :: (TIndex k1, TScalar v) =>
+                  (Int,Int) ->
+                  AbsTensor1 n1 k1 v ->
+                  AbsTensor1 n1 k1 v
+    aSymATens1 = aSymTens
     
-    aSymATens2 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    aSymATens2 :: (TIndex k1, TScalar v) =>
+                  (Int,Int) ->
+                  AbsTensor2 n1 n2 k1 v ->
+                  AbsTensor2 n1 n2 k1 v
     aSymATens2 inds = mapTo1 (aSymTens inds) 
 
-    aSymATens3 :: (TIndex k1, TIndex k2, TScalar v) => (Int,Int) -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    aSymATens3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                  (Int,Int) ->
+                  AbsTensor3 n1 n2 n3 k1 k2 v ->
+                  AbsTensor3 n1 n2 n3 k1 k2 v
     aSymATens3 inds = mapTo2 (aSymTens inds) 
 
-    aSymATens4 :: (TIndex k1, TIndex k2, TScalar v) => (Int,Int) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    aSymATens4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                  (Int,Int) ->
+                  AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                  AbsTensor4 n1 n2 n3 n4 k1 k2 v
     aSymATens4 inds = mapTo3 (aSymTens inds) 
 
-    aSymATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    aSymATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                  (Int,Int) ->
+                  AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                  AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     aSymATens5 inds = mapTo4 (aSymTens inds) 
 
-    aSymATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    aSymATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                  (Int,Int) ->
+                  AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                  AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     aSymATens6 inds = mapTo5 (aSymTens inds)
     
-    aSymATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    aSymATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                  (Int,Int) ->
+                  AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                  AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     aSymATens7 inds = mapTo6 (aSymTens inds)
 
-    aSymATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    aSymATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                  (Int,Int) ->
+                  AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                  AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     aSymATens8 inds = mapTo7 (aSymTens inds)
 
     --with factor 
 
-    aSymATensFac1 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    aSymATensFac1 inds = aSymTensFac inds
+    aSymATensFac1 :: (TIndex k1, TScalar v) =>
+                     (Int,Int) ->
+                     AbsTensor1 n1 k1 v ->
+                     AbsTensor1 n1 k1 v
+    aSymATensFac1 = aSymTensFac
     
-    aSymATensFac2 :: (TIndex k1, TScalar v) => (Int,Int) -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    aSymATensFac2 :: (TIndex k1, TScalar v) =>
+                     (Int,Int) ->
+                     AbsTensor2 n1 n2 k1 v ->
+                     AbsTensor2 n1 n2 k1 v
     aSymATensFac2 inds = mapTo1 (aSymTensFac inds) 
 
-    aSymATensFac3 :: (TIndex k1, TIndex k2, TScalar v) => (Int,Int) -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    aSymATensFac3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                     (Int,Int) ->
+                     AbsTensor3 n1 n2 n3 k1 k2 v ->
+                     AbsTensor3 n1 n2 n3 k1 k2 v
     aSymATensFac3 inds = mapTo2 (aSymTensFac inds) 
 
-    aSymATensFac4 :: (TIndex k1, TIndex k2, TScalar v) => (Int,Int) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    aSymATensFac4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                     (Int,Int) ->
+                     AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                     AbsTensor4 n1 n2 n3 n4 k1 k2 v
     aSymATensFac4 inds = mapTo3 (aSymTensFac inds) 
 
-    aSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    aSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                     (Int,Int) ->
+                     AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                     AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     aSymATensFac5 inds = mapTo4 (aSymTensFac inds) 
 
-    aSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => (Int,Int) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    aSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                     (Int,Int) ->
+                     AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                     AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     aSymATensFac6 inds = mapTo5 (aSymTensFac inds)
     
-    aSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    aSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                     (Int,Int) ->
+                     AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                     AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     aSymATensFac7 inds = mapTo6 (aSymTensFac inds)
 
-    aSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => (Int,Int) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    aSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                     (Int,Int) ->
+                     AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                     AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     aSymATensFac8 inds = mapTo7 (aSymTensFac inds)
 
     --block symmetrization 
 
-    symBlockATens1 :: (TIndex k1, TScalar v) => ([Int],[Int]) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    symBlockATens1 inds = symBlockTens inds
+    symBlockATens1 :: (TIndex k1, TScalar v) =>
+                      ([Int],[Int]) ->
+                      AbsTensor1 n1 k1 v ->
+                      AbsTensor1 n1 k1 v
+    symBlockATens1 = symBlockTens
     
-    symBlockATens2 :: (TIndex k1, TScalar v) => ([Int],[Int]) -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    symBlockATens2 :: (TIndex k1, TScalar v) =>
+                      ([Int],[Int]) ->
+                      AbsTensor2 n1 n2 k1 v ->
+                      AbsTensor2 n1 n2 k1 v
     symBlockATens2 inds = mapTo1 (symBlockTens inds) 
 
-    symBlockATens3 :: (TIndex k1, TIndex k2, TScalar v) => ([Int],[Int]) -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    symBlockATens3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                      ([Int],[Int]) ->
+                      AbsTensor3 n1 n2 n3 k1 k2 v ->
+                      AbsTensor3 n1 n2 n3 k1 k2 v
     symBlockATens3 inds = mapTo2 (symBlockTens inds) 
 
-    symBlockATens4 :: (TIndex k1, TIndex k2, TScalar v) => ([Int],[Int]) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    symBlockATens4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                      ([Int],[Int]) ->
+                      AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                      AbsTensor4 n1 n2 n3 n4 k1 k2 v
     symBlockATens4 inds = mapTo3 (symBlockTens inds) 
 
-    symBlockATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => ([Int],[Int]) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    symBlockATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                      ([Int],[Int]) ->
+                      AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                      AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     symBlockATens5 inds = mapTo4 (symBlockTens inds) 
 
-    symBlockATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => ([Int],[Int]) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    symBlockATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                      ([Int],[Int]) ->
+                      AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                      AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     symBlockATens6 inds = mapTo5 (symBlockTens inds)
     
-    symBlockATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => ([Int],[Int]) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    symBlockATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                      ([Int],[Int]) ->
+                      AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                      AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     symBlockATens7 inds = mapTo6 (symBlockTens inds)
 
-    symBlockATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => ([Int],[Int]) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    symBlockATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                      ([Int],[Int]) ->
+                      AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                      AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     symBlockATens8 inds = mapTo7 (symBlockTens inds)
 
     --with factor 
 
-    symBlockATensFac1 :: (TIndex k1, TScalar v) => ([Int],[Int]) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    symBlockATensFac1 inds = symBlockTensFac inds
+    symBlockATensFac1 :: (TIndex k1, TScalar v) =>
+                         ([Int],[Int]) ->
+                         AbsTensor1 n1 k1 v ->
+                         AbsTensor1 n1 k1 v
+    symBlockATensFac1 = symBlockTensFac
     
-    symBlockATensFac2 :: (TIndex k1, TScalar v) => ([Int],[Int]) -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    symBlockATensFac2 :: (TIndex k1, TScalar v) =>
+                         ([Int],[Int]) ->
+                         AbsTensor2 n1 n2 k1 v ->
+                         AbsTensor2 n1 n2 k1 v
     symBlockATensFac2 inds = mapTo1 (symBlockTensFac inds) 
 
-    symBlockATensFac3 :: (TIndex k1, TIndex k2, TScalar v) => ([Int],[Int]) -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    symBlockATensFac3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                         ([Int],[Int]) ->
+                         AbsTensor3 n1 n2 n3 k1 k2 v ->
+                         AbsTensor3 n1 n2 n3 k1 k2 v
     symBlockATensFac3 inds = mapTo2 (symBlockTensFac inds) 
 
-    symBlockATensFac4 :: (TIndex k1, TIndex k2, TScalar v) => ([Int],[Int]) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    symBlockATensFac4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                         ([Int],[Int]) ->
+                         AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                         AbsTensor4 n1 n2 n3 n4 k1 k2 v
     symBlockATensFac4 inds = mapTo3 (symBlockTensFac inds) 
 
-    symBlockATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => ([Int],[Int]) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    symBlockATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                         ([Int],[Int]) ->
+                         AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                         AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     symBlockATensFac5 inds = mapTo4 (symBlockTensFac inds) 
 
-    symBlockATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => ([Int],[Int]) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    symBlockATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                         ([Int],[Int]) ->
+                         AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                         AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     symBlockATensFac6 inds = mapTo5 (symBlockTensFac inds)
     
-    symBlockATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => ([Int],[Int]) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    symBlockATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                         ([Int],[Int]) ->
+                         AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                         AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     symBlockATensFac7 inds = mapTo6 (symBlockTensFac inds)
 
-    symBlockATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => ([Int],[Int]) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    symBlockATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                         ([Int],[Int]) ->
+                         AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                         AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     symBlockATensFac8 inds = mapTo7 (symBlockTensFac inds)
 
     --antisymmetrization
 
-    aSymBlockATens1 :: (TIndex k1, TScalar v) => ([Int],[Int]) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    aSymBlockATens1 inds = aSymBlockTens inds
+    aSymBlockATens1 :: (TIndex k1, TScalar v) =>
+                       ([Int],[Int]) ->
+                       AbsTensor1 n1 k1 v ->
+                       AbsTensor1 n1 k1 v
+    aSymBlockATens1 = aSymBlockTens
     
-    aSymBlockATens2 :: (TIndex k1, TScalar v) => ([Int],[Int]) -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    aSymBlockATens2 :: (TIndex k1, TScalar v) =>
+                       ([Int],[Int]) ->
+                       AbsTensor2 n1 n2 k1 v ->
+                       AbsTensor2 n1 n2 k1 v
     aSymBlockATens2 inds = mapTo1 (aSymBlockTens inds) 
 
-    aSymBlockATens3 :: (TIndex k1, TIndex k2, TScalar v) => ([Int],[Int]) -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    aSymBlockATens3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                       ([Int],[Int]) ->
+                       AbsTensor3 n1 n2 n3 k1 k2 v ->
+                       AbsTensor3 n1 n2 n3 k1 k2 v
     aSymBlockATens3 inds = mapTo2 (aSymBlockTens inds) 
 
-    aSymBlockATens4 :: (TIndex k1, TIndex k2, TScalar v) => ([Int],[Int]) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    aSymBlockATens4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                       ([Int],[Int]) ->
+                       AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                       AbsTensor4 n1 n2 n3 n4 k1 k2 v
     aSymBlockATens4 inds = mapTo3 (aSymBlockTens inds) 
 
-    aSymBlockATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => ([Int],[Int]) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    aSymBlockATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                       ([Int],[Int]) ->
+                       AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                       AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     aSymBlockATens5 inds = mapTo4 (aSymBlockTens inds) 
 
-    aSymBlockATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => ([Int],[Int]) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    aSymBlockATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                       ([Int],[Int]) ->
+                       AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                       AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     aSymBlockATens6 inds = mapTo5 (aSymBlockTens inds)
     
-    aSymBlockATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => ([Int],[Int]) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    aSymBlockATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                       ([Int],[Int]) ->
+                       AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                       AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     aSymBlockATens7 inds = mapTo6 (aSymBlockTens inds)
 
-    aSymBlockATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => ([Int],[Int]) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    aSymBlockATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                       ([Int],[Int]) ->
+                       AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                       AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     aSymBlockATens8 inds = mapTo7 (aSymBlockTens inds)
 
     --with factor 
 
-    aSymBlockATensFac1 :: (TIndex k1, TScalar v) => ([Int],[Int]) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    aSymBlockATensFac1 inds = aSymBlockTensFac inds
+    aSymBlockATensFac1 :: (TIndex k1, TScalar v) =>
+                          ([Int],[Int]) ->
+                          AbsTensor1 n1 k1 v ->
+                          AbsTensor1 n1 k1 v
+    aSymBlockATensFac1 = aSymBlockTensFac
     
-    aSymBlockATensFac2 :: (TIndex k1, TScalar v) => ([Int],[Int]) -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    aSymBlockATensFac2 :: (TIndex k1, TScalar v) =>
+                          ([Int],[Int]) ->
+                          AbsTensor2 n1 n2 k1 v ->
+                          AbsTensor2 n1 n2 k1 v
     aSymBlockATensFac2 inds = mapTo1 (aSymBlockTensFac inds) 
 
-    aSymBlockATensFac3 :: (TIndex k1, TIndex k2, TScalar v) => ([Int],[Int]) -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    aSymBlockATensFac3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                          ([Int],[Int]) ->
+                          AbsTensor3 n1 n2 n3 k1 k2 v ->
+                          AbsTensor3 n1 n2 n3 k1 k2 v
     aSymBlockATensFac3 inds = mapTo2 (aSymBlockTensFac inds) 
 
-    aSymBlockATensFac4 :: (TIndex k1, TIndex k2, TScalar v) => ([Int],[Int]) -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    aSymBlockATensFac4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                          ([Int],[Int]) ->
+                          AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                          AbsTensor4 n1 n2 n3 n4 k1 k2 v
     aSymBlockATensFac4 inds = mapTo3 (aSymBlockTensFac inds) 
 
-    aSymBlockATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => ([Int],[Int]) -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    aSymBlockATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                          ([Int],[Int]) ->
+                          AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                          AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     aSymBlockATensFac5 inds = mapTo4 (aSymBlockTensFac inds) 
 
-    aSymBlockATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => ([Int],[Int]) -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    aSymBlockATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                          ([Int],[Int]) ->
+                          AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                          AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     aSymBlockATensFac6 inds = mapTo5 (aSymBlockTensFac inds)
     
-    aSymBlockATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => ([Int],[Int]) -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    aSymBlockATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                          ([Int],[Int]) ->
+                          AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                          AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     aSymBlockATensFac7 inds = mapTo6 (aSymBlockTensFac inds)
 
-    aSymBlockATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => ([Int],[Int]) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    aSymBlockATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                          ([Int],[Int]) ->
+                          AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                          AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     aSymBlockATensFac8 inds = mapTo7 (aSymBlockTensFac inds)
 
     --cyclic symmetrization 
 
-    cyclicSymATens1 :: (TIndex k1, TScalar v) => [Int] -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    cyclicSymATens1 inds = cyclicSymTens inds
+    cyclicSymATens1 :: (TIndex k1, TScalar v) =>
+                       [Int] ->
+                       AbsTensor1 n1 k1 v ->
+                       AbsTensor1 n1 k1 v
+    cyclicSymATens1 = cyclicSymTens
     
-    cyclicSymATens2 :: (TIndex k1, TScalar v) => [Int] -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    cyclicSymATens2 :: (TIndex k1, TScalar v) =>
+                       [Int] ->
+                       AbsTensor2 n1 n2 k1 v ->
+                       AbsTensor2 n1 n2 k1 v
     cyclicSymATens2 inds = mapTo1 (cyclicSymTens inds) 
 
-    cyclicSymATens3 :: (TIndex k1, TIndex k2, TScalar v) => [Int] -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    cyclicSymATens3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                       [Int] ->
+                       AbsTensor3 n1 n2 n3 k1 k2 v ->
+                       AbsTensor3 n1 n2 n3 k1 k2 v
     cyclicSymATens3 inds = mapTo2 (cyclicSymTens inds) 
 
-    cyclicSymATens4 :: (TIndex k1, TIndex k2, TScalar v) => [Int] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    cyclicSymATens4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                       [Int] ->
+                       AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                       AbsTensor4 n1 n2 n3 n4 k1 k2 v
     cyclicSymATens4 inds = mapTo3 (cyclicSymTens inds) 
 
-    cyclicSymATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [Int] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    cyclicSymATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                       [Int] ->
+                       AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                       AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     cyclicSymATens5 inds = mapTo4 (cyclicSymTens inds) 
 
-    cyclicSymATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [Int] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    cyclicSymATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                       [Int] ->
+                       AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                       AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     cyclicSymATens6 inds = mapTo5 (cyclicSymTens inds)
     
-    cyclicSymATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    cyclicSymATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                       [Int] ->
+                       AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                       AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     cyclicSymATens7 inds = mapTo6 (cyclicSymTens inds)
 
-    cyclicSymATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    cyclicSymATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                       [Int] ->
+                       AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                       AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     cyclicSymATens8 inds = mapTo7 (cyclicSymTens inds)
 
     --with factor 
 
-    cyclicSymATensFac1 :: (TIndex k1, TScalar v) => [Int] -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    cyclicSymATensFac1 inds = cyclicSymTensFac inds
+    cyclicSymATensFac1 :: (TIndex k1, TScalar v) =>
+                          [Int] ->
+                          AbsTensor1 n1 k1 v ->
+                          AbsTensor1 n1 k1 v
+    cyclicSymATensFac1 = cyclicSymTensFac
     
-    cyclicSymATensFac2 :: (TIndex k1, TScalar v) => [Int] -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    cyclicSymATensFac2 :: (TIndex k1, TScalar v) =>
+                          [Int] ->
+                          AbsTensor2 n1 n2 k1 v ->
+                          AbsTensor2 n1 n2 k1 v
     cyclicSymATensFac2 inds = mapTo1 (cyclicSymTensFac inds) 
 
-    cyclicSymATensFac3 :: (TIndex k1, TIndex k2, TScalar v) => [Int] -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    cyclicSymATensFac3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                          [Int] ->
+                          AbsTensor3 n1 n2 n3 k1 k2 v ->
+                          AbsTensor3 n1 n2 n3 k1 k2 v
     cyclicSymATensFac3 inds = mapTo2 (cyclicSymTensFac inds) 
 
-    cyclicSymATensFac4 :: (TIndex k1, TIndex k2, TScalar v) => [Int] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    cyclicSymATensFac4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                          [Int] ->
+                          AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                          AbsTensor4 n1 n2 n3 n4 k1 k2 v
     cyclicSymATensFac4 inds = mapTo3 (cyclicSymTensFac inds) 
 
-    cyclicSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [Int] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    cyclicSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                          [Int] ->
+                          AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                          AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     cyclicSymATensFac5 inds = mapTo4 (cyclicSymTensFac inds) 
 
-    cyclicSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [Int] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    cyclicSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                          [Int] ->
+                          AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                          AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     cyclicSymATensFac6 inds = mapTo5 (cyclicSymTensFac inds)
     
-    cyclicSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    cyclicSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                          [Int] ->
+                          AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                          AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     cyclicSymATensFac7 inds = mapTo6 (cyclicSymTensFac inds)
 
-    cyclicSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    cyclicSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                          [Int] ->
+                          AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                          AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     cyclicSymATensFac8 inds = mapTo7 (cyclicSymTensFac inds)
 
     --cyclic Antisymmetrization 
 
-    cyclicASymATens1 :: (TIndex k1, TScalar v) => [Int] -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    cyclicASymATens1 inds = cyclicASymTens inds
+    cyclicASymATens1 :: (TIndex k1, TScalar v) =>
+                        [Int] ->
+                        AbsTensor1 n1 k1 v ->
+                        AbsTensor1 n1 k1 v
+    cyclicASymATens1 = cyclicASymTens
     
-    cyclicASymATens2 :: (TIndex k1, TScalar v) => [Int] -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    cyclicASymATens2 :: (TIndex k1, TScalar v) =>
+                        [Int] ->
+                        AbsTensor2 n1 n2 k1 v ->
+                        AbsTensor2 n1 n2 k1 v
     cyclicASymATens2 inds = mapTo1 (cyclicASymTens inds) 
 
-    cyclicASymATens3 :: (TIndex k1, TIndex k2, TScalar v) => [Int] -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    cyclicASymATens3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                        [Int] ->
+                        AbsTensor3 n1 n2 n3 k1 k2 v ->
+                        AbsTensor3 n1 n2 n3 k1 k2 v
     cyclicASymATens3 inds = mapTo2 (cyclicASymTens inds) 
 
-    cyclicASymATens4 :: (TIndex k1, TIndex k2, TScalar v) => [Int] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    cyclicASymATens4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                        [Int] ->
+                        AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                        AbsTensor4 n1 n2 n3 n4 k1 k2 v
     cyclicASymATens4 inds = mapTo3 (cyclicASymTens inds) 
 
-    cyclicASymATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [Int] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    cyclicASymATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                        [Int] ->
+                        AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                        AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     cyclicASymATens5 inds = mapTo4 (cyclicASymTens inds) 
 
-    cyclicASymATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [Int] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    cyclicASymATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                        [Int] ->
+                        AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                        AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     cyclicASymATens6 inds = mapTo5 (cyclicASymTens inds)
     
-    cyclicASymATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    cyclicASymATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                        [Int] ->
+                        AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                        AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     cyclicASymATens7 inds = mapTo6 (cyclicASymTens inds)
 
-    cyclicASymATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    cyclicASymATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                        [Int] ->
+                        AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                        AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     cyclicASymATens8 inds = mapTo7 (cyclicASymTens inds)
 
     --with factor 
 
-    cyclicASymATensFac1 :: (TIndex k1, TScalar v) => [Int] -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    cyclicASymATensFac1 inds = cyclicASymTensFac inds
+    cyclicASymATensFac1 :: (TIndex k1, TScalar v) =>
+                           [Int] ->
+                           AbsTensor1 n1 k1 v ->
+                           AbsTensor1 n1 k1 v
+    cyclicASymATensFac1 = cyclicASymTensFac
     
-    cyclicASymATensFac2 :: (TIndex k1, TScalar v) => [Int] -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    cyclicASymATensFac2 :: (TIndex k1, TScalar v) =>
+                           [Int] ->
+                           AbsTensor2 n1 n2 k1 v ->
+                           AbsTensor2 n1 n2 k1 v
     cyclicASymATensFac2 inds = mapTo1 (cyclicASymTensFac inds) 
 
-    cyclicASymATensFac3 :: (TIndex k1, TIndex k2, TScalar v) => [Int] -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    cyclicASymATensFac3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                           [Int] ->
+                           AbsTensor3 n1 n2 n3 k1 k2 v ->
+                           AbsTensor3 n1 n2 n3 k1 k2 v
     cyclicASymATensFac3 inds = mapTo2 (cyclicASymTensFac inds) 
 
-    cyclicASymATensFac4 :: (TIndex k1, TIndex k2, TScalar v) => [Int] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    cyclicASymATensFac4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                           [Int] ->
+                           AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                           AbsTensor4 n1 n2 n3 n4 k1 k2 v
     cyclicASymATensFac4 inds = mapTo3 (cyclicASymTensFac inds) 
 
-    cyclicASymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [Int] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    cyclicASymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                           [Int] ->
+                           AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                           AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     cyclicASymATensFac5 inds = mapTo4 (cyclicASymTensFac inds) 
 
-    cyclicASymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [Int] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    cyclicASymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                           [Int] ->
+                           AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                           AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     cyclicASymATensFac6 inds = mapTo5 (cyclicASymTensFac inds)
     
-    cyclicASymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    cyclicASymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                           [Int] ->
+                           AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                           AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     cyclicASymATensFac7 inds = mapTo6 (cyclicASymTensFac inds)
 
-    cyclicASymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [Int] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    cyclicASymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                           [Int] ->
+                           AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                           AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     cyclicASymATensFac8 inds = mapTo7 (cyclicASymTensFac inds)    
 
     --cyclic block symmetrization
 
-    cyclicBlockSymATens1 :: (TIndex k1, TScalar v) => [[Int]] -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    cyclicBlockSymATens1 inds = cyclicBlockSymTens inds
+    cyclicBlockSymATens1 :: (TIndex k1, TScalar v) =>
+                            [[Int]] ->
+                            AbsTensor1 n1 k1 v ->
+                            AbsTensor1 n1 k1 v
+    cyclicBlockSymATens1 = cyclicBlockSymTens
     
-    cyclicBlockSymATens2 :: (TIndex k1, TScalar v) => [[Int]] -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    cyclicBlockSymATens2 :: (TIndex k1, TScalar v) =>
+                            [[Int]] ->
+                            AbsTensor2 n1 n2 k1 v ->
+                            AbsTensor2 n1 n2 k1 v
     cyclicBlockSymATens2 inds = mapTo1 (cyclicBlockSymTens inds) 
 
-    cyclicBlockSymATens3 :: (TIndex k1, TIndex k2, TScalar v) => [[Int]] -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    cyclicBlockSymATens3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                            [[Int]] ->
+                            AbsTensor3 n1 n2 n3 k1 k2 v ->
+                            AbsTensor3 n1 n2 n3 k1 k2 v
     cyclicBlockSymATens3 inds = mapTo2 (cyclicBlockSymTens inds) 
 
-    cyclicBlockSymATens4 :: (TIndex k1, TIndex k2, TScalar v) => [[Int]] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    cyclicBlockSymATens4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                            [[Int]] ->
+                            AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                            AbsTensor4 n1 n2 n3 n4 k1 k2 v
     cyclicBlockSymATens4 inds = mapTo3 (cyclicBlockSymTens inds) 
 
-    cyclicBlockSymATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [[Int]] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    cyclicBlockSymATens5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                            [[Int]] ->
+                            AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                            AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     cyclicBlockSymATens5 inds = mapTo4 (cyclicBlockSymTens inds) 
 
-    cyclicBlockSymATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [[Int]] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    cyclicBlockSymATens6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                            [[Int]] ->
+                            AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                            AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     cyclicBlockSymATens6 inds = mapTo5 (cyclicBlockSymTens inds)
     
-    cyclicBlockSymATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [[Int]] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    cyclicBlockSymATens7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                            [[Int]] ->
+                            AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                            AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     cyclicBlockSymATens7 inds = mapTo6 (cyclicBlockSymTens inds)
 
-    cyclicBlockSymATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [[Int]] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    cyclicBlockSymATens8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                            [[Int]] ->
+                            AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                            AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     cyclicBlockSymATens8 inds = mapTo7 (cyclicBlockSymTens inds)
 
     --with factor
 
-    cyclicBlockSymATensFac1 :: (TIndex k1, TScalar v) => [[Int]] -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
-    cyclicBlockSymATensFac1 inds = cyclicBlockSymTensFac inds
+    cyclicBlockSymATensFac1 :: (TIndex k1, TScalar v) =>
+                               [[Int]] ->
+                               AbsTensor1 n1 k1 v ->
+                               AbsTensor1 n1 k1 v
+    cyclicBlockSymATensFac1 = cyclicBlockSymTensFac
     
-    cyclicBlockSymATensFac2 :: (TIndex k1, TScalar v) => [[Int]] -> AbsTensor2 n1 n2 k1 v -> AbsTensor2 n1 n2 k1 v
+    cyclicBlockSymATensFac2 :: (TIndex k1, TScalar v) =>
+                               [[Int]] ->
+                               AbsTensor2 n1 n2 k1 v ->
+                               AbsTensor2 n1 n2 k1 v
     cyclicBlockSymATensFac2 inds = mapTo1 (cyclicBlockSymTensFac inds) 
 
-    cyclicBlockSymATensFac3 :: (TIndex k1, TIndex k2, TScalar v) => [[Int]] -> AbsTensor3 n1 n2 n3 k1 k2 v -> AbsTensor3 n1 n2 n3 k1 k2 v
+    cyclicBlockSymATensFac3 :: (TIndex k1, TIndex k2, TScalar v) =>
+                               [[Int]] ->
+                               AbsTensor3 n1 n2 n3 k1 k2 v ->
+                               AbsTensor3 n1 n2 n3 k1 k2 v
     cyclicBlockSymATensFac3 inds = mapTo2 (cyclicBlockSymTensFac inds) 
 
-    cyclicBlockSymATensFac4 :: (TIndex k1, TIndex k2, TScalar v) => [[Int]] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+    cyclicBlockSymATensFac4 :: (TIndex k1, TIndex k2, TScalar v) =>
+                               [[Int]] ->
+                               AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
+                               AbsTensor4 n1 n2 n3 n4 k1 k2 v
     cyclicBlockSymATensFac4 inds = mapTo3 (cyclicBlockSymTensFac inds) 
 
-    cyclicBlockSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [[Int]] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+    cyclicBlockSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                               [[Int]] ->
+                               AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
+                               AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
     cyclicBlockSymATensFac5 inds = mapTo4 (cyclicBlockSymTensFac inds) 
 
-    cyclicBlockSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => [[Int]] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+    cyclicBlockSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) =>
+                               [[Int]] ->
+                               AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
+                               AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
     cyclicBlockSymATensFac6 inds = mapTo5 (cyclicBlockSymTensFac inds)
     
-    cyclicBlockSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [[Int]] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+    cyclicBlockSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                               [[Int]] ->
+                               AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
+                               AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
     cyclicBlockSymATensFac7 inds = mapTo6 (cyclicBlockSymTensFac inds)
 
-    cyclicBlockSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => [[Int]] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+    cyclicBlockSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) =>
+                               [[Int]] ->
+                               AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
+                               AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
     cyclicBlockSymATensFac8 inds = mapTo7 (cyclicBlockSymTensFac inds)
 
     --contraction for general tensors 
@@ -1318,81 +1651,54 @@
     toListT1 = toListT 
 
     toListT2 :: AbsTensor2 n1 n2 k1 v -> [(IndTuple2 n1 n2 k1, v)]
-    toListT2 t = concat $ map (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
-            where 
-                appendT1 = \i l -> map (\(x,y) -> ((i,x),y)) l
+    toListT2 t = concatMap (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
 
     toListT3 :: AbsTensor3 n1 n2 n3 k1 k2 v -> [(IndTuple3 n1 n2 n3 k1 k2, v)]
-    toListT3 t = concat $ map (\(x,y) -> appendT2 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
-            where 
-                appendT1 = \i l -> map (\(x,y) -> ((i,x),y)) l
-                appendT2 = \(i1,i2) l -> map (\(x,y) -> ((i1,i2,x),y)) l
+    toListT3 t = concatMap (\(x,y) -> appendT2 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
 
     toListT4 :: AbsTensor4 n1 n2 n3 n4 k1 k2 v -> [(IndTuple4 n1 n2 n3 n4 k1 k2, v)]
-    toListT4 t = concat $ map (\(x,y) -> appendT3 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT2 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
-            where 
-                appendT1 = \i l -> map (\(x,y) -> ((i,x),y)) l
-                appendT2 = \(i1,i2) l -> map (\(x,y) -> ((i1,i2,x),y)) l
-                appendT3 = \(i1,i2,i3) l -> map (\(x,y) -> ((i1,i2,i3,x),y)) l
+    toListT4 t = concatMap (\(x,y) -> appendT3 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT2 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
 
     toListT5 :: AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> [(IndTuple5 n1 n2 n3 n4 n5 k1 k2 k3, v)]
-    toListT5 t = concat $ map (\(x,y) -> appendT4 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT3 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT2 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
-            where 
-                appendT1 = \i l -> map (\(x,y) -> ((i,x),y)) l
-                appendT2 = \(i1,i2) l -> map (\(x,y) -> ((i1,i2,x),y)) l
-                appendT3 = \(i1,i2,i3) l -> map (\(x,y) -> ((i1,i2,i3,x),y)) l
-                appendT4 = \(i1,i2,i3,i4) l -> map (\(x,y) -> ((i1,i2,i3,i4,x),y)) l
+    toListT5 t = concatMap (\(x,y) -> appendT4 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT3 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT2 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
 
     toListT6 :: AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> [(IndTuple6 n1 n2 n3 n4 n5 n6 k1 k2 k3, v)]
-    toListT6 t = concat $ map (\(x,y) -> appendT5 x $ toListT y ) $ 
-                concat $ map (\(x,y) -> appendT4 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT3 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT2 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
-            where 
-                appendT1 = \i l -> map (\(x,y) -> ((i,x),y)) l
-                appendT2 = \(i1,i2) l -> map (\(x,y) -> ((i1,i2,x),y)) l
-                appendT3 = \(i1,i2,i3) l -> map (\(x,y) -> ((i1,i2,i3,x),y)) l
-                appendT4 = \(i1,i2,i3,i4) l -> map (\(x,y) -> ((i1,i2,i3,i4,x),y)) l
-                appendT5 = \(i1,i2,i3,i4,i5) l -> map (\(x,y) -> ((i1,i2,i3,i4,i5,x),y)) l
+    toListT6 t = concatMap (\(x,y) -> appendT5 x $ toListT y ) $ 
+                 concatMap (\(x,y) -> appendT4 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT3 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT2 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
 
     toListT7 :: AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> [(IndTuple7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4, v)]
-    toListT7 t = concat $ map (\(x,y) -> appendT6 x $ toListT y ) $ 
-                concat $ map (\(x,y) -> appendT5 x $ toListT y ) $ 
-                concat $ map (\(x,y) -> appendT4 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT3 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT2 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
-            where 
-                appendT1 = \i l -> map (\(x,y) -> ((i,x),y)) l
-                appendT2 = \(i1,i2) l -> map (\(x,y) -> ((i1,i2,x),y)) l
-                appendT3 = \(i1,i2,i3) l -> map (\(x,y) -> ((i1,i2,i3,x),y)) l
-                appendT4 = \(i1,i2,i3,i4) l -> map (\(x,y) -> ((i1,i2,i3,i4,x),y)) l
-                appendT5 = \(i1,i2,i3,i4,i5) l -> map (\(x,y) -> ((i1,i2,i3,i4,i5,x),y)) l
-                appendT6 = \(i1,i2,i3,i4,i5,i6) l -> map (\(x,y) -> ((i1,i2,i3,i4,i5,i6,x),y)) l
+    toListT7 t = concatMap (\(x,y) -> appendT6 x $ toListT y ) $ 
+                 concatMap (\(x,y) -> appendT5 x $ toListT y ) $ 
+                 concatMap (\(x,y) -> appendT4 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT3 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT2 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
 
     toListT8 :: AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> [(IndTuple8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4, v)]
-    toListT8 t = concat $ map (\(x,y) -> appendT7 x $ toListT y ) $ 
-                concat $ map (\(x,y) -> appendT6 x $ toListT y ) $ 
-                concat $ map (\(x,y) -> appendT5 x $ toListT y ) $ 
-                concat $ map (\(x,y) -> appendT4 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT3 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT2 x $ toListT y ) $
-                concat $ map (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
-            where 
-                appendT1 = \i l -> map (\(x,y) -> ((i,x),y)) l
-                appendT2 = \(i1,i2) l -> map (\(x,y) -> ((i1,i2,x),y)) l
-                appendT3 = \(i1,i2,i3) l -> map (\(x,y) -> ((i1,i2,i3,x),y)) l
-                appendT4 = \(i1,i2,i3,i4) l -> map (\(x,y) -> ((i1,i2,i3,i4,x),y)) l
-                appendT5 = \(i1,i2,i3,i4,i5) l -> map (\(x,y) -> ((i1,i2,i3,i4,i5,x),y)) l
-                appendT6 = \(i1,i2,i3,i4,i5,i6) l -> map (\(x,y) -> ((i1,i2,i3,i4,i5,i6,x),y)) l
-                appendT7 = \(i1,i2,i3,i4,i5,i6,i7) l -> map (\(x,y) -> ((i1,i2,i3,i4,i5,i6,i7,x),y)) l
+    toListT8 t = concatMap (\(x,y) -> appendT7 x $ toListT y ) $ 
+                 concatMap (\(x,y) -> appendT6 x $ toListT y ) $ 
+                 concatMap (\(x,y) -> appendT5 x $ toListT y ) $ 
+                 concatMap (\(x,y) -> appendT4 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT3 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT2 x $ toListT y ) $
+                 concatMap (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
+
+    appendT1 i = map (\(x,y) -> ((i,x),y))
+    appendT2 (i1,i2) = map (\(x,y) -> ((i1,i2,x),y))
+    appendT3 (i1,i2,i3) = map (\(x,y) -> ((i1,i2,i3,x),y))
+    appendT4 (i1,i2,i3,i4) = map (\(x,y) -> ((i1,i2,i3,i4,x),y))
+    appendT5 (i1,i2,i3,i4,i5) = map (\(x,y) -> ((i1,i2,i3,i4,i5,x),y))
+    appendT6 (i1,i2,i3,i4,i5,i6) = map (\(x,y) -> ((i1,i2,i3,i4,i5,i6,x),y))
+    appendT7 (i1,i2,i3,i4,i5,i6,i7) = map (\(x,y) -> ((i1,i2,i3,i4,i5,i6,i7,x),y))
 
     --convert to non type safe assocs list, all indices regardeless of their type are collected in the [Int] list 
 
@@ -1403,63 +1709,63 @@
     toListShow2 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT2 t 
-                showInd (i1,i2) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2)
+                showInd (i1,i2) = map fromEnum (toList i1) ++ map fromEnum (toList i2)
 
     toListShow3 :: (TIndex k1, TIndex k2, TScalar v) => AbsTensor3 n1 n2 n3 k1 k2 v -> [([Int],v)]
     toListShow3 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT3 t 
-                showInd (i1,i2,i3) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
-                                    (map fromEnum $ toList i3)
+                showInd (i1,i2,i3) = map fromEnum (toList i1) ++ map fromEnum (toList i2) ++ 
+                                     map fromEnum (toList i3)
 
     toListShow4 :: (TIndex k1, TIndex k2, TScalar v) => AbsTensor4 n1 n2 n3 n4 k1 k2 v -> [([Int],v)]
     toListShow4 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT4 t 
-                showInd (i1,i2,i3,i4) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
-                                        (map fromEnum $ toList i3) ++ (map fromEnum $ toList i4)
+                showInd (i1,i2,i3,i4) = map fromEnum (toList i1) ++ map fromEnum (toList i2) ++ 
+                                        map fromEnum (toList i3) ++ map fromEnum (toList i4)
 
     toListShow5 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> [([Int],v)]
     toListShow5 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT5 t 
-                showInd (i1,i2,i3,i4,i5) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
-                                        (map fromEnum $ toList i3) ++ (map fromEnum $ toList i4) ++ 
-                                        (map fromEnum $ toList i5)
+                showInd (i1,i2,i3,i4,i5) = map fromEnum (toList i1) ++ map fromEnum (toList i2) ++ 
+                                        map fromEnum (toList i3) ++ map fromEnum (toList i4) ++ 
+                                        map fromEnum (toList i5)
                 
     toListShow6 :: (TIndex k1, TIndex k2, TIndex k3, TScalar v) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> [([Int],v)]
     toListShow6 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT6 t 
-                showInd (i1,i2,i3,i4,i5,i6) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
-                                            (map fromEnum $ toList i3) ++ (map fromEnum $ toList i4) ++ 
-                                            (map fromEnum $ toList i5) ++ (map fromEnum $ toList i6) 
+                showInd (i1,i2,i3,i4,i5,i6) = map fromEnum (toList i1) ++ map fromEnum (toList i2) ++ 
+                                            map fromEnum (toList i3) ++ map fromEnum (toList i4) ++ 
+                                            map fromEnum (toList i5) ++ map fromEnum (toList i6) 
 
     toListShow7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> [([Int],v)]
     toListShow7 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT7 t 
-                showInd (i1,i2,i3,i4,i5,i6,i7) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
-                                            (map fromEnum $ toList i3) ++ (map fromEnum $ toList i4) ++ 
-                                            (map fromEnum $ toList i5) ++ (map fromEnum $ toList i6) ++
-                                            (map fromEnum $ toList i7)
+                showInd (i1,i2,i3,i4,i5,i6,i7) = map fromEnum (toList i1) ++ map fromEnum (toList i2) ++ 
+                                            map fromEnum (toList i3) ++ map fromEnum (toList i4) ++ 
+                                            map fromEnum (toList i5) ++ map fromEnum (toList i6) ++
+                                            map fromEnum (toList i7)
 
     toListShow8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TScalar v) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> [([Int],v)]
     toListShow8 t = filter (\x -> snd x /= scaleZero) $ map (\(x,y) -> (showInd x, y)) l
             where
                 l = toListT8 t 
-                showInd (i1,i2,i3,i4,i5,i6,i7,i8) = (map fromEnum $ toList i1) ++ (map fromEnum $ toList i2) ++ 
-                                            (map fromEnum $ toList i3) ++ (map fromEnum $ toList i4) ++ 
-                                            (map fromEnum $ toList i5) ++ (map fromEnum $ toList i6) ++
-                                            (map fromEnum $ toList i7) ++ (map fromEnum $ toList i8)
+                showInd (i1,i2,i3,i4,i5,i6,i7,i8) = map fromEnum (toList i1) ++ map fromEnum (toList i2) ++ 
+                                            map fromEnum (toList i3) ++ map fromEnum (toList i4) ++ 
+                                            map fromEnum (toList i5) ++ map fromEnum (toList i6) ++
+                                            map fromEnum (toList i7) ++ map fromEnum (toList i8)
 
 
     --AnsVar represents the variables in the tensor ansätze -> simply instance of TScalar that represents a single variable that can only occur linearly
 
-    data AnsVar a = AnsVar (I.IntMap a) deriving (Eq) 
+    newtype AnsVar a = AnsVar (I.IntMap a) deriving (Eq) 
 
     shiftVarLabels :: Int -> AnsVar a -> AnsVar a
-    shiftVarLabels s (AnsVar v) = AnsVar $ I.mapKeys ((+) s) v
+    shiftVarLabels s (AnsVar v) = AnsVar $ I.mapKeys (s +) v
 
     shiftLabels1 :: (TIndex k1, TScalar a) => Int -> AbsTensor1 n1 k1 (AnsVar a) -> AbsTensor1 n1 k1 (AnsVar a)
     shiftLabels1 s = mapTo1 (shiftVarLabels s)
@@ -1501,10 +1807,10 @@
 
     showAnsVar :: Char -> AnsVar Rational -> String 
     showAnsVar varLabel (AnsVar linMap) 
-        | assocs == [] = " "
+        | null assocs = " "
         | otherwise = tail assocs
             where 
-                assocs = concat $ map (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x ++ "]") $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
+                assocs = concatMap (\(x,y) -> "+" ++ showFrac y ++ "*" ++ [varLabel] ++ "[" ++ show x ++ "]") $ filter (\(_,y) -> y /= 0) $ I.assocs linMap 
                 showSigned x = if x < 0 then "(" ++ show x ++ ")" else show x
                 showFrac x = if denominator x == 1 then showSigned (numerator x) else showSigned (numerator x) ++ "/" ++ show (denominator x)  
 
@@ -1619,7 +1925,7 @@
 
     normalize :: [(Int,Rational)] -> ([(Int,Rational)],Rational)
     normalize [] = ([],1) 
-    normalize ((a,b) : xs) = ((a,1) : (map (\(x,y) -> (x,y / b)) xs),b)
+    normalize ((a,b) : xs) = ((a,1) : map (\(x,y) -> (x,y / b)) xs,b)
 
     --convert several tensor to one matrixList
     --types for heterogenic lists of tensors of different rank but of the syme algebraic type, i.e. same index spaces
@@ -1660,42 +1966,42 @@
 
     mapTensList1 :: (forall n1. AbsTensor1 n1 k1 v -> b ) -> TensList1 k1 v -> [b]
     mapTensList1 f EmptyTList1 = [] 
-    mapTensList1 f (AppendTList1 t l) = (f t) : (mapTensList1 f l)
+    mapTensList1 f (AppendTList1 t l) = f t : mapTensList1 f l
 
     mapTensList2 :: (forall n1 n2. AbsTensor2 n1 n2 k1 v -> b ) -> TensList2 k1 v -> [b]
     mapTensList2 f EmptyTList2 = [] 
-    mapTensList2 f (AppendTList2 t l) = (f t) : (mapTensList2 f l)
+    mapTensList2 f (AppendTList2 t l) = f t : mapTensList2 f l
 
     mapTensList3 :: (forall n1 n2 n3. AbsTensor3 n1 n2 n3 k1 k2 v -> b ) -> TensList3 k1 k2 v -> [b]
     mapTensList3 f EmptyTList3 = [] 
-    mapTensList3 f (AppendTList3 t l) = (f t) : (mapTensList3 f l)
+    mapTensList3 f (AppendTList3 t l) = f t : mapTensList3 f l
 
     mapTensList4 :: (forall n1 n2 n3 n4. AbsTensor4 n1 n2 n3 n4 k1 k2 v -> b ) -> TensList4 k1 k2 v -> [b]
     mapTensList4 f EmptyTList4 = [] 
-    mapTensList4 f (AppendTList4 t l) = (f t) : (mapTensList4 f l)
+    mapTensList4 f (AppendTList4 t l) = f t : mapTensList4 f l
 
     mapTensList5 :: (forall n1 n2 n3 n4 n5. AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> b ) -> TensList5 k1 k2 k3 v -> [b]
     mapTensList5 f EmptyTList5 = [] 
-    mapTensList5 f (AppendTList5 t l) = (f t) : (mapTensList5 f l)
+    mapTensList5 f (AppendTList5 t l) = f t : mapTensList5 f l
 
     mapTensList6 :: (forall n1 n2 n3 n4 n5 n6. AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> b ) -> TensList6 k1 k2 k3 v -> [b]
     mapTensList6 f EmptyTList6 = [] 
-    mapTensList6 f (AppendTList6 t l) = (f t) : (mapTensList6 f l)
+    mapTensList6 f (AppendTList6 t l) = f t : mapTensList6 f l
 
     mapTensList7 :: (forall n1 n2 n3 n4 n5 n6 n7. AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> b ) -> TensList7 k1 k2 k3 k4 v -> [b]
     mapTensList7 f EmptyTList7 = [] 
-    mapTensList7 f (AppendTList7 t l) = (f t) : (mapTensList7 f l)
+    mapTensList7 f (AppendTList7 t l) = f t : mapTensList7 f l
 
     mapTensList8 :: (forall n1 n2 n3 n4 n5 n6 n7 n8. AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> b ) -> TensList8 k1 k2 k3 k4 v -> [b]
     mapTensList8 f EmptyTList8 = [] 
-    mapTensList8 f (AppendTList8 t l) = (f t) : (mapTensList8 f l)
+    mapTensList8 f (AppendTList8 t l) = f t : mapTensList8 f l
 
     --heterogenic tensor list construction from tensors
 
     infixr 5 ...>
 
     (...>) :: AbsTensor1 n1 k1 v -> TensList1 k1 v -> TensList1 k1 v
-    (...>) t l = AppendTList1 t l 
+    (...>) = AppendTList1
 
     singletonTList1 :: AbsTensor1 n1 k1 v -> TensList1 k1 v
     singletonTList1 t = t ...> EmptyTList1
@@ -1712,7 +2018,7 @@
     infixr 5 ..&>
 
     (..&>) :: AbsTensor2 n1 n2 k1 v -> TensList2 k1 v -> TensList2 k1 v
-    (..&>) t l = AppendTList2 t l 
+    (..&>) = AppendTList2
 
     singletonTList2 :: AbsTensor2 n1 n2 k1 v -> TensList2 k1 v
     singletonTList2 t = t ..&> EmptyTList2
@@ -1729,7 +2035,7 @@
     infixr 5 .&.>
 
     (.&.>) :: AbsTensor3 n1 n2 n3 k1 k2 v -> TensList3 k1 k2 v -> TensList3 k1 k2 v
-    (.&.>) t l = AppendTList3 t l 
+    (.&.>) = AppendTList3
 
     singletonTList3 :: AbsTensor3 n1 n2 n3 k1 k2 v -> TensList3 k1 k2 v
     singletonTList3 t = t .&.> EmptyTList3
@@ -1746,7 +2052,7 @@
     infixr 5 .&&>
 
     (.&&>) :: AbsTensor4 n1 n2 n3 n4 k1 k2 v -> TensList4 k1 k2 v -> TensList4 k1 k2 v
-    (.&&>) t l = AppendTList4 t l 
+    (.&&>) = AppendTList4
 
     singletonTList4 :: AbsTensor4 n1 n2 n3 n4 k1 k2 v -> TensList4 k1 k2 v
     singletonTList4 t = t .&&> EmptyTList4
@@ -1763,7 +2069,7 @@
     infixr 5 &..>
 
     (&..>) :: AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> TensList5 k1 k2 k3 v -> TensList5 k1 k2 k3 v
-    (&..>) t l = AppendTList5 t l 
+    (&..>) = AppendTList5
 
     singletonTList5 :: AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> TensList5 k1 k2 k3 v
     singletonTList5 t = t &..> EmptyTList5
@@ -1780,7 +2086,7 @@
     infixr 5 &.&>
 
     (&.&>) :: AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> TensList6 k1 k2 k3 v -> TensList6 k1 k2 k3 v
-    (&.&>) t l = AppendTList6 t l 
+    (&.&>) = AppendTList6
 
     singletonTList6 :: AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> TensList6 k1 k2 k3 v
     singletonTList6 t = t &.&> EmptyTList6
@@ -1797,7 +2103,7 @@
     infixr 5 &&.>
 
     (&&.>) :: AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> TensList7 k1 k2 k3 k4 v -> TensList7 k1 k2 k3 k4 v
-    (&&.>) t l = AppendTList7 t l 
+    (&&.>) = AppendTList7
 
     singletonTList7 :: AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> TensList7 k1 k2 k3 k4 v
     singletonTList7 t = t &&.> EmptyTList7
@@ -1814,7 +2120,7 @@
     infixr 5 &&&>
 
     (&&&>) :: AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> TensList8 k1 k2 k3 k4 v -> TensList8 k1 k2 k3 k4 v
-    (&&&>) t l = AppendTList8 t l 
+    (&&&>) = AppendTList8 
 
     singletonTList8 :: AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> TensList8 k1 k2 k3 k4 v
     singletonTList8 t = t &&&> EmptyTList8
@@ -1831,136 +2137,91 @@
     --collect data of heterogenic tensor list in one sparse matrix assocs list 
     --intendet for evaluating tensorial equations: the values are only collected up to overall factors
 
+    collectMatList :: [[(Int, Rational)]] -> [((Int, Int), Rational)]
+    collectMatList matList = l'
+        where
+            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize matList 
+            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
+            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
+
     toMatList1 :: (TIndex k1) => TensList1 k1 (AnsVar Rational) -> [((Int,Int),Rational)] 
-    toMatList1 t = l' 
+    toMatList1 t = collectMatList matList
         where
             matList = concat $ mapTensList1 toMatList1' t 
-            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
-            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
-            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
     toMatList2 :: (TIndex k1) => TensList2 k1 (AnsVar Rational) -> [((Int,Int),Rational)] 
-    toMatList2 t = l'
+    toMatList2 t = collectMatList matList
         where
             matList = concat $ mapTensList2 toMatList2' t 
-            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
-            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
-            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
     toMatList3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 (AnsVar Rational) -> [((Int,Int),Rational)] 
-    toMatList3 t = l'
+    toMatList3 t = collectMatList matList
         where
             matList = concat $ mapTensList3 toMatList3' t 
-            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
-            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
-            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
     toMatList4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 (AnsVar Rational) -> [((Int,Int),Rational)] 
-    toMatList4 t = l'
+    toMatList4 t = collectMatList matList
         where
             matList = concat $ mapTensList4 toMatList4' t 
-            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
-            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
-            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
     toMatList5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 (AnsVar Rational) -> [((Int,Int),Rational)] 
-    toMatList5 t = l' 
+    toMatList5 t = collectMatList matList 
         where
             matList = concat $ mapTensList5 toMatList5' t 
-            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
-            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
-            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
     toMatList6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 (AnsVar Rational) -> [((Int,Int),Rational)] 
-    toMatList6 t = l'
+    toMatList6 t = collectMatList matList
         where
             matList = concat $ mapTensList6 toMatList6' t 
-            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
-            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
-            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
     toMatList7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 (AnsVar Rational) -> [((Int,Int),Rational)] 
-    toMatList7 t = l'
+    toMatList7 t = collectMatList matList
         where
             matList = concat $ mapTensList7 toMatList7' t 
-            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
-            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
-            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
     toMatList8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 (AnsVar Rational) -> [((Int,Int),Rational)] 
-    toMatList8 t = l'
+    toMatList8 t = collectMatList matList
         where
             matList = concat $ mapTensList8 toMatList8' t 
-            l2 = nubBy (\(a,_) (b,_) -> a == b) $ map normalize $ matList 
-            l = map (\(x,y) -> map (\(a,b) -> (a,b*y)) x) l2 
-            l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z, x), y)) r) l [1..]
 
 
     --convert to Eigen format for using LA subroutines
 
+    dims :: [((Int, Int), a)] -> (Int, Int)
+    dims xs = (rows, cols)
+        where
+            rows = maximum $ map (fst.fst) xs
+            cols = maximum $ map (snd.fst) xs
+
+    assocsToSparse :: [((Int, Int), Rational)] -> Sparse.SparseMatrixXd
+    assocsToSparse assocs = Sparse.fromList rows cols els
+        where
+            (rows, cols) = dims assocs
+            els          = map (\((x, y), z) -> (x-1, y-1, fromRational z)) assocs
+
     toEMatrix1 :: (TIndex k1) => TensList1 k1 (AnsVar Rational) -> Sparse.SparseMatrixXd
-    toEMatrix1 tList =  Sparse.fromList m n l'
-            where
-                l = toMatList1 tList
-                l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
-                m = maximum $ map (fst.fst) l
-                n = maximum $ map (snd.fst) l 
+    toEMatrix1 = assocsToSparse . toMatList1
 
     toEMatrix2 :: (TIndex k1) => TensList2 k1 (AnsVar Rational) -> Sparse.SparseMatrixXd
-    toEMatrix2 tList =  Sparse.fromList m n l'
-            where
-                l = toMatList2 tList
-                l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
-                m = maximum $ map (fst.fst) l
-                n = maximum $ map (snd.fst) l 
+    toEMatrix2 = assocsToSparse . toMatList2
 
     toEMatrix3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 (AnsVar Rational) -> Sparse.SparseMatrixXd
-    toEMatrix3 tList =  Sparse.fromList m n l'
-            where
-                l = toMatList3 tList
-                l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
-                m = maximum $ map (fst.fst) l
-                n = maximum $ map (snd.fst) l 
+    toEMatrix3 = assocsToSparse . toMatList3
             
     toEMatrix4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 (AnsVar Rational) -> Sparse.SparseMatrixXd 
-    toEMatrix4 tList =  Sparse.fromList m n l'
-            where
-                l = toMatList4 tList
-                l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
-                m = maximum $ map (fst.fst) l
-                n = maximum $ map (snd.fst) l 
+    toEMatrix4 = assocsToSparse . toMatList4
 
     toEMatrix5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 (AnsVar Rational) -> Sparse.SparseMatrixXd 
-    toEMatrix5 tList =  Sparse.fromList m n l'
-            where
-                l = toMatList5 tList
-                l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
-                m = maximum $ map (fst.fst) l
-                n = maximum $ map (snd.fst) l 
+    toEMatrix5 = assocsToSparse . toMatList5
 
     toEMatrix6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 (AnsVar Rational) -> Sparse.SparseMatrixXd 
-    toEMatrix6 tList =  Sparse.fromList m n l'
-            where
-                l = toMatList6 tList
-                l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
-                m = maximum $ map (fst.fst) l
-                n = maximum $ map (snd.fst) l 
+    toEMatrix6 = assocsToSparse . toMatList6
 
     toEMatrix7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 (AnsVar Rational) -> Sparse.SparseMatrixXd 
-    toEMatrix7 tList =  Sparse.fromList m n l'
-            where
-                l = toMatList7 tList
-                l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
-                m = maximum $ map (fst.fst) l
-                n = maximum $ map (snd.fst) l 
+    toEMatrix7 = assocsToSparse . toMatList7
 
     toEMatrix8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 (AnsVar Rational) -> Sparse.SparseMatrixXd 
-    toEMatrix8 tList =  Sparse.fromList m n l'
-            where
-                l = toMatList8 tList
-                l' = map (\((x,y),z) -> (x-1,y-1,fromRational z)) l
-                m = maximum $ map (fst.fst) l
-                n = maximum $ map (snd.fst) l 
+    toEMatrix8 = assocsToSparse . toMatList8
 
     --rank of the tensor can be computed with rank Sol.FullPivLU or Sol.JakobiSVD
 
@@ -2023,7 +2284,8 @@
     --finally explicitly provide the necessary instances for standard spacetime tensors and some further standard tensors 
     --Indi has a range from 0 to i 
 
-    data Ind1 =  Ind1 {indVal1 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    newtype Ind1 =  Ind1 {indVal1 :: Int}
+        deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
     instance TIndex Ind1 where
         indRange x = 2
@@ -2033,7 +2295,8 @@
         fromEnum = indVal1
 
 
-    data Ind2 =  Ind2 {indVal2 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    newtype Ind2 =  Ind2 {indVal2 :: Int}
+        deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
     instance TIndex Ind2 where
         indRange x = 3
@@ -2043,7 +2306,8 @@
         fromEnum = indVal2 
 
 
-    data Ind3 =  Ind3 {indVal3 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    newtype Ind3 =  Ind3 {indVal3 :: Int}
+        deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
     instance TIndex Ind3 where
         indRange x = 4
@@ -2053,7 +2317,8 @@
         fromEnum = indVal3 
 
     
-    data Ind9 =  Ind9 {indVal9 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    newtype Ind9 =  Ind9 {indVal9 :: Int}
+        deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
     instance TIndex Ind9 where
             indRange x = 10
@@ -2062,7 +2327,8 @@
             toEnum = Ind9 
             fromEnum = indVal9 
 
-    data Ind20 =  Ind20 {indVal20 :: {-# UNPACK #-} !Int} deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
+    newtype Ind20 =  Ind20 {indVal20 :: Int}
+        deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
     instance TIndex Ind20 where
             indRange x = 21

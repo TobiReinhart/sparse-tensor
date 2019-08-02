@@ -34,23 +34,22 @@
 
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
-module FlatTensorEquations (
+module DiffeoSymEqns (
     ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
     eqn1, ansatzAIBJCK, ansatzABCDJ, ansatzABCcDd, eqn3, eqn3AI, eqn1A, eqn1AI, eqn2Aa, eqn3A, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
     eqn1ABbCc, eqn1ABCI, eqn2ABCc, eqn3ABC, eqn1AB, eqn1ABC, ansatzABCD,
-    linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass, linSymbol, quadSymbol, polyTensEqn, polyDensEqn, rankDefLin, rankDefQuad,
+    linMass, linKin, quadKin1, quadKin2, quadKin3, quadMass, polyTensEqn, polyDensEqn,
     eqn1Met, eqn3Met, eqn1AMet, eqn1AIMet, eqn3AMet, eqn1ABMet, eqn2AaMet, eqn2ABbMet, eqn3ABMet, eqn1ABIMet, eqn1AaBbMet
    
 ) where
 
-    import TensorTreeNumeric4_2 
-    import BasicTensors4_2
+    import Math.Tensor
+    import Math.Tensor.Examples.Gravity
 
     import qualified Data.Map.Strict as M 
     import Data.List
     import qualified Data.IntMap.Strict as I
 
-    --first the flat equations 
 
     --the mass subgraph, i.e no derivatives 
 
@@ -185,10 +184,7 @@ module FlatTensorEquations (
     eqn3AI :: ATens 2 0 2 0 0 0 (AnsVar Rational) -> ATens 1 0 1 0 3 1 (AnsVar Rational) 
     eqn3AI ans12_1 = contrATens2 (0,0) $ contrATens1 (0,0) $ ans12_1 &* (contrATens1 (0,1) $ interEqn5 &* flatArea)
 
-    --the next step is writing down the eqns for generic are metric dofs 
-
     
-
     --the ansatz integrabillity conditions (when perturbing around eta*eta-eta*eta-epsilon)
 
     ansatzA :: ATens 1 0 0 0 0 0 (AnsVar Rational) -> ATens 1 0 0 0 2 0 (AnsVar Rational)
@@ -262,7 +258,6 @@ module FlatTensorEquations (
             block2 = tensorTrans1 (0,2) $ tensorTrans3 (0,2) block1 
             block3 = tensorTrans1 (1,2) $ tensorTrans3 (1,2) block1
 
-    --needs to be checked
     ansatzABCD :: ATens 4 0 0 0 0 0 (AnsVar Rational) -> ATens 4 0 0 0 2 0 (AnsVar Rational) 
     ansatzABCD ans16 = block1 &+ block2 &+ block3 &+ block4 
         where 
@@ -340,28 +335,8 @@ module FlatTensorEquations (
             tens1 = contrATens1 (1,0) $ ans10 &* interArea
             tens2 = contrATens1 (1,0) $ ans14 &* flatInter
 
-    --converting the lagrangian ansätze into the eom ansätze 
-    
-    linSymbol :: ATens 2 0 0 0 2 0 (AnsVar Rational) -> [(Int,Int,String)] 
-    linSymbol ans10 = tList 
-        where 
-            kTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0,1,2,3]
-            kTens = fromListT6 $ zipWith (\i j -> ((Empty,Empty,Empty,Empty,Empty,singletonInd $ Ind3 i),j)) [0..] kTensList :: ATens 0 0 0 0 0 1 (LinearVar Rational)
-            tens = contrATens3 (0,0) $ contrATens3 (1,1) $ ans10 &* kTens &* kTens
-            tensList = toListShow6 tens
-            tList = map (\([a,b],val) -> (a+1,b+1,showAnsVarQuadVar val 'x' 'k')) tensList 
 
-    --for the quadratic symbol we get multiple matrices 
-    quadSymbol :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> [[(Int,Int,String)]] 
-    quadSymbol ans14 = tList2 
-        where 
-            kTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0,1,2,3]
-            kTens = fromListT6 $ zipWith (\i j -> ((Empty,Empty,Empty,Empty,Empty,singletonInd $ Ind3 i),j)) [0..] kTensList :: ATens 0 0 0 0 0 1 (LinearVar Rational)
-            tens = contrATens3 (0,0) $ contrATens3 (1,1) $ ans14 &* kTens &* kTens 
-            tens' = resortTens1 [1,2,0] tens
-            tensList = toListShow6 tens'
-            tList = sortOn (\(a,_,_,_) -> a) $ map (\([a,b,c],val) -> (a,b,c,showAnsVarQuadVar val 'x' 'k')) tensList 
-            tList2 = map (map (\(a,b,c,d) -> (b+1,c+1,d))) $ groupBy (\(z1,_,_,_) (z2,_,_,_) -> z1 == z2) tList
+    --principal polynomial equations 
 
     polyTensEqn :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> [[String]] 
     polyTensEqn ans6 = tensList 
@@ -371,7 +346,7 @@ module FlatTensorEquations (
                 tens1 = contrATens1 (0,0) $ ans6' &* flatInter 
                 tens2 = contrATens2 (0,0) $ ans2 &* interMetric
                 total = tens1 &+ tens2 
-                tensList = map (map (\(_,y) -> showAnsVar y 'x' )) $ groupBy (\x y -> (fst x) == (fst y) ) $ sortOn (\(x,y) -> x) $ toListShow6 total
+                tensList = map (map (\(_,y) -> showAnsVar 'x' y)) $ groupBy (\x y -> (fst x) == (fst y) ) $ sortOn (\(x,y) -> x) $ toListShow6 total
 
     polyDensEqn :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> [[String]] 
     polyDensEqn ans6 = tensList 
@@ -381,31 +356,10 @@ module FlatTensorEquations (
                 tens1 = contrATens1 (0,0) $ ans6' &* flatInter 
                 tens2 = contrATens2 (0,0) $ ans2 &* interMetric
                 total = tens1 &+ tens2 &+ (ans2 &* delta3) 
-                tensList = map (map (\(_,y) -> showAnsVar y 'x' )) $ groupBy (\x y -> (fst x) == (fst y) ) $ sortOn (\(x,y) -> x) $ toListShow6 total
+                tensList = map (map (\(_,y) -> showAnsVar 'x' y)) $ groupBy (\x y -> (fst x) == (fst y) ) $ sortOn (\(x,y) -> x) $ toListShow6 total
 
-    rankDefLin :: [String] 
-    rankDefLin = tensList
-            where
-                kTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0,1,2,3]
-                kTens = fromListT6 $ zipWith (\i j -> ((Empty,Empty,Empty,Empty,Empty,singletonInd $ Ind3 i),j)) [0..] kTensList :: ATens 0 0 0 0 0 1 (LinearVar Rational)    
-                tens1 = contrATens3 (0,1) $ flatInter &* kTens   
-                tensTotal = tens1 
-                tensList = (map (\([x,y],z) -> "(" ++ show (x+1) ++ "," ++ show (y+1) ++ ") =" ++ showLinearVar z 'k' ++ "," )) $ toListShow6 tensTotal 
-
-    rankDefQuad :: [String] 
-    rankDefQuad = tensList
-            where
-                kTensList = map (\i -> LinearVar 0 (I.singleton i 1)) [0,1,2,3]
-                kTens = fromListT6 $ zipWith (\i j -> ((Empty,Empty,Empty,Empty,Empty,singletonInd $ Ind3 i),j)) [0..] kTensList :: ATens 0 0 0 0 0 1 (LinearVar Rational)    
-                hTensList = map (\i -> AnsVar (I.singleton i 1)) [0..20]
-                hTens = fromListT6 $ zipWith (\i j -> ((Empty, singletonInd $ Ind20 i,Empty,Empty,Empty,Empty),j)) [0..] hTensList :: ATens 0 1 0 0 0 0 (AnsVar Rational)
-                tens1 = contrATens3 (0,1) $ contrATens1 (0,1) $ (interArea &* hTens) &* kTens   
-                tensTotal = tens1  
-                tensList = (map (\([x,y],z) -> "(" ++ show (x+1) ++ "," ++ show (y+1) ++ ") =" ++ showAnsVarLinVar z 'H' 'k' ++ "," )) $ toListShow6 tensTotal 
-
-    --there are still some TAlg instances mmissing
-
-    --need aditional equations for the metric case 
+        
+    --aditional equations for the metric case 
 
     --the mass subgraph, i.e no derivatives 
 
@@ -431,7 +385,6 @@ module FlatTensorEquations (
                 block1 = symATens3 (0,1) $ contrATens2 (0,0) $ ans4 &* interMetric 
                 block2 = contrATens2 (0,0) $ ans6 &* flatInterMetric
                 block3 = ans4 &* delta3
-
 
 
     --the subgraph with 2 total derivative 

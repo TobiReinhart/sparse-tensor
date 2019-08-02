@@ -26,7 +26,7 @@
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
 
- module SparseTensor (
+ module Tensor (
  fromList', singletonInd, sortInd,  Ind1(..), Ind2(..),  Ind3(..), Ind9(..), Ind20(..), STTens, IndTupleST, ATens, IndTupleAbs,  IndList(..), 
  (&+), (&*), (&-), (&.), Tensor(..), AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8, TScalar, TAlgebra,
  removeZeros1, removeZeros2, removeZeros3, removeZeros4, removeZeros5, removeZeros6, removeZeros7, removeZeros8, 

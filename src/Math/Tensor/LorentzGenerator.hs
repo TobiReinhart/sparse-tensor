@@ -64,9 +64,7 @@ module LorentzGenerator (
     import qualified Data.Eigen.LA as Sol 
     import qualified Data.Eigen.SparseLA as SpSol
 
-    --SparseTensor
-
-    import SparseTensor
+    import Math.Tensor
 
     {--
     The first step consist of pre-reducing the index list for the eta and epsilon trees as much as possible.

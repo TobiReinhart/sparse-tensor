@@ -34,8 +34,7 @@
 
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
-
-module BasicTens (
+module Gravity (
     flatInter, interArea, interEqn5, flatArea, interEqn3, interEqn4, interEqn2, invEta,
     generic4Ansatz, generic5Ansatz, generic6Ansatz,
     generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
@@ -44,7 +43,6 @@ module BasicTens (
     interMetric, interI2, randAxon, eta, interJ2,
     interIArea, interJArea, epsilonInv, epsilon, flatInterMetric,
     interEqn5Metric, interEqn4Metric, interEqn3Metric, interEqn2Metric
-
 ) where 
 
     import Data.Foldable
@@ -77,7 +75,7 @@ module BasicTens (
     import System.Random.TF.Instances 
     import System.Random.TF.Init
 
-    import SparseTensor 
+    import Math.Tensor 
 
     --start with deltas
     

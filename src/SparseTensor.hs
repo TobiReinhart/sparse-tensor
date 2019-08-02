@@ -59,6 +59,7 @@
  singletonTList1, singletonTList2, singletonTList3, singletonTList4, singletonTList5, singletonTList6, singletonTList7, singletonTList8,
  (...>), (..&>), (.&.>), (.&&>), (&..>), (&.&>), (&&.>), (&&&>), (...+), (..&+), (.&.+), (.&&+), (&..+), (&.&+), (&&.+), (&&&+),
  toEMatrix1, toEMatrix2, toEMatrix3, toEMatrix4, toEMatrix5, toEMatrix6, toEMatrix7, toEMatrix8,
+ toMatList1, toMatList2, toMatList3, toMatList4, toMatList5, toMatList6, toMatList7, toMatList8,
  tensorRank1', tensorRank2', tensorRank3', tensorRank4', tensorRank5', tensorRank6', tensorRank7', tensorRank8',
  tensorRank1, tensorRank2, tensorRank3, tensorRank4, tensorRank5, tensorRank6, tensorRank7, tensorRank8
 

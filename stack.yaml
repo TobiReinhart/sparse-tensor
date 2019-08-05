@@ -1,0 +1,4 @@
+resolver: lts-13.30
+
+extra-deps:
+- eigen-3.3.4.1

@@ -1,31 +1,16 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeFamilyDependencies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TypeOperators #-}
 
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
-
-{-# LANGUAGE StandaloneDeriving #-}
 
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 {-# LANGUAGE RankNTypes #-}
 
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DeriveAnyClass #-}
-
-{-# LANGUAGE LambdaCase #-}
-
-{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
-
-{-# LANGUAGE FunctionalDependencies #-}
-
-
 
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver   #-}
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
@@ -56,7 +41,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     --order 0
 
     eqn1 :: ATens 0 0 0 0 0 0 (AnsVar Rational) -> ATens 1 0 0 0 0 0 (AnsVar Rational) -> ATens 0 0 0 0 1 1 (AnsVar Rational)
-    eqn1 ans0 ans4 = (contrATens1 (0,0) $ ans4 &* flatInter) &+ (ans0 &* delta3)
+    eqn1 ans0 ans4 = contrATens1 (0,0) (ans4 &* flatInter) &+ (ans0 &* delta3)
 
     --order 1
 
@@ -91,7 +76,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     --order 0
 
     eqn3 :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> ATens 0 0 0 0 3 1 (AnsVar Rational) 
-    eqn3 ans6 = contrATens2 (0,0) $ contrATens1 (0,0) $ ans6 &* (contrATens1 (0,1) $ interEqn5 &* flatArea)
+    eqn3 ans6 = contrATens2 (0,0) $ contrATens1 (0,0) $ ans6 &* contrATens1 (0,1) (interEqn5 &* flatArea)
 
     --order 1
 
@@ -128,7 +113,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     eqn3AB ans10_2 ans14_2 = block1 &+ block2
             where 
                 block1 = symATens1 (0,1) $ contrATens2 (0,0) $ contrATens1 (1,0) $ ans10_2 &* interEqn5
-                block2 = contrATens2 (0,0) $ contrATens1 (2,0) $ ans14_2 &* (contrATens1 (0,1) $ interEqn5 &* flatArea)
+                block2 = contrATens2 (0,0) $ contrATens1 (2,0) $ ans14_2 &* contrATens1 (0,1) (interEqn5 &* flatArea)
 
     eqn2ABb :: ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
     eqn2ABb ans10_1 ans10_2 ans14_1 = block1 &+ block2 &+ block3
@@ -174,15 +159,15 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     eqn3ABC :: ATens 3 0 1 0 0 0 (AnsVar Rational) -> ATens 4 0 1 0 0 0 (AnsVar Rational) -> ATens 3 0 0 0 3 1 (AnsVar Rational)
     eqn3ABC ans14_2 ans18_2 = block1 &+ block2 &+ block3 &+ block4 
             where 
-                block1 = contrATens2 (0,0) $ contrATens1 (3,0) $ ans18_2 &* (contrATens1 (0,1) $ interEqn5 &* flatArea) 
+                block1 = contrATens2 (0,0) $ contrATens1 (3,0) $ ans18_2 &* contrATens1 (0,1) (interEqn5 &* flatArea) 
                 block2 = contrATens2 (0,0) $ contrATens1 (2,0) $ ans14_2 &* interEqn5
-                block3 = tensorTrans1 (0,2) $ block2 
-                block4 = tensorTrans1 (1,2) $ block2
+                block3 = tensorTrans1 (0,2) block2 
+                block4 = tensorTrans1 (1,2) block2
 
     --the subgraph with a total of 4 derivatives 
 
     eqn3AI :: ATens 2 0 2 0 0 0 (AnsVar Rational) -> ATens 1 0 1 0 3 1 (AnsVar Rational) 
-    eqn3AI ans12_1 = contrATens2 (0,0) $ contrATens1 (0,0) $ ans12_1 &* (contrATens1 (0,1) $ interEqn5 &* flatArea)
+    eqn3AI ans12_1 = contrATens2 (0,0) $ contrATens1 (0,0) $ ans12_1 &* contrATens1 (0,1) (interEqn5 &* flatArea)
 
     
     --the ansatz integrabillity conditions (when perturbing around eta*eta-eta*eta-epsilon)
@@ -203,7 +188,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     ansatzAaBb ans10_1 = block1 &+ block2 
         where 
             block1 = aSymATens5 (1,3) $ contrATens1 (0,0) $ contrATens3 (0,0) $ contrATens3 (4,0) $ ans10_1 &* interEqn2 &* invEta 
-            block2 = tensorTrans1 (0,1) $ tensorTrans5 (0,2) $ block1
+            block2 = tensorTrans1 (0,1) $ tensorTrans5 (0,2) block1
 
     ansatzABI :: ATens 2 0 1 0 0 0 (AnsVar Rational) -> ATens 2 0 1 0 2 0 (AnsVar Rational)
     ansatzABI ans10_2 = block1 &+ block2 
@@ -234,8 +219,8 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     ansatzABCI :: ATens 3 0 1 0 0 0 (AnsVar Rational) -> ATens 3 0 1 0 2 0 (AnsVar Rational) 
     ansatzABCI ans14_2 = block1 &+ block2 
         where
-            block1 = symATens1 (0,2) $ contrATens1 (0,0) $ ans14_2 &* (aSymATens5 (0,1) $ contrATens3 (1,0) $ interArea &* invEta)
-            block2 = tensorTrans1 (1,2) $ contrATens2 (0,0) $ contrATens1 (2,0) $ ans14_2 &* (aSymATens5 (0,1) $ contrATens3 (1,0) $ interEqn3 &* invEta) 
+            block1 = symATens1 (0,2) $ contrATens1 (0,0) $ ans14_2 &* aSymATens5 (0,1) (contrATens3 (1,0) $ interArea &* invEta)
+            block2 = tensorTrans1 (1,2) $ contrATens2 (0,0) $ contrATens1 (2,0) $ ans14_2 &* aSymATens5 (0,1) (contrATens3 (1,0) $ interEqn3 &* invEta) 
 
     ansatzAaBbCI :: ATens 3 0 1 0 2 0 (AnsVar Rational) -> ATens 3 0 1 0 4 0 (AnsVar Rational) 
     ansatzAaBbCI ans16_1 = block1 &+ block2 &+ block3
@@ -254,7 +239,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     ansatzAIBJCK :: ATens 3 0 3 0 0 0 (AnsVar Rational) -> ATens 3 0 3 0 2 0 (AnsVar Rational) 
     ansatzAIBJCK ans18 = block1 &+ block2 &+ block3
         where 
-            block1 = contrATens1 (0,0) $ contrATens2 (0,0) $ ans18 &* (removeZeros6 $ aSymATens5 (0,1) $ contrATens3 (1,0) $ interEqn3 &* invEta) 
+            block1 = contrATens1 (0,0) $ contrATens2 (0,0) $ ans18 &* removeZeros6 (aSymATens5 (0,1) $ contrATens3 (1,0) $ interEqn3 &* invEta) 
             block2 = tensorTrans1 (0,2) $ tensorTrans3 (0,2) block1 
             block3 = tensorTrans1 (1,2) $ tensorTrans3 (1,2) block1
 
@@ -277,9 +262,9 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     ansatzABCcDd :: ATens 4 0 0 0 2 0 (AnsVar Rational) -> ATens 4 0 0 0 4 0 (AnsVar Rational) 
     ansatzABCcDd ans18_3 = block1 &+ block2 &+ block3 &+ block4 
         where 
-            block1 = contrATens1 (0,0) $ ans18_3 &* (aSymATens5 (0,1) $ contrATens3 (1,0) $ interArea &* invEta)
+            block1 = contrATens1 (0,0) $ ans18_3 &* aSymATens5 (0,1) (contrATens3 (1,0) $ interArea &* invEta)
             block2 = tensorTrans1 (0,3) block1 
-            block3' = contrATens3 (0,0) $ contrATens1 (2,0) $ ans18_3 &* (aSymATens5 (0,2) $ contrATens3 (2,0) $ interEqn2 &* invEta)
+            block3' = contrATens3 (0,0) $ contrATens1 (2,0) $ ans18_3 &* aSymATens5 (0,2) (contrATens3 (2,0) $ interEqn2 &* invEta)
             block3 = resortTens1 [3,0,2,1] $ resortTens5 [1,2,0,3] block3' 
             block4 = tensorTrans1 (1,2) $ tensorTrans5 (0,1) block3
 
@@ -330,7 +315,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
 
 
     quadKin3 :: ATens 3 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 2 0 (AnsVar Rational) -> ATens 2 0 0 0 3 1 (AnsVar Rational)
-    quadKin3 ans14 ans10 = cyclicSymATens5 [0,1,2] $ (tens1 &+ tens2) 
+    quadKin3 ans14 ans10 = cyclicSymATens5 [0,1,2] $ tens1 &+ tens2 
         where 
             tens1 = contrATens1 (1,0) $ ans10 &* interArea
             tens2 = contrATens1 (1,0) $ ans14 &* flatInter
@@ -338,26 +323,22 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
 
     --principal polynomial equations 
 
-    polyTensEqn :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> [[String]] 
-    polyTensEqn ans6 = tensList 
+    polyAns2 :: ATens 0 0 1 0 0 0 (AnsVar Rational)
+    polyAns2 = fromListT6 $ map (\(x,y) -> ((Empty, Empty, singletonInd $ Ind9 x, Empty, Empty, Empty),AnsVar $ I.singleton 1 y)) [(0,-1),(4,1),(7,1),(9,1)]
+
+    polyTensEqn :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> ATens 0 0 1 0 1 1 (AnsVar Rational)
+    polyTensEqn ans6 = total
             where 
                 ans6' = shiftLabels6 1 ans6 
-                ans2 = fromListT6 $ map (\(x,y) -> ((Empty, Empty, singletonInd $ Ind9 x, Empty, Empty, Empty),AnsVar $ I.singleton 1 y)) [(0,-1),(4,1),(7,1),(9,1)] :: ATens 0 0 1 0 0 0 (AnsVar Rational)           
+                ans2  = polyAns2
                 tens1 = contrATens1 (0,0) $ ans6' &* flatInter 
                 tens2 = contrATens2 (0,0) $ ans2 &* interMetric
-                total = tens1 &+ tens2 
-                tensList = map (map (\(_,y) -> showAnsVar 'x' y)) $ groupBy (\x y -> (fst x) == (fst y) ) $ sortOn (\(x,y) -> x) $ toListShow6 total
+                total = tens1 &+ tens2
 
-    polyDensEqn :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> [[String]] 
-    polyDensEqn ans6 = tensList 
+    polyDensEqn :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> ATens 0 0 1 0 1 1 (AnsVar Rational)
+    polyDensEqn ans6 = polyTensEqn &+ (ans2 &* delta3)
             where 
-                ans6' = shiftLabels6 1 ans6 
-                ans2 = fromListT6 $ map (\(x,y) -> ((Empty, Empty, singletonInd $ Ind9 x, Empty, Empty, Empty),AnsVar $ I.singleton 1 y)) [(0,-1),(4,1),(7,1),(9,1)] :: ATens 0 0 1 0 0 0 (AnsVar Rational)           
-                tens1 = contrATens1 (0,0) $ ans6' &* flatInter 
-                tens2 = contrATens2 (0,0) $ ans2 &* interMetric
-                total = tens1 &+ tens2 &+ (ans2 &* delta3) 
-                tensList = map (map (\(_,y) -> showAnsVar 'x' y)) $ groupBy (\x y -> (fst x) == (fst y) ) $ sortOn (\(x,y) -> x) $ toListShow6 total
-
+                ans2  = polyAns2
         
     --aditional equations for the metric case 
 
@@ -366,7 +347,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     --order 0
 
     eqn1Met :: ATens 0 0 0 0 0 0 (AnsVar Rational) -> ATens 0 0 1 0 0 0 (AnsVar Rational) -> ATens 0 0 0 0 1 1 (AnsVar Rational)
-    eqn1Met ans0 ans2 = (contrATens2 (0,0) $ ans2 &* flatInterMetric) &+ (ans0 &* delta3)
+    eqn1Met ans0 ans2 = contrATens2 (0,0) (ans2 &* flatInterMetric) &+ (ans0 &* delta3)
 
     --order 1
 
@@ -392,7 +373,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     --order 0
 
     eqn3Met :: ATens 0 0 2 0 0 0 (AnsVar Rational) -> ATens 0 0 0 0 3 1 (AnsVar Rational) 
-    eqn3Met ans4 = contrATens2 (0,0) $ contrATens2 (1,0) $ ans4 &* (contrATens2 (0,2) $ interEqn5Metric &* etaA)
+    eqn3Met ans4 = contrATens2 (0,0) $ contrATens2 (1,0) $ ans4 &* contrATens2 (0,2) (interEqn5Metric &* etaA)
 
     --order 1
 
@@ -413,7 +394,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     eqn3AMet ans4 ans6 = block1 &+ block2 
             where 
                 block1 = contrATens2 (0,0) $ contrATens2 (1,0) $ ans4 &* interEqn5Metric 
-                block2 = contrATens2 (1,0) $ contrATens2 (2,0) $ ans6 &* (contrATens2 (0,2) $ interEqn5Metric &* etaA)  
+                block2 = contrATens2 (1,0) $ contrATens2 (2,0) $ ans6 &* contrATens2 (0,2) (interEqn5Metric &* etaA)  
 
     --order 2
 
@@ -429,7 +410,7 @@ module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
     eqn3ABMet ans6 ans8 = block1 &+ block2
             where 
                 block1 = symATens3 (0,1) $ contrATens2 (1,0) $ contrATens2 (2,0) $ ans6 &* interEqn5Metric
-                block2 = contrATens2 (2,0) $ contrATens2 (3,0) $ ans8 &* (contrATens2 (0,2) $ interEqn5Metric &* etaA) 
+                block2 = contrATens2 (2,0) $ contrATens2 (3,0) $ ans8 &* contrATens2 (0,2) (interEqn5Metric &* etaA) 
 
     eqn2ABbMet :: ATens 0 0 2 0 2 0 (AnsVar Rational) -> ATens 0 0 3 0 0 0 (AnsVar Rational) -> ATens 0 0 3 0 2 0 (AnsVar Rational) -> ATens 0 0 2 0 3 1 (AnsVar Rational)
     eqn2ABbMet ans6_1 ans6_2 ans8 = block1 &+ block2 &+ block3

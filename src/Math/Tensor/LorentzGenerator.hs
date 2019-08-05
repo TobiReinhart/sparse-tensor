@@ -2,14 +2,11 @@
 
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeFamilyDependencies #-}
+{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
@@ -78,27 +75,27 @@ module Math.Tensor.LorentzGenerator (
     type Symmetry = ( [(Int,Int)] , [(Int,Int)] , [([Int],[Int])] , [[Int]], [[[Int]]] )
 
     addSym :: Symmetry -> Symmetry -> Symmetry
-    addSym (a,b,c,d,e) (f,g,h,i,j) = (union a f, union b g, union c h, union d i, union e j)
+    addSym (a,b,c,d,e) (f,g,h,i,j) = (a `union` f, b `union` g, c `union` h, d `union` i, e `union` j)
 
     --constructing the filter list out of the symmetry data for filtering one representative out of each symmetry class
 
     mkFilters :: Symmetry -> [(Int,Int)]
-    mkFilters (pairs,aPairs,blocks,cycles,blockCycles) = map sortPair $ union f1 (union f2 (union f3 f4))
+    mkFilters (pairs,aPairs,blocks,cycles,blockCycles) = map sortPair $ f1 `union` (f2 `union` (f3 `union` f4))
         where 
             sortPair (a,b) = if a < b then (a,b) else (b,a)            
             f1 =  pairs ++ aPairs 
             f2 = map (\(a,b) -> (head a, head b)) blocks 
             getPairs [a,b] = [(a,b)]
             getPairs (x:xs) = (x, head xs) : getPairs xs 
-            f3 = concat $ map getPairs cycles 
-            f4 = concat $ map (\x -> getPairs $ map head x) blockCycles 
+            f3 = concatMap getPairs cycles 
+            f4 = concatMap (getPairs . map head) blockCycles 
 
     --filter the index lists 
 
     filter1Sym :: [Int] -> (Int,Int) -> Bool 
     filter1Sym l (i,j) = case (iPos,jPos) of  
-                            (Just i', Just j')   ->  if i' < j' then True else False
-                            x   -> True  
+                            (Just i', Just j') ->  i' < j'
+                            _ -> True  
              where
                (iPos,jPos) = (elemIndex i l, elemIndex j l)
 
@@ -119,17 +116,17 @@ module Math.Tensor.LorentzGenerator (
     getExtraSyms1 [] syms = ([],[],[],[],[]) 
     getExtraSyms1 (a:b:xs) (pairs,aPairs,blocks,cycles,blockCycles) = addSym (newPairs, [],  newBlocks, [], []) (getExtraSyms1 xs newSyms)  
             where 
-                allBlocks = blocks ++ (concat $ map mkBlocksFromBlockCycle blockCycles) 
-                newBlocks' = map (\(x,y) -> unzip $ filter (\(c,d) -> not $ (c,d) == (a,b)) $ zip x y) allBlocks 
+                allBlocks = blocks ++ concatMap mkBlocksFromBlockCycle blockCycles
+                newBlocks' = map (\(x,y) -> unzip $ filter (\(c,d) -> (c,d) /= (a,b)) $ zip x y) allBlocks 
                 (newBlocks, newPairs') = partition (\(a,b) -> length a > 1) newBlocks'  
                 newPairs = map (\([a],[b]) -> (a,b)) newPairs' 
                 newSyms = addSym (pairs,aPairs,blocks,cycles,blockCycles) (newPairs, [],  newBlocks, [], [])
 
     mkBlocksFromBlockCycle :: [[Int]] -> [([Int],[Int])]  
     mkBlocksFromBlockCycle [x,y] = [(x,y)] 
-    mkBlocksFromBlockCycle (x:xs) = l ++ (mkBlocksFromBlockCycle xs)
+    mkBlocksFromBlockCycle (x:xs) = l ++ mkBlocksFromBlockCycle xs
             where 
-                l = map (\y -> (x,y)) xs
+                l = map (x,) xs
 
     {--
     Furthermore distributing a symmetric or antisymmetric pair of indices over 2 etas yields an additinal symmetry or antisymmetry
@@ -143,7 +140,7 @@ module Math.Tensor.LorentzGenerator (
     get2nd :: [Int] -> Symmetry -> (Maybe [(Int,Int)], Maybe [(Int,Int)]) 
     get2nd [a,b] (pairs,aPairs,blocks,cycles,blockCycles) = (sndPairs, sndAPairs)
             where 
-                allPairs = pairs ++ (concat $ map mkSymsFromCycle cycles)
+                allPairs = pairs ++ concatMap mkSymsFromCycle cycles
                 aPair = lookup a allPairs 
                 bPair = lookup b  (map swap allPairs) 
                 aAPair = lookup a aPairs
@@ -167,13 +164,13 @@ module Math.Tensor.LorentzGenerator (
     get2ndSyms (Just i) (pairs,aPairs,blocks,cycles,blockCycles) etas = (newPairs,[],[],[],[])  
         where 
             get2ndInd l (i,j) = mapMaybe (\[a,b] -> if j == a then Just (i,b) else if j == b then Just (i,a) else Nothing) l
-            newPairs = concat $ map (get2ndInd etas) i 
+            newPairs = concatMap (get2ndInd etas) i 
 
     mkSymsFromCycle :: [Int] -> [(Int,Int)]
     mkSymsFromCycle [x,y] = [(x,y)] 
-    mkSymsFromCycle (x:xs) = l ++ (mkSymsFromCycle xs)
+    mkSymsFromCycle (x:xs) = l ++ mkSymsFromCycle xs
             where 
-                l = map (\y -> (x,y)) xs
+                l = map (x,) xs
 
 
     get2ndASyms :: Maybe [(Int,Int)] -> Symmetry -> [[Int]] -> Symmetry 
@@ -181,7 +178,7 @@ module Math.Tensor.LorentzGenerator (
     get2ndASyms (Just i) (pairs,aPairs,blocks,cycles,blockCycles) etas = ([], newAPairs,[],[],[])  
         where 
             get2ndInd l (i,j) = mapMaybe (\[a,b] -> if j == a then Just (i,b) else if j == b then Just (i,a) else Nothing) l
-            newAPairs = concat $ map (get2ndInd etas) i 
+            newAPairs = concatMap (get2ndInd etas) i 
 
 
     --apply to whole ind list
@@ -210,22 +207,22 @@ module Math.Tensor.LorentzGenerator (
 
     getAllIndsEta :: [Int] -> [(Int,Int)] -> [[Int]]
     getAllIndsEta [a,b] aSyms = [[a,b]]
-    getAllIndsEta (x:xs) aSyms = concat $ map res firstEta
+    getAllIndsEta (x:xs) aSyms = concatMap res firstEta
             where 
-                firstEta = mapMaybe (\y -> if not $ elem (x,y) aSyms then Just ([x,y],delete y xs) else Nothing) xs 
-                res (a,b) = (++) a <$> (getAllIndsEta b aSyms)
+                firstEta = mapMaybe (\y -> if (x,y) `notElem` aSyms then Just ([x,y],delete y xs) else Nothing) xs 
+                res (a,b) = (++) a <$> getAllIndsEta b aSyms
 
     filterEta :: [Int] -> Symmetry -> [(Int,Int)] -> Bool
-    filterEta inds (p1,ap1,b1,c1,cb1) filters = (filterSym inds totFilters) && isNonZero 
+    filterEta inds (p1,ap1,b1,c1,cb1) filters = filterSym inds totFilters && isNonZero 
             where 
                 (p2,ap2,b2,c2,cb2) = getAllExtraSyms inds (p1,ap1,b1,c1,cb1) 
                 extrafilters = mkFilters (p2,ap2,b2,c2,cb2)
-                totFilters = union filters extrafilters
+                totFilters = filters `union` extrafilters
                 mkEtas [] = []
                 mkEtas [l,k] = [(l,k)]
                 mkEtas (l:k:ls) = (l,k) : mkEtas ls  
                 etas = mkEtas inds 
-                isNonZero = length (intersect etas (union ap1 ap2)) == 0 
+                isNonZero = null $ etas `intersect` union ap1 ap2
 
     --construct a pre-reduced list of eta indices
             
@@ -253,24 +250,24 @@ module Math.Tensor.LorentzGenerator (
 
     getAllIndsEpsilon :: [Int] -> Symmetry  -> [[Int]]
     getAllIndsEpsilon inds (p,ap,b,cyc,cb)  = [ [a,b,c,d] | a <- [1..i-3], b <- [a+1..i-2], c <- [b+1..i-1], d <- [c+1..i], 
-                                         (not $ isSym p [a,b,c,d]) && (not $ is3Area areaBlocks [a,b,c,d]) && (isValid2Area areaBlocks [a,b,c,d])
-                                          && (not $ is1Area areaBlocks [a,b,c,d]) && (not $ isSymCyc cyc [a,b,c,d]) ]
+                                         not (isSym p [a,b,c,d]) && not (is3Area areaBlocks [a,b,c,d]) && isValid2Area areaBlocks [a,b,c,d]
+                                          && not (is1Area areaBlocks [a,b,c,d]) && not (isSymCyc cyc [a,b,c,d]) ]
                     where 
                         i = length inds 
-                        blocks2 = filter (\x -> (length $ fst x) == 2)  b
-                        areaBlocks = map (\(x,y) -> x ++ y) $ filter (\([a,b],[c,d]) -> (elem (a,b) ap) && (elem (c,d) ap)) blocks2
+                        blocks2 = filter (\x -> length (fst x) == 2)  b
+                        areaBlocks = map (uncurry (++)) $ filter (\([a,b],[c,d]) -> (a,b) `elem` ap && (c,d) `elem` ap) blocks2
                         isSym [] x = False
-                        isSym [(a,b)] [i,j,k,l] = length (intersect [a,b] [i,j,k,l]) == 2
+                        isSym [(a,b)] [i,j,k,l] = length ([a,b] `intersect` [i,j,k,l]) == 2
                         isSym (x:xs) [i,j,k,l]
                             | isSym [x] [i,j,k,l] = True 
                             | otherwise = isSym xs [i,j,k,l]
                         isSymCyc [] x = False
-                        isSymCyc [l'] [i,j,k,l] = length (intersect l' [i,j,k,l]) >= 2
+                        isSymCyc [l'] [i,j,k,l] = length (l' `intersect` [i,j,k,l]) >= 2
                         isSymCyc (x:xs) [i,j,k,l]
                             | isSymCyc [x] [i,j,k,l] = True 
                             | otherwise = isSymCyc xs [i,j,k,l]
                         is3Area [] i = False 
-                        is3Area [[a,b,c,d]] [i,j,k,l] = length (intersect [a,b,c,d] [i,j,k,l]) == 3
+                        is3Area [[a,b,c,d]] [i,j,k,l] = length ([a,b,c,d] `intersect` [i,j,k,l]) == 3
                         is3Area (x:xs) [i,j,k,l]
                             | is3Area [x] [i,j,k,l] = True 
                             | otherwise = is3Area xs [i,j,k,l]
@@ -279,29 +276,29 @@ module Math.Tensor.LorentzGenerator (
                             | length inter == 2 = inter == [a,b]
                             | otherwise = True 
                              where
-                                inter = intersect [a,b,c,d] [i,j,k,l]
+                                inter = [a,b,c,d] `intersect` [i,j,k,l]
                         isValid2Area (x:xs) [i,j,k,l] 
                             | isValid2Area [x] [i,j,k,l] = isValid2Area xs [i,j,k,l]
                             | otherwise = False 
                         is1Area [] i = False
-                        is1Area list [i,j,k,l] = (maximum $ map (\x -> length $ intersect [i,j,k,l] x) list) == 1 
+                        is1Area list [i,j,k,l] = maximum (map (length . ([i,j,k,l] `intersect`)) list) == 1 
 
     --a 2-block symmetry with the respectively first indices at an epsilon yields an additional antisymmetry (note that we did not include higher block antisymmmetries)
 
     getExtraASymsEps :: [Int] -> Symmetry -> Symmetry 
     getExtraASymsEps eps (p,ap,blo,cyc,cb) = ([],newASyms, [], [], [])
             where 
-                allBlocks = blo ++ (concat $ map mkBlocksFromBlockCycle cb) 
+                allBlocks = blo ++ concatMap mkBlocksFromBlockCycle cb 
                 blocks2 = filter (\(a,b) -> length a == 2) allBlocks
-                newASyms = mapMaybe (\([i,j],[k,l]) -> if (length $ intersect [i,k] eps) == 2 then Just (j,l) else if (length $ intersect [j,l] eps) == 2  then Just (i,k) else Nothing) blocks2
+                newASyms = mapMaybe (\([i,j],[k,l]) -> if length ([i,k] `intersect` eps) == 2 then Just (j,l) else if length ([j,l] `intersect` eps) == 2  then Just (i,k) else Nothing) blocks2
 
     getEpsilonInds :: [Int] -> Symmetry -> [[Int]]
     getEpsilonInds inds sym = allIndsRed
             where 
                 epsInds = getAllIndsEpsilon inds sym 
-                allInds = concat $ filter (\x -> x /= []) $ map (\x -> map (\y -> x ++ y) $ getEtaInds (inds \\ x) (addSym sym (getExtraASymsEps x sym)) )epsInds 
+                allInds = concat $ filter (not . null) $ map (\x -> map (x ++) $ getEtaInds (inds \\ x) (addSym sym (getExtraASymsEps x sym)) )epsInds 
                 isSymP [] x = False
-                isSymP [(a,b)] [i,j,k,l] = length (intersect [a,b] [i,j,k,l]) == 2
+                isSymP [(a,b)] [i,j,k,l] = length ([a,b] `intersect` [i,j,k,l]) == 2
                 isSymP (x:xs) [i,j,k,l]
                     | isSymP [x] [i,j,k,l] = True 
                     | otherwise = isSymP xs [i,j,k,l]
@@ -325,8 +322,7 @@ module Math.Tensor.LorentzGenerator (
     data Var = Var {-# UNPACK #-} !Int {-# UNPACK #-} !Int deriving (Show, Read, Eq, Ord, Generic, Serialize, NFData )
     
     sortList :: Ord a => [a] -> [a]
-    sortList [] = [] 
-    sortList (x:xs) = insert x $ sortList xs 
+    sortList = foldr insert []
 
     sortEta :: Eta -> Eta 
     sortEta (Eta x y) = Eta (min x y) (max x y)
@@ -338,7 +334,7 @@ module Math.Tensor.LorentzGenerator (
                 [i',j',k',l'] = sortList [i,j,k,l]
     
     getEpsSign :: Epsilon -> Int 
-    getEpsSign (Epsilon i j k l) = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+    getEpsSign (Epsilon i j k l) = (-1) ^ length (filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
     {-# INLINEABLE getEpsSign #-}
 
     addVars :: Var -> Var -> Var 
@@ -366,10 +362,10 @@ module Math.Tensor.LorentzGenerator (
     encodeAnsatzForestEpsilon = compress . encodeLazy
 
     decodeAnsatzForestEta :: BS.ByteString -> AnsatzForestEta 
-    decodeAnsatzForestEta bs = (either error id $ decodeLazy $ decompress bs)
+    decodeAnsatzForestEta bs = either error id $ decodeLazy $ decompress bs
 
     decodeAnsatzForestEpsilon :: BS.ByteString -> AnsatzForestEpsilon 
-    decodeAnsatzForestEpsilon bs = (either error id $ decodeLazy $ decompress bs)
+    decodeAnsatzForestEpsilon bs = either error id $ decodeLazy $ decompress bs
 
     forestMap :: AnsatzForestEta -> M.Map Eta AnsatzForestEta
     forestMap (ForestEta m) = m
@@ -379,11 +375,11 @@ module Math.Tensor.LorentzGenerator (
 
     mapNodes :: (Eta -> Eta) -> AnsatzForestEta -> AnsatzForestEta
     mapNodes f EmptyForest = EmptyForest
-    mapNodes f (ForestEta m) = ForestEta $ (M.mapKeys f).(M.map (mapNodes f)) $ m
+    mapNodes f (ForestEta m) = ForestEta $ M.mapKeys f . M.map (mapNodes f) $ m
     mapNodes f (Leaf x) = Leaf x
 
     mapNodesEpsilon :: (Epsilon -> Epsilon) -> AnsatzForestEpsilon -> AnsatzForestEpsilon
-    mapNodesEpsilon f m = M.mapKeys f m
+    mapNodesEpsilon = M.mapKeys
 
     --map over the vars, i.e. the leafs of the tree 
 
@@ -393,7 +389,7 @@ module Math.Tensor.LorentzGenerator (
     mapVars f (ForestEta m) = ForestEta $ M.map (mapVars f) m
 
     mapVarsEpsilon :: (Var -> Var) -> AnsatzForestEpsilon -> AnsatzForestEpsilon
-    mapVarsEpsilon f m = M.map (mapVars f) $ m
+    mapVarsEpsilon f = M.map (mapVars f)
 
     --multiplying the vars with a fixed Int 
 
@@ -441,8 +437,8 @@ module Math.Tensor.LorentzGenerator (
 
     removeVarsEta :: [Int] -> AnsatzForestEta -> AnsatzForestEta 
     removeVarsEta vars (Leaf (Var i j)) 
-                | elem j vars = EmptyForest 
-                | otherwise = (Leaf (Var i j))
+                | j `elem` vars = EmptyForest 
+                | otherwise = Leaf (Var i j)
     removeVarsEta vars (ForestEta m) = ForestEta $ M.filter (/= EmptyForest) $ M.map (removeVarsEta vars) m  
     removeVarsEta vars EmptyForest = EmptyForest
 
@@ -465,7 +461,7 @@ module Math.Tensor.LorentzGenerator (
             | isZeroVar newLeafVal = EmptyForest
             | otherwise = Leaf newLeafVal
             where
-                newLeafVal = (addVars var1 var2)
+                newLeafVal = addVars var1 var2
     addForests (ForestEta m1) (ForestEta m2) 
             | M.null newMap = EmptyForest
             | otherwise = ForestEta newMap
@@ -481,7 +477,7 @@ module Math.Tensor.LorentzGenerator (
             | isZeroVar newLeafVal = EmptyForest
             | otherwise = Leaf newLeafVal
             where
-                newLeafVal = (addVars var1 var2)
+                newLeafVal = addVars var1 var2
     addList2Forest (ForestEta m1) (x:xs, var) = ForestEta $ M.insertWith (\a1 a2 -> addList2Forest a2 (xs, var)) x newVal m1
              where
                 newVal = mkForestFromAscList (xs,var)
@@ -511,23 +507,23 @@ module Math.Tensor.LorentzGenerator (
 
     drawEtaTree :: Eta -> AnsatzForestEta -> [String]
     drawEtaTree (Eta i j) (Leaf (Var a b)) =  ["(" ++ show i ++  "," ++ show j ++ ") * (" ++ show a ++ ") * x[" ++ show b ++ "]"]
-    drawEtaTree (Eta i j) (ForestEta m) = lines ("(" ++ show i ++ "," ++ show j ++ ")") ++ (drawSubTrees m)
+    drawEtaTree (Eta i j) (ForestEta m) = lines ("(" ++ show i ++ "," ++ show j ++ ")") ++ drawSubTrees m
             where 
                 drawSubTrees x
                     | x == M.empty = []
                     | M.size x == 1 = let [(a,b)] = M.assocs x in  "|" : shift "`---- " "   " (drawEtaTree a b)
-                    | otherwise =  let  (a,b) = head $ M.assocs x in "|" : shift "+---- " "|  " (drawEtaTree a b) ++ (drawSubTrees $ M.delete a x)
+                    | otherwise =  let  (a,b) = head $ M.assocs x in "|" : shift "+---- " "|  " (drawEtaTree a b) ++ drawSubTrees (M.delete a x)
                 shift first other = zipWith (++) (first : repeat other)
     drawEtaTree eta EmptyForest = []
 
     drawEpsilonTree :: Epsilon -> AnsatzForestEta -> [String]
     drawEpsilonTree (Epsilon i j k l) (Leaf (Var a b)) = ["(" ++ show i ++ "," ++ show j ++ "," ++ show k ++ "," ++ show l ++ ") * (" ++ show a ++ ") * x[" ++ show b ++ "]"]
-    drawEpsilonTree (Epsilon i j k l) (ForestEta m) = lines ("(" ++ show i ++ "," ++ show j ++ "," ++ show k ++ "," ++ show l ++ ")") ++ (drawSubTrees m)
+    drawEpsilonTree (Epsilon i j k l) (ForestEta m) = lines ("(" ++ show i ++ "," ++ show j ++ "," ++ show k ++ "," ++ show l ++ ")") ++ drawSubTrees m
             where 
                 drawSubTrees x
                     | x == M.empty = []
                     | M.size x == 1 = let [(a,b)] = M.assocs x in  "|" : shift "`---- " "   " (drawEtaTree a b)
-                    | otherwise =  let  (a,b) = head $ M.assocs x in "|" : shift "+---- " "|  " (drawEtaTree a b) ++ (drawSubTrees $ M.delete a x)
+                    | otherwise =  let  (a,b) = head $ M.assocs x in "|" : shift "+---- " "|  " (drawEtaTree a b) ++ drawSubTrees (M.delete a x)
                 shift first other = zipWith (++) (first : repeat other)
     drawEpsilonTree eps EmptyForest = []
 
@@ -544,18 +540,18 @@ module Math.Tensor.LorentzGenerator (
     --get one representative for each Var Label
 
     forestEtaList :: AnsatzForestEta -> [[Eta]]
-    forestEtaList f = map (\(a,b) -> a) fList''
+    forestEtaList f = map fst fList''
             where 
                 fList = flattenForest f 
-                fList' = sortBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> compare y1 y2) fList 
-                fList'' = nubBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
+                fList' = sortBy (\(e1, Var x1 y1 ) (e2, Var x2 y2) -> compare y1 y2) fList 
+                fList'' = nubBy (\(e1, Var x1 y1 ) (e2, Var x2 y2) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
 
     forestEpsList :: AnsatzForestEpsilon -> [(Epsilon,[Eta])]
     forestEpsList f = map (\(a,b,c) -> (a,b)) fList'' 
             where 
                 fList = flattenForestEpsilon f 
-                fList' = sortBy (\(e1, e', Var x1 y1 ) ((e2, e2',  Var x2 y2)) -> compare y1 y2) fList 
-                fList'' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
+                fList' = sortBy (\(e1, e', Var x1 y1 ) (e2, e2',  Var x2 y2) -> compare y1 y2) fList 
+                fList'' = nubBy (\(e1, e1', Var x1 y1 ) (e2, e2', Var x2 y2) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList' 
 
     --output in latex format 
 
@@ -567,9 +563,9 @@ module Math.Tensor.LorentzGenerator (
     forestEtaListLatex :: AnsatzForestEta -> String -> Char -> String 
     forestEtaListLatex f inds var =  tail $ concat etaL'' 
             where 
-                etaL = sortBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> compare y1 y2) $ flattenForest f 
-                etaL' = nubBy (\(e1, Var x1 y1 ) ((e2, Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) etaL 
-                etaL'' = map (\(a,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}\\cdot" ++ (concat $ map (mkEtasLatex inds) a)) etaL' 
+                etaL = sortBy (\(e1, Var x1 y1 ) (e2, Var x2 y2) -> compare y1 y2) $ flattenForest f 
+                etaL' = nubBy (\(e1, Var x1 y1 ) (e2, Var x2 y2) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) etaL 
+                etaL'' = map (\(a,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}\\cdot" ++ concatMap (mkEtasLatex inds) a) etaL' 
 
     mkEpsLatex :: String -> Epsilon -> String 
     mkEpsLatex inds (Epsilon i j k l) =  "\\epsilon^{" ++ epsi : epsj : epsk : epsl : "}"
@@ -579,9 +575,9 @@ module Math.Tensor.LorentzGenerator (
     forestEpsListLatex :: AnsatzForestEpsilon -> String -> Char -> String 
     forestEpsListLatex f inds var = tail $ concat epsL''
             where 
-                epsL = sortBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> compare y1 y2) $ flattenForestEpsilon f 
-                epsL' = nubBy (\(e1, e1', Var x1 y1 ) ((e2, e2', Var x2 y2)) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) epsL 
-                epsL'' = map (\(a,b,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}\\cdot" ++ mkEpsLatex inds a ++ (concat $ map (mkEtasLatex inds) b)) epsL' 
+                epsL = sortBy (\(e1, e1', Var x1 y1 ) (e2, e2', Var x2 y2) -> compare y1 y2) $ flattenForestEpsilon f 
+                epsL' = nubBy (\(e1, e1', Var x1 y1 ) (e2, e2', Var x2 y2) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) epsL 
+                epsL'' = map (\(a,b,Var x y) -> "+" ++ var : "_{" ++ show y ++ "}\\cdot" ++ mkEpsLatex inds a ++ concatMap (mkEtasLatex inds) b) epsL' 
 
     --construct a forest of a given asclist 
                 
@@ -625,7 +621,7 @@ module Math.Tensor.LorentzGenerator (
     swapBlockLabelMap :: ([Int],[Int]) -> I.IntMap Int
     swapBlockLabelMap (x,y) = swapF 
             where
-                swapF = I.fromList $ (zip x y)++(zip y x)
+                swapF = I.fromList $ zip x y ++ zip y x
 
     swapLabelEta :: (Int,Int) -> Eta -> Eta 
     swapLabelEta inds (Eta x y) = Eta (f x) (f y)
@@ -704,22 +700,22 @@ module Math.Tensor.LorentzGenerator (
     cyclicSymForestEta :: [Int] -> AnsatzForestEta -> AnsatzForestEta
     cyclicSymForestEta inds ans = foldr (\y x -> addForests x $ swapBlockLabelFEta y ans ) ans perms
             where
-                perms = map (\a -> I.fromList (zip inds a)) $ tail $ permutations inds 
+                perms = map (I.fromList . zip inds) $ tail $ permutations inds 
 
     cyclicSymForestEps :: [Int] -> AnsatzForestEpsilon -> AnsatzForestEpsilon
     cyclicSymForestEps inds ans = foldr (\y x -> addForestsEpsilon x $ swapBlockLabelFEps y ans ) ans perms
             where
-                perms = map (\a -> I.fromList (zip inds a)) $ tail $ permutations inds 
+                perms = map (I.fromList . zip inds) $ tail $ permutations inds 
 
     cyclicBlockSymForestEta :: [[Int]] -> AnsatzForestEta -> AnsatzForestEta
     cyclicBlockSymForestEta inds ans = foldr (\y x -> addForests x $ swapBlockLabelFEta y ans ) ans perms
             where
-                perms = map (\a -> I.fromList $ zip (concat inds) (concat a)) $ tail $ permutations inds 
+                perms = map (I.fromList . zip (concat inds) . concat) $ tail $ permutations inds 
 
     cyclicBlockSymForestEps :: [[Int]] -> AnsatzForestEpsilon-> AnsatzForestEpsilon
     cyclicBlockSymForestEps inds ans = foldr (\y x -> addForestsEpsilon x $ swapBlockLabelFEps y ans ) ans perms
             where
-                perms = map (\a -> I.fromList $ zip (concat inds) (concat a)) $ tail $ permutations inds 
+                perms = map (I.fromList . zip (concat inds) . concat) $ tail $ permutations inds 
 
     --generall symmetrizer function
 
@@ -755,7 +751,7 @@ module Math.Tensor.LorentzGenerator (
     
     mkEtaList :: [Int] -> [Eta]
     mkEtaList [] = [] 
-    mkEtaList x = (Eta a b) : (mkEtaList rest) 
+    mkEtaList x = Eta a b : mkEtaList rest 
             where
                 [a,b] = take 2 x
                 rest = drop 2 x
@@ -795,14 +791,14 @@ module Math.Tensor.LorentzGenerator (
     --reduce a list of possible ansätze w.r.t the present symmetries, no numerical evaluation
 
     reduceAnsatzEta' :: Symmetry -> [([Eta],Var)] -> AnsatzForestEta
-    reduceAnsatzEta' sym l = foldl' addOrRem' EmptyForest l
+    reduceAnsatzEta' sym = foldl' addOrRem' EmptyForest
             where
-                addOrRem' = \f ans -> if (isElem (fst ans) f) then f else addForests f (symAnsatzForestEta sym $ mkForestFromAscList ans)
+                addOrRem' f ans = if isElem (fst ans) f then f else addForests f (symAnsatzForestEta sym $ mkForestFromAscList ans)
 
     reduceAnsatzEpsilon' :: Symmetry -> [(Epsilon, [Eta], Var)] -> AnsatzForestEpsilon
-    reduceAnsatzEpsilon' sym l = foldl' addOrRem' M.empty l
+    reduceAnsatzEpsilon' sym = foldl' addOrRem' M.empty
             where
-                addOrRem' = \f (x,y,z) -> if (isElemEpsilon (x,y) f) then f else addForestsEpsilon f (symAnsatzForestEps sym $ mkForestFromAscListEpsilon (x,y,z))
+                addOrRem' f (x,y,z) = if isElemEpsilon (x,y) f then f else addForestsEpsilon f (symAnsatzForestEps sym $ mkForestFromAscListEpsilon (x,y,z))
 
     mkAllVars :: [Var] 
     mkAllVars = map (Var 1) [1..]
@@ -847,7 +843,7 @@ module Math.Tensor.LorentzGenerator (
     epsMap :: M.Map [Int] Int 
     epsMap = M.fromList $ map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
                 where
-                   epsSign [i,j,k,l] = (-1)^(length $  filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+                   epsSign [i,j,k,l] = (-1) ^ length (filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
 
     --basic tree eval function
 
@@ -856,16 +852,16 @@ module Math.Tensor.LorentzGenerator (
     evalAnsatzForestEta epsM evalM (ForestEta m) = M.foldlWithKey' foldF I.empty m 
                 where
                     foldF b k a = let nodeVal = evalNodeEta epsM evalM k 
-                                  in if nodeVal == Nothing then b 
-                                     else I.unionWith (+) (I.map ((*) (fromJust nodeVal)) (evalAnsatzForestEta epsM evalM a)) b
+                                  in if isNothing nodeVal then b 
+                                     else I.unionWith (+) (I.map (fromJust nodeVal *) (evalAnsatzForestEta epsM evalM a)) b
     evalAnsatzForestEta epsM evalM EmptyForest = I.empty
 
     evalAnsatzForestEpsilon :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEpsilon -> I.IntMap Int
-    evalAnsatzForestEpsilon epsM evalM m = M.foldlWithKey' foldF I.empty m 
+    evalAnsatzForestEpsilon epsM evalM = M.foldlWithKey' foldF I.empty
                 where
                     foldF b k a = let nodeVal = evalNodeEpsilon epsM evalM k 
-                                  in if nodeVal == Nothing then b 
-                                     else I.unionWith (+) (I.map ((*) (fromJust nodeVal)) (evalAnsatzForestEta epsM evalM a)) b
+                                  in if isNothing nodeVal then b 
+                                     else I.unionWith (+) (I.map (fromJust nodeVal *) (evalAnsatzForestEta epsM evalM a)) b
 
     --for a single Ansatz we do not need the IntMap to keep track of the VarLabels -> eval to a number
 
@@ -874,20 +870,20 @@ module Math.Tensor.LorentzGenerator (
     eval1AnsatzForestEta epsM evalM (ForestEta m) = M.foldlWithKey' foldF 0 m
                 where
                     foldF b k a = let nodeVal = evalNodeEta epsM evalM k 
-                                  in if nodeVal == Nothing then b 
+                                  in if isNothing nodeVal then b 
                                      else  b + (fromJust nodeVal * eval1AnsatzForestEta epsM evalM a)
     eval1AnsatzForestEta epsM evalM EmptyForest = 0
 
     eval1AnsatzForestEpsilon :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEpsilon -> Int
-    eval1AnsatzForestEpsilon epsM evalM m = M.foldlWithKey' foldF 0 m
+    eval1AnsatzForestEpsilon epsM evalM = M.foldlWithKey' foldF 0
                 where
                     foldF b k a = let nodeVal = evalNodeEpsilon epsM evalM k 
-                                  in if nodeVal == Nothing then b 
+                                  in if isNothing nodeVal then b 
                                     else  b + (fromJust nodeVal * eval1AnsatzForestEta epsM evalM a)
 
     --eval a given 1Var ansatz to a sparse Matrix (a row vector) -> Eigen Indices start at 0 !!
 
-    evalAnsatzEtaVecListEig :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEta -> Maybe (Sparse.SparseMatrixXd) 
+    evalAnsatzEtaVecListEig :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEta -> Maybe Sparse.SparseMatrixXd
     evalAnsatzEtaVecListEig epsM evalM EmptyForest = Nothing
     evalAnsatzEtaVecListEig epsM evalM f = vecList
             where
@@ -900,9 +896,9 @@ module Math.Tensor.LorentzGenerator (
                 max = maximum lVals
                 n = length evalM
                 vecList = let vec = Sparse.fromList 1 n l in
-                          if l == [] then Nothing else Just $ Sparse.scale (1/max) vec
+                          if null l then Nothing else Just $ Sparse.scale (1/max) vec
 
-    evalAnsatzEpsilonVecListEig :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe (Sparse.SparseMatrixXd)  
+    evalAnsatzEpsilonVecListEig :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe Sparse.SparseMatrixXd
     evalAnsatzEpsilonVecListEig epsM evalM f  = if f == M.empty then Nothing else vecList
             where 
                 dofList = zip [0..] evalM
@@ -914,7 +910,7 @@ module Math.Tensor.LorentzGenerator (
                 max = maximum lVals
                 n = length evalM
                 vecList = let vec = Sparse.fromList 1 n l in
-                                    if l == [] then Nothing else Just $ Sparse.scale (1/max) vec
+                                    if null l then Nothing else Just $ Sparse.scale (1/max) vec
 
     --eval a given Forest for all inds
 
@@ -928,7 +924,7 @@ module Math.Tensor.LorentzGenerator (
     evalAllEta epsM evalMs EmptyForest = [] 
     evalAllEta epsM evalMs f = l'
                 where
-                    l = map (\x -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f)) evalMs
+                    l = map (\x -> filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f) evalMs
                     l' = runEval $ parListChunk 500 rdeepseq l
 
     evalAllTensorEta :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, a)] -> AnsatzForestEta -> AssocsList a
@@ -943,7 +939,7 @@ module Math.Tensor.LorentzGenerator (
     evalAllEpsilon epsM  [] f = []
     evalAllEpsilon epsM evalMs f = if f == M.empty then [] else l'
                 where
-                    l = map (\x -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f)) evalMs
+                    l = map (\x -> filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f) evalMs
                     l' = runEval $ parListChunk 500 rdeepseq l
 
     evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, a)] -> AnsatzForestEpsilon -> AssocsList a
@@ -1000,7 +996,7 @@ module Math.Tensor.LorentzGenerator (
                     newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar 
                     eigenRank = Sol.rank Sol.FullPivLU newMat 
                     maxRank = min (Mat.cols newMat) (Mat.rows newMat)
-                    newAnsatzMat = Sparse.fromRows $ (Sparse.getRows lastFullMat) ++ [newVec]
+                    newAnsatzMat = Sparse.fromRows $ Sparse.getRows lastFullMat ++ [newVec]
     checkNumericLinDepEig (lastMat, lastFullMat) Nothing = Nothing 
 
     --concat Matrices to a block Matrix
@@ -1093,12 +1089,12 @@ module Math.Tensor.LorentzGenerator (
     mk1stRankDataEtaEigIO :: Symmetry -> Int -> [(Int,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> IO (AnsatzForestEta,RankDataEig,[(Int,[Eta])])
     mk1stRankDataEtaEigIO symL numEta etaL epsM evalM =
             do
-                putStrLn $ (show $ fst $ head etaL) ++ " of " ++ show numEta
+                putStrLn $ show (fst $ head etaL) ++ " of " ++ show numEta
                 let newAns = symAnsatzForestEta symL $ mkForestFromAscList (snd $ head etaL,Var 1 1)
                 let newVec = evalAnsatzEtaVecListEig epsM evalM newAns
                 let restList = tail etaL 
                 case newVec of
-                                    Nothing         -> if restList == [] then return (EmptyForest ,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEigIO symL numEta restList epsM evalM 
+                                    Nothing         -> if null restList then return (EmptyForest ,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEigIO symL numEta restList epsM evalM 
                                     Just newVec'    -> return (newAns, (newMat, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
@@ -1111,7 +1107,7 @@ module Math.Tensor.LorentzGenerator (
                 newVec = evalAnsatzEtaVecListEig epsM evalM newAns
                 restList = tail etaL 
                 output = case newVec of
-                                    Nothing         -> if restList == [] then (EmptyForest,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEig symL restList epsM evalM 
+                                    Nothing         -> if null restList then (EmptyForest,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEig symL restList epsM evalM 
                                     Just newVec'    -> (newAns, (newMat, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
@@ -1121,12 +1117,12 @@ module Math.Tensor.LorentzGenerator (
     mk1stRankDataEpsilonEigIO :: Symmetry -> Int -> [(Int,(Epsilon,[Eta]))] -> M.Map [Int] Int -> [I.IntMap Int] -> IO (AnsatzForestEpsilon,RankDataEig,[(Int,(Epsilon,[Eta]))])
     mk1stRankDataEpsilonEigIO symL numEps epsL epsM evalM =
             do
-                putStrLn $ (show $ fst $ head epsL) ++ " of " ++ show numEps
+                putStrLn $ show (fst $ head epsL) ++ " of " ++ show numEps
                 let newAns = symAnsatzForestEps symL $ mkForestFromAscListEpsilon (fst $ snd $ head epsL, snd $ snd $ head epsL,Var 1 1)
                 let newVec = evalAnsatzEpsilonVecListEig epsM evalM newAns
                 let restList = tail epsL
                 case newVec of
-                                    Nothing         -> if restList == [] then return (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEigIO symL numEps restList epsM evalM
+                                    Nothing         -> if null restList then return (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEigIO symL numEps restList epsM evalM
                                     Just newVec'    -> return (newAns,(newMat, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
@@ -1139,7 +1135,7 @@ module Math.Tensor.LorentzGenerator (
                 newVec = evalAnsatzEpsilonVecListEig epsM evalM newAns
                 restList = tail epsL
                 output = case newVec of
-                                    Nothing         -> if restList == [] then (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEig symL restList epsM evalM
+                                    Nothing         -> if null restList then (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEig symL restList epsM evalM
                                     Just newVec'    -> (newAns,(newMat, newVec'), restList)
                                         where 
                                             newVecTrans = Sparse.transpose newVec'
@@ -1156,17 +1152,17 @@ module Math.Tensor.LorentzGenerator (
                 putStrLn $ "fast-forward to first non-vanishing ansatz in list of " ++ show etaLLength
                 let zipped = zip [1..] etaL
                 (ans1,rDat1,restEtaL) <- mk1stRankDataEtaEigIO symL etaLLength zipped epsM evalM
-                putStrLn $ "first non-vanishing ansatz found"
+                putStrLn "first non-vanishing ansatz found"
                 (finalForest, (_,finalMat)) <- foldM (addOrDiscardEtaEigIO symL etaLLength epsM evalM) (ans1,rDat1) restEtaL
-                putStrLn $ "finished!"
-                if evalM == [] 
+                putStrLn "finished!"
+                if null evalM
                     then return (EmptyForest, Sparse.fromList 0 0 [])
                     else return (finalForest, finalMat)
 
     reduceAnsatzEtaEig :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
     reduceAnsatzEtaEig symL etaL evalM
-            | evalM == [] = (EmptyForest, Sparse.fromList 0 0 [])
-            | etaL == [] = (EmptyForest, Sparse.fromList 0 0 [])
+            | null evalM = (EmptyForest, Sparse.fromList 0 0 [])
+            | null etaL = (EmptyForest, Sparse.fromList 0 0 [])
             | otherwise = (finalForest, finalMat)
                 where
                     epsM = epsMap
@@ -1182,18 +1178,18 @@ module Math.Tensor.LorentzGenerator (
                 putStrLn $ "fast-forward to first non-vanishing ansatz in list of " ++ show epsLLength
                 let zipped = zip [1..] epsL
                 (ans1,rDat1,restEpsL) <- mk1stRankDataEpsilonEigIO symL epsLLength zipped epsM evalM
-                putStrLn $ "first non-vanishing ansatz found"
+                putStrLn "first non-vanishing ansatz found"
                 (finalForest, (_,finalMat)) <- foldM (addOrDiscardEpsilonEigIO symL epsLLength epsM evalM) (ans1,rDat1) restEpsL
-                putStrLn $ "finished!"
-                if evalM == [] 
+                putStrLn "finished!"
+                if null evalM
                     then return (M.empty, Sparse.fromList 0 0 [])
                     else return (finalForest, finalMat)
 
 
     reduceAnsatzEpsilonEig :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     reduceAnsatzEpsilonEig symL epsL evalM
-        | evalM == [] = (M.empty, Sparse.fromList 0 0 [])
-        | epsL == [] = (M.empty, Sparse.fromList 0 0 [])
+        | null evalM = (M.empty, Sparse.fromList 0 0 [])
+        | null epsL = (M.empty, Sparse.fromList 0 0 [])
         | otherwise = (finalForest, finalMat)
             where
                 epsM = epsMap
@@ -1205,7 +1201,7 @@ module Math.Tensor.LorentzGenerator (
     getEtaForestEigIO :: Int -> Symmetry -> [I.IntMap Int] -> IO (AnsatzForestEta,Sparse.SparseMatrixXd)
     getEtaForestEigIO ord sym [] = return (EmptyForest, Sparse.fromList 0 0 []) 
     getEtaForestEigIO ord sym evalMs
-        | allEtaLists == [] = return (EmptyForest, Sparse.fromList 0 0 []) 
+        | null allEtaLists = return (EmptyForest, Sparse.fromList 0 0 []) 
         | otherwise = reduceAnsatzEtaEigIO sym allEtaLists evalMs
             where
                 allInds = getEtaInds [1..ord] sym
@@ -1214,7 +1210,7 @@ module Math.Tensor.LorentzGenerator (
     getEtaForestEig :: Int -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
     getEtaForestEig ord sym [] = (EmptyForest, Sparse.fromList 0 0 []) 
     getEtaForestEig ord sym evalMs 
-        | allEtaLists == [] = (EmptyForest, Sparse.fromList 0 0 []) 
+        | null allEtaLists = (EmptyForest, Sparse.fromList 0 0 []) 
         | otherwise = reduceAnsatzEtaEig sym allEtaLists evalMs
             where
                 allInds = getEtaInds [1..ord] sym
@@ -1223,7 +1219,7 @@ module Math.Tensor.LorentzGenerator (
     getEpsForestEigIO :: Int -> Symmetry -> [I.IntMap Int] -> IO (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     getEpsForestEigIO ord sym [] = return (M.empty, Sparse.fromList 0 0 []) 
     getEpsForestEigIO ord sym evalMs 
-        | allEpsLists == [] = return (M.empty, Sparse.fromList 0 0 []) 
+        | null allEpsLists = return (M.empty, Sparse.fromList 0 0 []) 
         | otherwise = reduceAnsatzEpsilonEigIO sym allEpsLists evalMs
             where
                 allInds = getEpsilonInds [1..ord] sym 
@@ -1232,7 +1228,7 @@ module Math.Tensor.LorentzGenerator (
     getEpsForestEig :: Int -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
     getEpsForestEig ord sym [] = (M.empty, Sparse.fromList 0 0 []) 
     getEpsForestEig ord sym evalMs 
-        | allEpsLists == [] = (M.empty, Sparse.fromList 0 0 []) 
+        | null allEpsLists = (M.empty, Sparse.fromList 0 0 []) 
         | otherwise =  reduceAnsatzEpsilonEig sym allEpsLists evalMs
             where
                 allInds = getEpsilonInds [1..ord] sym 
@@ -1245,7 +1241,7 @@ module Math.Tensor.LorentzGenerator (
               do
                 (etaAns, etaMat) <- getEtaForestEigIO ord sym evalMEta 
                 (epsAns',epsMat) <- getEpsForestEigIO ord sym evalMEps
-                let epsAns = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels etaAns)) epsAns'
+                let epsAns = relabelAnsatzForestEpsilon (1 + length (getForestLabels etaAns)) epsAns'
                 return (etaAns, epsAns, etaMat, epsMat)
 
     getFullForestEig :: Int -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon, Sparse.SparseMatrixXd, Sparse.SparseMatrixXd)
@@ -1253,7 +1249,7 @@ module Math.Tensor.LorentzGenerator (
             where
                 (etaAns,etaMat) = getEtaForestEig ord sym evalMEta 
                 (epsAns',epsMat) = getEpsForestEig ord sym evalMEps
-                epsAns = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels etaAns)) epsAns'
+                epsAns = relabelAnsatzForestEpsilon (1 + length (getForestLabels etaAns)) epsAns'
 
     {--
     Finally we can evaluated the ansatz trees to a contravariant tensor with spacetime indices
@@ -1269,15 +1265,15 @@ module Math.Tensor.LorentzGenerator (
                     p' = map (\(x,y) -> (x-1,y-1)) p 
                     ap' = map (\(x,y) -> (x-1,y-1)) ap 
                     b' = map (\(x,y) -> (map (\z -> z-1) x, map (\z' -> z'-1) y) ) b
-                    c' = map (\l -> map (\l' -> l' -1) l) c 
-                    bc' = map (\l -> map (\k -> map (\m -> m-1) k) l) bc 
+                    c' = map (map (subtract 1)) c 
+                    bc' = map (map (map (subtract 1))) bc 
                     etaL = evalAllTensorEta epsM evalEta ansEta 
                     epsL = evalAllTensorEpsilon epsM evalEps ansEps 
                     etaL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral r)) x)) etaL
                     epsL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral r)) x)) epsL
                     etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) etaL'
                     epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) epsL'
-                    tens = (fromListT2 etaRmL) &+ (fromListT2 epsRmL)
+                    tens = fromListT2 etaRmL &+ fromListT2 epsRmL
                     symTens = foldr cyclicBlockSymATens1 (
                                 foldr cyclicSymATens1 (
                                     foldr symBlockATens1 (
@@ -1297,19 +1293,19 @@ module Math.Tensor.LorentzGenerator (
                     epsL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral r)) x)) epsL
                     etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) etaL'
                     epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) epsL'
-                    tens = (fromListT2 etaRmL) &+ (fromListT2 epsRmL)
+                    tens = fromListT2 etaRmL &+ fromListT2 epsRmL
 
     --eval to abstract tensor type taling into account possible blocksymmetries and multiplicity of the ansätze 
 
     evalToTensAbs :: M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> AnsatzForestEta -> AnsatzForestEpsilon -> ATens n1 0 n2 0 n3 0 (AnsVar Rational) 
-    evalToTensAbs epsM evalEta evalEps ansEta ansEps = (fromListT6 etaRmL) &+ (fromListT6 epsRmL)
+    evalToTensAbs epsM evalEta evalEps ansEta ansEps = fromListT6 etaRmL &+ fromListT6 epsRmL
                 where 
                     etaL = evalAllTensorEtaAbs epsM evalEta ansEta 
                     epsL = evalAllTensorEpsilonAbs epsM evalEps ansEps 
                     etaL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) etaL
                     epsL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) epsL
-                    etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) etaL'
-                    epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concat $ map (\(x,y) -> zip x (repeat y)) epsL'
+                    etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concatMap (\(x,y) -> zip x (repeat y)) etaL'
+                    epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concatMap (\(x,y) -> zip x (repeat y)) epsL'
     
    
     --the 2 final functions, constructing the 2 AnsatzForests and the AnsatzTensor (currently the list of symmetry DOFs must be specified by hand -> this can also yield a performance advantage)
@@ -1420,8 +1416,8 @@ module Math.Tensor.LorentzGenerator (
     assocsToEig l = Sparse.toMatrix $ Sparse.fromList n m l'
         where
             l' = concat $ zipWith (\r z -> map (\(x,y) -> (z-1, x-1, fromIntegral y)) r) l [1..]
-            n = (maximum $ map (\(x,_,_) -> x) l') + 1
-            m = (maximum $ map (\(_,x,_) -> x) l') + 1
+            n = maximum (map (\(x,_,_) -> x) l') + 1
+            m = maximum (map (\(_,x,_) -> x) l') + 1
 
     --filter the lin. dependant vars from the Assocs List 
 {-
@@ -1440,7 +1436,7 @@ module Math.Tensor.LorentzGenerator (
                 mat = assocsToEig l 
                 pMatTr = Mat.toList $ Mat.transpose $ Sol.image Sol.FullPivLU mat 
                 matTr = Mat.toList $ Mat.transpose mat 
-                p = mapMaybe (\x -> elemIndex x matTr) pMatTr
+                p = mapMaybe (`elemIndex` matTr) pMatTr
 
 
 
@@ -1482,7 +1478,7 @@ module Math.Tensor.LorentzGenerator (
                 ansEpsilon = getEpsForestFast ord symmetries  
                 ansEtaRed = reduceLinDepsFastEta epsM evalMEtaRed symmetries ansEta
                 ansEpsRed' = reduceLinDepsFastEps epsM evalMEpsRed symmetries ansEpsilon
-                ansEpsRed = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEtaRed)) ansEpsRed'
+                ansEpsRed = relabelAnsatzForestEpsilon (1 + length (getForestLabels ansEtaRed)) ansEpsRed'
                 tens = evalToTensSym symmetries epsM evalMEtaInds evalMEpsInds ansEtaRed ansEpsRed 
 
     --and without explicit symmetriization in tens
@@ -1503,7 +1499,7 @@ module Math.Tensor.LorentzGenerator (
                 ansEpsilon = getEpsForestFast ord symmetries  
                 ansEtaRed = reduceLinDepsFastEta epsM evalMEtaRed symmetries ansEta
                 ansEpsRed' = reduceLinDepsFastEps epsM evalMEpsRed symmetries ansEpsilon
-                ansEpsRed = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEtaRed)) ansEpsRed'
+                ansEpsRed = relabelAnsatzForestEpsilon (1 + length (getForestLabels ansEtaRed)) ansEpsRed'
                 tens = evalToTens epsM evalMEtaInds evalMEpsInds ansEtaRed ansEpsRed 
 
     --eval to abstract tensor
@@ -1524,7 +1520,7 @@ module Math.Tensor.LorentzGenerator (
                 evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEps
                 ansEtaRed = reduceLinDepsFastEta epsM evalMEtaRed symmetries ansEta
                 ansEpsRed' = reduceLinDepsFastEps epsM evalMEpsRed symmetries ansEpsilon
-                ansEpsRed = relabelAnsatzForestEpsilon (1 + (length $ getForestLabels ansEtaRed)) ansEpsRed'
+                ansEpsRed = relabelAnsatzForestEpsilon (1 + length (getForestLabels ansEtaRed)) ansEpsRed'
                 tens = evalToTensAbs epsM evalMEtaInds evalMEpsInds ansEtaRed ansEpsRed 
 
 
@@ -1572,7 +1568,7 @@ module Math.Tensor.LorentzGenerator (
 
     filterBSym :: [Int] -> ([Int],[Int]) -> Bool 
     filterBSym inds ([],[]) = True
-    filterBSym inds ((x:xs),(y:ys))
+    filterBSym inds (x:xs,y:ys)
                 | xVal < yVal = True 
                 | xVal == yVal = filterBSym inds (xs,ys)
                 | otherwise = False 
@@ -1618,7 +1614,7 @@ module Math.Tensor.LorentzGenerator (
              where 
                 inds = nub $ I.elems iMap 
                 n = length inds
-                allSwaps = zipWith (\x y -> I.fromList $ zip x y) (repeat inds) $ permutations [0..n-1]
+                allSwaps = map ((\x y -> I.fromList $ zip x y) inds) $ permutations [0..n-1]
 
     getAllIndLists :: [Int] -> [[Int]] 
     getAllIndLists l = map I.elems $ getAllIndListsMap $ I.fromList $ zip [1..] l 
@@ -1651,7 +1647,7 @@ module Math.Tensor.LorentzGenerator (
                 where 
                     iVal = (I.!) iMap i
                     jVal = (I.!) iMap j
-                    swapBlocks (m1,m2) x = let m = I.fromList $ (zip m1 m2) ++ (zip m2 m1) 
+                    swapBlocks (m1,m2) x = let m = I.fromList $ zip m1 m2 ++ zip m2 m1 
                                          in  fromMaybe x $ I.lookup x m
                     newMap = canonicalizeBlockPair (is,js) iMap 
                     
@@ -1659,8 +1655,8 @@ module Math.Tensor.LorentzGenerator (
     canonicalizeIntMap :: Symmetry -> I.IntMap Int -> I.IntMap Int 
     canonicalizeIntMap (p,ap,b,c,bc) iMap = iMap2
             where 
-                allBlocks = b ++ (concat $ map mkBlocksFromBlockCycle bc) 
-                allPairs = p ++ ap ++ (concat $ map mkSymsFromCycle c)
+                allBlocks = b ++ concatMap mkBlocksFromBlockCycle bc
+                allPairs = p ++ ap ++ concatMap mkSymsFromCycle c
                 iMap1 = foldr canonicalizePair iMap allPairs 
                 iMap2 = foldr canonicalizeBlockPair iMap1 allBlocks 
 
@@ -1675,7 +1671,7 @@ module Math.Tensor.LorentzGenerator (
                                           (Just j, Just k) -> [[k] | k <- [max j (k+1) .. 3]]
                 where 
                     (symB,aSymB) = (lookup 1 symBounds, lookup 1 aSymBounds)
-    allList' i syms aSyms symBounds aSymBounds = concat $ map (\x -> (:) <$> [x] <*> (allList' (i-1) newSyms newASyms (newSymBounds x) (newASymBounds x))) l
+    allList' i syms aSyms symBounds aSymBounds = concatMap (\x -> (:) <$> [x] <*> allList' (i-1) newSyms newASyms (newSymBounds x) (newASymBounds x)) l
                 where 
                     (symB,aSymB) = (lookup 1 symBounds, lookup 1 aSymBounds)
                     l' = case (symB, aSymB) of
@@ -1683,7 +1679,7 @@ module Math.Tensor.LorentzGenerator (
                         (Nothing, Just j) ->  [j+1..3]
                         (Nothing, Nothing) -> [0..3]
                         (Just j, Just k) -> [max j (k+1) .. 3]
-                    l = if (isJust newASymB) then filter (<3) l' else l' 
+                    l = if isJust newASymB then filter (<3) l' else l' 
                     newSyms = map (\(x,y) -> (x-1,y-1)) syms
                     newASyms = map (\(x,y) -> (x-1,y-1)) aSyms
                     newSymB = lookup 1 syms 
@@ -1703,14 +1699,14 @@ module Math.Tensor.LorentzGenerator (
     allList ord (syms,aSyms,_,_,_) =  allList' ord syms aSyms [] []
             
     mkEvalMaps :: Int -> [[Int]] -> [I.IntMap Int] 
-    mkEvalMaps i l = map (\x -> I.fromList $ zip [1..i] x) l 
+    mkEvalMaps i = map (I.fromList . zip [1..i])
 
     mkEvalMap :: Int -> [Int] -> I.IntMap Int 
-    mkEvalMap i l = I.fromList $ zip [1..i] l 
+    mkEvalMap i = I.fromList . zip [1..i]
 
 
     mkEvalMapsInds :: forall (n :: Nat). SingI n => Int -> [[Int]] -> [(I.IntMap Int, IndTupleST n 0)]
-    mkEvalMapsInds i l = map (\x -> (I.fromList $ zip [1..i] x, (fromList' $ map toEnum x, Empty))) l 
+    mkEvalMapsInds i = map (\x -> (I.fromList $ zip [1..i] x, (fromList' $ map toEnum x, Empty)))
 
 
     --use the above functions to construct ansätze without providing eval lists by hand 
@@ -1718,36 +1714,36 @@ module Math.Tensor.LorentzGenerator (
     mkAnsatzTensorEigIOSym' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
     mkAnsatzTensorEigIOSym' ord symmetries =
               do
-                let evalL = filter (\x -> filterAllSym x symmetries) $ allList ord symmetries
+                let evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
                 mkAnsatzTensorEigIOSym ord symmetries evalL   
 
     mkAnsatzTensorEigSym' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
     mkAnsatzTensorEigSym' ord symmetries = mkAnsatzTensorEigSym ord symmetries evalL
             where
-                evalL = filter (\x -> filterAllSym x symmetries) $ allList ord symmetries
+                evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 
     mkAnsatzTensorFastSym' :: forall (n :: Nat). SingI n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
     mkAnsatzTensorFastSym' ord symmetries = mkAnsatzTensorFastSym ord symmetries evalL
             where
-                evalL = filter (\x -> filterAllSym x symmetries) $ allList ord symmetries
+                evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 
     --and without explicit symmetrization
 
     mkAnsatzTensorEigIO' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
     mkAnsatzTensorEigIO' ord symmetries =
               do
-                let evalL = filter (\x -> filterAllSym x symmetries) $ allList ord symmetries
+                let evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
                 mkAnsatzTensorEigIO ord symmetries evalL   
 
     mkAnsatzTensorEig' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
     mkAnsatzTensorEig' ord symmetries = mkAnsatzTensorEig ord symmetries evalL
             where
-                evalL = filter (\x -> filterAllSym x symmetries) $ allList ord symmetries
+                evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 
     mkAnsatzTensorFast' :: forall (n :: Nat). SingI n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational)) 
     mkAnsatzTensorFast' ord symmetries = mkAnsatzTensorFast ord symmetries evalL
             where
-                evalL = filter (\x -> filterAllSym x symmetries) $ allList ord symmetries
+                evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 
     --abstract tensor evaluation lists 
 
@@ -1758,7 +1754,7 @@ module Math.Tensor.LorentzGenerator (
     trianMapArea :: I.IntMap [Int]
     trianMapArea = I.fromList $ zip [1..21] list 
             where 
-                list = [ [a,b,c,d] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], (isAreaSorted a b c d)]
+                list = [ [a,b,c,d] | a <- [0..2], b <- [a+1..3], c <- [a..2], d <- [c+1..3], isAreaSorted a b c d]
 
     trianMap2 :: I.IntMap [Int] 
     trianMap2 = I.fromList $ zip [1..10] list 
@@ -1875,7 +1871,7 @@ module Math.Tensor.LorentzGenerator (
           where 
               trian2 = trianMap2
               trianArea = trianMapArea
-              list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', areaMult a' * areaMult b' * areaMult c' * iMult2 i' * iMult2 j' * iMult2 k', map (\[[a,i],[b,j],[c,k]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Append (Ind9 $ i-1) $ Append (Ind9 $ j-1) $ singletonInd (Ind9 $ k-1), Empty, Empty, Empty) ) $ nub $ permutations [[a,i],[b,j],[c,k]]) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], k <- [1..10], not (a==b && i>j), not (b==c && j>k) ]
+              list = [ let (a',b',c',i', j', k') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trian2 i, (I.!) trian2 j, (I.!) trian2 k) in  (a' ++ i' ++ b' ++ j' ++ c' ++ k', areaMult a' * areaMult b' * areaMult c' * iMult2 i' * iMult2 j' * iMult2 k', map (\[[a,i],[b,j],[c,k]] -> (Append (Ind20 $ a-1) $ Append (Ind20 $ b-1) $ singletonInd (Ind20 $ c-1), Empty, Append (Ind9 $ i-1) $ Append (Ind9 $ j-1) $ singletonInd (Ind9 $ k-1), Empty, Empty, Empty) ) $ nub $ permutations [[a,i],[b,j],[c,k]]) | a <- [1..21], b <- [a..21], c <- [b..21], i <- [1..10], j <- [1..10], not (a==b && i>j), k <- [1..10], not (b==c && j>k) ]
      
     --order 4 
  

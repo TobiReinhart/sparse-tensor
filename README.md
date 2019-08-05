@@ -1,1 +1,1 @@
-# HaskellTensor
+# sparse-tensor

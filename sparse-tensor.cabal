@@ -36,4 +36,4 @@ library
                        Math.Tensor.LorentzGenerator
                        Math.Tensor.Examples.Gravity
                        Math.Tensor.Examples.Gravity.DiffeoSymEqns
-  ghc-options:         -j -funbox-strict-fields
+  ghc-options:         -funbox-strict-fields

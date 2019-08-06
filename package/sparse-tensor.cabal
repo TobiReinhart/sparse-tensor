@@ -20,19 +20,19 @@ source-repository head
 library
   hs-source-dirs:      src
   default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5,
-                       ghc >= 8.0.1 && < 8.6,
-                       containers,
-                       tf-random,
-                       ghc-typelits-natnormalise,
-                       ghc-typelits-knownnat,
-                       eigen == 3.3.4.1,
-                       parallel,
-                       deepseq,
-                       cereal,
-                       singletons,
-                       bytestring,
-                       zlib
+  build-depends:       base                       >= 4.7 && < 5,
+                       ghc                        >= 8.0.1 && < 8.6,
+                       containers                 >= 0.5.7 && < 0.6,
+                       tf-random                  >= 0.5 && < 0.6,
+                       ghc-typelits-natnormalise  >= 0.6.2 && < 0.7,
+                       ghc-typelits-knownnat      >= 0.5.1 && < 0.7,
+                       eigen                      == 3.3.4.1,
+                       parallel                   >= 3.2.2 && < 3.3,
+                       deepseq                    >= 1.4.2 && < 1.5,
+                       cereal                     >= 0.5.7 && < 0.6,
+                       singletons                 >= 2.4.1 && < 2.5,
+                       bytestring                 >= 0.10.8 && < 0.11,
+                       zlib                       >= 0.6.2 && < 0.7
   exposed-modules:     Math.Tensor
                        Math.Tensor.LorentzGenerator
                        Math.Tensor.Examples.Gravity

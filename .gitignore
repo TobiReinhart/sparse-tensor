@@ -26,3 +26,4 @@ cabal.project.local~
 *.dat
 *.dat.gz
 *.txt
+stack.yaml.lock

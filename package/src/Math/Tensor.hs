@@ -144,7 +144,6 @@ instance (KnownNat n, Generic a) => Generic (IndList n a) where
     to r = fromList' $ to r
     from = from . toList
 
-deriving instance Generic Int
 deriving instance (KnownNat n, Generic a, Serialize a) => Serialize (IndList n a)
 
 instance (NFData a) => NFData (IndList n a) where

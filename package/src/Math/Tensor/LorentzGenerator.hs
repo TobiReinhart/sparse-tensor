@@ -11,7 +11,7 @@
 {-# LANGUAGE TupleSections #-}
 
 module Math.Tensor.LorentzGenerator (
-AnsatzForestEpsilon(..), AnsatzForestEta(..), Eta(..), Epsilon(..), Var(..),
+AnsatzForestEpsilon(..), AnsatzForestEta(..), Eta(..), Epsilon(..), Var(..), Symmetry,
 flattenForest, flattenForestEpsilon, drawAnsatzEta, drawAnsatzEpsilon,
 mkAnsatzTensorEig, mkAnsatzTensorEigAbs,
 mkAnsatzTensorFast, mkAnsatzTensorFastAbs,

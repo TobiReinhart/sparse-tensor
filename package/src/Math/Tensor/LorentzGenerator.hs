@@ -815,16 +815,16 @@ that occur due to implicit antisymmetries in 5 or more indices.
 
 --evaluate the nodes, i.e. eta and epsilon
 
-evalNodeEta :: M.Map [Int] Int -> I.IntMap Int -> Eta -> Maybe Int
-evalNodeEta epsM iMap (Eta x y)
+evalNodeEta :: I.IntMap Int -> Eta -> Maybe Int
+evalNodeEta iMap (Eta x y)
             | a == b && a == 0 = Just (-1)
             | a == b = Just 1
             | otherwise = Nothing
              where
                 [a,b] = [(I.!) iMap x, (I.!) iMap y]
 
-evalNodeEpsilon :: M.Map [Int] Int -> I.IntMap Int -> Epsilon -> Maybe Int
-evalNodeEpsilon epsM iMap (Epsilon w x y z) = M.lookup l epsM
+evalNodeEpsilon :: I.IntMap Int -> Epsilon -> Maybe Int
+evalNodeEpsilon iMap (Epsilon w x y z) = M.lookup l epsMap
              where
                 l = [(I.!) iMap w, (I.!) iMap x, (I.!) iMap y, (I.!) iMap z]
 
@@ -835,39 +835,39 @@ epsMap = M.fromList $ map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
 
 --basic tree eval function
 
-evalAnsatzForestEta :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEta -> I.IntMap Int
-evalAnsatzForestEta epsM evalM (Leaf (Var x y)) = I.singleton y x
-evalAnsatzForestEta epsM evalM (ForestEta m) = M.foldlWithKey' foldF I.empty m
+evalAnsatzForestEta :: I.IntMap Int -> AnsatzForestEta -> I.IntMap Int
+evalAnsatzForestEta evalM (Leaf (Var x y)) = I.singleton y x
+evalAnsatzForestEta evalM (ForestEta m) = M.foldlWithKey' foldF I.empty m
             where
-                foldF b k a = let nodeVal = evalNodeEta epsM evalM k
+                foldF b k a = let nodeVal = evalNodeEta evalM k
                               in if isNothing nodeVal then b
-                                 else I.unionWith (+) (I.map (fromJust nodeVal *) (evalAnsatzForestEta epsM evalM a)) b
-evalAnsatzForestEta epsM evalM EmptyForest = I.empty
+                                 else I.unionWith (+) (I.map (fromJust nodeVal *) (evalAnsatzForestEta evalM a)) b
+evalAnsatzForestEta evalM EmptyForest = I.empty
 
-evalAnsatzForestEpsilon :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEpsilon -> I.IntMap Int
-evalAnsatzForestEpsilon epsM evalM = M.foldlWithKey' foldF I.empty
+evalAnsatzForestEpsilon :: I.IntMap Int -> AnsatzForestEpsilon -> I.IntMap Int
+evalAnsatzForestEpsilon evalM = M.foldlWithKey' foldF I.empty
             where
-                foldF b k a = let nodeVal = evalNodeEpsilon epsM evalM k
+                foldF b k a = let nodeVal = evalNodeEpsilon evalM k
                               in if isNothing nodeVal then b
-                                 else I.unionWith (+) (I.map (fromJust nodeVal *) (evalAnsatzForestEta epsM evalM a)) b
+                                 else I.unionWith (+) (I.map (fromJust nodeVal *) (evalAnsatzForestEta evalM a)) b
 
 --for a single Ansatz we do not need the IntMap to keep track of the VarLabels -> eval to a number
 
-eval1AnsatzForestEta :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEta -> Int
-eval1AnsatzForestEta epsM evalM (Leaf (Var x _)) = x
-eval1AnsatzForestEta epsM evalM (ForestEta m) = M.foldlWithKey' foldF 0 m
+eval1AnsatzForestEta :: I.IntMap Int -> AnsatzForestEta -> Int
+eval1AnsatzForestEta evalM (Leaf (Var x _)) = x
+eval1AnsatzForestEta evalM (ForestEta m) = M.foldlWithKey' foldF 0 m
             where
-                foldF b k a = let nodeVal = evalNodeEta epsM evalM k
+                foldF b k a = let nodeVal = evalNodeEta evalM k
                               in if isNothing nodeVal then b
-                                 else  b + (fromJust nodeVal * eval1AnsatzForestEta epsM evalM a)
-eval1AnsatzForestEta epsM evalM EmptyForest = 0
+                                 else  b + (fromJust nodeVal * eval1AnsatzForestEta evalM a)
+eval1AnsatzForestEta evalM EmptyForest = 0
 
-eval1AnsatzForestEpsilon :: M.Map [Int] Int -> I.IntMap Int -> AnsatzForestEpsilon -> Int
-eval1AnsatzForestEpsilon epsM evalM = M.foldlWithKey' foldF 0
+eval1AnsatzForestEpsilon :: I.IntMap Int -> AnsatzForestEpsilon -> Int
+eval1AnsatzForestEpsilon evalM = M.foldlWithKey' foldF 0
             where
-                foldF b k a = let nodeVal = evalNodeEpsilon epsM evalM k
+                foldF b k a = let nodeVal = evalNodeEpsilon evalM k
                               in if isNothing nodeVal then b
-                                else  b + (fromJust nodeVal * eval1AnsatzForestEta epsM evalM a)
+                                else  b + (fromJust nodeVal * eval1AnsatzForestEta evalM a)
 
 --eval a given 1Var ansatz to a sparse Matrix (a row vector) -> Eigen Indices start at 0 !!
 
@@ -882,19 +882,19 @@ mkVecList mkAns dofList evalM = vecList
                       if null l then Nothing else Just $ Sparse.scale (1/max) vec
 
 
-evalAnsatzEtaVecListEig :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEta -> Maybe Sparse.SparseMatrixXd
-evalAnsatzEtaVecListEig epsM evalM EmptyForest = Nothing
-evalAnsatzEtaVecListEig epsM evalM f = mkVecList mkAns dofList evalM
+evalAnsatzEtaVecListEig :: [I.IntMap Int] -> AnsatzForestEta -> Maybe Sparse.SparseMatrixXd
+evalAnsatzEtaVecListEig evalM EmptyForest = Nothing
+evalAnsatzEtaVecListEig evalM f = mkVecList mkAns dofList evalM
         where
             dofList = zip [0..] evalM
-            mkAns (i,j) = let ansVal = eval1AnsatzForestEta epsM j f
+            mkAns (i,j) = let ansVal = eval1AnsatzForestEta j f
                           in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)
 
-evalAnsatzEpsilonVecListEig :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe Sparse.SparseMatrixXd
-evalAnsatzEpsilonVecListEig epsM evalM f  = if f == M.empty then Nothing else mkVecList mkAns dofList evalM
+evalAnsatzEpsilonVecListEig :: [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe Sparse.SparseMatrixXd
+evalAnsatzEpsilonVecListEig evalM f  = if f == M.empty then Nothing else mkVecList mkAns dofList evalM
         where
             dofList = zip [0..] evalM
-            mkAns (i,j) = let ansVal = eval1AnsatzForestEpsilon epsM j f
+            mkAns (i,j) = let ansVal = eval1AnsatzForestEpsilon j f
                           in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)
 
 --eval a given Forest for all inds
@@ -904,49 +904,49 @@ type AssocsList a = [([(Int,Int)],a)]
 type AssocsListAbs a = [([(Int,Int)],Int,a)]
 
 
-evalAllEta :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEta -> [[(Int,Int)]]
-evalAllEta epsM [] f = []
-evalAllEta epsM evalMs EmptyForest = []
-evalAllEta epsM evalMs f = l'
+evalAllEta :: [I.IntMap Int] -> AnsatzForestEta -> [[(Int,Int)]]
+evalAllEta [] f = []
+evalAllEta evalMs EmptyForest = []
+evalAllEta evalMs f = l'
             where
-                l = map (\x -> filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f) evalMs
+                l = map (\x -> filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta x f) evalMs
                 l' = runEval $ parListChunk 500 rdeepseq l
 
-evalAllTensorEta :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, a)] -> AnsatzForestEta -> AssocsList a
-evalAllTensorEta epsM [] f = []
-evalAllTensorEta epsM evalMs EmptyForest = []
-evalAllTensorEta epsM evalMs f = l'
+evalAllTensorEta :: (NFData a) => [(I.IntMap Int, a)] -> AnsatzForestEta -> AssocsList a
+evalAllTensorEta [] f = []
+evalAllTensorEta evalMs EmptyForest = []
+evalAllTensorEta evalMs f = l'
             where
-                l = map (\(x,z) -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f,z)) evalMs
+                l = map (\(x,z) -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta x f,z)) evalMs
                 l' = runEval $ parListChunk 500 rdeepseq l
 
-evalAllEpsilon :: M.Map [Int] Int -> [I.IntMap Int] -> AnsatzForestEpsilon -> [[(Int,Int)]]
-evalAllEpsilon epsM  [] f = []
-evalAllEpsilon epsM evalMs f = if f == M.empty then [] else l'
+evalAllEpsilon :: [I.IntMap Int] -> AnsatzForestEpsilon -> [[(Int,Int)]]
+evalAllEpsilon [] f = []
+evalAllEpsilon evalMs f = if f == M.empty then [] else l'
             where
-                l = map (\x -> filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f) evalMs
+                l = map (\x -> filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon x f) evalMs
                 l' = runEval $ parListChunk 500 rdeepseq l
 
-evalAllTensorEpsilon :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, a)] -> AnsatzForestEpsilon -> AssocsList a
-evalAllTensorEpsilon epsM [] f = []
-evalAllTensorEpsilon epsM evalMs f = if f == M.empty then [] else l'
+evalAllTensorEpsilon :: (NFData a) => [(I.IntMap Int, a)] -> AnsatzForestEpsilon -> AssocsList a
+evalAllTensorEpsilon [] f = []
+evalAllTensorEpsilon evalMs f = if f == M.empty then [] else l'
             where
-                l = map (\(x,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f,z)) evalMs
+                l = map (\(x,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon x f,z)) evalMs
                 l' = runEval $ parListChunk 500 rdeepseq l
 
-evalAllTensorEtaAbs :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> AssocsListAbs a
-evalAllTensorEtaAbs epsM [] f = []
-evalAllTensorEtaAbs epsM evalMs EmptyForest = []
-evalAllTensorEtaAbs epsM evalMs f = l'
+evalAllTensorEtaAbs :: (NFData a) => [(I.IntMap Int, Int, a)] -> AnsatzForestEta -> AssocsListAbs a
+evalAllTensorEtaAbs [] f = []
+evalAllTensorEtaAbs evalMs EmptyForest = []
+evalAllTensorEtaAbs evalMs f = l'
             where
-                l = map (\(x,y,z) -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta epsM x f, y,z)) evalMs
+                l = map (\(x,y,z) -> (filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEta x f, y,z)) evalMs
                 l' = runEval $ parListChunk 500 rdeepseq l
 
-evalAllTensorEpsilonAbs :: (NFData a) => M.Map [Int] Int -> [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> AssocsListAbs a
-evalAllTensorEpsilonAbs epsM [] f = []
-evalAllTensorEpsilonAbs epsM evalMs f = if f == M.empty then [] else l'
+evalAllTensorEpsilonAbs :: (NFData a) => [(I.IntMap Int, Int, a)] -> AnsatzForestEpsilon -> AssocsListAbs a
+evalAllTensorEpsilonAbs [] f = []
+evalAllTensorEpsilonAbs evalMs f = if f == M.empty then [] else l'
             where
-                l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon epsM x f, y,z)) evalMs
+                l = map (\(x,y,z) -> ( filter (\(a,b) -> b /= 0) $ I.assocs $ evalAnsatzForestEpsilon x f, y,z)) evalMs
                 l' = runEval $ parListChunk 500 rdeepseq l
 
 
@@ -1006,22 +1006,22 @@ progress n total
     = show n ++ " of " ++ show total
 -}
 
-getNewRDat epsM evalM newAns rDat = newRDat
+getNewRDat evalM newAns rDat = newRDat
     where
-                newVec = evalAnsatzEtaVecListEig epsM evalM newAns
+                newVec = evalAnsatzEtaVecListEig evalM newAns
                 newRDat = checkNumericLinDepEig rDat newVec
 
-getNewRDatEps epsM evalM newAns rDat = newRDat
+getNewRDatEps evalM newAns rDat = newRDat
     where
-                newVec = evalAnsatzEpsilonVecListEig epsM evalM newAns
+                newVec = evalAnsatzEpsilonVecListEig evalM newAns
                 newRDat = checkNumericLinDepEig rDat newVec
 
 getNewAns symList etaList rDat = symAnsatzForestEta symList $ mkForestFromAscList (etaList,Var 1 (getVarNrEig rDat + 1))
 getNewAnsEps symList epsList etaList rDat = symAnsatzForestEps symList $ mkForestFromAscListEpsilon (epsList,etaList,Var 1 (getVarNrEig rDat + 1))
 
 {-
-addOrDiscardEtaEigIO :: Symmetry -> Int -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEta, RankDataEig) -> (Int, [Eta]) -> IO (AnsatzForestEta, RankDataEig)
-addOrDiscardEtaEigIO symList len epsM evalM (ans,rDat) (num, etaL)
+addOrDiscardEtaEigIO :: Symmetry -> Int -> [I.IntMap Int] -> (AnsatzForestEta, RankDataEig) -> (Int, [Eta]) -> IO (AnsatzForestEta, RankDataEig)
+addOrDiscardEtaEigIO symList len evalM (ans,rDat) (num, etaL)
             | isElem etaL ans = do
                                     alreadyPresentIO num len rDat
                                     return (ans,rDat)
@@ -1034,25 +1034,25 @@ addOrDiscardEtaEigIO symList len epsM evalM (ans,rDat) (num, etaL)
                                                     return (sumAns,newRDat')
              where
                 newAns = getNewAns symList etaL rDat
-                newRDat = getNewRDat epsM evalM newAns rDat
+                newRDat = getNewRDat evalM newAns rDat
                 sumAns = addForests ans newAns
 -}
 
-addOrDiscardEtaEig :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEta, RankDataEig) -> [Eta] -> (AnsatzForestEta, RankDataEig)
-addOrDiscardEtaEig symList epsM evalM (ans,rDat) etaL
+addOrDiscardEtaEig :: Symmetry -> [I.IntMap Int] -> (AnsatzForestEta, RankDataEig) -> [Eta] -> (AnsatzForestEta, RankDataEig)
+addOrDiscardEtaEig symList evalM (ans,rDat) etaL
             | isElem etaL ans = (ans,rDat)
             | otherwise = case newRDat of
                                Nothing          -> (ans,rDat)
                                Just newRDat'    -> (sumAns,newRDat')
              where
                 newAns = getNewAns symList etaL rDat
-                newRDat = getNewRDat epsM evalM newAns rDat
+                newRDat = getNewRDat evalM newAns rDat
                 sumAns = addForests ans newAns
 
 
 {-
-addOrDiscardEpsilonEigIO :: Symmetry -> Int -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataEig) -> (Int,(Epsilon,[Eta])) -> IO (AnsatzForestEpsilon, RankDataEig)
-addOrDiscardEpsilonEigIO symList len epsM evalM (ans,rDat) (num,(epsL,etaL))
+addOrDiscardEpsilonEigIO :: Symmetry -> Int -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataEig) -> (Int,(Epsilon,[Eta])) -> IO (AnsatzForestEpsilon, RankDataEig)
+addOrDiscardEpsilonEigIO symList len evalM (ans,rDat) (num,(epsL,etaL))
             | isElemEpsilon (epsL,etaL) ans = do
                                     alreadyPresentIO num len rDat
                                     return (ans,rDat)
@@ -1067,48 +1067,48 @@ addOrDiscardEpsilonEigIO symList len epsM evalM (ans,rDat) (num,(epsL,etaL))
                                                     return (sumAns,newRDat')
              where
                 newAns = getNewAnsEps symList epsL etaL rDat
-                newRDat = getNewRDatEps epsM evalM newAns rDat
+                newRDat = getNewRDatEps evalM newAns rDat
                 sumAns = addForestsEpsilon ans newAns
 -}
 
-addOrDiscardEpsilonEig :: Symmetry ->  M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataEig) -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataEig)
-addOrDiscardEpsilonEig symList epsM evalM (ans,rDat) (epsL,etaL)
+addOrDiscardEpsilonEig :: Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataEig) -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataEig)
+addOrDiscardEpsilonEig symList evalM (ans,rDat) (epsL,etaL)
             | isElemEpsilon (epsL,etaL) ans = (ans,rDat)
             | otherwise = case newRDat of
                                Nothing          -> (ans,rDat)
                                Just newRDat'    -> (sumAns,newRDat')
              where
                 newAns = getNewAnsEps symList epsL etaL rDat
-                newRDat = getNewRDatEps epsM evalM newAns rDat
+                newRDat = getNewRDatEps evalM newAns rDat
                 sumAns = addForestsEpsilon ans newAns
 
 
 --construct the RankData from the first nonzero Ansatz
 
 {-
-mk1stRankDataEtaEigIO :: Symmetry -> Int -> [(Int,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> IO (AnsatzForestEta,RankDataEig,[(Int,[Eta])])
-mk1stRankDataEtaEigIO symL numEta etaL epsM evalM =
+mk1stRankDataEtaEigIO :: Symmetry -> Int -> [(Int,[Eta])] -> [I.IntMap Int] -> IO (AnsatzForestEta,RankDataEig,[(Int,[Eta])])
+mk1stRankDataEtaEigIO symL numEta etaL evalM =
         do
             putStrLn $ show (fst $ head etaL) ++ " of " ++ show numEta
             let newAns = symAnsatzForestEta symL $ mkForestFromAscList (snd $ head etaL,Var 1 1)
-            let newVec = evalAnsatzEtaVecListEig epsM evalM newAns
+            let newVec = evalAnsatzEtaVecListEig evalM newAns
             let restList = tail etaL
             case newVec of
-                                Nothing         -> if null restList then return (EmptyForest ,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEigIO symL numEta restList epsM evalM
+                                Nothing         -> if null restList then return (EmptyForest ,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEigIO symL numEta restList evalM
                                 Just newVec'    -> return (newAns, (newMat, newVec'), restList)
                                     where
                                         newVecTrans = Sparse.transpose newVec'
                                         newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
 -}
 
-mk1stRankDataEtaEig :: Symmetry -> [[Eta]] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEta,RankDataEig,[[Eta]])
-mk1stRankDataEtaEig symL etaL epsM evalM = output
+mk1stRankDataEtaEig :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,RankDataEig,[[Eta]])
+mk1stRankDataEtaEig symL etaL evalM = output
         where
             newAns = symAnsatzForestEta symL $ mkForestFromAscList (head etaL,Var 1 1)
-            newVec = evalAnsatzEtaVecListEig epsM evalM newAns
+            newVec = evalAnsatzEtaVecListEig evalM newAns
             restList = tail etaL
             output = case newVec of
-                                Nothing         -> if null restList then (EmptyForest,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEig symL restList epsM evalM
+                                Nothing         -> if null restList then (EmptyForest,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEig symL restList evalM
                                 Just newVec'    -> (newAns, (newMat, newVec'), restList)
                                     where
                                         newVecTrans = Sparse.transpose newVec'
@@ -1116,29 +1116,29 @@ mk1stRankDataEtaEig symL etaL epsM evalM = output
 
 
 {-
-mk1stRankDataEpsilonEigIO :: Symmetry -> Int -> [(Int,(Epsilon,[Eta]))] -> M.Map [Int] Int -> [I.IntMap Int] -> IO (AnsatzForestEpsilon,RankDataEig,[(Int,(Epsilon,[Eta]))])
-mk1stRankDataEpsilonEigIO symL numEps epsL epsM evalM =
+mk1stRankDataEpsilonEigIO :: Symmetry -> Int -> [(Int,(Epsilon,[Eta]))] -> [I.IntMap Int] -> IO (AnsatzForestEpsilon,RankDataEig,[(Int,(Epsilon,[Eta]))])
+mk1stRankDataEpsilonEigIO symL numEps epsL evalM =
         do
             putStrLn $ show (fst $ head epsL) ++ " of " ++ show numEps
             let newAns = symAnsatzForestEps symL $ mkForestFromAscListEpsilon (fst $ snd $ head epsL, snd $ snd $ head epsL,Var 1 1)
-            let newVec = evalAnsatzEpsilonVecListEig epsM evalM newAns
+            let newVec = evalAnsatzEpsilonVecListEig evalM newAns
             let restList = tail epsL
             case newVec of
-                                Nothing         -> if null restList then return (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEigIO symL numEps restList epsM evalM
+                                Nothing         -> if null restList then return (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEigIO symL numEps restList evalM
                                 Just newVec'    -> return (newAns,(newMat, newVec'), restList)
                                     where
                                         newVecTrans = Sparse.transpose newVec'
                                         newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
 -}
 
-mk1stRankDataEpsilonEig :: Symmetry -> [(Epsilon,[Eta])] -> M.Map [Int] Int -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankDataEig,[(Epsilon,[Eta])])
-mk1stRankDataEpsilonEig symL epsL epsM evalM = output
+mk1stRankDataEpsilonEig :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankDataEig,[(Epsilon,[Eta])])
+mk1stRankDataEpsilonEig symL epsL evalM = output
         where
             newAns = symAnsatzForestEps symL $ mkForestFromAscListEpsilon (fst $ head epsL, snd $ head epsL,Var 1 1)
-            newVec = evalAnsatzEpsilonVecListEig epsM evalM newAns
+            newVec = evalAnsatzEpsilonVecListEig evalM newAns
             restList = tail epsL
             output = case newVec of
-                                Nothing         -> if null restList then (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEig symL restList epsM evalM
+                                Nothing         -> if null restList then (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEig symL restList evalM
                                 Just newVec'    -> (newAns,(newMat, newVec'), restList)
                                     where
                                         newVecTrans = Sparse.transpose newVec'
@@ -1151,13 +1151,12 @@ mk1stRankDataEpsilonEig symL epsL epsM evalM = output
 reduceAnsatzEtaEigIO :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> IO (AnsatzForestEta,Sparse.SparseMatrixXd)
 reduceAnsatzEtaEigIO symL etaL evalM =
         do
-            let epsM = epsMap
             let etaLLength = length $ force etaL
             putStrLn $ "fast-forward to first non-vanishing ansatz in list of " ++ show etaLLength
             let zipped = zip [1..] etaL
-            (ans1,rDat1,restEtaL) <- mk1stRankDataEtaEigIO symL etaLLength zipped epsM evalM
+            (ans1,rDat1,restEtaL) <- mk1stRankDataEtaEigIO symL etaLLength zipped evalM
             putStrLn "first non-vanishing ansatz found"
-            (finalForest, (_,finalMat)) <- foldM (addOrDiscardEtaEigIO symL etaLLength epsM evalM) (ans1,rDat1) restEtaL
+            (finalForest, (_,finalMat)) <- foldM (addOrDiscardEtaEigIO symL etaLLength evalM) (ans1,rDat1) restEtaL
             putStrLn "finished!"
             if null evalM
                 then return (EmptyForest, Sparse.fromList 0 0 [])
@@ -1170,22 +1169,20 @@ reduceAnsatzEtaEig symL etaL evalM
         | null etaL = (EmptyForest, Sparse.fromList 0 0 [])
         | otherwise = (finalForest, finalMat)
             where
-                epsM = epsMap
-                (ans1,rDat1,restEtaL) = mk1stRankDataEtaEig symL etaL epsM evalM
-                (finalForest, (_,finalMat)) = foldl' (addOrDiscardEtaEig symL epsM evalM) (ans1,rDat1) restEtaL
+                (ans1,rDat1,restEtaL) = mk1stRankDataEtaEig symL etaL evalM
+                (finalForest, (_,finalMat)) = foldl' (addOrDiscardEtaEig symL evalM) (ans1,rDat1) restEtaL
 
 
 {-
 reduceAnsatzEpsilonEigIO :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> IO (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
 reduceAnsatzEpsilonEigIO symL epsL evalM =
         do
-            let epsM = epsMap
             let epsLLength = length $ force epsL
             putStrLn $ "fast-forward to first non-vanishing ansatz in list of " ++ show epsLLength
             let zipped = zip [1..] epsL
-            (ans1,rDat1,restEpsL) <- mk1stRankDataEpsilonEigIO symL epsLLength zipped epsM evalM
+            (ans1,rDat1,restEpsL) <- mk1stRankDataEpsilonEigIO symL epsLLength zipped evalM
             putStrLn "first non-vanishing ansatz found"
-            (finalForest, (_,finalMat)) <- foldM (addOrDiscardEpsilonEigIO symL epsLLength epsM evalM) (ans1,rDat1) restEpsL
+            (finalForest, (_,finalMat)) <- foldM (addOrDiscardEpsilonEigIO symL epsLLength evalM) (ans1,rDat1) restEpsL
             putStrLn "finished!"
             if null evalM
                 then return (M.empty, Sparse.fromList 0 0 [])
@@ -1198,9 +1195,8 @@ reduceAnsatzEpsilonEig symL epsL evalM
     | null epsL = (M.empty, Sparse.fromList 0 0 [])
     | otherwise = (finalForest, finalMat)
         where
-            epsM = epsMap
-            (ans1,rDat1,restEpsL) = mk1stRankDataEpsilonEig symL epsL epsM evalM
-            (finalForest, (_,finalMat)) = foldl' (addOrDiscardEpsilonEig symL epsM evalM) (ans1,rDat1) restEpsL
+            (ans1,rDat1,restEpsL) = mk1stRankDataEpsilonEig symL epsL evalM
+            (finalForest, (_,finalMat)) = foldl' (addOrDiscardEpsilonEig symL evalM) (ans1,rDat1) restEpsL
 
 --construct a basis ansatz forest
 
@@ -1271,15 +1267,15 @@ tensor with another tensor with given symmetry one needs to account for the now 
 we used factor less symmetriser functions.
 --}
 
-evalToTensSym :: Symmetry -> M.Map [Int] Int -> [(I.IntMap Int, IndTupleST n1 0)] -> [(I.IntMap Int, IndTupleST n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational)
-evalToTensSym (p,ap,b,c,bc) epsM evalEta evalEps ansEta ansEps = symTens
+evalToTensSym :: Symmetry -> [(I.IntMap Int, IndTupleST n1 0)] -> [(I.IntMap Int, IndTupleST n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational)
+evalToTensSym (p,ap,b,c,bc) evalEta evalEps ansEta ansEps = symTens
             where
                 p' = map (\(x,y) -> (x-1,y-1)) p
                 ap' = map (\(x,y) -> (x-1,y-1)) ap
                 b' = map (\(x,y) -> (map (\z -> z-1) x, map (\z' -> z'-1) y) ) b
                 c' = map (map (subtract 1)) c
                 bc' = map (map (map (subtract 1))) bc
-                tens = evalToTens epsM evalEta evalEps ansEta ansEps
+                tens = evalToTens evalEta evalEps ansEta ansEps
                 symTens = foldr cyclicBlockSymATens1 (
                             foldr cyclicSymATens1 (
                                 foldr symBlockATens1 (
@@ -1290,11 +1286,11 @@ evalToTensSym (p,ap,b,c,bc) epsM evalEta evalEps ansEta ansEps = symTens
                                 ) c'
                             ) bc'
 
-evalToTens :: M.Map [Int] Int -> [(I.IntMap Int, IndTupleST n1 0)] -> [(I.IntMap Int, IndTupleST n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational)
-evalToTens epsM evalEta evalEps ansEta ansEps = tens
+evalToTens :: [(I.IntMap Int, IndTupleST n1 0)] -> [(I.IntMap Int, IndTupleST n1 0)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n1 0 (AnsVar Rational)
+evalToTens evalEta evalEps ansEta ansEps = tens
             where
-                etaL = evalAllTensorEta epsM evalEta ansEta
-                epsL = evalAllTensorEpsilon epsM evalEps ansEps
+                etaL = evalAllTensorEta evalEta ansEta
+                epsL = evalAllTensorEpsilon evalEps ansEps
                 etaL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral r)) x)) etaL
                 epsL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral r)) x)) epsL
                 etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) etaL'
@@ -1303,11 +1299,11 @@ evalToTens epsM evalEta evalEps ansEta ansEps = tens
 
 --eval to abstract tensor type taling into account possible blocksymmetries and multiplicity of the ansätze
 
-evalToTensAbs :: M.Map [Int] Int -> [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> AnsatzForestEta -> AnsatzForestEpsilon -> ATens n1 0 n2 0 n3 0 (AnsVar Rational)
-evalToTensAbs epsM evalEta evalEps ansEta ansEps = fromListT6 etaRmL &+ fromListT6 epsRmL
+evalToTensAbs :: [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> AnsatzForestEta -> AnsatzForestEpsilon -> ATens n1 0 n2 0 n3 0 (AnsVar Rational)
+evalToTensAbs evalEta evalEps ansEta ansEps = fromListT6 etaRmL &+ fromListT6 epsRmL
             where
-                etaL = evalAllTensorEtaAbs epsM evalEta ansEta
-                epsL = evalAllTensorEpsilonAbs epsM evalEps ansEps
+                etaL = evalAllTensorEtaAbs evalEta ansEta
+                epsL = evalAllTensorEpsilonAbs evalEps ansEps
                 etaL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) etaL
                 epsL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) epsL
                 etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concatMap (\(x,y) -> zip x (repeat y)) etaL'
@@ -1320,7 +1316,6 @@ evalToTensAbs epsM evalEta evalEps ansEta ansEps = fromListT6 etaRmL &+ fromList
 mkAnsatzTensorEigIOSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
 mkAnsatzTensorEigIOSym ord symmetries evalL =
           do
-            let epsM = epsMap
             let evalLEta = filter isEtaList evalL
             let evalLEps = filter isEpsilonList evalL
             let evalLEtaRed = filter (isLorentzEval symmetries) evalLEta
@@ -1330,24 +1325,53 @@ mkAnsatzTensorEigIOSym ord symmetries evalL =
             let evalMEtaInds = mkEvalMapsInds ord evalLEta
             let evalMEpsInds = mkEvalMapsInds ord evalLEps
             (ansEta, ansEps, _, _) <- getFullForestEigIO ord symmetries evalMEtaRed evalMEpsRed
-            let tens = evalToTensSym symmetries epsM evalMEtaInds evalMEpsInds ansEta ansEps
+            let tens = evalToTensSym symmetries evalMEtaInds evalMEpsInds ansEta ansEps
             return (ansEta, ansEps, tens)
 -}
+
+mkEvalMap :: Int -> [Int] -> I.IntMap Int
+mkEvalMap i = I.fromList . zip [1..i]
+
+mkEvalMaps :: [[Int]] -> [I.IntMap Int]
+mkEvalMaps l = let s = length (head l) in map (mkEvalMap s) l  
+
+mkEvalMapsInds :: forall (n :: Nat). SingI n => [[Int]] -> [(I.IntMap Int, IndTupleST n 0)]
+mkEvalMapsInds l = let s = length (head l) in map (\x -> (mkEvalMap s x, (fromList' $ map toEnum x, Empty))) l
+
+mkAllEvalMaps :: forall (n :: Nat). SingI n => Symmetry -> [[Int]] -> ([I.IntMap Int], [I.IntMap Int], [(I.IntMap Int, IndTupleST n 0)], [(I.IntMap Int, IndTupleST n 0)])
+mkAllEvalMaps sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
+        where
+            evalLEta = filter isEtaList l 
+            evalLEps = filter isEpsilonList l 
+            evalLEtaRed = filter (isLorentzEval sym) evalLEta
+            evalLEpsRed = filter (isLorentzEval sym) evalLEps
+            evalMEtaRed = mkEvalMaps evalLEtaRed
+            evalMEpsRed = mkEvalMaps evalLEpsRed
+            evalMEtaInds = mkEvalMapsInds evalLEta
+            evalMEpsInds = mkEvalMapsInds evalLEps
+
+
+mkAllEvalMapsAbs :: Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> ([I.IntMap Int], [I.IntMap Int], [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])], [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])])
+mkAllEvalMapsAbs sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
+        where
+            (headList,_,_) = head l 
+            ord = length headList   
+            evalLEta = filter (\(x,_,_) -> isEtaList x) l
+            evalLEps = filter (\(x,_,_) -> isEpsilonList x) l
+            evalLEtaRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval sym x) evalLEta
+            evalLEpsRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval sym x) evalLEps
+            evalMEtaRed = mkEvalMaps evalLEtaRed
+            evalMEpsRed = mkEvalMaps evalLEpsRed
+            evalMEtaInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEta
+            evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEps
+
 
 mkAnsatzTensorEigSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
 mkAnsatzTensorEigSym ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            epsM = epsMap
-            evalLEta = filter isEtaList evalL
-            evalLEps = filter isEpsilonList evalL
-            evalLEtaRed = filter (isLorentzEval symmetries) evalLEta
-            evalLEpsRed = filter (isLorentzEval symmetries) evalLEps
-            evalMEtaRed = mkEvalMaps ord evalLEtaRed
-            evalMEpsRed = mkEvalMaps ord evalLEpsRed
-            evalMEtaInds = mkEvalMapsInds ord evalLEta
-            evalMEpsInds = mkEvalMapsInds ord evalLEps
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
             (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
-            tens = evalToTensSym symmetries epsM evalMEtaInds evalMEpsInds ansEta ansEps
+            tens = evalToTensSym symmetries evalMEtaInds evalMEpsInds ansEta ansEps
 
 
 --return the tensor without explicit symmetrisation
@@ -1356,7 +1380,6 @@ mkAnsatzTensorEigSym ord symmetries evalL = (ansEta, ansEps, tens)
 mkAnsatzTensorEigIO :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
 mkAnsatzTensorEigIO ord symmetries evalL =
           do
-            let epsM = epsMap
             let evalLEta = filter isEtaList evalL
             let evalLEps = filter isEpsilonList evalL
             let evalLEtaRed = filter (isLorentzEval symmetries) evalLEta
@@ -1366,24 +1389,16 @@ mkAnsatzTensorEigIO ord symmetries evalL =
             let evalMEtaInds = mkEvalMapsInds ord evalLEta
             let evalMEpsInds = mkEvalMapsInds ord evalLEps
             (ansEta, ansEps, _, _) <- getFullForestEigIO ord symmetries evalMEtaRed evalMEpsRed
-            let tens = evalToTens epsM evalMEtaInds evalMEpsInds ansEta ansEps
+            let tens = evalToTens evalMEtaInds evalMEpsInds ansEta ansEps
             return (ansEta, ansEps, tens)
 -}
 
 mkAnsatzTensorEig :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
 mkAnsatzTensorEig ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            epsM = epsMap
-            evalLEta = filter isEtaList evalL
-            evalLEps = filter isEpsilonList evalL
-            evalLEtaRed = filter (isLorentzEval symmetries) evalLEta
-            evalLEpsRed = filter (isLorentzEval symmetries) evalLEps
-            evalMEtaRed = mkEvalMaps ord evalLEtaRed
-            evalMEpsRed = mkEvalMaps ord evalLEpsRed
-            evalMEtaInds = mkEvalMapsInds ord evalLEta
-            evalMEpsInds = mkEvalMapsInds ord evalLEps
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
             (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
-            tens = evalToTens epsM evalMEtaInds evalMEpsInds ansEta ansEps
+            tens = evalToTens evalMEtaInds evalMEpsInds ansEta ansEps
 
 
 --return tensor as abstract tensor type
@@ -1392,7 +1407,6 @@ mkAnsatzTensorEig ord symmetries evalL = (ansEta, ansEps, tens)
 mkAnsatzTensorEigAbsIO :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> IO (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 (AnsVar Rational))
 mkAnsatzTensorEigAbsIO ord symmetries evalL =
         do
-            let epsM = epsMap
             let evalLEta = filter (\(x,_,_) -> isEtaList x) evalL
             let evalLEps = filter (\(x,_,_) -> isEpsilonList x) evalL
             let evalLEtaRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEta
@@ -1402,24 +1416,16 @@ mkAnsatzTensorEigAbsIO ord symmetries evalL =
             let evalMEtaInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z))  evalLEta
             let evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z))  evalLEps
             let (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
-            let tens = evalToTensAbs epsM evalMEtaInds evalMEpsInds ansEta ansEps
+            let tens = evalToTensAbs evalMEtaInds evalMEpsInds ansEta ansEps
             return (ansEta, ansEps, tens)
 -}
 
 mkAnsatzTensorEigAbs :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 (AnsVar Rational))
 mkAnsatzTensorEigAbs ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            epsM = epsMap
-            evalLEta = filter (\(x,_,_) -> isEtaList x) evalL
-            evalLEps = filter (\(x,_,_) -> isEpsilonList x) evalL
-            evalLEtaRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEta
-            evalLEpsRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEps
-            evalMEtaRed = mkEvalMaps ord evalLEtaRed
-            evalMEpsRed = mkEvalMaps ord evalLEpsRed
-            evalMEtaInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z))  evalLEta
-            evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z))  evalLEps
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMapsAbs symmetries evalL 
             (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
-            tens = evalToTensAbs epsM evalMEtaInds evalMEpsInds ansEta ansEps
+            tens = evalToTensAbs evalMEtaInds evalMEpsInds ansEta ansEps
 
 
 --now we start with the second way
@@ -1454,19 +1460,19 @@ getPivots l = map (1+) p
 
 --reduce linear deps in the ansätze
 
-reduceLinDepsFastEta :: M.Map [Int] Int -> [I.IntMap Int] -> Symmetry -> AnsatzForestEta -> AnsatzForestEta
-reduceLinDepsFastEta epsM evalM symL ansEta = newEtaAns
+reduceLinDepsFastEta :: [I.IntMap Int] -> Symmetry -> AnsatzForestEta -> AnsatzForestEta
+reduceLinDepsFastEta evalM symL ansEta = newEtaAns
         where
-            etaL = evalAllEta epsM evalM ansEta
+            etaL = evalAllEta evalM ansEta
             etaVars = getPivots etaL
             allEtaVars = getForestLabels ansEta
             remVarsEta =  allEtaVars \\ etaVars
             newEtaAns = relabelAnsatzForest 1 $ removeVarsEta remVarsEta ansEta
 
-reduceLinDepsFastEps :: M.Map [Int] Int -> [I.IntMap Int] -> Symmetry -> AnsatzForestEpsilon -> AnsatzForestEpsilon
-reduceLinDepsFastEps epsM evalM symL ansEps = newEpsAns
+reduceLinDepsFastEps :: [I.IntMap Int] -> Symmetry -> AnsatzForestEpsilon -> AnsatzForestEpsilon
+reduceLinDepsFastEps evalM symL ansEps = newEpsAns
         where
-            epsL = evalAllEpsilon epsM evalM ansEps
+            epsL = evalAllEpsilon evalM ansEps
             epsVars = getPivots epsL
             allEpsVars = getForestLabelsEpsilon ansEps
             remVarsEps =  allEpsVars \\ epsVars
@@ -1477,65 +1483,36 @@ reduceLinDepsFastEps epsM evalM symL ansEps = newEpsAns
 mkAnsatzFast :: Int -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon)
 mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed = (ansEtaRed, ansEpsRed)
         where
-            epsM = epsMap
             ansEta = getEtaForestFast ord symmetries
             ansEpsilon = getEpsForestFast ord symmetries
-            ansEtaRed = reduceLinDepsFastEta epsM evalMEtaRed symmetries ansEta
-            ansEpsRed' = reduceLinDepsFastEps epsM evalMEpsRed symmetries ansEpsilon
+            ansEtaRed = reduceLinDepsFastEta evalMEtaRed symmetries ansEta
+            ansEpsRed' = reduceLinDepsFastEps evalMEpsRed symmetries ansEpsilon
             ansEpsRed = relabelAnsatzForestEpsilon (1 + length (getForestLabels ansEtaRed)) ansEpsRed'
 
 mkAnsatzTensorFastSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
 mkAnsatzTensorFastSym ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            epsM = epsMap
-            evalLEta = filter isEtaList evalL
-            evalLEps = filter isEpsilonList evalL
-            evalLEtaRed = filter (isLorentzEval symmetries) evalLEta
-            evalLEpsRed = filter (isLorentzEval symmetries) evalLEps
-            evalMEtaRed = mkEvalMaps ord evalLEtaRed
-            evalMEpsRed = mkEvalMaps ord evalLEpsRed
-            evalMEtaInds = mkEvalMapsInds ord evalLEta
-            evalMEpsInds = mkEvalMapsInds ord evalLEps
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
             (ansEta, ansEps) = mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed
-            tens = evalToTensSym symmetries epsM evalMEtaInds evalMEpsInds ansEta ansEps
+            tens = evalToTensSym symmetries evalMEtaInds evalMEpsInds ansEta ansEps
 
 --and without explicit symmetriization in tens
 
 mkAnsatzTensorFast :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
 mkAnsatzTensorFast ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            epsM = epsMap
-            evalLEta = filter isEtaList evalL
-            evalLEps = filter isEpsilonList evalL
-            evalLEtaRed = filter (isLorentzEval symmetries) evalLEta
-            evalLEpsRed = filter (isLorentzEval symmetries) evalLEps
-            evalMEtaRed = mkEvalMaps ord evalLEtaRed
-            evalMEpsRed = mkEvalMaps ord evalLEpsRed
-            evalMEtaInds = mkEvalMapsInds ord evalLEta
-            evalMEpsInds = mkEvalMapsInds ord evalLEps
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
             (ansEta, ansEps) = mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed
-            tens = evalToTens epsM evalMEtaInds evalMEpsInds ansEta ansEps
+            tens = evalToTens evalMEtaInds evalMEpsInds ansEta ansEps
 
 --eval to abstract tensor
 
 mkAnsatzTensorFastAbs :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 (AnsVar Rational))
-mkAnsatzTensorFastAbs ord symmetries evalL = (ansEtaRed, ansEpsRed, tens)
+mkAnsatzTensorFastAbs ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            epsM = epsMap
-            evalLEta = filter (\(x,_,_) -> isEtaList x) evalL
-            evalLEps = filter (\(x,_,_) -> isEpsilonList x) evalL
-            evalLEtaRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEta
-            evalLEpsRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval symmetries x) evalLEps
-            ansEta = getEtaForestFast ord symmetries
-            ansEpsilon = getEpsForestFast ord symmetries
-            evalMEtaRed = mkEvalMaps ord evalLEtaRed
-            evalMEpsRed = mkEvalMaps ord evalLEpsRed
-            evalMEtaInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEta
-            evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEps
-            ansEtaRed = reduceLinDepsFastEta epsM evalMEtaRed symmetries ansEta
-            ansEpsRed' = reduceLinDepsFastEps epsM evalMEpsRed symmetries ansEpsilon
-            ansEpsRed = relabelAnsatzForestEpsilon (1 + length (getForestLabels ansEtaRed)) ansEpsRed'
-            tens = evalToTensAbs epsM evalMEtaInds evalMEpsInds ansEtaRed ansEpsRed
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMapsAbs symmetries evalL 
+            (ansEta, ansEps) = mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed
+            tens = evalToTensAbs evalMEtaInds evalMEpsInds ansEta ansEps
 
 
 {--
@@ -1711,17 +1688,6 @@ allList' i syms aSyms symBounds aSymBounds = concatMap (\x -> (:) <$> [x] <*> al
 
 allList :: Int -> Symmetry -> [[Int]]
 allList ord (syms,aSyms,_,_,_) =  allList' ord syms aSyms [] []
-
-mkEvalMaps :: Int -> [[Int]] -> [I.IntMap Int]
-mkEvalMaps i = map (I.fromList . zip [1..i])
-
-mkEvalMap :: Int -> [Int] -> I.IntMap Int
-mkEvalMap i = I.fromList . zip [1..i]
-
-
-mkEvalMapsInds :: forall (n :: Nat). SingI n => Int -> [[Int]] -> [(I.IntMap Int, IndTupleST n 0)]
-mkEvalMapsInds i = map (\x -> (I.fromList $ zip [1..i] x, (fromList' $ map toEnum x, Empty)))
-
 
 --use the above functions to construct ansätze without providing eval lists by hand
 

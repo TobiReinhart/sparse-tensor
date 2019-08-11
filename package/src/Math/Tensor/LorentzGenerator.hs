@@ -1847,7 +1847,7 @@ areaList18_3 = list
       where
           trian2 = trianMap2
           trianArea = trianMapArea
-          list = [ let (a',b',c',d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c'++ p : d'++[q], areaMult a' * areaMult b' * areaMult c' * areaMult d', map ( \(a,b,c,p,d,q) -> ((:) (Ind20 $ a-1) $ (:) (Ind20 $ b-1) $ (:) (Ind20 $ c-1) [Ind20 $ d-1], [], [], [], (:) (Ind3 p) ([Ind3 q]), []) ) $ nub [(a,b,c,p,d,q),(b,a,c,p,d,q),(a,b,d,q,c,p),(b,a,d,q,c,p)] ) | a <- [1..21], b <- [a..21], c <- [1..21], d <- [c..21], p <- [0..3], q <- [0..3] , not (c == d && p > q) ]
+          list = [ let (a',b',c',d') = ((I.!) trianArea a, (I.!) trianArea b, (I.!) trianArea c, (I.!) trianArea d) in  (a' ++ b' ++ c'++ p : d'++[q], areaMult a' * areaMult b' * areaMult c' * areaMult d', map ( \(a,b,c,p,d,q) -> ((:) (Ind20 $ a-1) $ (:) (Ind20 $ b-1) $ (:) (Ind20 $ c-1) [Ind20 $ d-1], [], [], [], (:) (Ind3 p) [Ind3 q], []) ) $ nub [(a,b,c,p,d,q),(b,a,c,p,d,q),(a,b,d,q,c,p),(b,a,d,q,c,p)] ) | a <- [1..21], b <- [a..21], c <- [1..21], d <- [c..21], p <- [0..3], q <- [0..3] , not (c == d && p > q) ]
 
 --order 5
 

@@ -302,7 +302,7 @@ quadKin3 ans14 ans10 = cyclicSymATens5 [0,1,2] $ tens1 &+ tens2
 --principal polynomial equations
 
 polyAns2 :: ATens 0 0 1 0 0 0 (AnsVar Rational)
-polyAns2 = fromListT6 $ map (\(x,y) -> ((Empty, Empty, singletonInd $ Ind9 x, Empty, Empty, Empty),AnsVar $ I.singleton 1 y)) [(0,-1),(4,1),(7,1),(9,1)]
+polyAns2 = fromListT6' $ map (\(x,y) -> (([], [], [Ind9 x], [], [], []),AnsVar $ I.singleton 1 y)) [(0,-1),(4,1),(7,1),(9,1)]
 
 polyTensEqn :: ATens 1 0 1 0 0 0 (AnsVar Rational) -> ATens 0 0 1 0 1 1 (AnsVar Rational)
 polyTensEqn ans6 = total

@@ -25,12 +25,40 @@
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
+
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Math.Tensor
+-- Copyright   :  2019 Tobias Reinhart and Nils Alex
+-- License     :  MIT
+-- Maintainer  :  tobi.reinhart@fau.de, nils.alex@fau.de
+-- Language    :  Haskell 2010
+--
+--
+-- = Tensor
+--
+-- The @'Tensor' n k v@  data type represents a general tensor that takes @n@ individual indices indices all belonging
+-- to the same index typ @k@ and retrieves values of type @v@. Such a tensor can be thought of representing a single tensor that only allows for
+-- contravariant indices. 
+--
+-- Additional covariant indices can be included in the tensor by use of the data type @Tensor2 n1 n2 k v@. Appending further tensors with possibly different
+-- index types as values one thus can treat tensor that allow for an arbitrary number of different indices.
+-- 
+-- The tensor data type directly incorporates its rank in form of a type level natural number @n@. This results in added type safety when performing the usual 
+-- tensor algebra operations.
+--
+-- Furthermore the tensor type employs a sparse storage paradigm in the sense that when constructing tensors only non zero values must be specified.
+-- Missing values are then taken as vanishing automatically. 
+-----------------------------------------------------------------------------
+
 module Math.Tensor (
-fromList', singletonInd, sortInd,
+Tensor(..),
+
+
 Ind1(..), Ind2(..), Ind3(..), Ind9(..), Ind20(..),
-STTens, IndTupleST, ATens, IndTupleAbs, IndList(..),
+STTens, ATens,
 (&+), (&*), (&-), (&.),
-Tensor(..), AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8,
+AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8,
 TScalar, TAlgebra,
 removeZeros1, removeZeros2, removeZeros3, removeZeros4, removeZeros5, removeZeros6, removeZeros7, removeZeros8,
 tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6, tensorTrans7, tensorTrans8,
@@ -65,7 +93,8 @@ singletonTList1, singletonTList2, singletonTList3, singletonTList4, singletonTLi
 toEMatrix1, toEMatrix2, toEMatrix3, toEMatrix4, toEMatrix5, toEMatrix6, toEMatrix7, toEMatrix8,
 toMatList1, toMatList2, toMatList3, toMatList4, toMatList5, toMatList6, toMatList7, toMatList8,
 tensorRank1', tensorRank2', tensorRank3', tensorRank4', tensorRank5', tensorRank6', tensorRank7', tensorRank8',
-tensorRank1, tensorRank2, tensorRank3, tensorRank4, tensorRank5, tensorRank6, tensorRank7, tensorRank8
+tensorRank1, tensorRank2, tensorRank3, tensorRank4, tensorRank5, tensorRank6, tensorRank7, tensorRank8,
+IndTupleST, IndTupleAbs
 ) where
 
 import Data.Foldable (toList)
@@ -2332,8 +2361,8 @@ instance Enum Ind20 where
 
 type STTens n1 n2 v = AbsTensor2 n1 n2 Ind3 v
 
-type IndTupleST n1 n2 = (IndList n1 Ind3, IndList n2 Ind3)
+type IndTupleST = ([Ind3], [Ind3])
 
 type ATens n1 n2 n3 n4 n5 n6 v = AbsTensor6 n1 n2 n3 n4 n5 n6 Ind20 Ind9 Ind3 v
 
-type IndTupleAbs n1 n2 n3 n4 n5 n6 = (IndList n1 Ind20, IndList n2 Ind20 , IndList n3 Ind9, IndList n4 Ind9, IndList n5 Ind3, IndList n6 Ind3)
+type IndTupleAbs = ([Ind20], [Ind20] , [Ind9], [Ind9], [Ind3], [Ind3])

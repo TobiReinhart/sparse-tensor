@@ -57,10 +57,12 @@ module Math.Tensor (
 -- * Length typed Index List
 -- | Tensors provide information regarding their number of indices in their type. As consequence for constructing tensors from list and 
 -- converting them to list we also provide length information of the list in its type.
-IndList(..), singletonInd, (+>),
+IndList(..), singletonInd, (+>), fromList, fromListMaybe,
+-- | Basic Listfunctions for lenght typed lists.
+headInd, tailInd, sortInd, updateInd, 
 -- * Tensor Data Types
--- | The basic tensor type 'Tensor n k v' represents a tensor that takes 'n' indices of type 'k' and maps them to values of type 'v'.
--- This type can be thought of as representing a single, purely contravariant tensor that features 'n' indices.
+-- | The basic tensor type @'Tensor' n k v@ represents a tensor that takes @n@ indices of type @k@ and maps them to values of type @v@.
+-- This type can be thought of as representing a single, purely contravariant tensor that features @n@ indices.
 --
 -- A general abstract Tensor with multiple possibly different indices is obtained by simply adjoining the appropriate number of individual basic tensors.
 --
@@ -70,7 +72,6 @@ TMap,
 Tensor(..), Tensor2, AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8, STTens, ATens,
 -- * Index Type Class 
 TIndex, Ind3(..), Ind9(..), Ind20(..),
-IndTupleST, IndTupleAbs, 
 -- * Value Type Class 
 -- | Values of a given tensor must satisfy number like properties, i.e. constitute an algebra.
 -- Thus they need to provide functions for addition, scaling and multiplication. 
@@ -80,7 +81,7 @@ IndTupleST, IndTupleAbs,
 --
 -- Note that also the basic tensor type itself provides an instance of the following two type classes. Only this enables the use of tensors as
 -- value types of other tensors and thus the construction of tensors that involve different indices. 
-TAdd(..), TAlgebra(..), AnsVar(..), AnsVarR, SField(..),
+TAdd(..), SField(..), TVec(..), TAlgebra(..), AnsVar(..), AnsVarR, 
 shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabels6, shiftLabels7, shiftLabels8,
 -- * Lists of multiple Tensors
 -- | Sometimes it is convenient to collect multiple tensors in a list. If the tensros have different rank these lists must be heterogenic.
@@ -89,19 +90,28 @@ shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabel
 TensList1(..), TensList2(..), TensList3(..), TensList4(..), TensList5(..), TensList6(..), TensList7(..), TensList8(..),
 -- | Construct a List with a single Entry.
 singletonTList1, singletonTList2, singletonTList3, singletonTList4, singletonTList5, singletonTList6, singletonTList7, singletonTList8,
--- | Synonyms for teh various AppendTListi.
+-- | Synonyms for the various AppendTList functions.
 (...>), (..&>), (.&.>), (.&&>), (&..>), (&.&>), (&&.>), (&&&>),
--- | Append two tensor lists.
+-- | Combining two tensor lists.
 (...+), (..&+), (.&.+), (.&&+), (&..+), (&.&+), (&&.+), (&&&+),
 -- * Construction
--- | Construct a basic tensor from a list of indices value pairs.
--- For tensors of 'i' multiple indices the list must include a tuple with first entry being an 'i'-tuple of indices lists and second entry being the corresponding value.
+-- | The standard way of constructing a tensor is from a list of tuples, where the first entry contains a tuple of @'IndList'@ types with
+-- the appropriate length and type given by the explicit @'Tensor'@ type. The number of elements in the tuple is determined by the number of indices the tensor takes.
+--
+-- Type synonyms for the basic such tuples of @'IndList'@ types
+IndTuple1, IndTuple2, IndTuple3, IndTuple4, IndTuple5, IndTuple6, IndTuple7, IndTuple8,
+IndTupleST, IndTupleAbs, 
+-- 
+-- | Construction of tensors from such tuple lists.
+fromListT1, fromListT2, fromListT3, fromListT4, fromListT5, fromListT6, fromListT7, fromListT8,
+-- | Construction of a tensor from a list of tuples consisting of non-typed indices value pairs is also possible.
 fromListT1', fromListT2', fromListT3', fromListT4', fromListT5', fromListT6', fromListT7', fromListT8',
 -- * Conversion 
--- | Convert a tensor to a list of pairs with first entry being a list of indices or a tuple of such lists if the tensor features multiple index types
--- and second entry being the corresponding value.  
+-- | Convert a Tensor to a typed indices value list.
+toListT1, toListT2, toListT3, toListT4, toListT5, toListT6, toListT7, toListT8,
+-- | Convert a tensor to a non-typed indices value list. 
 toListT1', toListT2', toListT3', toListT4', toListT5', toListT6', toListT7', toListT8',
--- | Convert a tensor that stores 'AnsVar' values to sparse matrix list where the columns label the variables in 'AnsVar'
+-- | Convert a tensor that stores @'AnsVar'@ values to sparse matrix list where the columns label the variables in @'AnsVar'@
 --   and the rows label independent components of the tensor.
 toMatListT1', toMatListT2', toMatListT3', toMatListT4', toMatListT5', toMatListT6', toMatListT7', toMatListT8', 
 -- | Convert a tensor that stores 'AnsVar' values to sparse matrix using the 'Eigen' matrix type.
@@ -110,32 +120,70 @@ toEMatrixT1', toEMatrixT2', toEMatrixT3', toEMatrixT4', toEMatrixT5', toEMatrixT
 toMatListT1, toMatListT2, toMatListT3, toMatListT4, toMatListT5, toMatListT6, toMatListT7, toMatListT8,
 -- | Same as the 'toEMatrixTi'' functions but taking a whole list of tensors as input.
 toEMatrixT1, toEMatrixT2, toEMatrixT3, toEMatrixT4, toEMatrixT5, toEMatrixT6, toEMatrixT7, toEMatrixT8,
-
-
-
-
-(&+), (&*), (&-), (&.),
+-- * Sparse storage 
+-- | Remove all zero values from a tensor that might occur during computations. 
 removeZeros1, removeZeros2, removeZeros3, removeZeros4, removeZeros5, removeZeros6, removeZeros7, removeZeros8,
-tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6, tensorTrans7, tensorTrans8,
-tensorBlockTrans1, tensorBlockTrans2, tensorBlockTrans3, tensorBlockTrans4, tensorBlockTrans5, tensorBlockTrans6, tensorBlockTrans7, tensorBlockTrans8,
-resortTens1, resortTens2, resortTens3, resortTens4, resortTens5, resortTens6, resortTens7, resortTens8,
-evalTens1, evalTens2, evalTens3, evalTens4, evalTens5, evalTens6, evalTens7, evalTens8,
+-- * Tensor algebra
+(&+), negateTens, (&*), (&-), (&.),
+-- | Contraction of a tensor in two of its indices, i.e. the function sets the two indices equal and sums over their whole index range.
 contrATens1, contrATens2, contrATens3, contrATens4,
+-- * Rearranging indices
+-- | In each of the following functions the first integer refers to the specific index type of the tensor the second argument labels the corresponding 
+-- indices.
+-- 
+-- Transpose a tensor in two specified indices. The result is simply the tensor with the two provided indices swapped in their position
+tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6, tensorTrans7, tensorTrans8,
+-- | Swap two index block in a given tensor.
+tensorBlockTrans1, tensorBlockTrans2, tensorBlockTrans3, tensorBlockTrans4, tensorBlockTrans5, tensorBlockTrans6, tensorBlockTrans7, tensorBlockTrans8,
+-- | Completely rearrange the indices of a given type in a givne tensor. The new index order is specified by a list '[Int]' that must be of length given by the 
+-- number of indices the tensor contains of the given type. The list then specifies in its i-th element the position on which the i-th such index
+-- shall be sorted. For instance labeling the appropriate tensor indice by '[A, B, C]' and invoking the function with '[1,2,0]' the indices are arranged as
+-- '[C, A, B]'. 
+resortTens1, resortTens2, resortTens3, resortTens4, resortTens5, resortTens6, resortTens7, resortTens8,
+-- * Symmetrization
+-- | In the following functions the first argument of type 'Int' refers to the index type that is to be symmetrized. The second argument then specifies which indices
+-- are concerned by the symmetrization. 
+--
+-- Symmetrization is achieved by adding the tensor at hand and possibly multiple copies of it that have their appropriate indices resorted accordingly. 
+-- Each function is provided in a way that does not include the usual division by the number of thereby appearing terms, i.e. the symmetrization then does not define a projection,
+-- and one version that includes the factors.
+--  
+-- Basic symmetrization in a pair of indices. Factors of '1/2' are not include in this function.
 symATens1, symATens2, symATens3, symATens4, symATens5, symATens6, symATens7, symATens8,
+-- | Basic Basic symmetrization in a pair of indices including factors of '1/2'. Note that this restricts the function to tenosrs that can be scaled with rational values.
 symATensFac1, symATensFac2, symATensFac3, symATensFac4, symATensFac5, symATensFac6, symATensFac7, symATensFac8,
+-- | Basic anti-symmetrization in a pair of indices. Factors of '1/2' are not include in this function.
 aSymATens1, aSymATens2, aSymATens3, aSymATens4, aSymATens5, aSymATens6, aSymATens7, aSymATens8,
+-- | Basic Basic anti-symmetrization in a pair of indices including factors of '1/2'. Note that this restricts the function to tenosrs that can be scaled with rational values.
 aSymATensFac1, aSymATensFac2, aSymATensFac3, aSymATensFac4, aSymATensFac5, aSymATensFac6, aSymATensFac7, aSymATensFac8,
+-- | Symmetrization w.r.t. the exchange of two index blocks. The index blocks must be disjoint. The function does not include the usual '1/2' factors.
 symBlockATens1, symBlockATens2, symBlockATens3, symBlockATens4, symBlockATens5, symBlockATens6, symBlockATens7, symBlockATens8,
+-- | Basic block pair symmetrization including the '1/2' factors.
 symBlockATensFac1, symBlockATensFac2, symBlockATensFac3, symBlockATensFac4, symBlockATensFac5, symBlockATensFac6, symBlockATensFac7, symBlockATensFac8,
+-- | Anti symmetrization w.r.t. the exchange of two index blocks. The index blocks must be disjoint. The function does not include the usual '1/2' factors.
 aSymBlockATens1, aSymBlockATens2, aSymBlockATens3, aSymBlockATens4, aSymBlockATens5, aSymBlockATens6, aSymBlockATens7, aSymBlockATens8,
+-- | Basic block pair anti symmetrization including the '1/2' factors.
 aSymBlockATensFac1, aSymBlockATensFac2, aSymBlockATensFac3, aSymBlockATensFac4, aSymBlockATensFac5, aSymBlockATensFac6, aSymBlockATensFac7, aSymBlockATensFac8,
+-- | Complete symmetrization of a subset of the tensor indices. The usual '1/i!' are not included. Here 'i' is the number of indices that is completely symmetrized.
 cyclicSymATens1, cyclicSymATens2, cyclicSymATens3, cyclicSymATens4, cyclicSymATens5, cyclicSymATens6, cyclicSymATens7, cyclicSymATens8,
+-- | This function completely symmetrizes a tensors in a subset of its indices while including the usual '1/i!' factors.
 cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6, cyclicSymATensFac7, cyclicSymATensFac8,
+-- | Completely anti symmetrize a subset of the tensor indices. The usual '1/i!' are not included.
 cyclicASymATens1, cyclicASymATens2, cyclicASymATens3, cyclicASymATens4, cyclicASymATens5, cyclicASymATens6, cyclicASymATens7, cyclicASymATens8,
+-- | Completely anti symmetrize a subset of the tensor indices including '1/i!' factors.
 cyclicASymATensFac1, cyclicASymATensFac2, cyclicASymATensFac3, cyclicASymATensFac4, cyclicASymATensFac5, cyclicASymATensFac6, cyclicASymATensFac7, cyclicASymATensFac8,
+-- | Completely symmetrize a tensor w.r.t permutations of disjoint blocks of indices, while not including '1/i!' factors, where 'i' is the number of such blocks.
 cyclicBlockSymATens1, cyclicBlockSymATens2, cyclicBlockSymATens3, cyclicBlockSymATens4, cyclicBlockSymATens5, cyclicBlockSymATens6, cyclicBlockSymATens7, cyclicBlockSymATens8,
+-- | Completely symmetrize a tensor w.r.t permutations of disjoint blocks of indices, including '1/i!' factors.
 cyclicBlockSymATensFac1, cyclicBlockSymATensFac2, cyclicBlockSymATensFac3, cyclicBlockSymATensFac4, cyclicBlockSymATensFac5, cyclicBlockSymATensFac6, cyclicBlockSymATensFac7, cyclicBlockSymATensFac8,
+-- * Tensor functions 
+-- | Evaluate a tensor on a specific index value returning the corresponding sub tensor.
+evalTens1, evalTens2, evalTens3, evalTens4, evalTens5, evalTens6, evalTens7, evalTens8,
+-- | Compute the rank of a tensor of 'AnsVarR' values. The tensor is converted to a matrix with columns labeling the individual variables that occur in 'ansVarR'
+-- and rows labeling the independent tensor components. Th ereank is then computed using 'Eigen' subroutines. This function is for instance usefull
+-- when determining the rank of tensorial equations.
 tensorRank1', tensorRank2', tensorRank3', tensorRank4', tensorRank5', tensorRank6', tensorRank7', tensorRank8',
+-- | Compute the combined rank of a list of multiple tensors. CAn for instance be used to compute the rank of a linear equation system constituted of tensorial equations. 
 tensorRank1, tensorRank2, tensorRank3, tensorRank4, tensorRank5, tensorRank6, tensorRank7, tensorRank8,
 ) where
 
@@ -190,29 +238,36 @@ isZero n = case n %~ SNat @0
 
 --construction from untyped lists
 
-fromList :: forall (n :: Nat). SNat n -> forall (a :: *). [a] -> Maybe (IndList n a)
-fromList n xs = case isZero n
+fromList' :: forall (n :: Nat). SNat n -> forall (a :: *). [a] -> Maybe (IndList n a)
+fromList' n xs = case isZero n
                   of Zero    -> case xs
                                   of [] -> Just Empty
                                      _  -> Nothing
                      NonZero -> case xs
                                   of []    -> Nothing
-                                     x:xs' -> case fromList (sPred n) xs'
+                                     x:xs' -> case fromList' (sPred n) xs'
                                                 of Just v  -> Just (x `Append` v)
                                                    Nothing -> Nothing
 
-fromList' :: forall (n :: Nat). SingI n => forall (a :: *). [a] -> IndList n a
-fromList' = \case
+-- | Construction of legth typed 'IndList n' from untyped lists '[a]'.
+
+fromList :: forall (n :: Nat). SingI n => forall (a :: *). [a] -> IndList n a
+fromList = \case
                Just v  -> v
                Nothing -> undefined
-            . fromList sing
+            . fromList' sing
 
---instances
+-- | Construction from untyped lists returning a 'Maybe' value. 
+
+fromListMaybe :: forall (n :: Nat). SingI n => forall (a :: *). [a] -> Maybe (IndList n a)
+fromListMaybe = fromList' sing
+
+--instances of the lentgh typed lists
 
 instance (KnownNat n, Generic a) => Generic (IndList n a) where
     type Rep (IndList n a) = Rep [a]
 
-    to r = fromList' $ to r
+    to r = fromList $ to r
     from = from . toList
 
 deriving instance (KnownNat n, Generic a, Serialize a) => Serialize (IndList n a)
@@ -296,13 +351,13 @@ resortInd perm indList = newindList
         l' = toList indList
         l'' = if length l' == length perm then zip perm l' else error "permutation has wrong length"
         lReSorted = sortOn fst l''
-        newindList = fromList' $ map snd lReSorted
+        newindList = fromList $ map snd lReSorted
 
+--Index type class
 
 -- | Index types must satisfy the 'Eq', 'Ord', and 'Enum' constraints and further provide information about the corresponding index range.
 
 class (Eq a, Ord a, Enum a) => TIndex a where
-    indRange :: a -> Int
 
 -- | Index type with range from 0 to 3.
 
@@ -310,7 +365,6 @@ newtype Ind3 =  Ind3 {indVal3 :: Int}
     deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
 instance TIndex Ind3 where
-    indRange x = 4
 
 instance Enum Ind3 where
     toEnum = Ind3
@@ -322,7 +376,6 @@ newtype Ind9 =  Ind9 {indVal9 :: Int}
     deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
 instance TIndex Ind9 where
-        indRange x = 10
 
 instance Enum Ind9 where
         toEnum = Ind9
@@ -334,7 +387,6 @@ newtype Ind20 =  Ind20 {indVal20 :: Int}
     deriving (Ord, Eq, Show, Read, Generic, NFData, Serialize)
 
 instance TIndex Ind20 where
-        indRange x = 21
 
 instance Enum Ind20 where
         toEnum = Ind20
@@ -356,7 +408,10 @@ given rank yields a third tensors with new rank that is hence represented by a d
 Thus we need the values of tensors to allow for vector space operations
 --}
 
--- | Type class that encodes group property that underlies the vector space structure, i.e. addition, neutral element and existance of invers elements. 
+-- Tensor Value type classes.
+
+-- | Type class that encodes group structure that underlies the vector space of possible tensor values, i.e. addition, neutral element and existance of invers elements. 
+-- | Each possible tensor value must allow for these basic group operations and hence be an instance of this type class.
 
 class TAdd a where
     scaleZero :: a -> Bool
@@ -364,6 +419,8 @@ class TAdd a where
     negateS :: a -> a
     subS :: a -> a -> a
     subS a b = a `addS` (negateS b)
+
+-- | Newtype wrapper for reprsenting the underlying base field that is used for scalar multiplications.
 
 newtype SField a = SField a deriving (Show, Eq, Ord)
 
@@ -377,12 +434,12 @@ instance Num a => Num (SField a) where
     fromInteger = SField . fromInteger
     
 
--- | Type class that employs additional scalar multiplation.
+-- | Type class that employs scalar multiplation.
 
 class TVec v s where
     scaleS :: s -> v -> v
 
--- tensor type must be instance of both
+-- tensor type must be instance of both.
 
 instance (TIndex k, TAdd v) => TAdd (Tensor n k v) where
     addS = (&+)
@@ -402,10 +459,8 @@ instance (Num a, Eq a) => TAdd (SField a) where
 instance (RealFrac a, RealFrac b) => TVec (SField a) (SField b) where
     (SField b) `scaleS` (SField a) = SField $ fromRational (toRational b) * a
 
--- instance (Num v) => TVec (SField v) (SField v) where
---    SField b `scaleS` SField a = SField $ b * a
-
--- | Type class for the product of two types that are used as tensor value. Not only the function that explicitly computes values for such a product is needed
+-- | Type class that encodes properties of the product of two types that are used as tensor value.
+-- Not only the function that explicitly computes values for such a product is needed
 -- one also needs a type level function that encodes the appropriate type of the product.
 
 class TAlgebra v v' where
@@ -757,7 +812,7 @@ fromListT [] = ZeroTensor
 fromListT' :: forall n k v b. (TIndex k, TAdd v, SingI n) => [([k],v)] -> Tensor n k v
 fromListT' l = fromListT indList
         where
-            indList = map (\(x,y) -> (fromList' x, y)) l
+            indList = map (\(x,y) -> (fromList x, y)) l
 
 fromListT1 :: (TIndex k1, TAdd v) => [(IndTuple1 n1 k1, v)] -> AbsTensor1 n1 k1 v
 fromListT1 = fromListT
@@ -773,7 +828,7 @@ fromListT2 l = foldr (&+) ZeroTensor tensList
 fromListT2' :: forall n1 n2 k1 v b. (SingI n1, SingI n2, TIndex k1, TAdd v) => [(([k1],[k1]),v)] -> AbsTensor2 n1 n2 k1 v
 fromListT2' l = fromListT2 indList
         where
-            indList = map (\((x1,x2),y) -> ((fromList' x1, fromList' x2),y)) l
+            indList = map (\((x1,x2),y) -> ((fromList x1, fromList x2),y)) l
 
 fromListT3 :: (TIndex k1, TIndex k2, TAdd v) => [(IndTuple3 n1 n2 n3 k1 k2, v)] -> AbsTensor3 n1 n2 n3 k1 k2 v
 fromListT3 l = foldr (&+) ZeroTensor tensList
@@ -783,7 +838,7 @@ fromListT3 l = foldr (&+) ZeroTensor tensList
 fromListT3' :: forall n1 n2 n3 k1 k2 v b. (SingI n1, SingI n2, SingI n3, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2]),v)] -> AbsTensor3 n1 n2 n3 k1 k2 v
 fromListT3' l = fromListT3 indList
         where
-            indList = map (\((x1,x2,x3),y) -> ((fromList' x1, fromList' x2, fromList' x3),y)) l
+            indList = map (\((x1,x2,x3),y) -> ((fromList x1, fromList x2, fromList x3),y)) l
 
 fromListT4 :: (TIndex k1, TIndex k2, TAdd v) => [(IndTuple4 n1 n2 n3 n4 k1 k2, v)] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
 fromListT4 l = foldr (&+) ZeroTensor tensList
@@ -793,7 +848,7 @@ fromListT4 l = foldr (&+) ZeroTensor tensList
 fromListT4' :: forall n1 n2 n3 n4 k1 k2 v b. (SingI n1, SingI n2, SingI n3, SingI n4, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2],[k2]),v)] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
 fromListT4' l = fromListT4 indList
         where
-            indList = map (\((x1,x2,x3,x4),y) -> ((fromList' x1, fromList' x2, fromList' x3, fromList' x4),y)) l
+            indList = map (\((x1,x2,x3,x4),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4),y)) l
 
 fromListT5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(IndTuple5 n1 n2 n3 n4 n5 k1 k2 k3, v)] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
 fromListT5 l = foldr (&+) ZeroTensor tensList
@@ -803,7 +858,7 @@ fromListT5 l = foldr (&+) ZeroTensor tensList
 fromListT5' :: forall n1 n2 n3 n4 n5 k1 k2 k3 v b. (SingI n1, SingI n2, SingI n3, SingI n4, SingI n5,  TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3]),v)] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
 fromListT5' l = fromListT5 indList
         where
-            indList = map (\((x1,x2,x3,x4,x5),y) -> ((fromList' x1, fromList' x2, fromList' x3, fromList' x4, fromList' x5),y)) l
+            indList = map (\((x1,x2,x3,x4,x5),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4, fromList x5),y)) l
 
 fromListT6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(IndTuple6 n1 n2 n3 n4 n5 n6 k1 k2 k3, v)] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
 fromListT6 l = foldr (&+) ZeroTensor tensList
@@ -813,7 +868,7 @@ fromListT6 l = foldr (&+) ZeroTensor tensList
 fromListT6' :: forall n1 n2 n3 n4 n5 n6 k1 k2 k3 v b. (SingI n1, SingI n2, SingI n3, SingI n4, SingI n5, SingI n6, TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3]),v)] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
 fromListT6' l = fromListT6 indList
         where
-            indList = map (\((x1,x2,x3,x4,x5,x6),y) -> ((fromList' x1, fromList' x2, fromList' x3, fromList' x4, fromList' x5, fromList' x6),y)) l
+            indList = map (\((x1,x2,x3,x4,x5,x6),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4, fromList x5, fromList x6),y)) l
 
 fromListT7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(IndTuple7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4, v)] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
 fromListT7 l = foldr (&+) ZeroTensor tensList
@@ -823,7 +878,7 @@ fromListT7 l = foldr (&+) ZeroTensor tensList
 fromListT7' :: forall n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v b. (SingI n1, SingI n2, SingI n3, SingI n4, SingI n5, SingI n6, SingI n7, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4]),v)] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
 fromListT7' l = fromListT7 indList
         where
-            indList = map (\((x1,x2,x3,x4,x5,x6,x7),y) -> ((fromList' x1, fromList' x2, fromList' x3, fromList' x4, fromList' x5, fromList' x6, fromList' x7),y)) l
+            indList = map (\((x1,x2,x3,x4,x5,x6,x7),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4, fromList x5, fromList x6, fromList x7),y)) l
 
 fromListT8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(IndTuple8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4, v)] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
 fromListT8 l = foldr (&+) ZeroTensor tensList
@@ -833,7 +888,7 @@ fromListT8 l = foldr (&+) ZeroTensor tensList
 fromListT8' :: forall n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v b. (SingI n1, SingI n2, SingI n3, SingI n4, SingI n5, SingI n6, SingI n7, SingI n8, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4],[k4]),v)] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
 fromListT8' l = fromListT8 indList
         where
-            indList = map (\((x1,x2,x3,x4,x5,x6,x7,x8),y) -> ((fromList' x1, fromList' x2, fromList' x3, fromList' x4, fromList' x5, fromList' x6, fromList' x7, fromList' x8),y)) l
+            indList = map (\((x1,x2,x3,x4,x5,x6,x7,x8),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4, fromList x5, fromList x6, fromList x7, fromList x8),y)) l
 
 
 --helper function for tensor addition: adding one indice value pair to the tree structure of a given tensor
@@ -849,25 +904,31 @@ insertOrAdd inds ZeroTensor = mkTens inds
 
 infixr 6 &+
 
+-- | Addition of two arbitrary tensors. The noly requirement is that the corresponding values satisfy the 'TAdd' constraint.
+-- In particular this function can also be used for adding tensors that themselves contain tensors as values. 
+
 (&+) :: (TIndex k, TAdd v) => Tensor n k v -> Tensor n k v -> Tensor n k v
 (&+) (Scalar a) (Scalar b) = Scalar $ addS a b
 (&+) (Tensor m1) (Tensor m2) = Tensor $ addTMaps (&+) m1 m2
 (&+) t1 ZeroTensor = t1
 (&+) ZeroTensor t2 = t2
 
---scalar multiplication for tensors
+-- | Scalar multiplication of an arbitrary tensor. Only requirement is that the corresponding values 'v' and the scalar type 'a' satisfy the 
+-- 'TVec' constraint.
 
 infix 8 &.
 
 (&.) :: (TIndex k, TVec v a) => a -> Tensor n k v -> Tensor n k v
 (&.) scalar = fmap (scaleS scalar)
 
---negation for tensors
+-- | Negation of an arbitrary tensor. The function uses the erquired group property of the tensor values to map each value of the tensors to its 
+-- additive inverse.
 
 negateTens :: (TIndex k, TAdd v) => Tensor n k v -> Tensor n k v
 negateTens = fmap negateS
 
---subtraction for tensors
+-- | Subtraction of two arbitrary tensors. The noly requirement is that the corresponding values satisfy the 'TAdd' constraint.
+-- In particular this function can also be used for adding tensors that themselves contain tensors as values. 
 
 infix 5 &-
 
@@ -877,7 +938,7 @@ infix 5 &-
 (&-) t1 ZeroTensor = t1
 (&-) ZeroTensor t2 = negateS t2
 
---product of tensors
+-- | Tensorproduct of two tensors. In the result for each index type the indices in the leftmost tensor are arranged to the left. 
 
 infixr 7 &*
 

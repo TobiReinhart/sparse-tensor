@@ -81,7 +81,7 @@ TIndex, Ind3(..), Ind9(..), Ind20(..),
 --
 -- Note that also the basic tensor type itself provides an instance of the following two type classes. Only this enables the use of tensors as
 -- value types of other tensors and thus the construction of tensors that involve different indices. 
-TAdd(..), SField(..), TVec(..), TAlgebra(..), AnsVar(..), AnsVarR, 
+TAdd(..), SField(..), Prod(..), AnsVar(..), AnsVarR, 
 shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabels6, shiftLabels7, shiftLabels8,
 -- * Lists of multiple Tensors
 -- | Sometimes it is convenient to collect multiple tensors in a list. If the tensros have different rank these lists must be heterogenic.
@@ -188,6 +188,7 @@ tensorRank1, tensorRank2, tensorRank3, tensorRank4, tensorRank5, tensorRank6, te
 ) where
 
 import Data.Foldable (toList)
+import Control.Applicative (liftA2)
 import Data.Ratio ((%), numerator, denominator)
 import Data.List (nubBy, sortOn, intersect)
 import Data.Maybe (mapMaybe, fromMaybe)
@@ -424,22 +425,28 @@ class TAdd a where
 
 newtype SField a = SField a deriving (Show, Eq, Ord)
 
+instance Functor SField where
+    fmap f (SField a) = SField $ f a
+
+instance Applicative SField where
+    pure = SField
+    (<*>) (SField f) = fmap f
+
 instance Num a => Num (SField a) where
-    (SField a) + (SField b) = SField $ a + b
-    (SField a) - (SField b) = SField $ a - b
-    (SField a) * (SField b) = SField $ a * b
-    negate (SField a) = SField $ negate a
-    abs (SField a) = SField $ abs a
-    signum (SField a) = SField $ signum a
-    fromInteger = SField . fromInteger
-    
-
--- | Type class that employs scalar multiplation.
-
-class TVec v s where
-    scaleS :: s -> v -> v
+    (+) = liftA2 (+)
+    (-) = liftA2 (+)
+    (*) = liftA2 (+)
+    negate = fmap negate
+    abs = fmap abs
+    signum = fmap signum
+    fromInteger = pure . fromInteger
 
 -- tensor type must be instance of both.
+
+instance (Num a, Eq a) => TAdd (SField a) where
+    addS (SField a) (SField b) = SField $ a + b
+    negateS (SField a) = SField $ negate a
+    scaleZero (SField a) = a == 0
 
 instance (TIndex k, TAdd v) => TAdd (Tensor n k v) where
     addS = (&+)
@@ -448,32 +455,38 @@ instance (TIndex k, TAdd v) => TAdd (Tensor n k v) where
                     ZeroTensor -> True
                     _          -> False
 
-instance (TIndex k, TVec v a) => TVec (Tensor n k v) a where
-    scaleS = (&.)
-
-instance (Num a, Eq a) => TAdd (SField a) where
-    addS (SField a) (SField b) = SField $ a + b
-    negateS (SField a) = SField $ negate a
-    scaleZero (SField a) = a == 0
-
-instance (RealFrac a, RealFrac b) => TVec (SField a) (SField b) where
-    (SField b) `scaleS` (SField a) = SField $ fromRational (toRational b) * a
-
 -- | Type class that encodes properties of the product of two types that are used as tensor value.
 -- Not only the function that explicitly computes values for such a product is needed
 -- one also needs a type level function that encodes the appropriate type of the product.
 
-class TAlgebra v v' where
-    type TAlg v v' :: *
-    prodA :: v -> v' -> TAlg v v'
+{-
+type family TProd a b where
+    TProd a a = a
+    TProd a (Tensor n k v) = Tensor n k (TProd a v)
+    TProd (Tensor n k v) (Tensor n' k v') = Tensor (n+n') k (TProd v v')
+    TProd a (AnsVar b) = AnsVar (TProd a b)
+    TProd (AnsVar a) b = AnsVar (TProd a b)
+-}
 
-instance (TIndex k, TAlgebra v v') => TAlgebra (Tensor n k v) (Tensor m k v') where
-    type TAlg (Tensor n k v) (Tensor m k v') = Tensor (n+m) k (TAlg v v')
-    prodA = (&*)
+class Prod v v' where
+    type TProd v v' :: *
+    prod :: v -> v' -> TProd v v'
 
-instance (RealFrac a, RealFrac b) => TAlgebra (SField a) (SField b) where
-    type TAlg (SField a) (SField b) = SField b
-    prodA (SField x) (SField y) = SField $ (fromRational $ toRational x) * y
+instance Num a => Prod (SField a) (SField a) where
+    type TProd (SField a) (SField a) = SField a
+    prod = (*)
+
+instance (TIndex k, Prod (SField s) v) => Prod (SField s) (Tensor n k v) where
+    type TProd (SField s) (Tensor n k v) = Tensor n k (TProd (SField s) v)
+    prod = (&.)
+
+instance (TIndex k, Prod (AnsVar s) v) => Prod (AnsVar s) (Tensor n k v) where
+    type TProd (AnsVar s) (Tensor n k v) = Tensor n k (TProd (AnsVar s) v)
+    prod = (&.)
+
+instance (TIndex k, Prod v v') => Prod (Tensor n k v) (Tensor n' k v') where
+    type TProd (Tensor n k v) (Tensor n' k v') = Tensor (n+n') k (TProd v v')
+    prod = (&*)
 
 -- | The 'AnsVar a' type represents a basic type for variables that must only occur linearly. 
 
@@ -514,16 +527,13 @@ instance TAdd a => TAdd (AnsVar a) where
     negateS (AnsVar v1) = AnsVar $ I.map negateS v1
     scaleZero (AnsVar v) = I.null v
 
-instance (RealFrac a, RealFrac b) => TVec (AnsVar (SField a)) (SField b) where
-    scaleS s (AnsVar v) = AnsVar $ I.map (scaleS s) v
+instance Prod (SField v) (SField v') => Prod (SField v) (AnsVar (SField v')) where
+    type TProd (SField v) (AnsVar (SField v')) = AnsVar (TProd (SField v) (SField v'))
+    prod v (AnsVar v') = AnsVar $ I.map (prod v) v'
 
-instance (RealFrac a, RealFrac b) => TAlgebra (SField a) (AnsVar (SField b)) where
-    type TAlg (SField a) (AnsVar (SField b)) = AnsVar (SField b)
-    prodA = scaleS
-
-instance (RealFrac a, RealFrac b) => TAlgebra (AnsVar (SField b)) (SField a) where
-    type TAlg (AnsVar (SField b)) (SField a) = AnsVar (SField b)
-    prodA = flip scaleS
+instance Prod (SField v') (SField v) => Prod (AnsVar (SField v)) (SField v') where
+    type TProd (AnsVar (SField v)) (SField v') = AnsVar (TProd (SField v') (SField v))
+    prod (AnsVar v) v' = AnsVar $ I.map (prod v') v
 
 -- | Type for the sorted tensor forest. The list must be sorted w.r.t. the keys, i.e. the first entries in the various tuples.
 --  All future functions maintain this order when acting on an ordered 'TMap'. 
@@ -914,12 +924,12 @@ infixr 6 &+
 (&+) ZeroTensor t2 = t2
 
 -- | Scalar multiplication of an arbitrary tensor. Only requirement is that the corresponding values 'v' and the scalar type 'a' satisfy the 
--- 'TVec' constraint.
+-- 'Prod' constraint.
 
 infix 8 &.
 
-(&.) :: (TIndex k, TVec v a) => a -> Tensor n k v -> Tensor n k v
-(&.) scalar = fmap (scaleS scalar)
+(&.) :: (TIndex k, Prod s v) => s -> Tensor n k v -> Tensor n k (TProd s v)
+(&.) scalar = fmap (prod scalar)
 
 -- | Negation of an arbitrary tensor. The function uses the erquired group property of the tensor values to map each value of the tensors to its 
 -- additive inverse.
@@ -942,9 +952,9 @@ infix 5 &-
 
 infixr 7 &*
 
-(&*) :: (TIndex k, TAlgebra v v') => Tensor n k v -> Tensor m k v' -> Tensor (n+m) k (TAlg v v')
-(&*) (Scalar x) (Scalar y) = Scalar $ prodA x y
-(&*) (Scalar x) t2 = fmap (prodA x) t2
+(&*) :: (TIndex k, Prod v v') => Tensor n k v -> Tensor m k v' -> TProd (Tensor n k v) (Tensor m k v')
+(&*) (Scalar x) (Scalar y) = Scalar $ prod x y
+(&*) (Scalar x) t2 = fmap (prod x) t2
 (&*) (Tensor m) t2 = Tensor $ mapTMap (&* t2) m
 (&*) t1 ZeroTensor = ZeroTensor
 (&*) ZeroTensor t2 = ZeroTensor
@@ -994,10 +1004,10 @@ symTens inds t = t &+ tensorTrans inds t
 aSymTens :: (TIndex k, TAdd v) => (Int,Int) -> Tensor n k v -> Tensor n k v
 aSymTens inds t = t &- tensorTrans inds t
 
-symTensFac :: (TIndex k, TAdd v, TVec v (SField Rational)) => (Int,Int) -> Tensor n k v -> Tensor n k v
+symTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => (Int,Int) -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 symTensFac inds t = half &. symTens inds t
 
-aSymTensFac :: (TIndex k, TAdd v, TVec v (SField Rational)) => (Int,Int) -> Tensor n k v -> Tensor n k v
+aSymTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => (Int,Int) -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 aSymTensFac inds t = half &. aSymTens inds t
 
 --block symmetrization
@@ -1008,10 +1018,10 @@ symBlockTens inds t = t &+ tensorBlockTrans inds t
 aSymBlockTens :: (TIndex k, TAdd v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k v
 aSymBlockTens inds t = t &- tensorBlockTrans inds t
 
-symBlockTensFac :: (TIndex k, TAdd v, TVec v (SField Rational)) => ([Int],[Int]) -> Tensor n k v -> Tensor n k v
+symBlockTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 symBlockTensFac inds t = half &. symBlockTens inds t
 
-aSymBlockTensFac :: (TIndex k, TAdd v, TVec v (SField Rational)) => ([Int],[Int]) -> Tensor n k v -> Tensor n k v
+aSymBlockTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 aSymBlockTensFac inds t = half &. aSymBlockTens inds t
 
 --helper function for cyclic symmetrization: convert all permutations of a given list of indices into an equivalent lists of lists of Swaps of 2 indices
@@ -1061,17 +1071,17 @@ cyclicBlockSymTens inds t = newTens
             tensList = map (foldr tensorBlockTrans t) swapList
             newTens = foldr (&+) t tensList
 
-cyclicSymTensFac :: (TIndex k, TAdd v, TVec v (SField Rational)) => [Int] -> Tensor n k v -> Tensor n k v
+cyclicSymTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => [Int] -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 cyclicSymTensFac inds t = fac &. cyclicSymTens inds t
         where
             fac = SField $ 1 % fromIntegral (factorial $ length inds)
 
-cyclicASymTensFac :: (TIndex k, TAdd v, TVec v (SField Rational)) => [Int] -> Tensor n k v -> Tensor n k v
+cyclicASymTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => [Int] -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 cyclicASymTensFac inds t = fac &. cyclicASymTens inds t
         where
             fac = SField $ 1 % fromIntegral (factorial $ length inds)
 
-cyclicBlockSymTensFac :: (TIndex k, TAdd v, TVec v (SField Rational)) => [[Int]] -> Tensor n k v -> Tensor n k v
+cyclicBlockSymTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => [[Int]] -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 cyclicBlockSymTensFac inds t = fac &. cyclicBlockSymTens inds t
         where
             fac = SField $ 1 % fromIntegral (factorial $ length inds)
@@ -1306,52 +1316,52 @@ symATens8 inds = mapTo7 (symTens inds)
 
 --with factor
 
-symATensFac1 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+symATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                 (Int,Int) ->
                 AbsTensor1 n1 k1 v ->
-                AbsTensor1 n1 k1 v
+                AbsTensor1 n1 k1 (TProd (SField Rational) v)
 symATensFac1 = symTensFac
 
-symATensFac2 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+symATensFac2 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                 (Int,Int) ->
                 AbsTensor2 n1 n2 k1 v ->
-                AbsTensor2 n1 n2 k1 v
+                AbsTensor2 n1 n2 k1 (TProd (SField Rational) v)
 symATensFac2 inds = mapTo1 (symTensFac inds)
 
-symATensFac3 :: (TIndex k1,TIndex k2, TAdd v, TVec v (SField Rational)) =>
+symATensFac3 :: (TIndex k1,TIndex k2, TAdd v, Prod (SField Rational) v) =>
                 (Int,Int) ->
                 AbsTensor3 n1 n2 n3 k1 k2 v ->
-                AbsTensor3 n1 n2 n3 k1 k2 v
+                AbsTensor3 n1 n2 n3 k1 k2 (TProd (SField Rational) v)
 symATensFac3 inds = mapTo2 (symTensFac inds)
 
-symATensFac4 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+symATensFac4 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                 (Int,Int) ->
                 AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
-                AbsTensor4 n1 n2 n3 n4 k1 k2 v
+                AbsTensor4 n1 n2 n3 n4 k1 k2 (TProd (SField Rational) v)
 symATensFac4 inds = mapTo3 (symTensFac inds)
 
-symATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+symATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                 (Int,Int) ->
                 AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
-                AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+                AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (TProd (SField Rational) v)
 symATensFac5 inds = mapTo4 (symTensFac inds)
 
-symATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+symATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                 (Int,Int) ->
                 AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
-                AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+                AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (TProd (SField Rational) v)
 symATensFac6 inds = mapTo5 (symTensFac inds)
 
-symATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+symATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                 (Int,Int) ->
                 AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
-                AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+                AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (TProd (SField Rational) v)
 symATensFac7 inds = mapTo6 (symTensFac inds)
 
-symATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+symATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                 (Int,Int) ->
                 AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
-                AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+                AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (TProd (SField Rational) v)
 symATensFac8 inds = mapTo7 (symTensFac inds)
 
 --antisymmetrization
@@ -1406,52 +1416,52 @@ aSymATens8 inds = mapTo7 (aSymTens inds)
 
 --with factor
 
-aSymATensFac1 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+aSymATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                  (Int,Int) ->
                  AbsTensor1 n1 k1 v ->
-                 AbsTensor1 n1 k1 v
+                 AbsTensor1 n1 k1 (TProd (SField Rational) v)
 aSymATensFac1 = aSymTensFac
 
-aSymATensFac2 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+aSymATensFac2 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                  (Int,Int) ->
                  AbsTensor2 n1 n2 k1 v ->
-                 AbsTensor2 n1 n2 k1 v
+                 AbsTensor2 n1 n2 k1 (TProd (SField Rational) v)
 aSymATensFac2 inds = mapTo1 (aSymTensFac inds)
 
-aSymATensFac3 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+aSymATensFac3 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                  (Int,Int) ->
                  AbsTensor3 n1 n2 n3 k1 k2 v ->
-                 AbsTensor3 n1 n2 n3 k1 k2 v
+                 AbsTensor3 n1 n2 n3 k1 k2 (TProd (SField Rational) v)
 aSymATensFac3 inds = mapTo2 (aSymTensFac inds)
 
-aSymATensFac4 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+aSymATensFac4 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                  (Int,Int) ->
                  AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
-                 AbsTensor4 n1 n2 n3 n4 k1 k2 v
+                 AbsTensor4 n1 n2 n3 n4 k1 k2 (TProd (SField Rational) v)
 aSymATensFac4 inds = mapTo3 (aSymTensFac inds)
 
-aSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+aSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                  (Int,Int) ->
                  AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
-                 AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+                 AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (TProd (SField Rational) v)
 aSymATensFac5 inds = mapTo4 (aSymTensFac inds)
 
-aSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+aSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                  (Int,Int) ->
                  AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
-                 AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+                 AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (TProd (SField Rational) v)
 aSymATensFac6 inds = mapTo5 (aSymTensFac inds)
 
-aSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+aSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                  (Int,Int) ->
                  AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
-                 AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+                 AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (TProd (SField Rational) v)
 aSymATensFac7 inds = mapTo6 (aSymTensFac inds)
 
-aSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+aSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                  (Int,Int) ->
                  AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
-                 AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+                 AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (TProd (SField Rational) v)
 aSymATensFac8 inds = mapTo7 (aSymTensFac inds)
 
 --block symmetrization
@@ -1506,52 +1516,52 @@ symBlockATens8 inds = mapTo7 (symBlockTens inds)
 
 --with factor
 
-symBlockATensFac1 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+symBlockATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                      ([Int],[Int]) ->
                      AbsTensor1 n1 k1 v ->
-                     AbsTensor1 n1 k1 v
+                     AbsTensor1 n1 k1 (TProd (SField Rational) v)
 symBlockATensFac1 = symBlockTensFac
 
-symBlockATensFac2 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+symBlockATensFac2 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                      ([Int],[Int]) ->
                      AbsTensor2 n1 n2 k1 v ->
-                     AbsTensor2 n1 n2 k1 v
+                     AbsTensor2 n1 n2 k1 (TProd (SField Rational) v)
 symBlockATensFac2 inds = mapTo1 (symBlockTensFac inds)
 
-symBlockATensFac3 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+symBlockATensFac3 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                      ([Int],[Int]) ->
                      AbsTensor3 n1 n2 n3 k1 k2 v ->
-                     AbsTensor3 n1 n2 n3 k1 k2 v
+                     AbsTensor3 n1 n2 n3 k1 k2 (TProd (SField Rational) v)
 symBlockATensFac3 inds = mapTo2 (symBlockTensFac inds)
 
-symBlockATensFac4 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+symBlockATensFac4 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                      ([Int],[Int]) ->
                      AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
-                     AbsTensor4 n1 n2 n3 n4 k1 k2 v
+                     AbsTensor4 n1 n2 n3 n4 k1 k2 (TProd (SField Rational) v)
 symBlockATensFac4 inds = mapTo3 (symBlockTensFac inds)
 
-symBlockATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+symBlockATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                      ([Int],[Int]) ->
                      AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
-                     AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+                     AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (TProd (SField Rational) v)
 symBlockATensFac5 inds = mapTo4 (symBlockTensFac inds)
 
-symBlockATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+symBlockATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                      ([Int],[Int]) ->
                      AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
-                     AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+                     AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (TProd (SField Rational) v)
 symBlockATensFac6 inds = mapTo5 (symBlockTensFac inds)
 
-symBlockATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+symBlockATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                      ([Int],[Int]) ->
                      AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
-                     AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+                     AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (TProd (SField Rational) v)
 symBlockATensFac7 inds = mapTo6 (symBlockTensFac inds)
 
-symBlockATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+symBlockATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                      ([Int],[Int]) ->
                      AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
-                     AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+                     AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (TProd (SField Rational) v)
 symBlockATensFac8 inds = mapTo7 (symBlockTensFac inds)
 
 --antisymmetrization
@@ -1606,52 +1616,52 @@ aSymBlockATens8 inds = mapTo7 (aSymBlockTens inds)
 
 --with factor
 
-aSymBlockATensFac1 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+aSymBlockATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                       ([Int],[Int]) ->
                       AbsTensor1 n1 k1 v ->
-                      AbsTensor1 n1 k1 v
+                      AbsTensor1 n1 k1 (TProd (SField Rational) v)
 aSymBlockATensFac1 = aSymBlockTensFac
 
-aSymBlockATensFac2 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+aSymBlockATensFac2 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                       ([Int],[Int]) ->
                       AbsTensor2 n1 n2 k1 v ->
-                      AbsTensor2 n1 n2 k1 v
+                      AbsTensor2 n1 n2 k1 (TProd (SField Rational) v)
 aSymBlockATensFac2 inds = mapTo1 (aSymBlockTensFac inds)
 
-aSymBlockATensFac3 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+aSymBlockATensFac3 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                       ([Int],[Int]) ->
                       AbsTensor3 n1 n2 n3 k1 k2 v ->
-                      AbsTensor3 n1 n2 n3 k1 k2 v
+                      AbsTensor3 n1 n2 n3 k1 k2 (TProd (SField Rational) v)
 aSymBlockATensFac3 inds = mapTo2 (aSymBlockTensFac inds)
 
-aSymBlockATensFac4 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+aSymBlockATensFac4 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                       ([Int],[Int]) ->
                       AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
-                      AbsTensor4 n1 n2 n3 n4 k1 k2 v
+                      AbsTensor4 n1 n2 n3 n4 k1 k2 (TProd (SField Rational) v)
 aSymBlockATensFac4 inds = mapTo3 (aSymBlockTensFac inds)
 
-aSymBlockATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+aSymBlockATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                       ([Int],[Int]) ->
                       AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
-                      AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+                      AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (TProd (SField Rational) v)
 aSymBlockATensFac5 inds = mapTo4 (aSymBlockTensFac inds)
 
-aSymBlockATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+aSymBlockATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                       ([Int],[Int]) ->
                       AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
-                      AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+                      AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (TProd (SField Rational) v)
 aSymBlockATensFac6 inds = mapTo5 (aSymBlockTensFac inds)
 
-aSymBlockATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+aSymBlockATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                       ([Int],[Int]) ->
                       AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
-                      AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+                      AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (TProd (SField Rational) v)
 aSymBlockATensFac7 inds = mapTo6 (aSymBlockTensFac inds)
 
-aSymBlockATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+aSymBlockATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                       ([Int],[Int]) ->
                       AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
-                      AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+                      AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (TProd (SField Rational) v)
 aSymBlockATensFac8 inds = mapTo7 (aSymBlockTensFac inds)
 
 --cyclic symmetrization
@@ -1706,52 +1716,52 @@ cyclicSymATens8 inds = mapTo7 (cyclicSymTens inds)
 
 --with factor
 
-cyclicSymATensFac1 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+cyclicSymATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                       [Int] ->
                       AbsTensor1 n1 k1 v ->
-                      AbsTensor1 n1 k1 v
+                      AbsTensor1 n1 k1 (TProd (SField Rational) v)
 cyclicSymATensFac1 = cyclicSymTensFac
 
-cyclicSymATensFac2 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+cyclicSymATensFac2 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                       [Int] ->
                       AbsTensor2 n1 n2 k1 v ->
-                      AbsTensor2 n1 n2 k1 v
+                      AbsTensor2 n1 n2 k1 (TProd (SField Rational) v)
 cyclicSymATensFac2 inds = mapTo1 (cyclicSymTensFac inds)
 
-cyclicSymATensFac3 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+cyclicSymATensFac3 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                       [Int] ->
                       AbsTensor3 n1 n2 n3 k1 k2 v ->
-                      AbsTensor3 n1 n2 n3 k1 k2 v
+                      AbsTensor3 n1 n2 n3 k1 k2 (TProd (SField Rational) v)
 cyclicSymATensFac3 inds = mapTo2 (cyclicSymTensFac inds)
 
-cyclicSymATensFac4 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+cyclicSymATensFac4 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                       [Int] ->
                       AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
-                      AbsTensor4 n1 n2 n3 n4 k1 k2 v
+                      AbsTensor4 n1 n2 n3 n4 k1 k2 (TProd (SField Rational) v)
 cyclicSymATensFac4 inds = mapTo3 (cyclicSymTensFac inds)
 
-cyclicSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+cyclicSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                       [Int] ->
                       AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
-                      AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+                      AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (TProd (SField Rational) v)
 cyclicSymATensFac5 inds = mapTo4 (cyclicSymTensFac inds)
 
-cyclicSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+cyclicSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                       [Int] ->
                       AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
-                      AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+                      AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (TProd (SField Rational) v)
 cyclicSymATensFac6 inds = mapTo5 (cyclicSymTensFac inds)
 
-cyclicSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+cyclicSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                       [Int] ->
                       AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
-                      AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+                      AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (TProd (SField Rational) v)
 cyclicSymATensFac7 inds = mapTo6 (cyclicSymTensFac inds)
 
-cyclicSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+cyclicSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                       [Int] ->
                       AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
-                      AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+                      AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (TProd (SField Rational) v)
 cyclicSymATensFac8 inds = mapTo7 (cyclicSymTensFac inds)
 
 --cyclic Antisymmetrization
@@ -1806,52 +1816,52 @@ cyclicASymATens8 inds = mapTo7 (cyclicASymTens inds)
 
 --with factor
 
-cyclicASymATensFac1 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+cyclicASymATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                        [Int] ->
                        AbsTensor1 n1 k1 v ->
-                       AbsTensor1 n1 k1 v
+                       AbsTensor1 n1 k1 (TProd (SField Rational) v)
 cyclicASymATensFac1 = cyclicASymTensFac
 
-cyclicASymATensFac2 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+cyclicASymATensFac2 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                        [Int] ->
                        AbsTensor2 n1 n2 k1 v ->
-                       AbsTensor2 n1 n2 k1 v
+                       AbsTensor2 n1 n2 k1 (TProd (SField Rational) v)
 cyclicASymATensFac2 inds = mapTo1 (cyclicASymTensFac inds)
 
-cyclicASymATensFac3 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+cyclicASymATensFac3 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                        [Int] ->
                        AbsTensor3 n1 n2 n3 k1 k2 v ->
-                       AbsTensor3 n1 n2 n3 k1 k2 v
+                       AbsTensor3 n1 n2 n3 k1 k2 (TProd (SField Rational) v)
 cyclicASymATensFac3 inds = mapTo2 (cyclicASymTensFac inds)
 
-cyclicASymATensFac4 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+cyclicASymATensFac4 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                        [Int] ->
                        AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
-                       AbsTensor4 n1 n2 n3 n4 k1 k2 v
+                       AbsTensor4 n1 n2 n3 n4 k1 k2 (TProd (SField Rational) v)
 cyclicASymATensFac4 inds = mapTo3 (cyclicASymTensFac inds)
 
-cyclicASymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+cyclicASymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                        [Int] ->
                        AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
-                       AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+                       AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (TProd (SField Rational) v)
 cyclicASymATensFac5 inds = mapTo4 (cyclicASymTensFac inds)
 
-cyclicASymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+cyclicASymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                        [Int] ->
                        AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
-                       AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+                       AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (TProd (SField Rational) v)
 cyclicASymATensFac6 inds = mapTo5 (cyclicASymTensFac inds)
 
-cyclicASymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+cyclicASymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                        [Int] ->
                        AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
-                       AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+                       AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (TProd (SField Rational) v)
 cyclicASymATensFac7 inds = mapTo6 (cyclicASymTensFac inds)
 
-cyclicASymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+cyclicASymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                        [Int] ->
                        AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
-                       AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+                       AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (TProd (SField Rational) v)
 cyclicASymATensFac8 inds = mapTo7 (cyclicASymTensFac inds)
 
 --cyclic block symmetrization
@@ -1906,52 +1916,52 @@ cyclicBlockSymATens8 inds = mapTo7 (cyclicBlockSymTens inds)
 
 --with factor
 
-cyclicBlockSymATensFac1 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+cyclicBlockSymATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                            [[Int]] ->
                            AbsTensor1 n1 k1 v ->
-                           AbsTensor1 n1 k1 v
+                           AbsTensor1 n1 k1 (TProd (SField Rational) v)
 cyclicBlockSymATensFac1 = cyclicBlockSymTensFac
 
-cyclicBlockSymATensFac2 :: (TIndex k1, TAdd v, TVec v (SField Rational)) =>
+cyclicBlockSymATensFac2 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
                            [[Int]] ->
                            AbsTensor2 n1 n2 k1 v ->
-                           AbsTensor2 n1 n2 k1 v
+                           AbsTensor2 n1 n2 k1 (TProd (SField Rational) v)
 cyclicBlockSymATensFac2 inds = mapTo1 (cyclicBlockSymTensFac inds)
 
-cyclicBlockSymATensFac3 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+cyclicBlockSymATensFac3 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                            [[Int]] ->
                            AbsTensor3 n1 n2 n3 k1 k2 v ->
-                           AbsTensor3 n1 n2 n3 k1 k2 v
+                           AbsTensor3 n1 n2 n3 k1 k2 (TProd (SField Rational) v)
 cyclicBlockSymATensFac3 inds = mapTo2 (cyclicBlockSymTensFac inds)
 
-cyclicBlockSymATensFac4 :: (TIndex k1, TIndex k2, TAdd v, TVec v (SField Rational)) =>
+cyclicBlockSymATensFac4 :: (TIndex k1, TIndex k2, TAdd v, Prod (SField Rational) v) =>
                            [[Int]] ->
                            AbsTensor4 n1 n2 n3 n4 k1 k2 v ->
-                           AbsTensor4 n1 n2 n3 n4 k1 k2 v
+                           AbsTensor4 n1 n2 n3 n4 k1 k2 (TProd (SField Rational) v)
 cyclicBlockSymATensFac4 inds = mapTo3 (cyclicBlockSymTensFac inds)
 
-cyclicBlockSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+cyclicBlockSymATensFac5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                            [[Int]] ->
                            AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v ->
-                           AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+                           AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (TProd (SField Rational) v)
 cyclicBlockSymATensFac5 inds = mapTo4 (cyclicBlockSymTensFac inds)
 
-cyclicBlockSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, TVec v (SField Rational)) =>
+cyclicBlockSymATensFac6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v, Prod (SField Rational) v) =>
                            [[Int]] ->
                            AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v ->
-                           AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+                           AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (TProd (SField Rational) v)
 cyclicBlockSymATensFac6 inds = mapTo5 (cyclicBlockSymTensFac inds)
 
-cyclicBlockSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+cyclicBlockSymATensFac7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                            [[Int]] ->
                            AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v ->
-                           AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+                           AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (TProd (SField Rational) v)
 cyclicBlockSymATensFac7 inds = mapTo6 (cyclicBlockSymTensFac inds)
 
-cyclicBlockSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, TVec v (SField Rational)) =>
+cyclicBlockSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (SField Rational) v) =>
                            [[Int]] ->
                            AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v ->
-                           AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+                           AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (TProd (SField Rational) v)
 cyclicBlockSymATensFac8 inds = mapTo7 (cyclicBlockSymTensFac inds)
 
 --contraction for general tensors

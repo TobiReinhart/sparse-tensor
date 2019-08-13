@@ -1267,7 +1267,7 @@ tensor with another tensor with given symmetry one needs to account for the now 
 we used factor less symmetriser functions.
 --}
 
-evalToTensSym :: forall (n :: Nat). SingI n => Symmetry -> [(I.IntMap Int, IndTupleST)] -> [(I.IntMap Int, IndTupleST)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n 0 (AnsVar Rational)
+evalToTensSym :: forall (n :: Nat). SingI n => Symmetry -> [(I.IntMap Int, IndTupleST)] -> [(I.IntMap Int, IndTupleST)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n 0 (AnsVar (SField Rational))
 evalToTensSym (p,ap,b,c,bc) evalEta evalEps ansEta ansEps = symTens
             where
                 p' = map (\(x,y) -> (x-1,y-1)) p
@@ -1286,28 +1286,28 @@ evalToTensSym (p,ap,b,c,bc) evalEta evalEps ansEta ansEps = symTens
                                 ) c'
                             ) bc'
 
-evalToTens :: forall (n :: Nat). SingI n => [(I.IntMap Int, IndTupleST)] -> [(I.IntMap Int, IndTupleST)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n 0 (AnsVar Rational)
+evalToTens :: forall (n :: Nat). SingI n => [(I.IntMap Int, IndTupleST)] -> [(I.IntMap Int, IndTupleST)] -> AnsatzForestEta -> AnsatzForestEpsilon -> STTens n 0 (AnsVar (SField Rational))
 evalToTens evalEta evalEps ansEta ansEps = tens
             where
                 etaL = evalAllTensorEta evalEta ansEta
                 epsL = evalAllTensorEpsilon evalEps ansEps
-                etaL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral r)) x)) etaL
-                epsL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral r)) x)) epsL
-                etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) etaL'
-                epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) epsL'
+                etaL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,SField $ fromIntegral r)) x)) etaL
+                epsL' = map (\(x,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,SField $ fromIntegral r)) x)) epsL
+                etaRmL = filter (\(_,AnsVar b) -> not $ I.null b) etaL'
+                epsRmL = filter (\(_,AnsVar b) -> not $ I.null b) epsL'
                 tens =  fromListT2' etaRmL &+  fromListT2' epsRmL
 
 --eval to abstract tensor type taling into account possible blocksymmetries and multiplicity of the ansätze
 
-evalToTensAbs :: forall n1 n2 n3. (SingI n1, SingI n2, SingI n3) => [(I.IntMap Int, Int, [IndTupleAbs])] -> [(I.IntMap Int, Int, [IndTupleAbs])] -> AnsatzForestEta -> AnsatzForestEpsilon -> ATens n1 0 n2 0 n3 0 (AnsVar Rational)
+evalToTensAbs :: forall n1 n2 n3. (SingI n1, SingI n2, SingI n3) => [(I.IntMap Int, Int, [IndTupleAbs])] -> [(I.IntMap Int, Int, [IndTupleAbs])] -> AnsatzForestEta -> AnsatzForestEpsilon -> ATens n1 0 n2 0 n3 0 (AnsVar (SField Rational))
 evalToTensAbs evalEta evalEps ansEta ansEps =  fromListT6' etaRmL &+  fromListT6' epsRmL
             where
                 etaL = evalAllTensorEtaAbs evalEta ansEta
                 epsL = evalAllTensorEpsilonAbs evalEps ansEps
                 etaL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) etaL
                 epsL' = map (\(x,mult,indTuple) -> (indTuple, AnsVar $ I.fromList $ map (\(i,r) -> (i,fromIntegral $ r*mult)) x)) epsL
-                etaRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concatMap (\(x,y) -> zip x (repeat y)) etaL'
-                epsRmL = filter (\(_,b) -> b /= AnsVar I.empty) $ concatMap (\(x,y) -> zip x (repeat y)) epsL'
+                etaRmL = filter (\(_,AnsVar b) -> not $ I.null b) $ concatMap (\(x,y) -> zip x (repeat y)) etaL'
+                epsRmL = filter (\(_,AnsVar b) -> not $ I.null b) $ concatMap (\(x,y) -> zip x (repeat y)) epsL'
 
 
 --the 2 final functions, constructing the 2 AnsatzForests and the AnsatzTensor (currently the list of symmetry DOFs must be specified by hand -> this can also yield a performance advantage)
@@ -1349,7 +1349,7 @@ mkAllEvalMapsAbs sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
             evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEps
 
 
-mkAnsatzTensorEigSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorEigSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEigSym ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
@@ -1360,7 +1360,7 @@ mkAnsatzTensorEigSym ord symmetries evalL = (ansEta, ansEps, tens)
 --return the tensor without explicit symmetrisation
 
 {-
-mkAnsatzTensorEigIO :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorEigIO :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEigIO ord symmetries evalL =
           do
             let evalLEta = filter isEtaList evalL
@@ -1376,7 +1376,7 @@ mkAnsatzTensorEigIO ord symmetries evalL =
             return (ansEta, ansEps, tens)
 -}
 
-mkAnsatzTensorEig :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorEig :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEig ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
@@ -1384,7 +1384,7 @@ mkAnsatzTensorEig ord symmetries evalL = (ansEta, ansEps, tens)
             tens = evalToTens evalMEtaInds evalMEpsInds ansEta ansEps
 
 
-mkAnsatzTensorEigAbs :: forall n1 n2 n3. (SingI n1, SingI n2, SingI n3) => Int -> Symmetry -> [([Int], Int, [IndTupleAbs])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 (AnsVar Rational))
+mkAnsatzTensorEigAbs :: forall n1 n2 n3. (SingI n1, SingI n2, SingI n3) => Int -> Symmetry -> [([Int], Int, [IndTupleAbs])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 AnsVarR)
 mkAnsatzTensorEigAbs ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMapsAbs symmetries evalL 
@@ -1453,7 +1453,7 @@ mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed = (ansEtaRed, ansEpsRed)
             ansEpsRed' = reduceLinDepsFastEps evalMEpsRed symmetries ansEpsilon
             ansEpsRed = relabelAnsatzForestEpsilon (1 + length (getForestLabels ansEtaRed)) ansEpsRed'
 
-mkAnsatzTensorFastSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorFastSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFastSym ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
@@ -1462,7 +1462,7 @@ mkAnsatzTensorFastSym ord symmetries evalL = (ansEta, ansEps, tens)
 
 --and without explicit symmetriization in tens
 
-mkAnsatzTensorFast :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorFast :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFast ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
@@ -1471,7 +1471,7 @@ mkAnsatzTensorFast ord symmetries evalL = (ansEta, ansEps, tens)
 
 --eval to abstract tensor
 
-mkAnsatzTensorFastAbs :: forall n1 n2 n3. (SingI n1, SingI n2, SingI n3) => Int -> Symmetry -> [([Int], Int, [IndTupleAbs])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 (AnsVar Rational))
+mkAnsatzTensorFastAbs :: forall n1 n2 n3. (SingI n1, SingI n2, SingI n3) => Int -> Symmetry -> [([Int], Int, [IndTupleAbs])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 AnsVarR)
 mkAnsatzTensorFastAbs ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMapsAbs symmetries evalL 
@@ -1657,19 +1657,19 @@ allList ord (syms,aSyms,_,_,_) =  allList' ord syms aSyms [] []
 
 
 {-
-mkAnsatzTensorEigIOSym' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorEigIOSym' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEigIOSym' ord symmetries =
           do
             let evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
             mkAnsatzTensorEigIOSym ord symmetries evalL
 -}
 
-mkAnsatzTensorEigSym' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorEigSym' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEigSym' ord symmetries = mkAnsatzTensorEigSym ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 
-mkAnsatzTensorFastSym' :: forall (n :: Nat). SingI n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorFastSym' :: forall (n :: Nat). SingI n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFastSym' ord symmetries = mkAnsatzTensorFastSym ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
@@ -1678,19 +1678,19 @@ mkAnsatzTensorFastSym' ord symmetries = mkAnsatzTensorFastSym ord symmetries eva
 
 
 {-
-mkAnsatzTensorEigIO' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorEigIO' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> IO (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEigIO' ord symmetries =
           do
             let evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
             mkAnsatzTensorEigIO ord symmetries evalL
 -}
 
-mkAnsatzTensorEig' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorEig' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEig' ord symmetries = mkAnsatzTensorEig ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 
-mkAnsatzTensorFast' :: forall (n :: Nat). SingI n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 (AnsVar Rational))
+mkAnsatzTensorFast' :: forall (n :: Nat). SingI n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFast' ord symmetries = mkAnsatzTensorFast ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries

@@ -422,7 +422,7 @@ class TAdd a where
     addS :: a -> a -> a
     negateS :: a -> a
     subS :: a -> a -> a
-    subS a b = a `addS` (negateS b)
+    subS a b = a `addS` negateS b
 
 -- | Newtype wrapper for reprsenting the underlying base field that is used for scalar multiplications.
 

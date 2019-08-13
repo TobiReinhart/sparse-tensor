@@ -266,16 +266,16 @@ linKin ans10 = tens1
 quadMass :: ATens 3 0 0 0 0 0 AnsVarR -> ATens 2 0 0 0 0 0 AnsVarR -> ATens 2 0 0 0 1 1 AnsVarR
 quadMass ans12 ans8 = tens1 &+ tens2 &+ tens3 &+ dens
     where
-        dens = (SField 2 &.) $ ans8 &* delta3
-        tens1 = (SField 6 &.) $ contrATens1 (1,0) $ ans12 &* flatInter
-        tens2 = (SField 2 &.) $ contrATens1 (1,0) $ ans8 &* interArea
-        tens3 = (SField 2 &.) $ tensorTrans1 (0,1) $ contrATens1 (0,0) $ ans8 &* interArea
+        dens = (SField (2 :: Rational) &.) $ ans8 &* delta3
+        tens1 = (SField (6 :: Rational) &.) $ contrATens1 (1,0) $ ans12 &* flatInter
+        tens2 = (SField (2 :: Rational) &.) $ contrATens1 (1,0) $ ans8 &* interArea
+        tens3 = (SField (2 :: Rational) &.) $ tensorTrans1 (0,1) $ contrATens1 (0,0) $ ans8 &* interArea
 
 quadKin1 :: ATens 3 0 0 0 2 0 AnsVarR -> ATens 2 0 0 0 2 0 AnsVarR -> ATens 2 0 0 0 3 1 AnsVarR
 quadKin1 ans14 ans10 = tens1 &+ tens2 &+ tens3 &+ dens &- (tens4_1 &+ tens4_2)
     where
         dens = ans10 &* delta3
-        tens1 = (SField (1/2) &.) $ symATens5 (0,1) $ contrATens1 (2,0) $ ans14 &* flatInter
+        tens1 = (SField (1/2 :: Rational) &.) $ symATens5 (0,1) $ contrATens1 (2,0) $ ans14 &* flatInter
         tens2 = contrATens1 (1,0) $ ans10 &* interArea
         tens3 = tensorTrans1 (0,1) $ contrATens1 (0,0) $ ans10 &* interArea
         tens4_1 = tensorTrans5 (1,2) $ ans10 &* delta3
@@ -286,7 +286,7 @@ quadKin2 :: ATens 3 0 0 0 2 0 AnsVarR -> ATens 2 0 0 0 2 0 AnsVarR -> ATens 2 0 
 quadKin2 ans14 ans10 = symATens5 (0,2) $ tens1 &+ tens3 &+ tens4 &- (tens0 &+ tens2)
     where
         tens0 = tensorTrans5 (1,2) $ ans10 &* delta3
-        tens1 = (SField 2 &.) $ contrATens1 (1,0) $ ans10 &* interArea
+        tens1 = (SField (2 :: Rational) &.) $ contrATens1 (1,0) $ ans10 &* interArea
         tens2 = tensorTrans1 (0,1) $ contrATens1 (0,0) $ ans14 &* flatInter
         tens3 = contrATens1 (2,0) $ ans14 &* flatInter
         tens4 = contrATens1 (0,0) $ ans14 &* flatInter

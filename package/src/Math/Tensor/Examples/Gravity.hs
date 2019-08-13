@@ -154,10 +154,10 @@ interJArea = fromListT6 $ fmap (fmap SField) $ filter (\(i,k) -> k /= 0) $ map (
 
 
 interMetric :: ATens 0 0 1 1 1 1 (SField Rational)
-interMetric = SField (-2) &. contrATens3 (0,0) (interI2 &* interJ2)
+interMetric = SField (-2 :: Rational) &. contrATens3 (0,0) (interI2 &* interJ2)
 
 interArea :: ATens 1 1 0 0 1 1 (SField Rational)
-interArea = SField (-4) &. contrATens3 (1,1) (contrATens3 (2,2) $ contrATens3 (3,3) $ interIArea &* interJArea)
+interArea = SField (-4 :: Rational) &. contrATens3 (1,1) (contrATens3 (2,2) $ contrATens3 (3,3) $ interIArea &* interJArea)
 
 interEqn2 :: ATens 1 1 0 0 2 2 (SField Rational)
 interEqn2 = int1 &- int2

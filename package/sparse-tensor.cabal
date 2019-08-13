@@ -3,24 +3,24 @@ version:             0.1.0.0
 synopsis:            typesafe tensor algebra and related functions
 description:   
     .      
-    This package is intedent to be used as a general purpose tensor algebra computer program.
-    It defines the usual tensor algebra functions such as addition, scalar multiplication, tensor product and contractions,
+    This package is intended to be used as a general purpose tensor algebra library.
+    It defines the usual tensor algebra functions such as addition, scalar multiplication, tensor product, and contractions,
     but also general symmetrizations and further utility functions.
     .
     The implemented tensor data type is capable of being used with an arbitrary number of general abstract indices and can incorporate values 
-    of any type that allows for a meaningfull addition, ssaling and product function. The package is thus very flexible and can easily be customised 
+    of any type that allow for a meaningful addition, scaling, and multiplication. The package is thus very flexible and can easily be customised 
     at wish.
     .
-    This package performs best when the values a given tensor provides are explicitly needed. In particular all coorporated functions are   
-    implemented such that they explicitly maniulate the values of the given tensors. This allows for fast extraction the individual values from given tensors.
+    This package performs best when the values a given tensor provides are explicitly needed. In particular all incorporated functions are   
+    implemented such that they explicitly manipulate the values of the given tensors. This allows for fast evaluation of the individual values from given tensors.
     .
-    In order to improve memory usage the tensors in this package employ a sparse storage paradigm. In other words one may define a tensor by only 
-    providing its non zero values explicitly. All remaining values are then taking to be zero.
+    In order to improve memory usage, the tensors in this package employ a sparse storage paradigm. In other words, one may define a tensor by only 
+    providing its non-zero values explicitly. All remaining values are taken to be zero.
     .
-    Furthermore this package also provides the functionallity of fully automatically computing all linear independent expressions that might be formed by 
-    using Minkowski metrics and Levi-civita symbols and obey a given symmetry and number of indices. In order words the package includes functions that 
-    construct a basis of the space of Lorentz invariant tensors of given symmetry and rank. With slight modifications the therefore implemented algorithms might 
-    also be used for the computation of invariant tensor bases of any other speacial orthogonal group SO(p,q). 
+    Furthermore this package also provides the functionality of fully automatically computing all linear independent expressions with given rank and symmetries
+    that can be composed by using Minkowski metrics and Levi-civita symbols. In order words, the package includes functions that 
+    construct a basis of the space of Lorentz invariant tensors of given symmetry and rank. With slight modifications the therefore implemented algorithms can 
+    also be used for the computation of invariant tensor bases of any other special orthogonal group @SO(p,q)@. 
 homepage:            https://github.com/TobiReinhart/sparse-tensor#readme
 license:             MIT
 license-file:        LICENSE

@@ -1,4 +1,31 @@
---Implementation of efficient sparse tensor algebra in Haskell
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Math.Tensor
+-- Copyright   :  (c) 2019 Tobias Reinhart and Nils Alex
+-- License     :  MIT
+-- Maintainer  :  tobi.reinhart@fau.de, nils.alex@fau.de
+--
+--
+-- This module defines the basic data types and functions of the sparse-tensor package.
+--
+-- The @'Tensor' n k v@  data type provides the fundamental building block of all further tensor types.
+-- It represents a general tensor that takes @n@ individual indices all belonging
+-- to the same index typ @k@ and retrieves values of type @v@. Such a tensor can be thought of representing a single tensor that only features
+-- contravariant indices. 
+--
+-- Additional covariant indices can be incorporated by adjoining further tensors that take the same index type as values to the first tensor. 
+-- This yields the type @'Tensor2' n1 n2 k v@ which thus represents usual tensors with contravariant and covariant indices of type @k@ and values of
+-- type @v@.
+--
+-- Adjoining multiple such tensors of type @'Tensor2'@ each one with possibly different
+-- index types and different ranks by successivle appending tensors as values to tensors the sparse-tensor package allows for a flexible treatment arbitrary number of different indices.
+--
+-- The tensor data type directly incorporates its rank in form of a type level natural number @n@. This results in added type safety when performing the usual 
+-- tensor algebra operations.
+--
+-- Furthermore the tensor type employs a sparse storage paradigm in the sense that when constructing tensors only non zero values must be specified.
+-- Missing values are then taken as vanishing automatically. 
+-----------------------------------------------------------------------------
 
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE DataKinds #-}
@@ -24,41 +51,12 @@
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
 {-# OPTIONS_GHC -fplugin-opt GHC.TypeLits.Normalise:allow-negated-numbers #-}
 
------------------------------------------------------------------------------
--- |
--- Module      :  Math.Tensor
--- Copyright   :  2019 Tobias Reinhart and Nils Alex
--- License     :  MIT
--- Maintainer  :  tobi.reinhart@fau.de, nils.alex@fau.de
--- Language    :  Haskell 2010
---
---
--- = Tensor
---
--- This module defines the basic data types and functions of the sparse-tensor package.
---
--- The @'Tensor' n k v@  data type provides the fundamental building block of all further tensor types.
--- It represents a general tensor that takes @n@ individual indices all belonging
--- to the same index typ @k@ and retrieves values of type @v@. Such a tensor can be thought of representing a single tensor that only allows for
--- contravariant indices. 
---
--- Additional covariant indices can be incorporated by adjoining further tensors that take the same index type as values to the first tensor. 
--- These then represent the covariant indices of the total tensor. Appending further tensors with possibly different
--- index types as values one thus can treat tensor that allow for an arbitrary number of different indices.
--- 
--- The tensor data type directly incorporates its rank in form of a type level natural number @n@. This results in added type safety when performing the usual 
--- tensor algebra operations.
---
--- Furthermore the tensor type employs a sparse storage paradigm in the sense that when constructing tensors only non zero values must be specified.
--- Missing values are then taken as vanishing automatically. 
------------------------------------------------------------------------------
-
 module Math.Tensor (
--- * Length typed Index List
+-- * Length typed index list
 -- | Tensors provide information regarding their number of indices in their type. As consequence for constructing tensors from list and 
 -- converting them to list we also provide length information of the list in its type.
 IndList(..), singletonInd, (+>), fromList, fromListMaybe,
--- | Basic Listfunctions for lenght typed lists.
+-- | Basic list functions for length typed lists.
 headInd, tailInd, sortInd, updateInd, 
 -- * Tensor Data Types
 -- | The basic tensor type @'Tensor' n k v@ represents a tensor that takes @n@ indices of type @k@ and maps them to values of type @v@.
@@ -66,27 +64,93 @@ headInd, tailInd, sortInd, updateInd,
 --
 -- A general abstract Tensor with multiple possibly different indices is obtained by simply adjoining the appropriate number of individual basic tensors.
 --
---
--- The tensor type is internally implemented as order forest with nodes being the individual indices and leavs the correspinding values.
+-- The tensor type is internally implemented as ordered forest with nodes being the individual indices and leafs given by the corresponding values.
 TMap, 
 Tensor(..), Tensor2, AbsTensor1, AbsTensor2, AbsTensor3, AbsTensor4, AbsTensor5, AbsTensor6, AbsTensor7, AbsTensor8, STTens, ATens,
 -- * Index Type Class 
 TIndex, Ind3(..), Ind9(..), Ind20(..),
 -- * Value Type Class 
--- | Values of a given tensor must satisfy number like properties, i.e. constitute an algebra.
--- Thus they need to provide functions for addition, scaling and multiplication. 
+-- | Types that any @'Tensor'@ might use as values must satisfy number like properties, more precisely they must constritute an additive group.
+-- This requirement is encoded in the @'TAdd'@ type class. 
+--  
+-- Allowing further for the computation of tensor products the @'Tensor'@ types resemble the structure of the usual graded tensor algebra on the type level.
+-- When computing tensor products of different ranked tensors and also tensors with different value type it is thus necessary that the two @'Tensor'@ types provide the 
+-- information regarding the explicit type of their product. This is the case if the two value types provide an instance of the @'Prod'@ type class. 
 --
--- It should further be possible to form the tensor product of two tensors with different value type under the constraint that the two value types 
--- provide the necessary type information for the values of the thus obtained result. 
---
--- Note that also the basic tensor type itself provides an instance of the following two type classes. Only this enables the use of tensors as
--- value types of other tensors and thus the construction of tensors that involve different indices. 
+-- If the values of a given tensor are instances of these two type classes also tensor type  @'Tensor'@ itself represents an instance of them.
+-- Only this enables the use of tensors as value types of other tensors and thus the construction of tensors that involve different indices. 
 TAdd(..), SField(..), Prod(..), AnsVar(..), AnsVarR, 
 shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabels6, shiftLabels7, shiftLabels8,
--- * Lists of multiple Tensors
--- | Sometimes it is convenient to collect multiple tensors in a list. If the tensros have different rank these lists must be heterogenic.
+-- * Construction
+-- | The standard way of constructing a tensor is from a list of tuples, where the first entry contains a tuple of @'IndList'@ types with
+-- the appropriate length and type given by the explicit @'Tensor'@ type. The number of elements in the tuple is determined by the number of indices the tensor takes.
 --
--- | Types for heterogenic lists of tensors of different rank but of the syme algebraic type, i.e. same index spaces.
+-- Type synonyms for the basic such tuples of @'IndList'@ types. 
+IndTuple1, IndTuple2, IndTuple3, IndTuple4, IndTuple5, IndTuple6, IndTuple7, IndTuple8,
+IndTupleST, IndTupleAbs, 
+-- | This allows for the construction of tensors from typed index tuple lists.
+fromListT1, fromListT2, fromListT3, fromListT4, fromListT5, fromListT6, fromListT7, fromListT8,
+-- | Construction of a tensor from a non typed index tuple list is also possible.
+fromListT1', fromListT2', fromListT3', fromListT4', fromListT5', fromListT6', fromListT7', fromListT8',
+-- * Tensor algebra
+-- The following provide the @'Tensor'@ type with the structure of the usual tensor algebra.
+(&+), negateTens, (&*), (&-), (&.),
+-- | These functions compute the contraction of a tensor in two of its indices, i.e. the function sets the two indices equal and sums over their whole index range.
+-- The number contained in the function name labels the type of indices that are to be contracted, i.e. @'contrATens1'@ contracts the first two index types of a tensor,
+-- @'contrATens2'@ contracts the second index type, etc. The additional @'Int'@ pair that these functions require as input then label the position of the contravariant and covariant 
+-- index that shall be contracted respectively.
+contrATens1, contrATens2, contrATens3, contrATens4,
+-- * Rearranging indices
+-- | The following functions allow for swapping and permuting indices of a given tensor. 
+-- 
+-- Transpose a tensor in two specified indices. The result is simply the tensor with the two provided indices swapped in their position
+tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6, tensorTrans7, tensorTrans8,
+-- | Swap two index blocks in a given tensor.
+tensorBlockTrans1, tensorBlockTrans2, tensorBlockTrans3, tensorBlockTrans4, tensorBlockTrans5, tensorBlockTrans6, tensorBlockTrans7, tensorBlockTrans8,
+-- | Completely rearrange the indices of a given tensor. The new index order is specified by a list @'[Int]'@ that must be of length given by the 
+-- number of indices the tensor contains. The list then specifies in its i-th element the position on which the i-th index of the tensor
+-- shall be sorted. For instance labeling the appropriate tensor indice by @'[A, B, C]'@ and invoking the function with @'[1,2,0]'@ the indices are arranged as
+-- @'[C, A, B]'@. 
+resortTens1, resortTens2, resortTens3, resortTens4, resortTens5, resortTens6, resortTens7, resortTens8,
+-- * Symmetrization
+--
+-- Symmetrization is achieved by adding the tensor and possibly multiple copies of it that have their indices permuted according to the specific symmetry that
+-- one wishes to impose. 
+--
+-- For each function there are two versions provided:
+--    * The first version (as for isntance @'symATens1'@) does not include the usual division by the number of terms that appear in the symmetrizated expression. The symmetrization then does not define a projectoion.
+--    * The second version (as for instance @'symATens1Fac'@) does includes the factors and hence defines a projection.
+--  
+-- Basic symmetrization in a pair of indices. Factors are not include in these function.
+symATens1, symATens2, symATens3, symATens4, symATens5, symATens6, symATens7, symATens8,
+-- | Basic Basic symmetrization in a pair of indices including factors of @'1 % 2'@. 
+symATensFac1, symATensFac2, symATensFac3, symATensFac4, symATensFac5, symATensFac6, symATensFac7, symATensFac8,
+-- | Basic anti-symmetrization in a pair of indices. Factors are not include in these function.
+aSymATens1, aSymATens2, aSymATens3, aSymATens4, aSymATens5, aSymATens6, aSymATens7, aSymATens8,
+-- | Basic Basic anti-symmetrization in a pair of indices including factors of @'1 % 2'@. 
+aSymATensFac1, aSymATensFac2, aSymATensFac3, aSymATensFac4, aSymATensFac5, aSymATensFac6, aSymATensFac7, aSymATensFac8,
+-- | Symmetrization w.r.t. the exchange of two index blocks. The index blocks must be disjoint. These functions do not include the usual factors.
+symBlockATens1, symBlockATens2, symBlockATens3, symBlockATens4, symBlockATens5, symBlockATens6, symBlockATens7, symBlockATens8,
+-- | Basic block pair symmetrization including the @'1 % 2'@ factors.
+symBlockATensFac1, symBlockATensFac2, symBlockATensFac3, symBlockATensFac4, symBlockATensFac5, symBlockATensFac6, symBlockATensFac7, symBlockATensFac8,
+-- | Anti symmetrization w.r.t. the exchange of two index blocks. The index blocks must be disjoint. These functions do not include the usual factors.
+aSymBlockATens1, aSymBlockATens2, aSymBlockATens3, aSymBlockATens4, aSymBlockATens5, aSymBlockATens6, aSymBlockATens7, aSymBlockATens8,
+-- | Basic block pair anti symmetrization including the @'1 % 2'@ factors.
+aSymBlockATensFac1, aSymBlockATensFac2, aSymBlockATensFac3, aSymBlockATensFac4, aSymBlockATensFac5, aSymBlockATensFac6, aSymBlockATensFac7, aSymBlockATensFac8,
+-- | Complete symmetrization of a subset of the tensor indices. The usual factors are not included. 
+cyclicSymATens1, cyclicSymATens2, cyclicSymATens3, cyclicSymATens4, cyclicSymATens5, cyclicSymATens6, cyclicSymATens7, cyclicSymATens8,
+-- | These functions completely symmetrize a tensors in a subset of its indices while including the usual factors.
+cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6, cyclicSymATensFac7, cyclicSymATensFac8,
+-- | Completely anti symmetrize a subset of the tensor indices not including the usual factors.
+cyclicASymATens1, cyclicASymATens2, cyclicASymATens3, cyclicASymATens4, cyclicASymATens5, cyclicASymATens6, cyclicASymATens7, cyclicASymATens8,
+-- | Completely anti symmetrize a subset of the tensor indices including the factors.
+cyclicASymATensFac1, cyclicASymATensFac2, cyclicASymATensFac3, cyclicASymATensFac4, cyclicASymATensFac5, cyclicASymATensFac6, cyclicASymATensFac7, cyclicASymATensFac8,
+-- | Completely symmetrize a tensor w.r.t permutations of disjoint blocks of indices, while not including usual factors.
+cyclicBlockSymATens1, cyclicBlockSymATens2, cyclicBlockSymATens3, cyclicBlockSymATens4, cyclicBlockSymATens5, cyclicBlockSymATens6, cyclicBlockSymATens7, cyclicBlockSymATens8,
+-- | Completely symmetrize a tensor w.r.t permutations of disjoint blocks of indices, including the usual factors.
+cyclicBlockSymATensFac1, cyclicBlockSymATensFac2, cyclicBlockSymATensFac3, cyclicBlockSymATensFac4, cyclicBlockSymATensFac5, cyclicBlockSymATensFac6, cyclicBlockSymATensFac7, cyclicBlockSymATensFac8,
+-- * Lists of multiple Tensors
+-- | Sometimes it is convenient to collect multiple tensors with the syme element type in a list. To allow the individual tensors to have different rank these lists are heterogenic.
 TensList1(..), TensList2(..), TensList3(..), TensList4(..), TensList5(..), TensList6(..), TensList7(..), TensList8(..),
 -- | Construct a List with a single Entry.
 singletonTList1, singletonTList2, singletonTList3, singletonTList4, singletonTList5, singletonTList6, singletonTList7, singletonTList8,
@@ -94,97 +158,36 @@ singletonTList1, singletonTList2, singletonTList3, singletonTList4, singletonTLi
 (...>), (..&>), (.&.>), (.&&>), (&..>), (&.&>), (&&.>), (&&&>),
 -- | Combining two tensor lists.
 (...+), (..&+), (.&.+), (.&&+), (&..+), (&.&+), (&&.+), (&&&+),
--- * Construction
--- | The standard way of constructing a tensor is from a list of tuples, where the first entry contains a tuple of @'IndList'@ types with
--- the appropriate length and type given by the explicit @'Tensor'@ type. The number of elements in the tuple is determined by the number of indices the tensor takes.
---
--- Type synonyms for the basic such tuples of @'IndList'@ types
-IndTuple1, IndTuple2, IndTuple3, IndTuple4, IndTuple5, IndTuple6, IndTuple7, IndTuple8,
-IndTupleST, IndTupleAbs, 
--- 
--- | Construction of tensors from such tuple lists.
-fromListT1, fromListT2, fromListT3, fromListT4, fromListT5, fromListT6, fromListT7, fromListT8,
--- | Construction of a tensor from a list of tuples consisting of non-typed indices value pairs is also possible.
-fromListT1', fromListT2', fromListT3', fromListT4', fromListT5', fromListT6', fromListT7', fromListT8',
 -- * Conversion 
--- | Convert a Tensor to a typed indices value list.
+-- | The following functions convert a Tensor to a typed indices tuple list.
 toListT1, toListT2, toListT3, toListT4, toListT5, toListT6, toListT7, toListT8,
--- | Convert a tensor to a non-typed indices value list. 
+-- | These functions convert a given tensor to a non-typed index tuple list. 
 toListT1', toListT2', toListT3', toListT4', toListT5', toListT6', toListT7', toListT8',
--- | Convert a tensor that stores @'AnsVar'@ values to sparse matrix list where the columns label the variables in @'AnsVar'@
+-- | Convert a tensor that stores @'AnsVar'@ values to a sparse matrix list where the columns label the variables in @'AnsVar'@
 --   and the rows label independent components of the tensor.
 toMatListT1', toMatListT2', toMatListT3', toMatListT4', toMatListT5', toMatListT6', toMatListT7', toMatListT8', 
--- | Convert a tensor that stores 'AnsVar' values to sparse matrix using the 'Eigen' matrix type.
+-- | Convert a tensor that stores @'AnsVar'@ values to sparse matrix using the @'Eigen'@ matrix type.
 toEMatrixT1', toEMatrixT2', toEMatrixT3', toEMatrixT4', toEMatrixT5', toEMatrixT6', toEMatrixT7', toEMatrixT8',
--- | Same as the 'toMatListi'' functions but taking a whole list of tensors as input.
+-- | These functions also convert to a sparse matrix list but take a whole heterogenic list of tensors as input.
+-- This can for instance be used if the individual tensors in the list represent individual equations of a linear equation system and the information
+-- of the complete system is needed in matrix form.
 toMatListT1, toMatListT2, toMatListT3, toMatListT4, toMatListT5, toMatListT6, toMatListT7, toMatListT8,
--- | Same as the 'toEMatrixTi'' functions but taking a whole list of tensors as input.
+-- | The following functions take a heterogenic list of tensors as input and convert to one overall sparse @'Eigen'@ matrix.
 toEMatrixT1, toEMatrixT2, toEMatrixT3, toEMatrixT4, toEMatrixT5, toEMatrixT6, toEMatrixT7, toEMatrixT8,
--- * Sparse storage 
--- | Remove all zero values from a tensor that might occur during computations. 
+-- | Applying these functions on a given tensor removes all zero values from it. Even if zero values are not included in a given tensor when it is constructed
+-- they might occure during computations. If so they are not automatically removed from the tensor.  
 removeZeros1, removeZeros2, removeZeros3, removeZeros4, removeZeros5, removeZeros6, removeZeros7, removeZeros8,
--- * Tensor algebra
-(&+), negateTens, (&*), (&-), (&.),
--- | Contraction of a tensor in two of its indices, i.e. the function sets the two indices equal and sums over their whole index range.
-contrATens1, contrATens2, contrATens3, contrATens4,
--- * Rearranging indices
--- | In each of the following functions the first integer refers to the specific index type of the tensor the second argument labels the corresponding 
--- indices.
--- 
--- Transpose a tensor in two specified indices. The result is simply the tensor with the two provided indices swapped in their position
-tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTrans6, tensorTrans7, tensorTrans8,
--- | Swap two index block in a given tensor.
-tensorBlockTrans1, tensorBlockTrans2, tensorBlockTrans3, tensorBlockTrans4, tensorBlockTrans5, tensorBlockTrans6, tensorBlockTrans7, tensorBlockTrans8,
--- | Completely rearrange the indices of a given type in a givne tensor. The new index order is specified by a list '[Int]' that must be of length given by the 
--- number of indices the tensor contains of the given type. The list then specifies in its i-th element the position on which the i-th such index
--- shall be sorted. For instance labeling the appropriate tensor indice by '[A, B, C]' and invoking the function with '[1,2,0]' the indices are arranged as
--- '[C, A, B]'. 
-resortTens1, resortTens2, resortTens3, resortTens4, resortTens5, resortTens6, resortTens7, resortTens8,
--- * Symmetrization
--- | In the following functions the first argument of type 'Int' refers to the index type that is to be symmetrized. The second argument then specifies which indices
--- are concerned by the symmetrization. 
---
--- Symmetrization is achieved by adding the tensor at hand and possibly multiple copies of it that have their appropriate indices resorted accordingly. 
--- Each function is provided in a way that does not include the usual division by the number of thereby appearing terms, i.e. the symmetrization then does not define a projection,
--- and one version that includes the factors.
---  
--- Basic symmetrization in a pair of indices. Factors of '1/2' are not include in this function.
-symATens1, symATens2, symATens3, symATens4, symATens5, symATens6, symATens7, symATens8,
--- | Basic Basic symmetrization in a pair of indices including factors of '1/2'. Note that this restricts the function to tenosrs that can be scaled with rational values.
-symATensFac1, symATensFac2, symATensFac3, symATensFac4, symATensFac5, symATensFac6, symATensFac7, symATensFac8,
--- | Basic anti-symmetrization in a pair of indices. Factors of '1/2' are not include in this function.
-aSymATens1, aSymATens2, aSymATens3, aSymATens4, aSymATens5, aSymATens6, aSymATens7, aSymATens8,
--- | Basic Basic anti-symmetrization in a pair of indices including factors of '1/2'. Note that this restricts the function to tenosrs that can be scaled with rational values.
-aSymATensFac1, aSymATensFac2, aSymATensFac3, aSymATensFac4, aSymATensFac5, aSymATensFac6, aSymATensFac7, aSymATensFac8,
--- | Symmetrization w.r.t. the exchange of two index blocks. The index blocks must be disjoint. The function does not include the usual '1/2' factors.
-symBlockATens1, symBlockATens2, symBlockATens3, symBlockATens4, symBlockATens5, symBlockATens6, symBlockATens7, symBlockATens8,
--- | Basic block pair symmetrization including the '1/2' factors.
-symBlockATensFac1, symBlockATensFac2, symBlockATensFac3, symBlockATensFac4, symBlockATensFac5, symBlockATensFac6, symBlockATensFac7, symBlockATensFac8,
--- | Anti symmetrization w.r.t. the exchange of two index blocks. The index blocks must be disjoint. The function does not include the usual '1/2' factors.
-aSymBlockATens1, aSymBlockATens2, aSymBlockATens3, aSymBlockATens4, aSymBlockATens5, aSymBlockATens6, aSymBlockATens7, aSymBlockATens8,
--- | Basic block pair anti symmetrization including the '1/2' factors.
-aSymBlockATensFac1, aSymBlockATensFac2, aSymBlockATensFac3, aSymBlockATensFac4, aSymBlockATensFac5, aSymBlockATensFac6, aSymBlockATensFac7, aSymBlockATensFac8,
--- | Complete symmetrization of a subset of the tensor indices. The usual '1/i!' are not included. Here 'i' is the number of indices that is completely symmetrized.
-cyclicSymATens1, cyclicSymATens2, cyclicSymATens3, cyclicSymATens4, cyclicSymATens5, cyclicSymATens6, cyclicSymATens7, cyclicSymATens8,
--- | This function completely symmetrizes a tensors in a subset of its indices while including the usual '1/i!' factors.
-cyclicSymATensFac1, cyclicSymATensFac2, cyclicSymATensFac3, cyclicSymATensFac4, cyclicSymATensFac5, cyclicSymATensFac6, cyclicSymATensFac7, cyclicSymATensFac8,
--- | Completely anti symmetrize a subset of the tensor indices. The usual '1/i!' are not included.
-cyclicASymATens1, cyclicASymATens2, cyclicASymATens3, cyclicASymATens4, cyclicASymATens5, cyclicASymATens6, cyclicASymATens7, cyclicASymATens8,
--- | Completely anti symmetrize a subset of the tensor indices including '1/i!' factors.
-cyclicASymATensFac1, cyclicASymATensFac2, cyclicASymATensFac3, cyclicASymATensFac4, cyclicASymATensFac5, cyclicASymATensFac6, cyclicASymATensFac7, cyclicASymATensFac8,
--- | Completely symmetrize a tensor w.r.t permutations of disjoint blocks of indices, while not including '1/i!' factors, where 'i' is the number of such blocks.
-cyclicBlockSymATens1, cyclicBlockSymATens2, cyclicBlockSymATens3, cyclicBlockSymATens4, cyclicBlockSymATens5, cyclicBlockSymATens6, cyclicBlockSymATens7, cyclicBlockSymATens8,
--- | Completely symmetrize a tensor w.r.t permutations of disjoint blocks of indices, including '1/i!' factors.
-cyclicBlockSymATensFac1, cyclicBlockSymATensFac2, cyclicBlockSymATensFac3, cyclicBlockSymATensFac4, cyclicBlockSymATensFac5, cyclicBlockSymATensFac6, cyclicBlockSymATensFac7, cyclicBlockSymATensFac8,
 -- * Tensor functions 
 -- | Evaluate a tensor on a specific index value returning the corresponding sub tensor.
 evalTens1, evalTens2, evalTens3, evalTens4, evalTens5, evalTens6, evalTens7, evalTens8,
--- | Compute the rank of a tensor of 'AnsVarR' values. The tensor is converted to a matrix with columns labeling the individual variables that occur in 'ansVarR'
--- and rows labeling the independent tensor components. Th ereank is then computed using 'Eigen' subroutines. This function is for instance usefull
+-- | Compute the rank of a tensor of @'AnsVarR'@ values. The tensor is converted to a matrix with columns labeling the individual variables that occur in 'ansVarR'
+-- and rows labeling the independent tensor components. Th ereank is then computed using 'Eigen' subroutines. These functions is for instance usefull
 -- when determining the rank of tensorial equations.
 tensorRank1', tensorRank2', tensorRank3', tensorRank4', tensorRank5', tensorRank6', tensorRank7', tensorRank8',
--- | Compute the combined rank of a list of multiple tensors. CAn for instance be used to compute the rank of a linear equation system constituted of tensorial equations. 
+-- | Compute the combined rank of a heterogenic list of multiple tensors. If the tensors for instance describe the individual equations of 
+-- a linear equation system then these functions can be used to compute the rank of the complete system. 
 tensorRank1, tensorRank2, tensorRank3, tensorRank4, tensorRank5, tensorRank6, tensorRank7, tensorRank8,
+encodeTensor, decodeTensor
 ) where
 
 import Data.Foldable (toList)
@@ -250,7 +253,7 @@ fromList' n xs = case isZero n
                                                 of Just v  -> Just (x `Append` v)
                                                    Nothing -> Nothing
 
--- | Construction of legth typed 'IndList n' from untyped lists '[a]'.
+-- | Construction of legth typed @'IndList'@ from untyped lists.
 
 fromList :: forall (n :: Nat). SingI n => forall (a :: *). [a] -> IndList n a
 fromList = \case
@@ -258,7 +261,7 @@ fromList = \case
                Nothing -> undefined
             . fromList' sing
 
--- | Construction from untyped lists returning a 'Maybe' value. 
+-- | Construction from untyped lists returning a @'Maybe'@ value. 
 
 fromListMaybe :: forall (n :: Nat). SingI n => forall (a :: *). [a] -> Maybe (IndList n a)
 fromListMaybe = fromList' sing
@@ -356,7 +359,7 @@ resortInd perm indList = newindList
 
 --Index type class
 
--- | Index types must satisfy the 'Eq', 'Ord', and 'Enum' constraints and further provide information about the corresponding index range.
+-- | Index types must satisfy the 'Eq', 'Ord', and 'Enum' constraints.
 
 class (Eq a, Ord a, Enum a) => TIndex a where
 
@@ -455,18 +458,7 @@ instance (TIndex k, TAdd v) => TAdd (Tensor n k v) where
                     ZeroTensor -> True
                     _          -> False
 
--- | Type class that encodes properties of the product of two types that are used as tensor value.
--- Not only the function that explicitly computes values for such a product is needed
--- one also needs a type level function that encodes the appropriate type of the product.
-
-{-
-type family TProd a b where
-    TProd a a = a
-    TProd a (Tensor n k v) = Tensor n k (TProd a v)
-    TProd (Tensor n k v) (Tensor n' k v') = Tensor (n+n') k (TProd v v')
-    TProd a (AnsVar b) = AnsVar (TProd a b)
-    TProd (AnsVar a) b = AnsVar (TProd a b)
--}
+-- | Type class for product of two (different) types.
 
 class Prod v v' where
     type TProd v v' :: *
@@ -488,7 +480,7 @@ instance (TIndex k, Prod v v') => Prod (Tensor n k v) (Tensor n' k v') where
     type TProd (Tensor n k v) (Tensor n' k v') = Tensor (n+n') k (TProd v v')
     prod = (&*)
 
--- | The 'AnsVar a' type represents a basic type for variables that must only occur linearly. 
+-- | The @'AnsVar a'@ type represents a basic type for variables that must only occur linearly. 
 
 newtype AnsVar a = AnsVar (I.IntMap a) deriving Show
 type AnsVarR = AnsVar (SField Rational)
@@ -496,7 +488,7 @@ type AnsVarR = AnsVar (SField Rational)
 shiftVarLabels :: Int -> AnsVar a -> AnsVar a
 shiftVarLabels s (AnsVar v) = AnsVar $ I.mapKeys (s +) v
 
--- | Shifts the labels of the variables that are stored in the given tensor by an amount specified by the 'Int' towards larger labels.
+-- | Shifts the labels of the variables that are stored in the given tensor by an amount specified by the @'Int'@ towards larger labels.
 
 shiftLabels1 :: Int -> AbsTensor1 n1 k1 (AnsVar a) -> AbsTensor1 n1 k1 (AnsVar a)
 shiftLabels1 s = mapTo1 (shiftVarLabels s)
@@ -570,17 +562,12 @@ mapTMap f = map (\(k,v) -> (k,f v))
 filterTMap :: (v -> Bool) -> TMap k v -> TMap k v
 filterTMap f = filter (\(_,v) -> f v)
 
--- | Basic tensor data type. 
+-- | Basic tensor data types.
 
 data Tensor n k v where
     Scalar :: v -> Tensor 0 k v
     Tensor :: TMap k (Tensor n k v) -> Tensor (n+1) k v
     ZeroTensor :: Tensor n k v
-
--- | This type consists of a basic tesnor that further contains tensors as values. Whereas the basic tensor on the first level represents contravariant indices
--- the further adjoined tensors represent the corresponding covariant indices. Thus 'Tensor2 n1 n2 k v' represents a rank '(n1,n2)' tensor in the usual sense.
-
--- | Representation of a general tensor with contravariant and covariant indices.
 
 type Tensor2 n1 n2 k v = Tensor n1 k (Tensor n2 k v)
 
@@ -609,8 +596,6 @@ type STTens n1 n2 v = AbsTensor2 n1 n2 Ind3 v
 
 type ATens n1 n2 n3 n4 n5 n6 v = AbsTensor6 n1 n2 n3 n4 n5 n6 Ind20 Ind9 Ind3 v
 
-
--- | Remove possible zero values that might be generated during computations from a given tensor
 
 removeZeros :: TAdd v => Tensor n k v -> Tensor n k v
 removeZeros (Scalar x) = if scaleZero x then ZeroTensor else Scalar x
@@ -914,7 +899,7 @@ insertOrAdd inds ZeroTensor = mkTens inds
 
 infixr 6 &+
 
--- | Addition of two arbitrary tensors. The noly requirement is that the corresponding values satisfy the 'TAdd' constraint.
+-- | Addition of two arbitrary tensors. The noly requirement is that the corresponding values satisfy the @'TAdd'@ constraint.
 -- In particular this function can also be used for adding tensors that themselves contain tensors as values. 
 
 (&+) :: (TIndex k, TAdd v) => Tensor n k v -> Tensor n k v -> Tensor n k v
@@ -924,7 +909,7 @@ infixr 6 &+
 (&+) ZeroTensor t2 = t2
 
 -- | Scalar multiplication of an arbitrary tensor. Only requirement is that the corresponding values 'v' and the scalar type 'a' satisfy the 
--- 'Prod' constraint.
+-- @'Prod'@ constraint.
 
 infix 8 &.
 
@@ -937,7 +922,7 @@ infix 8 &.
 negateTens :: (TIndex k, TAdd v) => Tensor n k v -> Tensor n k v
 negateTens = fmap negateS
 
--- | Subtraction of two arbitrary tensors. The noly requirement is that the corresponding values satisfy the 'TAdd' constraint.
+-- | Subtraction of two arbitrary tensors. The only requirement is that the corresponding values satisfy the @'TAdd'@ constraint.
 -- In particular this function can also be used for adding tensors that themselves contain tensors as values. 
 
 infix 5 &-
@@ -949,6 +934,7 @@ infix 5 &-
 (&-) ZeroTensor t2 = negateS t2
 
 -- | Tensorproduct of two tensors. In the result for each index type the indices in the leftmost tensor are arranged to the left. 
+-- Types must satisfy @'Prod'@ constraint.
 
 infixr 7 &*
 
@@ -1099,8 +1085,12 @@ tensorContr inds (Scalar s) = error "cannot contract scalar!"
 
 --encode and decode tensors as bytestrings for efficient storing
 
+-- | Utility function to serialize and compress a @'Tensor'@ into a @'ByteString'@, making use of the @'Serialize'@ instance.  
+
 encodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => Tensor n k v -> BS.ByteString
 encodeTensor = compress . encodeLazy
+
+-- | Utility function to decompress and deserialize a @'ByteString'@ into a @'Tensor'@, making use of the @'Serialize'@ instance.  
 
 decodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => BS.ByteString -> Tensor n k v
 decodeTensor bs = either error id $ decodeLazy $ decompress bs

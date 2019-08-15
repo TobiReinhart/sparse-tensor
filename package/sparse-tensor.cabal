@@ -18,16 +18,16 @@ description:
     providing its non-zero values explicitly. All remaining values are taken to be zero.
     .
     Furthermore this package also provides the functionality of fully automatically computing all linear independent expressions with given rank and symmetries
-    that can be composed by using Minkowski metrics and Levi-civita symbols. In order words, the package includes functions that 
+    that can be composed by using \( \eta^{ab} \) and \( \epsilon^{abcd} \). In order words, the package includes functions that 
     construct a basis of the space of Lorentz invariant tensors of given symmetry and rank. With slight modifications the therefore implemented algorithms can 
-    also be used for the computation of invariant tensor bases of any other special orthogonal group @SO(p,q)@. 
+    also be used for the computation of invariant tensor bases of any other special orthogonal group \( \mathrm{SO}(p,q) \). 
 homepage:            https://github.com/TobiReinhart/sparse-tensor#readme
 license:             MIT
 license-file:        LICENSE
 author:              Tobias Reinhart and Nils Alex
 maintainer:          tobi.reinhart@fau.de, nils.alex@fau.de
 copyright:           2019 Tobias Reinhart and Nils Alex
-category:            Data, Math
+category:            Data, Math, Algebra
 build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  README.md

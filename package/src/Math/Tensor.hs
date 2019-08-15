@@ -2854,6 +2854,7 @@ dims xs = (rows, cols)
         cols = maximum $ map (snd.fst) xs
 
 assocsToSparse :: Real a => [((Int, Int), SField a)] -> Sparse.SparseMatrixXd
+assocsToSparse [] = Sparse.fromList 1 1 [(0,0,0)]
 assocsToSparse assocs = Sparse.fromList rows cols els
     where
         (rows, cols) = dims assocs

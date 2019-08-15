@@ -1,60 +1,12 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-{-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver #-}
-{-# OPTIONS_GHC -fplugin GHC.TypeLits.Normalise #-}
-
 module Math.Tensor.Examples.Gravity.Schwarzschild
-
 (schwarzschild, schwarzschild', christoffel, ricci, einstein)
-
 where
 
 import Math.Tensor
 import Math.Tensor.Examples.Gravity
-
-import Data.Ratio ((%))
-
-import Control.Applicative
-
-import Numeric.AD.Rank1.Forward
-
-import GHC.TypeLits
-
-newtype CFun a b = CFun (a -> b)
-
-instance Functor (CFun a) where
-    fmap f (CFun g) = CFun $ f . g
-
-instance Applicative (CFun a) where
-    pure = CFun . const
-    (CFun f) <*> (CFun g) = CFun $ \x -> f x (g x)
-
-instance Num b => Num (CFun a b) where
-    (+) = liftA2 (+)
-    (*) = liftA2 (*)
-    (-) = liftA2 (-)
-    negate = fmap negate
-    abs = fmap abs
-    signum = fmap signum
-    fromInteger = CFun . const . fromInteger
-
-instance Num b => TAdd (CFun a b) where
-    addS = (+)
-    negateS = negate
-    scaleZero = const False
-
-instance Num b => Prod (CFun a b) (CFun a b) where
-    type TProd (CFun a b) (CFun a b) = CFun a b
-    prod = (*)
-
-instance Num b => Prod (SField b) (CFun a b) where
-    type TProd (SField b) (CFun a b) = CFun a b
-    prod (SField s) (CFun f) = CFun $ (*s) . f
 
 schwarzschild :: Floating a => a -> STTens 0 2 (CFun [a] a)
 schwarzschild rs = fromListT2
@@ -115,18 +67,3 @@ einstein = r_ab &- (h &. r &* g)
         g' = schwarzschild' 1 :: STTens 2 0 (CFun [a] a)
         r = contrATens1 (0,0) $ contrATens1 (1,1) $ g' &* r_ab
         h = half :: SField a
-
-myGrad :: Num a => [Int] -> ([Forward a] -> Forward a) -> [(Int, [a] -> a)]
-myGrad is f = map (\i -> (i, (!!i) . g)) is
-    where
-        g = grad f
-
--- | partial derivative of a tensor with spacetime indices
-
-partial :: Num a => STTens n1 n2 (CFun [Forward a] (Forward a)) -> STTens n1 (n2+1) (CFun [a] a)
-partial tens = tens'
-    where
-        tList = toListT2 tens
-        grads = map (\(is, (CFun v)) -> (is, myGrad [0..3] v)) tList
-        tList' = concatMap (\((i1, i2), gs) -> map (\(ig, g) -> ((i1, (Ind3 ig `Append` i2)), CFun g)) gs) grads
-        tens' = fromListT2 tList'

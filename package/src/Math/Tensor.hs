@@ -119,7 +119,9 @@ shiftVarLabels,
 -- | __The following functions apply this shift of the variable labels, i.e. the function @'shiftVarLabels'@ to all @'AnsVar'@s that are contained in a @'Tensor'@.__
 shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabels6, shiftLabels7, shiftLabels8,
 --
--- *** Functions 
+-- *** Functions as Values
+--
+CFun(..),
 --
 -- ** Construction of Tensor
 -- | @'Tensor'@s can most easily be constructed from key value list where the keys are tuples of either @'IndList'@s or simply traditional lists that encode the values of the 
@@ -329,7 +331,11 @@ tensorRank1', tensorRank2', tensorRank3', tensorRank4', tensorRank5', tensorRank
 tensorRank1, tensorRank2, tensorRank3, tensorRank4, tensorRank5, tensorRank6, tensorRank7, tensorRank8,
 --
 -- *** Save and Load Tensors
-encodeTensor, decodeTensor
+encodeTensor, decodeTensor,
+--
+-- ** Tensor Differentiation 
+-- *** Partial Derivatives
+partial
 ) where
 
 import Data.Foldable (toList)
@@ -340,6 +346,7 @@ import Data.Maybe (mapMaybe, fromMaybe)
 import qualified Data.IntMap.Strict as I
 import qualified Data.Map.Strict as M
 import Numeric.Natural (Natural(..))
+import qualified Numeric.AD.Rank1.Forward as AD
 import GHC.TypeLits
 import GHC.Generics (Generic(..))
 import Control.DeepSeq (rnf, NFData(..))
@@ -696,6 +703,45 @@ instance Prod (SField v') (SField v) => Prod (AnsVar (SField v)) (SField v') whe
     type TProd (AnsVar (SField v)) (SField v') = AnsVar (TProd (SField v') (SField v))
     prod (AnsVar v) v' = AnsVar $ I.map (prod v') v
 
+-- | Type for representation of functions as @'Tensor'@ values. 
+newtype CFun a b = CFun (a -> b)
+
+instance Functor (CFun a) where
+    fmap f (CFun g) = CFun $ f . g
+
+instance Applicative (CFun a) where
+    pure = CFun . const
+    (CFun f) <*> (CFun g) = CFun $ \x -> f x (g x)
+
+instance Num b => Num (CFun a b) where
+    (+) = liftA2 (+)
+    (*) = liftA2 (*)
+    (-) = liftA2 (-)
+    negate = fmap negate
+    abs = fmap abs
+    signum = fmap signum
+    fromInteger = CFun . const . fromInteger
+
+instance Num b => TAdd (CFun a b) where
+    addS = (+)
+    negateS = negate
+    scaleZero = const False
+
+instance Num b => Prod (CFun a b) (CFun a b) where
+    type TProd (CFun a b) (CFun a b) = CFun a b
+    prod = (*)
+
+instance Num b => Prod (SField b) (CFun a b) where
+    type TProd (SField b) (CFun a b) = CFun a b
+    prod (SField s) (CFun f) = CFun $ (*s) . f
+
+
+-- compute gradient as [[a] -> a] instead of [a] -> [a]
+myGrad :: Num a => [Int] -> ([AD.Forward a] -> AD.Forward a) -> [(Int, [a] -> a)]
+myGrad is f = map (\i -> (i, (!!i) . g)) is
+    where
+        g = AD.grad f
+
 -- | Additional type for the sorted tensor forest. @'TMap' k v@ represents an ordered list of key value pairs. Ordering is always defined w.r.t. the keys. 
 --  All future functions maintain this order when acting on a valid, i.e. ordered @'TMap'@s. 
 type TMap k v = [(k,v)]
@@ -1042,6 +1088,16 @@ encodeTensor = compress . encodeLazy
 -- | Utility function to decompress and de-serialize a @'Data.ByteString.Lazy.ByteString'@ into a @'Tensor'@, making use of the @'Serialize'@ instance.  
 decodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => BS.ByteString -> Tensor n k v
 decodeTensor bs = either error id $ decodeLazy $ decompress bs
+
+
+-- | The function computes partial derivatives of spacetime tensor of type @'STTens'@ with @'CFun'@ values.
+partial :: Num a => STTens n1 n2 (CFun [AD.Forward a] (AD.Forward a)) -> STTens n1 (n2+1) (CFun [a] a)
+partial tens = tens'
+    where
+        tList = toListT2 tens
+        grads = map (\(is, (CFun v)) -> (is, myGrad [0..3] v)) tList
+        tList' = concatMap (\((i1, i2), gs) -> map (\(ig, g) -> ((i1, (Ind3 ig `Append` i2)), CFun g)) gs) grads
+        tens' = fromListT2 tList'
 
 --AbsTensors automatically satisfy TensorAlgebra as we only used type synonyms
 --e.g. AbsTensor4 actually looks like Tensor n1 kq1 (Tensor n2 k2 (Tensor n3 k3 (Tensor n4 k4 (Tensor n5 k5 (Tensor n6 k6 (Tensor n7 k7 (Tensor n8 k8 a)))))))

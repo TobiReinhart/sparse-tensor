@@ -7,17 +7,17 @@
 --
 --
 -- This module collects several tensorial equations. 
--- These equations arise in the research topic of perturbative constructive gravity and are used there to encode perturbative diffeomorphism invaraince. 
+-- These equations arise in the research topic of perturbative constructive gravity and are used there to encode perturbative diffeomorphism invariance. 
 --
 -- Providing further usage examples of the sparse-tensor package the equations included here nicely illustrate the syntax that is used when entering tensors.
--- They also show how the sparse tensor package can be used to manipulate not only tenors but linear tensorial equations. The sparse-tensor package can for instance be used to extract the information that is contained in a such a tensorial equation in matrix form. This then obviously allows one 
--- computate of the rank of the linear tensorial equation or even explicitly solve it.
+-- They also show how the sparse tensor package can be used to manipulate not only tenors but linear tensorial equations. The sparse-tensor package can for instance be used to extract the information that is contained in such a tensorial equation in matrix form. This then obviously allows one 
+-- to computate the rank of the linear tensorial equation or even explicitly solve it.
 -- 
 --
 -- All equations that are contained in this module are functions that take possibly several tensors of type @'ATens' 'AnsVarR'@ as input. These tensors then represent
 -- the individual unknown tensors in the equation. The output that is computed by the functions is also of this type.     
 --
--- When illustrating how the individual such equations that are nicluded in this module are defined we will use again the same convention as in the "Math.Tensor.Examples.Gravity" module, i.e. we label indices of type @'Ind20'@ by \(A,B,C,D,...\), indices of type 
+-- When illustrating how the individual such equations that are included in this module are defined we will use again the same convention as in the "Math.Tensor.Examples.Gravity" module, i.e. we label indices of type @'Ind20'@ by \(A,B,C,D,...\), indices of type 
 -- \(I,J,K,L,...\) and spacetime indices of type @'ind3'@ are labeled by \(a,b,c,d,...\). Hence a general such tensor is displayed as \(T^{A_1...A_m I_1...I_r a_1...a_p}_{B_1...B_n J_1...J_s b_1...b_s} \).
 -- Such a tensor then has the type @'ATens' m n r s p q@.   
 -----------------------------------------------------------------------------
@@ -39,7 +39,7 @@ ansatzAIBJCK, ansatzABCD, ansatzABCDJ, ansatzABCcDd,
 eqn1, eqn3, eqn1A, eqn1AI,  eqn2Aa, eqn3A, eqn1AB, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
 -- ** Metric
 -- | The following equations can be used with the Lorentz invariant ansätze for the a traditional metric metric \(g_I = J_I^{ab}g_{ab}\) as input.
--- In the following documentation these input tensors are labeled as \(a_0,a^{A}, a^{AJ}, a^{AB},\) etc. Care must be taken as for the case of the metrich equations all indices that are labeled by \(A,B,C,D,... \) are also of type @'Ind9'@, 
+-- In the following documentation these input tensors are labeled as \(a_0,a^{A}, a^{AJ}, a^{AB},\) etc. Care must be taken as for the case of the metric equations all indices that are labeled by \(A,B,C,D,... \) are also of type @'Ind9'@, 
 -- but are distinguished from the indices labeled by \(I,J,K,L,...\) as they describe the metric components and the latter ones describe symmetric spacetime derivative pairs.
 -- For the definition of the further included tensors see  "Math.Tensor.Examples.Gravity".
 eqn1Met, eqn3Met, eqn2AaMet, eqn3AMet, eqn1AMet, eqn1AIMet, eqn1ABMet, eqn1ABIMet, eqn1AaBbMet, eqn2ABbMet, eqn3ABMet
@@ -50,7 +50,7 @@ import Math.Tensor.Examples.Gravity
 
 import qualified Data.IntMap.Strict as I
 
---the ansatz integrabillity conditions (when perturbing around eta*eta-eta*eta-epsilon)
+--the ansatz integrability conditions (when perturbing around eta*eta-eta*eta-epsilon)
 
 ansatzA :: ATens 1 0 0 0 0 0 AnsVarR -> ATens 1 0 0 0 2 0 AnsVarR
 ansatzA ans4 = aSymATens5 (0,1) $ contrATens1 (0,0) $ contrATens3 (1,0) $ ans4 &* interArea &* invEta
@@ -149,7 +149,7 @@ ansatzABCcDd ans18_3 = block1 &+ block2 &+ block3 &+ block4
         block4 = tensorTrans1 (1,2) $ tensorTrans5 (0,1) block3
 
 
---the mass subgraph, i.e no derivatives
+--the mass sub graph, i.e no derivatives
 
 --order 0
 
@@ -187,7 +187,7 @@ eqn1ABC ans12 ans16 = block1 &+ block2 &+ block3 &+ block4
             block3 = tensorTrans1 (1,2) block1
             block4 = contrATens1 (0,0) $ ans16 &* flatInter
 
---the subgraph with 2 total derivative
+--the sub-graph with 2 total derivative
 
 --order 0
 
@@ -288,7 +288,7 @@ eqn3ABC ans14_2 ans18_2 = block1 &+ block2 &+ block3 &+ block4
             block3 = tensorTrans1 (0,2) block2
             block4 = tensorTrans1 (1,2) block2
 
---the subgraph with a total of 4 derivatives: further equations that contain more derivatives
+--the sub graph with a total of 4 derivatives: further equations that contain more derivatives
 
 eqn3AI :: ATens 2 0 2 0 0 0 AnsVarR -> ATens 1 0 1 0 3 1 AnsVarR
 eqn3AI ans12_1 = contrATens2 (0,0) $ contrATens1 (0,0) $ ans12_1 &* contrATens1 (0,1) (interEqn5 &* flatArea)
@@ -366,9 +366,9 @@ polyDensEqn ans6 = polyTensEqn ans6 &+ (ans2 &* delta3)
         where
             ans2  = polyAns2
 
---aditional equations for the metric case
+--additional equations for the metric case
 
---the mass subgraph, i.e no derivatives
+--the mass sub graph, i.e no derivatives
 
 --order 0
 
@@ -397,7 +397,7 @@ eqn1ABMet ans4 ans6 = block1 &+ block2 &+ block3
             block3 = ans4 &* delta3
 
 
---the subgraph with 2 total derivative
+--the sub graph with 2 total derivative
 
 --order 0
 

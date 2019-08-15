@@ -25,7 +25,7 @@ main = do
   let zeroT = fromListT6' [(([],[],[],[],[],[]),AnsVar $I.fromList [(1,0)] )] :: ATens 0 0 0 0 0 0 (AnsVarR)
 
 
-  print $ tensorRank6' zeroT    
+  putStr $ unlines $ map (\x -> "-- > " ++ x) $ lines $ drawAnsatzEpsilon eps6    
 
   
  

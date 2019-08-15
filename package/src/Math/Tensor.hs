@@ -22,7 +22,7 @@
 -- index types and different ranks allows the sparse-tensor package cover the treatment of more complicated tensors with an arbitrary number of different indices.
 --
 -- The @'Tensor'@ data type directly incorporates its rank in form of a type level natural number @n@. This results in added type safety when performing the usual 
--- tensor algebra operations. To provide a simple example the addition of two tesnors is only meaningful if the ranks of the two tensors coincide. Hence then sparse-tensor package only incorporates an addition of @'Tensor'@s with the same type.
+-- tensor algebra operations. To provide a simple example the addition of two tensors is only meaningful if the ranks of the two tensors coincide. Hence then sparse-tensor package only incorporates an addition of @'Tensor'@s with the same type.
 -- Unintentional additions of @'Tensors'@ with different type then immediately yields a type error thus preventing the mistake. 
 --
 -- Furthermore the @'Tensor'@ type employs a sparse storage paradigm in the sense that when constructing @'Tensor'@s only non zero values must be specified.
@@ -58,7 +58,7 @@ module Math.Tensor (
 -- ** Length Typed Index List
 --
 -- | @'Tensor'@s provide information regarding their number of indices, i.e. their rank in their type. Consequently when constructing them from lists of indices value pairs and 
--- converting them to such it is advantegous when also these lists contain the additional length information in their type.
+-- converting them to such it is advantageous when also these lists contain the additional length information in their type.
 IndList(..), 
 --
 singletonInd, (+>), fromList, fromListMaybe,
@@ -112,7 +112,7 @@ AnsVar(..), AnsVarR,
 --
 shiftVarLabels,
 --
--- | __The following functions apply this shift of the variable lables, i.e. the function @'shiftVarLabels'@ to all @'AnsVar'@s that are contained in a @'Tensor'@.__
+-- | __The following functions apply this shift of the variable labels, i.e. the function @'shiftVarLabels'@ to all @'AnsVar'@s that are contained in a @'Tensor'@.__
 shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabels6, shiftLabels7, shiftLabels8,
 --
 -- ** Construction of Tensor
@@ -165,7 +165,7 @@ tensorTrans1, tensorTrans2, tensorTrans3, tensorTrans4, tensorTrans5, tensorTran
 -- *** Swapping 2 index Blocks
 tensorBlockTrans, 
 --
--- | __If the indicex blocks that are to be transposed do not correspond to the first index type of the given @'Tensor'@ the following functions can be used.__
+-- | __If the index blocks that are to be transposed do not correspond to the first index type of the given @'Tensor'@ the following functions can be used.__
 tensorBlockTrans1, tensorBlockTrans2, tensorBlockTrans3, tensorBlockTrans4, tensorBlockTrans5, tensorBlockTrans6, tensorBlockTrans7, tensorBlockTrans8,
 --
 -- *** Permuting indices
@@ -174,7 +174,7 @@ resortTens,
 -- | __If the indices that are to be permuted do not correspond to the first index type of the given @'Tensor'@ the following functions can be used.__
 resortTens1, resortTens2, resortTens3, resortTens4, resortTens5, resortTens6, resortTens7, resortTens8,
 --
--- ** Symmetrizations of Tensors
+-- ** Symmetrization of Tensors
 --
 -- *** Pair Symmetrization
 symTens,
@@ -242,7 +242,7 @@ cyclicASymTensFac,
 -- | __If the indices in which the @'Tensor'@ shall be anti symmetrized do not correspond to the first index type of the given @'Tensor'@ the following functions can be used.__
 cyclicASymATensFac1, cyclicASymATensFac2, cyclicASymATensFac3, cyclicASymATensFac4, cyclicASymATensFac5, cyclicASymATensFac6, cyclicASymATensFac7, cyclicASymATensFac8,
 --
--- *** Cyclic Block Symmetrizations
+-- *** Cyclic Block Symmetrization
 cyclicBlockSymTens, 
 --
 -- | __If the index blocks in which the @'Tensor'@ shall be symmetrized do not correspond to the first index type of the given @'Tensor'@ the following functions can be used.__
@@ -256,16 +256,16 @@ cyclicBlockSymATensFac1, cyclicBlockSymATensFac2, cyclicBlockSymATensFac3, cycli
 -- * Tensor Functions 
 -- ** Lists of multiple Tensors
 --
--- | Sometimes it is convenient to collect multiple @'Tensors'@s with the same value type. To allow the individual @'Tensor'@s to have different rank these lists are heterogenic.
+-- | Sometimes it is convenient to collect multiple @'Tensors'@s with the same value type. To allow the individual @'Tensor'@s to have different rank these lists are heterogeneous.
 TensList1(..), TensList2(..), TensList3(..), TensList4(..), TensList5(..), TensList6(..), TensList7(..), TensList8(..),
 --
--- | __Construction of a such heterogenic list with a single @'Tensor'@ as Entry.__
+-- | __Construction of a such heterogeneous list with a single @'Tensor'@ as Entry.__
 singletonTList1, singletonTList2, singletonTList3, singletonTList4, singletonTList5, singletonTList6, singletonTList7, singletonTList8,
 --
 -- | __Infix Synonyms for the various constructors such as @'AppendTList1'@, @'AppendTList2'@, etc.__
 (...>), (..&>), (.&.>), (.&&>), (&..>), (&.&>), (&&.>), (&&&>),
 --
--- | __Combining functions for the seperate heterogenic tensor lists.__
+-- | __Combining functions for the separate heterogeneous tensor lists.__
 (...+), (..&+), (.&.+), (.&&+), (&..+), (&.&+), (&&.+), (&&&+),
 --
 -- ** Conversion of Tensors
@@ -291,10 +291,10 @@ toMatListT1', toMatListT2', toMatListT3', toMatListT4', toMatListT5', toMatListT
 -- __ Convert a @'Tensor'@ to a sparse "Eigen.SparseMatrix".__
 toEMatrixT1', toEMatrixT2', toEMatrixT3', toEMatrixT4', toEMatrixT5', toEMatrixT6', toEMatrixT7', toEMatrixT8',
 --
--- | __ Convert all @'Tensors'@ of a heterogenic tensor List to a combined sparse matrix assocs list.__
+-- | __ Convert all @'Tensors'@ of a heterogeneous tensor List to a combined sparse matrix assocs list.__
 toMatListT1, toMatListT2, toMatListT3, toMatListT4, toMatListT5, toMatListT6, toMatListT7, toMatListT8,
 --
--- | __ Convert all @'Tensors'@ of a heterogenic tensor List to a combined sparse "Eigen.SparseMatrix".__
+-- | __ Convert all @'Tensors'@ of a heterogeneous tensor List to a combined sparse "Eigen.SparseMatrix".__
 toEMatrixT1, toEMatrixT2, toEMatrixT3, toEMatrixT4, toEMatrixT5, toEMatrixT6, toEMatrixT7, toEMatrixT8,
 --
 -- ** Tensor utility functions 
@@ -313,13 +313,13 @@ evalTens1, evalTens2, evalTens3, evalTens4, evalTens5, evalTens6, evalTens7, eva
 --
 -- *** Rank Computations
 -- | Compute the rank of a tensor of @'AnsVarR'@ values. The tensor is converted to a matrix with columns labeling the individual variables that occur in 'ansVarR'
--- and rows labeling the independent tensor components. Th ereank is then computed using 'Eigen' subroutines. These functions is for instance usefull
+-- and rows labeling the independent tensor components. The rank is then computed using 'Eigen' subroutines. These functions is for instance useful
 -- when determining the rank of tensorial equations.
 --
 -- __ Compute the rank of a single @'Tensor'@.__
 tensorRank1', tensorRank2', tensorRank3', tensorRank4', tensorRank5', tensorRank6', tensorRank7', tensorRank8',
 --
--- | __Compute the combined rank of a heterogenic list of multiple tensors.__
+-- | __Compute the combined rank of a heterogeneous list of multiple tensors.__
 tensorRank1, tensorRank2, tensorRank3, tensorRank4, tensorRank5, tensorRank6, tensorRank7, tensorRank8,
 --
 -- *** Save and Load Tensors
@@ -406,7 +406,7 @@ fromList = \case
 fromListMaybe :: forall (n :: Nat). SingI n => forall (a :: *). [a] -> Maybe (IndList n a)
 fromListMaybe = fromList' sing
 
---Instances of the lentgh typed lists.
+--Instances of the length typed lists.
 
 instance (KnownNat n, Generic a) => Generic (IndList n a) where
     type Rep (IndList n a) = Rep [a]
@@ -455,17 +455,17 @@ combineInds :: IndList n a -> IndList m a -> IndList (n+m) a
 combineInds Empty l = l
 combineInds (Append x xs) l = Append x $ combineInds xs l
 
--- | An implementaion of the usual head function from "Data.List" for @'IndList'@s. The function returns the first element of the @'IndList'@.
+-- | An implementation of the usual head function from "Data.List" for @'IndList'@s. The function returns the first element of the @'IndList'@.
 
 headInd :: IndList n a -> a
 headInd (Append x xs) = x
 
--- | An implementaion of the usual tail function from "Data.List" for @'IndList'@s. The function removes the first element of the @'IndList'@.
+-- | An implementation of the usual tail function from "Data.List" for @'IndList'@s. The function removes the first element of the @'IndList'@.
 
 tailInd :: IndList n a -> IndList (n-1) a
 tailInd (Append x xs) = xs
 
--- | An implementaion of the usual @(!!)@ function from "Data.List" for @'IndList'@s. The function returns the list element that is specified by the provided integer value.
+-- | An implementation of the usual @(!!)@ function from "Data.List" for @'IndList'@s. The function returns the list element that is specified by the provided integer value.
 --  Indices start from zero.
 
 indexInd :: Int -> IndList n a -> a
@@ -480,7 +480,7 @@ updateInd 0 s (Append x xs) = Append s xs
 updateInd i s (Append x xs) = Append x $ updateInd (i-1) s xs
 updateInd _ _  _ = error "Index is too large!"
 
--- Special functions for the contraction of tesnors.
+-- Special functions for the contraction of tensors.
 
 swapHead :: Int -> IndList n b -> IndList n b
 swapHead 1 (Append x xs) = Append (headInd xs) $ Append x (tailInd xs)
@@ -496,7 +496,7 @@ removeContractionInd 0 ind1 (Append x xs, t)
 removeContractionInd i ind1 (Append x xs,t) = (\(m,n) -> (Append x m, n)) <$> removeContractionInd (i-1) ind1 (xs,t)
 
 {--
-resort inds in IndList accroding to the permutation given by [Int], length of [Int] must be n
+resort Inds in IndList according to the permutation given by [Int], length of [Int] must be n
 example: perm = [1, 2, 0] -> "C is put on 0th pos. A on 1st and B on 2nd"
          indList = [A, B, C]
          algorithm sorts [(1,A), (2,B), (0,C)] on firsts
@@ -547,14 +547,14 @@ instance Enum Ind20 where
         toEnum = Ind20
         fromEnum = indVal20
 
--- | Index tuple type for a @'Tensor'@ that provides only contravariant and covarinat spacetime indices, i.e. a @'STTensor'@. 
+-- | Index tuple type for a @'Tensor'@ that provides only contravariant and covariant spacetime indices, i.e. a @'STTensor'@. 
 type IndTupleST n1 n2 = (IndList n1 Ind3, IndList n2 Ind3)
 
 -- | Index tuple type for a @'Tensor'@ with indices of type @'Ind20'@, @'ind9'@ and @'Ind3'@ each one appearing contravariantly and covariantly, i.e. a ‘@ATens'@.
 type IndTupleAbs n1 n2 n3 n4 n5 n6 = (IndList n1 Ind20, IndList n2 Ind20 , IndList n3 Ind9, IndList n4 Ind9, IndList n5 Ind3, IndList n6 Ind3)
 
 {--
-Values of a given tensor should satisfy numberlike properties -> more precisely should constitute an algebra (scaling, addition and multiplication).
+Values of a given tensor should satisfy number-like properties -> more precisely should constitute an algebra (scaling, addition and multiplication).
 It is important to note that only the vector space that tensors of given rank constitute closes on the type level, the product of two tensors with
 given rank yields a third tensors with new rank that is hence represented by a different type.
 Thus we need the values of tensors to allow for vector space operations
@@ -562,7 +562,7 @@ Thus we need the values of tensors to allow for vector space operations
 
 -- Tensor Value type classes.
 
--- | Type class that encodes the additive group structure of possible @'Tensor'@ values, i.e. addition, neutral element and existance of invers elements. 
+-- | Type class that encodes the additive group structure of possible @'Tensor'@ values, i.e. addition, neutral element and existence of inverse elements. 
 -- Each possible @'Tensor'@ value must allow for these basic group operations and hence be an instance of this type class.
 class TAdd a where
     -- | Test whether the given element is zero, i.e. the neutral element. 
@@ -575,7 +575,7 @@ class TAdd a where
     subS :: a -> a -> a
     subS a b = a `addS` negateS b
 
--- | Newtype wrapper that is used for reprsenting scalar values.
+-- | Newtype wrapper that is used for representing scalar values.
 newtype SField a = SField a deriving (Show, Eq, Ord)
 
 instance Functor SField where
@@ -612,7 +612,7 @@ instance (TIndex k, TAdd v) => TAdd (Tensor n k v) where
 class Prod v v' where
     -- | Type level function that returns the type of the result of @'prod'@.
     type TProd v v' :: * 
-    -- | Produkt function.
+    -- | Product function.
     prod :: v -> v' -> TProd v v'
 
 instance Num a => Prod (SField a) (SField a) where
@@ -632,8 +632,8 @@ instance (TIndex k, Prod v v') => Prod (Tensor n k v) (Tensor n' k v') where
     prod = (&*)
 
 -- | The @'AnsVar' a@ type represents a basic type for variables that must only occur linearly. As such they
--- can for instance be used whenever tensorial expression involves a tensor with inknown components. This tensor can then be described as 
--- having vaules of type @'AnsVar'@. The @'AnsVar'@ type can for instance be usefull when the tensorial expression that involves the @'Tensor'@ with 
+-- can for instance be used whenever tensorial expression involves a tensor with unknown components. This tensor can then be described as 
+-- having values of type @'AnsVar'@. The @'AnsVar'@ type can for instance be useful when the tensorial expression that involves the @'Tensor'@ with 
 -- @'AnsVar'@ values describes a linear equation system. Using the functions @'toMatListT1'@, ... this equation system can 
 -- then be transformed into a matrix with columns labeling the individual @'AnsVar'@s.   
 
@@ -725,7 +725,7 @@ filterTMap f = filter (\(_,v) -> f v)
 data Tensor n k v where
     -- | Constructor of leaf values.
     Scalar :: v -> Tensor 0 k v
-    -- | Constructs a @'Tensor'@ from a @'TMap'@ of index subtensor pairs.
+    -- | Constructs a @'Tensor'@ from a @'TMap'@ of index sub tensor pairs.
     Tensor :: TMap k (Tensor n k v) -> Tensor (n+1) k v
     -- | Represents a @'Tensor'@ that is identical zero.
     ZeroTensor :: Tensor n k v
@@ -758,10 +758,10 @@ type STTens n1 n2 v = AbsTensor2 n1 n2 Ind3 v
 --   appearing contravariantly and covariantly.
 type ATens n1 n2 n3 n4 n5 n6 v = AbsTensor6 n1 n2 n3 n4 n5 n6 Ind20 Ind9 Ind3 v
 
---for converting tensor to bytestrings for saving and loading from file we need a non typesafe data type as intermediate type
+--for converting tensor to @'Bytestring'@s for saving and loading from file we need a non typesafe data type as intermediate type
 data TensorRep k v = ScalarR v | TensorR Natural (TMap k (TensorRep k v)) | ZeroR Natural deriving (Show, Generic, Serialize)
 
---convert betweeen typesafe and non typesafe tensors
+--convert between typesafe and non typesafe tensors
 
 lemma :: forall n m. (n-1 :~: m) -> (m+1 :~: n)
 lemma _ = unsafeCoerce (Refl @n)
@@ -877,14 +877,14 @@ mkTens :: (IndList n k, v) -> Tensor n k v
 mkTens (Empty, a) = Scalar a
 mkTens (Append x xs, a) = Tensor  [(x, mkTens (xs, a))]
 
--- | This functions construction @'Tensor'@s with a single index type that only appears contravarinatly from a list of key value pairs, where the keys are provided by a @'IndList'@ that contains the indices
+-- | This functions construction @'Tensor'@s with a single index type that only appears contravariantly from a list of key value pairs, where the keys are provided by a @'IndList'@ that contains the indices
 -- under which the corresponding value shall be stored.
 fromListT :: (TIndex k, TAdd v) => [(IndList n k, v)] -> Tensor n k v
 fromListT [x] = mkTens x
 fromListT (x:xs) = foldr insertOrAdd (mkTens x) xs
 fromListT [] = ZeroTensor
 
--- | Same functionallity as @'fromListT'@ but the indices of the various values are specified by usual list. This is certainly more flexible
+-- | Same functionality as @'fromListT'@ but the indices of the various values are specified by usual list. This is certainly more flexible
 -- however all at the cost of reduced type safety compared to @'fromListT'@.
 fromListT' :: forall n k v b. (TIndex k, TAdd v, SingI n) => [([k],v)] -> Tensor n k v
 fromListT' l = fromListT indList
@@ -968,7 +968,7 @@ fromListT8' l = fromListT8 indList
             indList = map (\((x1,x2,x3,x4,x5,x6,x7,x8),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4, fromList x5, fromList x6, fromList x7, fromList x8),y)) l
 
 
---helper function for tensor addition: adding one indice value pair to the tree structure of a given tensor
+--helper function for tensor addition: adding one indices value pair to the tree structure of a given tensor
 
 insertOrAdd :: (TIndex k, TAdd v) => (IndList n k, v) -> Tensor n k v -> Tensor n k v
 insertOrAdd (Empty, a) (Scalar b) = Scalar (addS a b)
@@ -981,7 +981,7 @@ insertOrAdd inds ZeroTensor = mkTens inds
 
 infixr 6 &+
 
--- | Addition of two arbitrary tensors. The noly requirement is that the corresponding values satisfy the @'TAdd'@ constraint.
+-- | Addition of two arbitrary tensors. The only requirement is that the corresponding values satisfy the @'TAdd'@ constraint.
 -- In particular this function can also be used for adding tensors that themselves contain tensors as values. 
 
 (&+) :: (TIndex k, TAdd v) => Tensor n k v -> Tensor n k v -> Tensor n k v
@@ -1030,19 +1030,17 @@ infixr 7 &*
 --encode and decode tensors as bytestrings for efficient storing
 
 -- | Utility function to serialize and compress a @'Tensor'@ into a @'Data.ByteString.Lazy.ByteString'@, making use of the @'Serialize'@ instance.  
-
 encodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => Tensor n k v -> BS.ByteString
 encodeTensor = compress . encodeLazy
 
--- | Utility function to decompress and deserialize a @'Data.ByteString.Lazy.ByteString'@ into a @'Tensor'@, making use of the @'Serialize'@ instance.  
-
+-- | Utility function to decompress and de-serialize a @'Data.ByteString.Lazy.ByteString'@ into a @'Tensor'@, making use of the @'Serialize'@ instance.  
 decodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => BS.ByteString -> Tensor n k v
 decodeTensor bs = either error id $ decodeLazy $ decompress bs
 
 --AbsTensors automatically satisfy TensorAlgebra as we only used type synonyms
 --e.g. AbsTensor4 actually looks like Tensor n1 kq1 (Tensor n2 k2 (Tensor n3 k3 (Tensor n4 k4 (Tensor n5 k5 (Tensor n6 k6 (Tensor n7 k7 (Tensor n8 k8 a)))))))
 
---fmap takes us 1 level deeper -> we get functions that apply a given function to the various subtensors
+--fmap takes us 1 level deeper -> we get functions that apply a given function to the various sub tensors
 
 -- | Synonym for @fmap@. @'mapTo1'@ applies a function to the values of a tensor. 
 --
@@ -1093,10 +1091,10 @@ mapTo7 = fmap . fmap . fmap . fmap . fmap . fmap . fmap
 mapTo8 :: (v1 -> v2) -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v1 -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v2
 mapTo8 = fmap . fmap . fmap . fmap . fmap . fmap . fmap . fmap
 
---remove Zero Values at every level of Abstact Tensor
+--remove Zero Values at every level of Abstract Tensor
 
 -- | Applying these functions on a given tensor removes all zero values from it. Even if zero values are not included in a given tensor when it is constructed
--- they might occure during computations. If so they are not automatically removed from the tensor.  
+-- they might occur during computations. If so they are not automatically removed from the tensor.  
 removeZeros :: TAdd v => Tensor n k v -> Tensor n k v
 removeZeros (Scalar x) = if scaleZero x then ZeroTensor else Scalar x
 removeZeros (Tensor m) = let newMap = filterTMap
@@ -1260,7 +1258,7 @@ resortTens7 = mapTo6 . resortTens
 resortTens8 :: (KnownNat n8, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [Int] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
 resortTens8 = mapTo7 . resortTens
 
---evaluation of a tensor for a specific index value returning the appropriate subtensor
+--evaluation of a tensor for a specific index value returning the appropriate sub tensor
 
 -- | Evaluate a @'Tensor'@ for a specific value of its first contravariant index type returning the corresponding sub @'Tensor'@.
 -- The additional functions specified below apply the evaluation function @'evalTens'@ to the deeper @'Tensor'@ levels.
@@ -1308,7 +1306,7 @@ evalTens8 ind indVal = mapTo7 (evalTens ind indVal)
 
 --symmetrizer functions
 
--- | Basic symmetrization in a pair of contravarinat indices of the 1st index type. Usual factors of \( \frac{1}{2} \) are not include in this function. The resulting function hence no longer satisfies the property of 
+-- | Basic symmetrization in a pair of contravariant indices of the 1st index type. Usual factors of \( \frac{1}{2} \) are not include in this function. The resulting function hence no longer satisfies the property of 
 -- a projection. The following functions apply @'symTens'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc. 
 symTens :: (TIndex k, TAdd v) => (Int,Int) -> Tensor n k v -> Tensor n k v
 symTens inds t = t &+ tensorTrans inds t
@@ -1371,7 +1369,7 @@ symATens8 = mapTo7 . symTens
 
 --with factor
 
--- | Same functionallity as @'symTens'@ but including the \( \frac{1}{2} \) in the result and thus defining a projection.
+-- | Same functionality as @'symTens'@ but including the \( \frac{1}{2} \) in the result and thus defining a projection.
 -- The following functions apply @'symTensFac'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc. 
 --
 -- > symTensFac inds t = (SField $ 1%2) &. symTens inds t
@@ -1436,7 +1434,7 @@ symATensFac8 = mapTo7 . symTensFac
 
 --anti-symmetrization
 
--- | Basic anti symmetrization in a pair of contravarinat indices of the 1st index type. Usual factors of \( \frac{1}{2} \) are not include in this function. The resulting function hence no longer satisfies the property of 
+-- | Basic anti symmetrization in a pair of contravariant indices of the 1st index type. Usual factors of \( \frac{1}{2} \) are not include in this function. The resulting function hence no longer satisfies the property of 
 -- a projection. The following functions apply @'aSymTens'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc. 
 aSymTens :: (TIndex k, TAdd v) => (Int,Int) -> Tensor n k v -> Tensor n k v
 aSymTens inds t = t &- tensorTrans inds t
@@ -1499,7 +1497,7 @@ aSymATens8 = mapTo7 . aSymTens
 
 --with factor
 
--- | Same functionallity as @'aSymTens'@ but including the \( \frac{1}{2} \) factors in the result and thus defining a projection.
+-- | Same functionality as @'aSymTens'@ but including the \( \frac{1}{2} \) factors in the result and thus defining a projection.
 -- The following functions apply @'aSymTensFac'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc. 
 --
 -- > aSymTensFac inds t = (SField $ 1%2)&. aSymTens inds t
@@ -1627,7 +1625,7 @@ symBlockATens8 = mapTo7 . symBlockTens
 
 --with factor
 
--- | Same functionallity as @'symBlockTens'@ but including the usual factors of \( \frac{1}{2} \) in the result and thus defining a projection.
+-- | Same functionality as @'symBlockTens'@ but including the usual factors of \( \frac{1}{2} \) in the result and thus defining a projection.
 -- The following functions apply @'symBlockTensFac'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc. 
 --
 -- > symBlockTensFac inds t = (SField $ 1%2)&. symBlockTens inds t
@@ -1690,7 +1688,7 @@ symBlockATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod (
                      AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (TProd (SField Rational) v)
 symBlockATensFac8 = mapTo7 . symBlockTensFac 
 
---antisymmetrization
+--anti symmetrization
 
 -- | Anti symmetrization w.r.t. the exchange of two blocks of contravariant indices of the 1st index type. The index blocks must be disjoint. These function does not include the usual \( \frac{1}{2} \) factors and thus does not 
 -- define a projection. The following functions apply @'aSymBlockTens'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc. 
@@ -1755,7 +1753,7 @@ aSymBlockATens8 = mapTo7 . aSymBlockTens
 
 --with factor
 
--- | Same functionallity as @'aSymBlockTens'@ but including the usual factors of \( \frac{1}{2} \) in the result and thus defining a projection.
+-- | Same functionality as @'aSymBlockTens'@ but including the usual factors of \( \frac{1}{2} \) in the result and thus defining a projection.
 -- The following functions apply @'aSymBlockTensFac'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc. 
 --
 -- > aSymBlockTensFac inds t = (SField $ 1%2)&. aSymBlockTens inds t
@@ -1844,7 +1842,7 @@ factorial n = n * factorial (n-1)
 
 -- | Cyclic symmetrization of the specified subset of contravariant @'Tensor'@ indices of the first index type. The function does not include
 -- usual factors of \( \frac{1}{i!} \) where \( i \) is the number of indices w.r.t. which the symmetrization is performed. 
--- Further functions that are displayed below apply @'cyclicSymTens'@ to the various depper @'Tensor'@ levels.   
+-- Further functions that are displayed below apply @'cyclicSymTens'@ to the various deeper @'Tensor'@ levels.   
 cyclicSymTens :: (TIndex k, TAdd v) => [Int] -> Tensor n k v -> Tensor n k v
 cyclicSymTens inds t = newTens
         where
@@ -1975,11 +1973,11 @@ cyclicSymATensFac8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v, Prod 
                       AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (TProd (SField Rational) v)
 cyclicSymATensFac8 = mapTo7 . cyclicSymTensFac 
 
---cyclic Antisymmetrization
+--cyclic anti symmetrization
 
 -- | Cyclic anti symmetrization of the specified subset of contravariant @'Tensor'@ indices of the first index type. The function does not include
 -- usual factors of \( \frac{1}{i!} \) where \( i \) is the number of indices w.r.t. which the symmetrization is performed. 
--- Further functions that are displayed below apply @'cyclicASymTens'@ to the various depper @'Tensor'@ levels.   
+-- Further functions that are displayed below apply @'cyclicASymTens'@ to the various deeper @'Tensor'@ levels.   
 cyclicASymTens :: (TIndex k, TAdd v) => [Int] -> Tensor n k v -> Tensor n k v
 cyclicASymTens inds t = newTens
         where
@@ -2116,7 +2114,7 @@ cyclicASymATensFac8 = mapTo7 . cyclicASymTensFac
 
 -- | Cyclic block symmetrization, i.e. symmetrization w.r.t. any permutation of the specified index blocks of contravariant indices of the first index type. 
 -- Usual factors of \( \frac{1}{i!} \) where \( i \) is the number of index blocks w.r.t. which the symmetrization is performed are not included. 
--- The functions that are displayed further below apply @'cyclicBlockSymTens'@ to the various depper @'Tensor'@ levels.   
+-- The functions that are displayed further below apply @'cyclicBlockSymTens'@ to the various deeper @'Tensor'@ levels.   
 cyclicBlockSymTens :: (TIndex k, TAdd v) => [[Int]] -> Tensor n k v -> Tensor n k v
 cyclicBlockSymTens inds t = newTens
         where
@@ -2458,7 +2456,7 @@ toListT8' t = filter (not . scaleZero . snd) $ map (\(x,y) -> (showInd x, y)) l
                                         map fromEnum (toList i7), map fromEnum (toList i8))
 
 
---convert to non type safe assocs list, all indices regardeless of their type are collected in the [Int] list
+--convert to non type safe assocs list, all indices regardless of their type are collected in the [Int] list
 
 toListShow1 :: (TIndex k1, TAdd v) => AbsTensor1 n1 k1 v -> [([Int],v)]
 toListShow1 = toListT'
@@ -2560,7 +2558,7 @@ toListShowVar8 t = filter (not . null . snd) $ map (\(a,AnsVar b) -> (a, filter 
         where
             l = toListShow8 t
 
---write the tensor data into a matrix: columns label the occuring AnsVars (note that this is possible as we restricted to the case where the vars only occur linearly)
+--write the tensor data into a matrix: columns label the occurring AnsVars (note that this is possible as we restricted to the case where the vars only occur linearly)
 --rows label the non zero entries in the tensor
 
 toMatList1' :: (TIndex k1, TAdd a) => AbsTensor1 n1 k1 (AnsVar a) -> [[(Int, a)]]
@@ -2623,7 +2621,7 @@ data TensList8 k1 k2 k3 k4 v where
     EmptyTList8 :: TensList8 k1 k2 k3 k4 v
     AppendTList8 :: AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> TensList8 k1 k2 k3 k4 v -> TensList8 k1 k2 k3 k4 v
 
--- | Usual map function for heterogenic tensor lists.
+-- | Usual map function for heterogeneous tensor lists.
 
 mapTensList1 :: (forall n1. AbsTensor1 n1 k1 v -> b ) -> TensList1 k1 v -> [b]
 mapTensList1 f EmptyTList1 = []
@@ -2794,8 +2792,8 @@ infixr 6 &&&+
 (&&&+) (AppendTList8 t1 t1') t2 = AppendTList8 t1 (t1' &&&+ t2)
 
 
---collect data of heterogenic tensor list in one sparse matrix assocs list
---intendet for evaluating tensorial equations: the values are only collected up to overall factors
+--collect data of heterogeneous tensor list in one sparse matrix assocs list
+--intended for evaluating tensorial equations: the values are only collected up to overall factors
 
 collectMatList :: [[(Int, a)]] -> [((Int, Int), a)]
 collectMatList matList = l

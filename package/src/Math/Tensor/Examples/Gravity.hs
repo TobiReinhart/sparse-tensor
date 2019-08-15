@@ -8,13 +8,13 @@
 --
 -- This module provides a variety of @'Tensor'@s that are currently predefined in the sparse.tensor package. 
 --
--- Amongst many standard tensor from differential geometry and classical field theories such as Kronecker deltas \(\delta^a_b \) in multi,ple different dimensions,
+-- Amongst many standard tensor from differential geometry and classical field theories such as Kronecker deltas \(\delta^a_b \) in multiple different dimensions,
 -- the Levi-Civita symbol \(\epsilon^{abcd} \) and the Minkowski metric \(\eta_{ab}\) and its inverse \(\eta^{ab}\), most included tensors were implemented during
 -- the initial use of the sparse-tensor package, the perturbative construction of generalized gravity theories. Thus many of the included tensors stem from this area of research.
 --
 -- Additionally to providing basic predefined @'Tensor'@s for further computations this module also nicely illustrates how the construction of @'Tensor'@s is achieved.
 --
--- The majority of the tensors in this module are defined as type @'ATens'@ which describes a tensor that takes the three differnet index types 
+-- The majority of the tensors in this module are defined as type @'ATens'@ which describes a tensor that takes the three different index types 
 -- @'Ind20'@, @'Ind9'@, @'Ind3'@ each one appearing in contravariant and covariant position. If in the following expression that are formed from such tensors are additionally 
 -- explained via their algebraic expression using appropriate symbols for the individual tensors we label indices of type @'Ind20'@ by \(A,B,C,D,...\), indices of type 
 -- \(I,J,K,L,...\) and spacetime indices of type @'ind3'@ are labeled by \(a,b,c,d,...\). Hence a general such tensor is displayed as \(T^{A_1...A_m I_1...I_r a_1...a_p}_{B_1...B_n J_1...J_s b_1...b_s} \).
@@ -32,7 +32,7 @@ eta, invEta, etaA,
 -- ** Levi-Civita Symbol
 epsilon, epsilonInv,
 -- ** Generators of the Lorentz Group \( \mathrm{SO}(3,1)\)
--- | The following six tensors are a choice of generators of the Lorentz group \( \mathrm{SO}(3,1)\), i.e. they constitute a bais of the 
+-- | The following six tensors are a choice of generators of the Lorentz group \( \mathrm{SO}(3,1)\), i.e. they constitute a basis of the 
 -- corresponding Lie algebra \( \mathrm{so}(3,1)\).
 --
 -- The Lie algebra \( \mathrm{so}(3,1)\) is isomorphic to the algebra of \(\eta_{ab}\) anti symmetric matrices. 
@@ -51,7 +51,7 @@ interI2, interJ2,
 -- \( a \leftrightarrow b \), anti symmetric in \( c \leftrightarrow d \) and further symmetric w.r.t. \( (ab) \leftrightarrow (cd) \).
 interIArea, interJArea, 
 -- ** Infinitesimal Diffeomorphisms
--- | The following two tensors \(C^{Am}_{Bn} \) and \(K^{Im}_{Jn}\) encode the infinitesimal transformation behaviour of tensors of type @'ATens' 0 0 0 1 0 0@  and tensors of type
+-- | The following two tensors \(C^{Am}_{Bn} \) and \(K^{Im}_{Jn}\) encode the infinitesimal transformation behavior of tensors of type @'ATens' 0 0 0 1 0 0@  and tensors of type
 -- @'ATens' 0 1 0 0 0 0@ respectively under spacetime diffeomorphisms. They are related to the Lie derivative via \(\mathscr{L}_{\xi}G_A = \partial_m G_A \cdot \xi^m + C^{Bm}_{An} G_B \cdot \partial_m \xi ^n \).  
 interArea, interMetric,
 -- | __ Further such Tensors__
@@ -62,7 +62,7 @@ interEqn2Metric, interEqn3Metric, interEqn4Metric, interEqn5Metric,
 -- | The following tensors are filled with random components. They can for instance be used to test ranks of tensorial equations.
 randArea, randFlatArea, randAreaDerivative1, randAreaDerivative2, randMetric, randAxon,
 -- * Unknown Tensors 
--- The following tensors have all there individual components filled with different variabels using the @'AnsVarR'@ type. 
+-- The following tensors have all there individual components filled with different variables using the @'AnsVarR'@ type. 
 -- Thus they represent general tensors with unknown components.
 generic4Ansatz, generic5Ansatz, generic6Ansatz,
 generic8Ansatz, generic9Ansatz, generic10_1Ansatz, generic10_2Ansatz, generic11Ansatz, generic12_1Ansatz,
@@ -109,7 +109,7 @@ eta =  fromListT6 l
                 l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Empty,Append (Ind3 x) $ Append (Ind3 y) Empty),SField z))
                     [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
 
--- | Inverse spacetime Minkowski metric \(\eta^{ab}\) as @'ATens' 0 0 0 0 2 0 ('SField' 'Rational')@. The invserse Minkowski metric could 
+-- | Inverse spacetime Minkowski metric \(\eta^{ab}\) as @'ATens' 0 0 0 0 2 0 ('SField' 'Rational')@. The inverse Minkowski metric could 
 -- also be defined as @'STTens' 2 0 ('SField' 'Rational')@ in similar fashion.
 --
 -- > invEta =  map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Append (Ind3 x) $ Append (Ind3 y) Empty,Empty),SField z)) [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
@@ -126,16 +126,16 @@ etaA = fromListT6 l
                 l = map (\(x,y) -> ((Empty, Empty, Empty, singletonInd $ Ind9 x, Empty, Empty),SField y))
                     [(0,-1),(4,1),(7,1),(9,1)]
 
--- | Covariant spacetime Levi-Civity symbol \(\epsilon_{abcd}\) as type @'ATens' 0 0 0 0 0 4 ('SField' 'Rational')@. The covariant Levi-Civita symbol can be constructed as @'STTens' 0 4 ('SField' 'Rational')@ 
--- in simily fashion.
+-- | Covariant spacetime Levi-Civita symbol \(\epsilon_{abcd}\) as type @'ATens' 0 0 0 0 0 4 ('SField' 'Rational')@. The covariant Levi-Civita symbol can be constructed as @'STTens' 0 4 ('SField' 'Rational')@ 
+-- in similar fashion.
 epsilon :: ATens 0 0 0 0 0 4 (SField Rational)
 epsilon = fromListT6 l
                 where
                    l = map (\([i,j,k,l],v) -> ((Empty, Empty, Empty, Empty, Empty, Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l)),SField v)) epsL 
                    epsSign [i,j,k,l] = (-1) ^ length (filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
                    epsL = map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
--- | Contravariant spacetime Levi-Civity symbol \(\epsilon^{abcd}\) as type @'ATens' 0 0 0 0 4 0 ('SField' 'Rational')@. The Levi-Civita symbol can be constructed as @'STTens' 4 0 ('SField' 'Rational')@  
--- in simily fashion.
+-- | Contravariant spacetime Levi-Civita symbol \(\epsilon^{abcd}\) as type @'ATens' 0 0 0 0 4 0 ('SField' 'Rational')@. The Levi-Civita symbol can be constructed as @'STTens' 4 0 ('SField' 'Rational')@  
+-- in similar fashion.
 epsilonInv :: ATens 0 0 0 0 4 0 (SField Rational)
 epsilonInv = fromListT6 l
                 where

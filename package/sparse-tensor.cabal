@@ -27,7 +27,7 @@ license-file:        LICENSE
 author:              Tobias Reinhart and Nils Alex
 maintainer:          tobi.reinhart@fau.de, nils.alex@fau.de
 copyright:           2019 Tobias Reinhart and Nils Alex
-category:            Data, Math
+category:            Data, Math, Algebra
 build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  README.md

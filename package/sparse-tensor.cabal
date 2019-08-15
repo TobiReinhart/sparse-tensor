@@ -50,9 +50,11 @@ library
                        cereal                     >= 0.5.7 && < 0.6,
                        singletons                 >= 2.4.1 && < 2.6,
                        bytestring                 >= 0.10.8 && < 0.11,
-                       zlib                       >= 0.6.2 && < 0.7
+                       zlib                       >= 0.6.2 && < 0.7,
+                       ad                         >= 4.3 && < 4.4
   exposed-modules:     Math.Tensor
                        Math.Tensor.LorentzGenerator
                        Math.Tensor.Examples.Gravity
+                       Math.Tensor.Examples.Gravity.Schwarzschild
                        Math.Tensor.Examples.Gravity.DiffeoSymEqns
-  ghc-options:         -funbox-strict-fields
+  ghc-options:         -funbox-strict-fields -fprint-potential-instances

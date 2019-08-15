@@ -104,9 +104,11 @@ Ind3(..), Ind9(..), Ind20(..),
 --
 TAdd(..),
 --
-SField(..),
---
 Prod(..),
+--
+-- ** Tensor Value Instances
+--
+SField(..),
 --
 AnsVar(..), AnsVarR, 
 --

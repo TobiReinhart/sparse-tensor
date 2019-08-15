@@ -22,7 +22,7 @@ main = do
   let (eta14_1,eps14_1,ans14_1) = mkAnsatzTensorEig 14 symList14_1 evalL :: (AnsatzForestEta, AnsatzForestEpsilon, STTens 14 0 (AnsVarR))
   let (eta14_2,eps14_2,ans14_2) = mkAnsatzTensorFastAbs 14 symList14_2 areaList14_2 :: (AnsatzForestEta, AnsatzForestEpsilon, ATens 3 0 1 0 0 0 (AnsVarR))
 
-  print $ tensorRank6' ans14_2   
+  print $ getForestLabelsEpsilon eps14_1    
 
   
  

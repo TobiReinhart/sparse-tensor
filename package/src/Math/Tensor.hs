@@ -89,7 +89,7 @@ TIndex(..),
 --
 Ind3(..), Ind9(..), Ind20(..),
 --
--- ** Value Type Class 
+-- ** Tensor Value Type Class 
 --
 -- | Types that any @'Tensor'@ might use as values must satisfy number like properties, more precisely they must constitute an additive group.
 -- This requirement is encoded in the @'TAdd'@ type class. 
@@ -107,15 +107,19 @@ TAdd(..),
 Prod(..),
 --
 -- ** Tensor Value Instances
+-- *** Scalar Values
 --
 SField(..),
 --
+-- *** Linear Variables
 AnsVar(..), AnsVarR, 
 --
 shiftVarLabels,
 --
 -- | __The following functions apply this shift of the variable labels, i.e. the function @'shiftVarLabels'@ to all @'AnsVar'@s that are contained in a @'Tensor'@.__
 shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabels6, shiftLabels7, shiftLabels8,
+--
+-- *** Functions 
 --
 -- ** Construction of Tensor
 -- | @'Tensor'@s can most easily be constructed from key value list where the keys are tuples of either @'IndList'@s or simply traditional lists that encode the values of the 
@@ -549,7 +553,7 @@ instance Enum Ind20 where
         toEnum = Ind20
         fromEnum = indVal20
 
--- | Index tuple type for a @'Tensor'@ that provides only contravariant and covariant spacetime indices, i.e. a @'STTensor'@. 
+-- | Index tuple type for a @'Tensor'@ that provides only contravariant and covariant spacetime indices, i.e. a @'STTens'@. 
 type IndTupleST n1 n2 = (IndList n1 Ind3, IndList n2 Ind3)
 
 -- | Index tuple type for a @'Tensor'@ with indices of type @'Ind20'@, @'ind9'@ and @'Ind3'@ each one appearing contravariantly and covariantly, i.e. a ‘@ATens'@.

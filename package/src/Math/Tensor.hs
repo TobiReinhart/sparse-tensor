@@ -31,14 +31,12 @@
 
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
@@ -413,9 +411,7 @@ fromList = fromList' (undefined :: Proxy n)
 -- | Construction of a length typed @'IndList'@ (partial function).
 
 fromListUnsafe :: forall n.KnownNat n => forall (a :: *). [a] -> IndList n a
-fromListUnsafe xs = case fromList xs of
-                      Nothing -> error errorString
-                      Just l  -> l
+fromListUnsafe xs = fromMaybe (error errorString) (fromList xs)
   where
     nVal = natVal (undefined :: Proxy n)
     len = length xs
@@ -901,8 +897,8 @@ fromRep (TensorR r m) = case someNatVal (fromIntegral r) of
        NonZero -> case sameNat x' (Proxy @n) of
          Nothing   -> Nothing
          Just Refl -> let tMap'   = mapTMap (\t -> fromRep t :: Maybe (Tensor (x-1) k v)) m
-                          tMap''  = filterTMap (\t -> case t of Nothing -> False
-                                                                _       -> True) tMap'
+                          tMap''  = filterTMap (\case Nothing -> False
+                                                      _       -> True) tMap'
                           tMap''' = mapTMap (\(Just t) -> t) tMap''
                       in case tMap''' of
                         [] -> Nothing
@@ -937,7 +933,7 @@ deriving instance (Show a, Show k) => Show (Tensor n k a)
 
 deriving instance (Eq a, Eq k) => Eq (Tensor n k a)
 
-getTensorMap :: forall n k v. 1 <= n =>Tensor n k v -> TMap k (Tensor (n-1) k v)
+getTensorMap :: forall n k v.(1 <= n) => Tensor n k v -> TMap k (Tensor (n-1) k v)
 getTensorMap (Tensor m) = m
 getTensorMap ZeroTensor = []
 
@@ -1520,9 +1516,9 @@ symATens8 = mapTo7 . symTens
 -- | Same functionality as @'symTens'@ but including the \( \frac{1}{2} \) in the result and thus defining a projection.
 -- The following functions apply @'symTensFac'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc.
 --
--- > symTensFac inds t = (SField (1/2 :: Rational)) &. symTens inds t
+-- > symTensFac inds t = SField (1/2 :: Rational) &. symTens inds t
 symTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => (Int,Int) -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
-symTensFac inds t = (SField (1/2 :: Rational)) &. symTens inds t
+symTensFac inds t = SField (1/2 :: Rational) &. symTens inds t
 
 -- | > symATensFac1 = symTensFac
 symATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>

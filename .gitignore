@@ -27,3 +27,4 @@ cabal.project.local~
 *.dat.gz
 *.txt
 stack.yaml.lock
+.vscode/

@@ -1,14 +1,34 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Math.Tensor.Examples.Gravity.Schwarzschild
+-- Copyright   :  (c) 2019 Tobias Reinhart and Nils Alex
+-- License     :  MIT
+-- Maintainer  :  tobi.reinhart@fau.de, nils.alex@fau.de
+--
+--
+-- This module provides the metric, inverse metric, Christoffel symbol, Ricci tensor and Einstein tensor for the Schwarzschild spacetime as an
+-- example for tensor sections and partial derivatives thereof.
+--
+-----------------------------------------------------------------------------
+
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Math.Tensor.Examples.Gravity.Schwarzschild
-(schwarzschild, schwarzschild', christoffel, ricci, einstein)
+module Math.Tensor.Examples.Gravity.Schwarzschild (
+schwarzschild,
+schwarzschild',
+christoffel,
+ricci,
+einstein
+)
 where
 
 import Math.Tensor
 import Math.Tensor.Examples.Gravity
 
 import Numeric.AD.Internal.Forward (Forward(..))
+
+-- | Schwarzschild metric \( g = (1-\frac{r_\text{s}}{r})\,\mathrm dt\otimes\mathrm dt - \frac{1}{1-\frac{r_\text{s}}{r}}\,\mathrm dr\otimes \mathrm dr - r^2\,\mathrm d\theta\otimes \mathrm d\theta - r^2\sin^2\theta\,\mathrm d\phi\otimes \mathrm d\phi \).
 
 schwarzschild :: Floating a => a -> STTens 0 2 (CFun [a] a)
 schwarzschild rs = fromListT2
@@ -20,6 +40,9 @@ schwarzschild rs = fromListT2
     ]
   where
     r' r = 1 - rs / r
+
+
+-- | Inverse Schwarzschild metric \( g = \frac{1}{1-\frac{r_\text{s}}{r}}\,\partial_t \otimes \partial_t - (1-\frac{r_\text{s}}{r})\,\partial_r \otimes \partial_r - \frac{1}{r^2}\,\partial_\theta \otimes \partial_\theta - \frac{1}{r^2\sin^2\theta}\,\partial_\phi \otimes \partial_\phi \).
 
 schwarzschild' :: Floating a => a -> STTens 2 0 (CFun [a] a)
 schwarzschild' rs = fromListT2
@@ -35,6 +58,8 @@ schwarzschild' rs = fromListT2
 half :: Fractional a => SField a
 half = SField $ 1/2
 
+-- | Christoffel symbol of the Schwarzschild metric.
+
 christoffel :: forall a.Floating a => a -> STTens 1 2 (CFun [a] a)
 christoffel rs = gamma
     where
@@ -49,6 +74,8 @@ christoffel rs = gamma
         h = half :: SField a
         gamma = h &. s
 
+-- | Ricci tensor of the Schwarzschild metric.
+
 ricci :: forall a.Floating a => a -> STTens 0 2 (CFun [a] a)
 ricci rs = (term1 &- term2) &+ (term3 &- term4)
     where
@@ -60,6 +87,13 @@ ricci rs = (term1 &- term2) &+ (term3 &- term4)
         term2 = contrATens1 (0,1) del_gamma
         term3 = contrATens1 (0,0) gamma_gamma
         term4 = contrATens1 (0,1) gamma_gamma
+
+-- | Einstein tensor of the Schwarzschild metric.
+--   The component functions evaluate to zero:
+--
+-- >>> let g = einstein 2
+-- >>> g `evalSec` [1.1, 2.4, 1.7, 2.2]
+-- ZeroTensor
 
 einstein :: forall a.Floating a => a -> STTens 0 2 (CFun [a] a)
 einstein rs = r_ab &- (h &. r &* g)

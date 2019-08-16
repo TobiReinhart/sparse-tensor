@@ -7,7 +7,7 @@ where
 
 import Math.Tensor
 import Math.Tensor.Examples.Gravity
-
+ 
 schwarzschild :: Floating a => a -> STTens 0 2 (CFun [a] a)
 schwarzschild rs = fromListT2
     [

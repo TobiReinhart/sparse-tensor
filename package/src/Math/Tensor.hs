@@ -23,7 +23,7 @@
 --
 -- The @'Tensor'@ data type directly incorporates its rank in form of a type level natural number @n@. This results in added type safety when performing the usual 
 -- tensor algebra operations. To provide a simple example the addition of two tensors is only meaningful if the ranks of the two tensors coincide. Hence then sparse-tensor package only incorporates an addition of @'Tensor'@s with the same type.
--- Unintentional additions of @'Tensors'@ with different type then immediately yields a type error thus preventing the mistake. 
+-- Unintentional additions of @'Tensor'@s with different type then immediately yields a type error thus preventing the mistake. 
 --
 -- Furthermore the @'Tensor'@ type employs a sparse storage paradigm in the sense that when constructing @'Tensor'@s only non zero values must be specified.
 -- Missing values are then taken as vanishing automatically. 
@@ -1031,7 +1031,7 @@ insertOrAdd inds ZeroTensor = mkTens inds
 
 --addition for tensors
 
-infixr 6 &+
+infixl 6 &+
 
 -- | Addition of two arbitrary tensors. The only requirement is that the corresponding values satisfy the @'TAdd'@ constraint.
 -- In particular this function can also be used for adding tensors that themselves contain tensors as values. 
@@ -1059,7 +1059,7 @@ negateTens = fmap negateS
 -- | Subtraction of two arbitrary @'Tensor'@s. The only requirement is that the corresponding values satisfy the @'TAdd'@ constraint.
 -- In particular this function can also be used for adding tensors that themselves contain tensors as values. 
 
-infix 5 &-
+infixl 6 &-
 
 (&-) :: (TIndex k, TAdd v) => Tensor n k v -> Tensor n k v -> Tensor n k v
 (&-) (Scalar a) (Scalar b) = Scalar $ subS a b
@@ -1070,7 +1070,7 @@ infix 5 &-
 -- | Tensor product of two @'Tensor'@s. In the result for each index type the indices of the first @'Tensor'@ are arranged left of those in the second @'Tensor'@ argument. 
 -- The values of the two @'Tensor'@s must satisfy the @'Prod'@ constraint.
 
-infixr 7 &*
+infixl 7 &*
 
 (&*) :: (TIndex k, Prod v v') => Tensor n k v -> Tensor m k v' -> TProd (Tensor n k v) (Tensor m k v')
 (&*) (Scalar x) (Scalar y) = Scalar $ prod x y
@@ -2726,7 +2726,7 @@ infixr 5 ...>
 singletonTList1 :: AbsTensor1 n1 k1 v -> TensList1 k1 v
 singletonTList1 t = t ...> EmptyTList1
 
-infixr 6 ...+
+infixr 5  ...+
 
 (...+) :: TensList1 k1 v -> TensList1 k1 v -> TensList1 k1 v
 (...+) EmptyTList1 t1 = t1
@@ -2743,7 +2743,7 @@ infixr 5 ..&>
 singletonTList2 :: AbsTensor2 n1 n2 k1 v -> TensList2 k1 v
 singletonTList2 t = t ..&> EmptyTList2
 
-infixr 6 ..&+
+infixr 5 ..&+
 
 (..&+) :: TensList2 k1 v -> TensList2 k1 v -> TensList2 k1 v
 (..&+) EmptyTList2 t1 = t1
@@ -2760,7 +2760,7 @@ infixr 5 .&.>
 singletonTList3 :: AbsTensor3 n1 n2 n3 k1 k2 v -> TensList3 k1 k2 v
 singletonTList3 t = t .&.> EmptyTList3
 
-infixr 6 .&.+
+infixr 5 .&.+
 
 (.&.+) :: TensList3 k1 k2 v -> TensList3 k1 k2 v -> TensList3 k1 k2 v
 (.&.+) EmptyTList3 t1 = t1
@@ -2777,7 +2777,7 @@ infixr 5 .&&>
 singletonTList4 :: AbsTensor4 n1 n2 n3 n4 k1 k2 v -> TensList4 k1 k2 v
 singletonTList4 t = t .&&> EmptyTList4
 
-infixr 6 .&&+
+infixr 5 .&&+
 
 (.&&+) :: TensList4 k1 k2 v -> TensList4 k1 k2 v -> TensList4 k1 k2 v
 (.&&+) EmptyTList4 t1 = t1
@@ -2794,7 +2794,7 @@ infixr 5 &..>
 singletonTList5 :: AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> TensList5 k1 k2 k3 v
 singletonTList5 t = t &..> EmptyTList5
 
-infixr 6 &..+
+infixr 5 &..+
 
 (&..+) :: TensList5 k1 k2 k3 v -> TensList5 k1 k2 k3 v -> TensList5 k1 k2 k3 v
 (&..+) EmptyTList5 t1 = t1
@@ -2811,7 +2811,7 @@ infixr 5 &.&>
 singletonTList6 :: AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> TensList6 k1 k2 k3 v
 singletonTList6 t = t &.&> EmptyTList6
 
-infixr 6 &.&+
+infixr 5 &.&+
 
 (&.&+) :: TensList6 k1 k2 k3 v -> TensList6 k1 k2 k3 v -> TensList6 k1 k2 k3 v
 (&.&+) EmptyTList6 t1 = t1
@@ -2828,7 +2828,7 @@ infixr 5 &&.>
 singletonTList7 :: AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> TensList7 k1 k2 k3 k4 v
 singletonTList7 t = t &&.> EmptyTList7
 
-infixr 6 &&.+
+infixr 5 &&.+
 
 (&&.+) :: TensList7 k1 k2 k3 k4 v -> TensList7 k1 k2 k3 k4 v -> TensList7 k1 k2 k3 k4 v
 (&&.+) EmptyTList7 t1 = t1
@@ -2845,7 +2845,7 @@ infixr 5 &&&>
 singletonTList8 :: AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> TensList8 k1 k2 k3 k4 v
 singletonTList8 t = t &&&> EmptyTList8
 
-infixr 6 &&&+
+infixr 5 &&&+
 
 (&&&+) :: TensList8 k1 k2 k3 k4 v -> TensList8 k1 k2 k3 k4 v -> TensList8 k1 k2 k3 k4 v
 (&&&+) EmptyTList8 t1 = t1

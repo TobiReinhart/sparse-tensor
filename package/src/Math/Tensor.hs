@@ -123,6 +123,9 @@ shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabel
 --
 CFun(..), evalSec,
 --
+-- *** Symbolic Values
+SSymbolic(..),
+--
 -- ** Construction of Tensor
 -- | @'Tensor'@s can most easily be constructed from key value list where the keys are tuples of either @'IndList'@s or simply traditional lists that encode the values of the
 -- various indices and the values then are the corresponding @'Tensor'@ values. While the construction from tuples of normal lists is certainly more flexible
@@ -335,7 +338,7 @@ encodeTensor, decodeTensor,
 --
 -- ** Tensor Differentiation
 -- *** Partial Derivatives
-partial
+partial, partialSymbolic
 ) where
 
 import Data.Foldable (toList)
@@ -607,6 +610,19 @@ instance Num a => Num (SField a) where
     signum = fmap signum
     fromInteger = pure . fromInteger
 
+-- | Newtype wrapper for symbolic values.
+--   Note that this version does not yet support simplification of symbolic values.
+newtype SSymbolic = SSymbolic String deriving (Show, Eq, Ord)
+
+instance Num SSymbolic where
+    SSymbolic s1 + SSymbolic s2 = SSymbolic $ "(" ++ s1 ++ ")+(" ++ s2 ++ ")"
+    SSymbolic s1 - SSymbolic s2 = SSymbolic $ "(" ++ s1 ++ ")-(" ++ s2 ++ ")"
+    SSymbolic s1 * SSymbolic s2 = SSymbolic $ "(" ++ s1 ++ ")*(" ++ s2 ++ ")"
+    negate (SSymbolic s) = SSymbolic $ "(-1)*(" ++ s ++ ")"
+    abs (SSymbolic s) = SSymbolic $ "abs(" ++ s ++ ")"
+    signum (SSymbolic s) = SSymbolic $ "signum(" ++ s ++ ")"
+    fromInteger i = SSymbolic $ "(" ++ show i ++ ")"
+
 -- tensor type must be instance of both.
 
 class Epsilon a where
@@ -632,6 +648,11 @@ instance (Num a, Eq a) => TAdd (SField a) where
     negateS (SField a) = SField $ negate a
     scaleZero (SField a) = a == 0
 
+instance TAdd SSymbolic where
+    addS = (+)
+    negateS = negate
+    scaleZero (SSymbolic a) = null a
+
 instance (TIndex k, TAdd v) => TAdd (Tensor n k v) where
     addS = (&+)
     negateS = negateTens
@@ -650,12 +671,28 @@ instance Num a => Prod (SField a) (SField a) where
     type TProd (SField a) (SField a) = SField a
     prod = (*)
 
+instance Prod SSymbolic SSymbolic where
+    type TProd SSymbolic SSymbolic = SSymbolic
+    prod = (*)
+
+instance Show a => Prod (SField a) SSymbolic where
+    type TProd (SField a) SSymbolic = SSymbolic
+    prod (SField s) = (SSymbolic (show s) *)
+
+instance Show a => Prod SSymbolic (SField a) where
+    type TProd SSymbolic (SField a) = SSymbolic
+    prod a (SField s) = a * SSymbolic (show s)
+
 instance (TIndex k, Prod (SField s) v) => Prod (SField s) (Tensor n k v) where
     type TProd (SField s) (Tensor n k v) = Tensor n k (TProd (SField s) v)
     prod = (&.)
 
 instance (TIndex k, Prod (AnsVar s) v) => Prod (AnsVar s) (Tensor n k v) where
     type TProd (AnsVar s) (Tensor n k v) = Tensor n k (TProd (AnsVar s) v)
+    prod = (&.)
+
+instance (TIndex k, Prod SSymbolic v) => Prod SSymbolic (Tensor n k v) where
+    type TProd SSymbolic (Tensor n k v) = Tensor n k (TProd SSymbolic v)
     prod = (&.)
 
 instance (TIndex k, Prod v v') => Prod (Tensor n k v) (Tensor n' k v') where
@@ -1117,13 +1154,25 @@ decodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => BS.ByteString -
 decodeTensor bs = either error id $ decodeLazy $ decompress bs
 
 
--- | The function computes partial derivatives of spacetime tensor of type @'STTens'@ with @'CFun'@ values.
+-- | The function computes partial derivatives of spacetime tensors of type @'STTens'@ with @'CFun'@ values.
 partial :: Num a => STTens n1 n2 (CFun [AD.Forward a] (AD.Forward a)) -> STTens n1 (n2+1) (CFun [a] a)
 partial tens = tens'
     where
         tList = toListT2 tens
         grads = map (\(is, CFun v) -> (is, myGrad [0..3] v)) tList
         tList' = concatMap (\((i1, i2), gs) -> map (\(ig, g) -> ((i1, Ind3 ig `Append` i2), CFun g)) gs) grads
+        tens' = fromListT2 tList'
+
+-- | The function computes partial derivatives of spacetime tensors of type @'STTens'@ with @'SSymbolic'@ values.
+--
+-- > g_ab_p = partialSymbolic ["t", "x", "y", "z"] g_ab
+
+partialSymbolic :: [String] -> STTens n1 n2 SSymbolic -> STTens n1 (n2+1) SSymbolic
+partialSymbolic vars tens = tens'
+    where
+        tList = toListT2 tens
+        grads = map (\(is, SSymbolic v) -> (is, map (\(i, var) -> (i, SSymbolic $ "diff(" ++ v ++ ", " ++ var ++ ")")) $ zip [0..] vars)) tList
+        tList' = concatMap (\((i1, i2), gs) -> map (\(ig, g) -> ((i1, Ind3 ig `Append` i2), g)) gs) grads
         tens' = fromListT2 tList'
 
 --AbsTensors automatically satisfy TensorAlgebra as we only used type synonyms

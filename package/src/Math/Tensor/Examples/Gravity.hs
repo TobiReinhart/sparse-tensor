@@ -27,10 +27,11 @@ module Math.Tensor.Examples.Gravity (
 -- * Standard Tensors
 -- ** Kronecker Delta
 delta3, delta9, delta20,
+delta3A, 
 -- ** Minkowski Metric
-eta, invEta, etaA,
+eta, invEta, etaA, invEtaA, etaAbs,
 -- ** Levi-Civita Symbol
-epsilon, epsilonInv,
+epsilon, epsilonInv, epsilonA, epsilonInvA,
 -- ** Generators of the Lorentz Group \( \mathrm{SO}(3,1)\)
 -- | The following six tensors are a choice of generators of the Lorentz group \( \mathrm{SO}(3,1)\), i.e. they constitute a basis of the
 -- corresponding Lie algebra \( \mathrm{so}(3,1)\).
@@ -78,14 +79,20 @@ import Data.List (permutations, nub, sort)
 
 import Math.Tensor
 
+liftSTtoATens :: STTens n1 n2 v -> ATens 0 0 0 0 n1 n2 v
+liftSTtoATens = Scalar . Scalar . Scalar . Scalar 
+
 --start with deltas
 
--- | Standard spacetime Kronecker delta \(\delta^a_b\) as @'ATens' 0 0 0 0 1 1 ('SField' 'Rational')@. The standard Kronecker delta could
--- also be defined as @'STTens' 1 1 ('SField' 'Rational')@ in similar fashion.
+-- | Standard spacetime Kronecker delta \(\delta^a_b\) as @'STTens' 1 1 ('SField' 'Rational')@.
 --
--- > delta3 = fromListT6 $ zip [(Empty, Empty, Empty, Empty, singletonInd (Ind3 i),singletonInd (Ind3 i)) | i <- [0..3]] (repeat $ SField 1)
-delta3 :: ATens 0 0 0 0 1 1 (SField Rational)
-delta3 = fromListT6 $ zip [(Empty, Empty, Empty, Empty, singletonInd (Ind3 i),singletonInd (Ind3 i)) | i <- [0..3]] (repeat $ SField 1)
+-- > delta3 = fromListT2 $ zip [(singletonInd (Ind3 i),singletonInd (Ind3 i)) | i <- [0..3]] (repeat $ SField 1)
+delta3 :: STTens 1 1 (SField Rational)
+delta3 = fromListT2 $ zip [(singletonInd (Ind3 i),singletonInd (Ind3 i)) | i <- [0..3]] (repeat $ SField 1)
+
+-- | Spacetime Kronecker delta as @'ATens'@.  
+delta3A :: ATens 0 0 0 0 1 1 (SField Rational)
+delta3A = liftSTtoATens delta3 
 
 -- | Standard Kronecker delta for the @'Ind9'@ index type \(\delta^I_J\) as @'ATens' 0 0 1 1 0 0 ('SField' 'Rational')@.
 --
@@ -102,46 +109,61 @@ delta20 = fromListT6 $ zip [(singletonInd (Ind20 i),singletonInd (Ind20 i), Empt
 -- | Spacetime Minkowski metric \(\eta_{ab}\) as @'ATens' 0 0 0 0 0 2 ('SField' 'Rational')@. The Minkowski metric could
 -- also be defined as @'STTens' 0 2 ('SField' 'Rational')@ in similar fashion.
 --
--- > eta =  fromListT6 map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Empty,Append (Ind3 x) $ Append (Ind3 y) Empty),SField z)) [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
-eta :: ATens 0 0 0 0 0 2 (SField Rational)
-eta =  fromListT6 l
+-- > eta =  fromListT2 map (\(x,y,z) -> ((Empty,Append (Ind3 x) $ Append (Ind3 y) Empty),SField z)) [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
+eta :: STTens 0 2 (SField Rational)
+eta =  fromListT2 l
             where
-                l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Empty,Append (Ind3 x) $ Append (Ind3 y) Empty),SField z))
+                l = map (\(x,y,z) -> ((Empty,Append (Ind3 x) $ Append (Ind3 y) Empty),SField z))
                     [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
+
+-- | Minkowski metric lifted to @'ATens'@.
+etaA :: ATens 0 0 0 0 0 2 (SField Rational)
+etaA = liftSTtoATens eta 
 
 -- | Inverse spacetime Minkowski metric \(\eta^{ab}\) as @'ATens' 0 0 0 0 2 0 ('SField' 'Rational')@. The inverse Minkowski metric could
 -- also be defined as @'STTens' 2 0 ('SField' 'Rational')@ in similar fashion.
 --
--- > invEta =  map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Append (Ind3 x) $ Append (Ind3 y) Empty,Empty),SField z)) [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
-invEta :: ATens 0 0 0 0 2 0 (SField Rational)
-invEta =  fromListT6 l
+-- > invEta = fromListT2 $ map (\(x,y,z) -> ((Append (Ind3 x) $ Append (Ind3 y) Empty,Empty),SField z)) [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
+invEta :: STTens 2 0 (SField Rational)
+invEta =  fromListT2 l
             where
-                l = map (\(x,y,z) -> ((Empty,Empty,Empty,Empty,Append (Ind3 x) $ Append (Ind3 y) Empty,Empty),SField z))
+                l = map (\(x,y,z) -> ((Append (Ind3 x) $ Append (Ind3 y) Empty,Empty),SField z))
                     [(0,0,-1),(1,1,1),(2,2,1),(3,3,1)]
 
+-- | Inverse Minkowski metric lifted to @'ATens'@.
+invEtaA :: ATens 0 0 0 0 2 0 (SField Rational)
+invEtaA = liftSTtoATens invEta
+
 -- | The tensor \(\eta_I\) provides an equivalent version of the Minkowski metric that uses an index of type @'Ind9'@ to label the @10@ different values of the symmetric spacetime index pair.
-etaA :: ATens 0 0 0 1 0 0 (SField Rational)
-etaA = fromListT6 l
+etaAbs :: ATens 0 0 0 1 0 0 (SField Rational)
+etaAbs = fromListT6 l
             where
                 l = map (\(x,y) -> ((Empty, Empty, Empty, singletonInd $ Ind9 x, Empty, Empty),SField y))
                     [(0,-1),(4,1),(7,1),(9,1)]
 
--- | Covariant spacetime Levi-Civita symbol \(\epsilon_{abcd}\) as type @'ATens' 0 0 0 0 0 4 ('SField' 'Rational')@. The covariant Levi-Civita symbol can be constructed as @'STTens' 0 4 ('SField' 'Rational')@
--- in similar fashion.
-epsilon :: ATens 0 0 0 0 0 4 (SField Rational)
-epsilon = fromListT6 l
+-- | Covariant spacetime Levi-Civita symbol \(\epsilon_{abcd}\) as type @'ATTens' 0 4 ('SField' 'Rational')@. 
+epsilon :: STTens 0 4 (SField Rational)
+epsilon = fromListT2 l
                 where
-                   l = map (\([i,j,k,l],v) -> ((Empty, Empty, Empty, Empty, Empty, Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l)),SField v)) epsL
+                   l = map (\([i,j,k,l],v) -> ((Empty, Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l)),SField v)) epsL
                    epsSign [i,j,k,l] = (-1) ^ length (filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
                    epsL = map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
--- | Contravariant spacetime Levi-Civita symbol \(\epsilon^{abcd}\) as type @'ATens' 0 0 0 0 4 0 ('SField' 'Rational')@. The Levi-Civita symbol can be constructed as @'STTens' 4 0 ('SField' 'Rational')@
--- in similar fashion.
-epsilonInv :: ATens 0 0 0 0 4 0 (SField Rational)
-epsilonInv = fromListT6 l
+
+-- | Covariant Levi-Civita symbol lifted to @'ATens'@.
+epsilonA :: ATens 0 0 0 0 0 4 (SField Rational)
+epsilonA = liftSTtoATens epsilon
+
+-- | Contravariant spacetime Levi-Civita symbol \(\epsilon^{abcd}\) as type @'STTens'4 0 ('SField' 'Rational')@. T
+epsilonInv :: STTens 4 0 (SField Rational)
+epsilonInv = fromListT2 l
                 where
-                   l = map (\([i,j,k,l],v) -> ((Empty, Empty, Empty, Empty, Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l), Empty),SField v)) epsL
+                   l = map (\([i,j,k,l],v) -> ((Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l), Empty),SField v)) epsL
                    epsSign [i,j,k,l] = (-1) ^ length (filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
                    epsL = map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
+
+-- | Contravariant Levi-Civita symbol lifted to @'ATens'@.
+epsilonInvA :: ATens 0 0 0 0 4 0 (SField Rational)
+epsilonInvA = liftSTtoATens epsilonInv
 
 --generators of the Lorentz group lie algebra (for flat metric eta)
 
@@ -289,23 +311,23 @@ flatInter = contrATens1 (0,1) $ interArea &* flatArea
 
 -- | Is given by: \( K^m_{Jn} = K^{Im}_{Jn} \eta_I\)
 --
--- > flatInterMetric = contrATens2 (0,1) $ interMetric &* etaA
+-- > flatInterMetric = contrATens2 (0,1) $ interMetric &* etaAbs
 flatInterMetric :: ATens 0 0 0 1 1 1 (SField Rational)
-flatInterMetric = contrATens2 (0,1) $ interMetric &* etaA
+flatInterMetric = contrATens2 (0,1) $ interMetric &* etaAbs
 
 -- | Is given by: \(  C_{An}^{Bm} \delta_p^q - \delta_A^B \delta_m^n \)
 interEqn2 :: ATens 1 1 0 0 2 2 (SField Rational)
 interEqn2 = int1 &- int2
         where
-            int1 = interArea &* delta3
-            int2 = tensorTrans6 (0,1) (delta3 &* delta3) &* delta20
+            int1 = interArea &* delta3A
+            int2 = tensorTrans6 (0,1) (delta3A &* delta3A) &* delta20
 
 -- | Is given by: \(  K_{In}^{Jm} \delta_p^q - \delta_I^J \delta_m^n \)
 interEqn2Metric :: ATens 0 0 1 1 2 2 (SField Rational)
 interEqn2Metric = int1 &- int2
         where
-            int1 = interMetric &* delta3
-            int2 = tensorTrans6 (0,1) (delta3 &* delta3) &* delta9
+            int1 = interMetric &* delta3A
+            int2 = tensorTrans6 (0,1) (delta3A &* delta3A) &* delta9
 
 -- | Is given by: \(  C_{An}^{Bm} \delta_I^J + \delta_A^B K^{Im}_{Jn}\)
 interEqn3 :: ATens 1 1 1 1 1 1 (SField Rational)
@@ -327,7 +349,7 @@ interEqn4 = block1 &- block2
         where
             block1' = interJ2 &* interArea
             block1 = block1' &+ tensorTrans5 (1,2) block1'
-            block2 = delta20 &* delta3 &* interJ2
+            block2 = delta20 &* delta3A &* interJ2
 
 -- | Is given by: \( K_{In}^{J(m\vert} 2 J_L^{\vert p) q} - \delta^I_J J_L ^{pm} \delta_n^q  \)
 interEqn4Metric :: ATens 0 0 1 2 3 1 (SField Rational)
@@ -335,7 +357,7 @@ interEqn4Metric = block1 &- block2
         where
             block1' = interJ2 &* interMetric
             block1 = block1' &+ tensorTrans5 (1,2) block1'
-            block2 = delta3 &* interJ2 &* delta9
+            block2 = delta3A &* interJ2 &* delta9
 
 -- | Is given by: \( C_{An}^{B(m\vert} J_I^{\vert p q )} \)
 interEqn5 :: ATens 1 1 0 1 3 1 (SField Rational)

@@ -25,7 +25,7 @@ Tensor types can be defined with any value type and index types. For example, a 
 type MyTensor n m  = AbsTensor2 n m Ind3 (SField Rational)
 ```
 
-These operations on tensors are **type-safe**, for example it is not possible to add two tensors of different rank,
+The operations on tensors are **type-safe**, for example it is not possible to add two tensors of different rank,
 ```haskell
 >>> :set -XDataKinds
 >>> (undefined :: MyTensor 0 1) &+ (undefined :: MyTensor 0 2)
@@ -38,20 +38,39 @@ These operations on tensors are **type-safe**, for example it is not possible to
 as this causes a type error at **compile time**.
 
 ## Predefined tensors
-The package comes with pre-defined tensor types. Basic tensors of these types for applications in mathematical physics are exported by `Math.Tensor.Examples.Gravity`. It is of course possible to define further custom tensor types and tensors.
+The package comes with pre-defined tensor types. Basic tensors of these types for applications in mathematical physics are exported by `Math.Tensor.Examples.Gravity`:
+```haskell
+>>> sequence_ $ map print $ toListT2' delta3  -- print assocs of spacetime delta
+(([0],[0]),SField (1 % 1))
+(([1],[1]),SField (1 % 1))
+(([2],[2]),SField (1 % 1))
+(([3],[3]),SField (1 % 1))
+
+>>> sequence_ $ map print $ toListT2' eta     -- print assocs of Minkowski metric
+(([],[0,0]),SField ((-1) % 1))
+(([],[1,1]),SField (1 % 1))
+(([],[2,2]),SField (1 % 1))
+(([],[3,3]),SField (1 % 1))
+
+>>> let t = invEta &* epsilon
+>>> contrATens1 (0,0) $ contrATens1 (1,1) t   -- contraction of inverse Minkowski metric with epsilon
+ZeroTensor
+```
+
+ It is of course possible to define further custom tensor types and tensors.
 
 `Math.Tensor.LorentzGenerator` exports functionality to generate a basis for the space of Lorentz-invariant tensors of certain rank which obey certain symmetries.
 
 ## Automatic differentiation
 `sparse-tensor` also supports tensors with **functions** as values. For such tensors, the package also provides the `partial` function for automatic differentiation. `Math.Tensor.Examples.Gravity.Schwarzschild` exports the Einstein tensor for a Schwarzschild spacetime, calculated from the Schwarzschild metric:
 ```haskell
->>> let e = einstein 2 -- einstein tensor for Schwarzschild metric with r_s = 2
+>>> let e = einstein 2.0 -- Einstein tensor for Schwarzschild metric with r_s = 2.0
 >>> e `evalSec` [1.2, 3.1, 1.3, 2.2] -- evaluate at spacetime point
 ZeroTensor
 ```
 
 ## Symbolic calculations
-The package can also handle **symbolic** tensor values. All manipulations, including differentiation, are then performed on strings which may be passed to a computer algebra engine. `sparse-tensor` itself cannot yet process these symbolic values. `Math.Tensor.Examples.Gravity.SchwarzschildSymbolic` exports the Schwarzschild metric with symbolic entries and methods to calculate derived geometric entities:
+The package can also handle **symbolic** tensor values. All manipulations, including differentiation, are then performed on strings which may be passed to a computer algebra engine. `sparse-tensor` itself cannot yet simplify these symbolic values. `Math.Tensor.Examples.Gravity.SchwarzschildSymbolic` exports the Schwarzschild metric with symbolic entries and methods to calculate derived geometric entities:
 ```haskell
 >>> let g  = schwarzschildS
 >>> let g' = schwarzschildS'

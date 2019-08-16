@@ -27,7 +27,7 @@ module Math.Tensor.Examples.Gravity (
 -- * Standard Tensors
 -- ** Kronecker Delta
 delta3, delta9, delta20,
-delta3A, 
+delta3A,
 -- ** Minkowski Metric
 eta, invEta, etaA, invEtaA, etaAbs,
 -- ** Levi-Civita Symbol
@@ -80,7 +80,7 @@ import Data.List (permutations, nub, sort)
 import Math.Tensor
 
 liftSTtoATens :: STTens n1 n2 v -> ATens 0 0 0 0 n1 n2 v
-liftSTtoATens = Scalar . Scalar . Scalar . Scalar 
+liftSTtoATens = Scalar . Scalar . Scalar . Scalar
 
 --start with deltas
 
@@ -90,9 +90,9 @@ liftSTtoATens = Scalar . Scalar . Scalar . Scalar
 delta3 :: STTens 1 1 (SField Rational)
 delta3 = fromListT2 $ zip [(singletonInd (Ind3 i),singletonInd (Ind3 i)) | i <- [0..3]] (repeat $ SField 1)
 
--- | Spacetime Kronecker delta as @'ATens'@.  
+-- | Spacetime Kronecker delta as @'ATens'@.
 delta3A :: ATens 0 0 0 0 1 1 (SField Rational)
-delta3A = liftSTtoATens delta3 
+delta3A = liftSTtoATens delta3
 
 -- | Standard Kronecker delta for the @'Ind9'@ index type \(\delta^I_J\) as @'ATens' 0 0 1 1 0 0 ('SField' 'Rational')@.
 --
@@ -118,7 +118,7 @@ eta =  fromListT2 l
 
 -- | Minkowski metric lifted to @'ATens'@.
 etaA :: ATens 0 0 0 0 0 2 (SField Rational)
-etaA = liftSTtoATens eta 
+etaA = liftSTtoATens eta
 
 -- | Inverse spacetime Minkowski metric \(\eta^{ab}\) as @'ATens' 0 0 0 0 2 0 ('SField' 'Rational')@. The inverse Minkowski metric could
 -- also be defined as @'STTens' 2 0 ('SField' 'Rational')@ in similar fashion.
@@ -141,13 +141,13 @@ etaAbs = fromListT6 l
                 l = map (\(x,y) -> ((Empty, Empty, Empty, singletonInd $ Ind9 x, Empty, Empty),SField y))
                     [(0,-1),(4,1),(7,1),(9,1)]
 
--- | Covariant spacetime Levi-Civita symbol \(\epsilon_{abcd}\) as type @'ATTens' 0 4 ('SField' 'Rational')@. 
+-- | Covariant spacetime Levi-Civita symbol \(\epsilon_{abcd}\) as type @'ATTens' 0 4 ('SField' 'Rational')@.
 epsilon :: STTens 0 4 (SField Rational)
-epsilon = fromListT2 l
+epsilon = fromListT2 ls
                 where
-                   l = map (\([i,j,k,l],v) -> ((Empty, Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l)),SField v)) epsL
-                   epsSign [i,j,k,l] = (-1) ^ length (filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
-                   epsL = map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
+                   ls = map (\([i,j,k,l],v) -> ((Empty, Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l)),SField v)) epsL
+                   epsSign i j k l = (-1) ^ length (filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+                   epsL = map (\x@[i,j,k,l] -> (x, epsSign i j k l)) $ permutations [0,1,2,3]
 
 -- | Covariant Levi-Civita symbol lifted to @'ATens'@.
 epsilonA :: ATens 0 0 0 0 0 4 (SField Rational)
@@ -155,11 +155,11 @@ epsilonA = liftSTtoATens epsilon
 
 -- | Contravariant spacetime Levi-Civita symbol \(\epsilon^{abcd}\) as type @'STTens'4 0 ('SField' 'Rational')@. T
 epsilonInv :: STTens 4 0 (SField Rational)
-epsilonInv = fromListT2 l
+epsilonInv = fromListT2 ls
                 where
-                   l = map (\([i,j,k,l],v) -> ((Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l), Empty),SField v)) epsL
-                   epsSign [i,j,k,l] = (-1) ^ length (filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
-                   epsL = map (\x -> (x, epsSign x)) $ permutations [0,1,2,3]
+                   ls = map (\([i,j,k,l],v) -> ((Append (Ind3 i) $ Append (Ind3 j) $ Append (Ind3 k) $ singletonInd (Ind3 l), Empty),SField v)) epsL
+                   epsSign i j k l = (-1) ^ length (filter (==True) [j>i,k>i,l>i,k>j,l>j,l>k])
+                   epsL = map (\x@[i,j,k,l] -> (x, epsSign i j k l)) $ permutations [0,1,2,3]
 
 -- | Contravariant Levi-Civita symbol lifted to @'ATens'@.
 epsilonInvA :: ATens 0 0 0 0 4 0 (SField Rational)
@@ -218,8 +218,8 @@ jMult2 (Append a (Append b Empty))
         | a == b = 1
         | otherwise = 1/2
 
-jMult3 :: (Eq a) => IndList 3 a -> Rational
-jMult3 (Append a (Append b (Append c Empty)))
+_jMult3 :: (Eq a) => IndList 3 a -> Rational
+_jMult3 (Append a (Append b (Append c Empty)))
         | i == 1 = 1
         | i == 2 = 1/3
         | otherwise = 1/6
@@ -231,8 +231,8 @@ jMultArea (Append a (Append b (Append c (Append d Empty))))
             | a == c && b == d = 1/4
             | otherwise = 1/8
 
-isZeroArea :: (Eq a) => IndList 4 a -> Bool
-isZeroArea (Append a (Append b (Append c (Append d Empty)))) = a == b || c == d
+_isZeroArea :: (Eq a) => IndList 4 a -> Bool
+_isZeroArea (Append a (Append b (Append c (Append d Empty)))) = a == b || c == d
 
 areaSign :: (Eq a, Ord a) => IndList 4 a -> Rational
 areaSign (Append a (Append b (Append c (Append d Empty)))) = s1 * s2
@@ -249,7 +249,7 @@ canonicalizeArea (Append a (Append b (Append c (Append d Empty)))) = (Append a' 
 
 -- | The tensor \(I^I_{ab} \) maps between covariant @'Ind9'@ indices and symmetric pairs of covariant @'Ind3'@ indices.
 interI2 :: ATens 0 0 1 0 0 2 (SField Rational)
-interI2 = fromListT6 $ fmap (fmap SField) $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+interI2 = fromListT6 $ fmap (fmap SField) $ filter (\(_,k) -> k /= 0) $ map (\x -> (x,f x)) inds
         where
             trian2 = trianMap2
             inds = [ (Empty, Empty, singletonInd $ Ind9 a, Empty, Empty, Append (Ind3 b) $ singletonInd $ Ind3 c) | a <- [0..9], b <- [0..3], c <- [0..3]]
@@ -259,7 +259,7 @@ interI2 = fromListT6 $ fmap (fmap SField) $ filter (\(i,k) -> k /= 0) $ map (\x 
 
 -- | The tensor \(J_I^{ab} \) maps between covariant @'Ind9'@ indices and pairs of covariant @'Ind3'@ indices.
 interJ2 :: ATens 0 0 0 1 2 0 (SField Rational)
-interJ2 = fromListT6 $ fmap (fmap SField) $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+interJ2 = fromListT6 $ fmap (fmap SField) $ filter (\(_,k) -> k /= 0) $ map (\x -> (x,f x)) inds
         where
             trian2 = trianMap2
             inds = [ (Empty, Empty, Empty, singletonInd $ Ind9 a, Append (Ind3 b) $ singletonInd $ Ind3 c, Empty) | a <- [0..9], b <- [0..3], c <- [0..3]]
@@ -269,7 +269,7 @@ interJ2 = fromListT6 $ fmap (fmap SField) $ filter (\(i,k) -> k /= 0) $ map (\x 
 
 -- | The tensor \( I^A_{abcd}\) maps between covariant @'Ind20'@ indices and blocks of @4@ of covariant @'Ind3'@ indices.
 interIArea :: ATens 1 0 0 0 0 4  (SField Rational)
-interIArea = fromListT6 $ fmap (fmap SField) $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+interIArea = fromListT6 $ fmap (fmap SField) $ filter (\(_,k) -> k /= 0) $ map (\x -> (x,f x)) inds
         where
             trianArea = trianMapArea
             inds = [ (singletonInd (Ind20 a), Empty, Empty, Empty, Empty, Append (Ind3 b) $ Append (Ind3 c) $ Append (Ind3 d) $ singletonInd $ Ind3 e) | a <- [0..20], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], not (b == c || d == e)]
@@ -281,7 +281,7 @@ interIArea = fromListT6 $ fmap (fmap SField) $ filter (\(i,k) -> k /= 0) $ map (
 
 -- | The tensor \( J_A^{abcd}\) maps between contravariant @'Ind20'@ indices and blocks of @4@ of contravariant @'Ind3'@ indices.
 interJArea :: ATens 0 1 0 0 4 0 (SField Rational)
-interJArea = fromListT6 $ fmap (fmap SField) $ filter (\(i,k) -> k /= 0) $ map (\x -> (x,f x)) inds
+interJArea = fromListT6 $ fmap (fmap SField) $ filter (\(_,k) -> k /= 0) $ map (\x -> (x,f x)) inds
         where
             trianArea = trianMapArea
             inds = [  (Empty, singletonInd $ Ind20 a, Empty, Empty, Append (Ind3 b) $ Append (Ind3 c) $ Append (Ind3 d) $ singletonInd $ Ind3 e, Empty) | a <- [0..20], b <- [0..3], c <- [0..3], d <- [0..3], e <- [0..3], not (b == c || d == e)]
@@ -516,13 +516,13 @@ randRats = do
             return randList
 
 randArea :: IO (ATens 0 1 0 0 0 0 (SField Rational))
-randArea = do gen <- newTFGen
+randArea = do
               randList <- randRats
               let inds = map (\i -> (Empty, singletonInd $ Ind20 i, Empty, Empty, Empty, Empty)) [0..20]
               return $ fromListT6 $ zip inds $ fmap SField randList
 
 randAxon :: IO (ATens 0 1 0 0 0 0 (SField Rational))
-randAxon = do gen <- newTFGen
+randAxon = do
               randList <- randRats
               let inds = map (\i -> (Empty, singletonInd $ Ind20 i, Empty, Empty, Empty, Empty)) [5,9,12]
               let randInd = SField $ head randList
@@ -531,7 +531,7 @@ randAxon = do gen <- newTFGen
               return tens
 
 randFlatArea :: IO (ATens 0 1 0 0 0 0 (SField Rational))
-randFlatArea = do gen <- newTFGen
+randFlatArea = do
                   randList <- randRats
                   let assocs = map (\(i,v) -> ( (Empty, singletonInd $ Ind20 i, Empty, Empty, Empty, Empty), SField v))
                          [(0, -1 * head randList),(5, randList !! 3),(6, -1 * randList !! 1),(9, -1 * randList !! 4),(11, -1 * randList !! 2),(12, randList !! 5),(15, head randList),(18, randList !! 1),(20, randList !! 2)]
@@ -540,7 +540,7 @@ randFlatArea = do gen <- newTFGen
 
 
 randAreaDerivative1 :: IO (ATens 0 1 0 0 0 1 (SField Rational))
-randAreaDerivative1 = do gen <- newTFGen
+randAreaDerivative1 = do
                          randList <- randRats
                          let inds = [ f a p | a <- [0..20], p <- [0..3]]
                          return $ fromListT6 $ zip inds $ fmap SField randList
@@ -548,7 +548,7 @@ randAreaDerivative1 = do gen <- newTFGen
 
 
 randAreaDerivative2 :: IO (ATens 0 1 0 1 0 0 (SField Rational))
-randAreaDerivative2 = do gen <- newTFGen
+randAreaDerivative2 = do
                          randList <- randRats
                          let inds = [ f a i | a <- [0..20], i <- [0..9]]
                          return $ fromListT6 $ zip inds $ fmap SField randList
@@ -556,7 +556,7 @@ randAreaDerivative2 = do gen <- newTFGen
 
 
 randMetric :: IO (ATens 0 0 0 1 0 0 (SField Rational))
-randMetric = do gen <- newTFGen
+randMetric = do
                 randList <- randRats
                 let inds = map (\i -> (Empty, Empty, Empty, singletonInd $ Ind9 i, Empty, Empty)) [0..20]
                 return $ fromListT6 $ zip inds $ fmap SField randList

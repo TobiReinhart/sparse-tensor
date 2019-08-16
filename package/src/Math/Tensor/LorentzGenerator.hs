@@ -13,13 +13,13 @@
 -- Thus the goal of the following functions is the computation of a set of ansätze of given rank and symmetry that are linear independent and allow one to express any further Lorentz invariant tensor with the same rank and symmetry as appropriate linear combination of them.
 --
 -- Considering tensors with @4@ contravariant spacetime indices \(T^{abcd} \) that further satisfy the symmetry property \( T^{abcd} = T^{cdab} = T^{bacd} \) as an example, there only exist two linear independent ansätze namely:
---    
+--
 --          * \( \eta^{ab} \eta^{cd}\)
---          * \( \eta^{c(a} \eta^{b)d} \).   
---   
+--          * \( \eta^{c(a} \eta^{b)d} \).
+--
 -- If the tensors are required to have @6@ contravariant spacetime indices \( Q^{abcdpq} \) and satisfy the symmetry property \(Q^{abcdpq} = Q^{cdabpq} = - Q^{bacdpq} = Q^{abcdqp} \) there exist three linear independent ansätze:
 --
---          * \( \eta^{ac}\eta^{bd}\eta^{pq} - \eta^{ad}\eta^{bc}\eta^{pq} \) 
+--          * \( \eta^{ac}\eta^{bd}\eta^{pq} - \eta^{ad}\eta^{bc}\eta^{pq} \)
 --          * \( \eta^{ac}\eta^{bp}\eta^{dq} + \eta^{ac}\eta^{bq}\eta^{dp} - \eta^{bc}\eta^{ap}\eta^{dq} - \eta^{bc}\eta^{aq}\eta^{dp} - \eta^{ad}\eta^{bp}\eta^{cq} - \eta^{ad}\eta^{bq}\eta^{cp} + \eta^{bd}\eta^{ap}\eta^{cq} + \eta^{bd}\eta^{aq}\eta^{cp}  \)
 --          * \( \epsilon^{abcd}\eta^{pq} \).
 --
@@ -27,10 +27,10 @@
 -- Hence the problem actually decouples into two sub problems, the construction of all linear independent ansätze that do not contain an Levi-Civita symbol and the construction of all those linear independent ansätze that do contain exactly one Levi-Civita symbol.
 --
 --
--- This module specifically defines data types @'AnsatzForestEta'@ and @'AnsatzForestEpsilon'@ that are internally implemented as ordered expression tailored towards linear combinations of the two types of ansätze. 
+-- This module specifically defines data types @'AnsatzForestEta'@ and @'AnsatzForestEpsilon'@ that are internally implemented as ordered expression tailored towards linear combinations of the two types of ansätze.
 --
 -- Currently the computation of ansatz bases is limited to the case where all indices are contravariant spacetime indices.
--- Minor changes should nevertheless also allow the computation of ansatz bases for arbitrary mixed rank spacetime tensors and even bases for tensors that are invariant under the action of any \(\mathrm{SO}(p,q)\), i.e. in arbitrary dimension and for arbitrary signature of the inner product. 
+-- Minor changes should nevertheless also allow the computation of ansatz bases for arbitrary mixed rank spacetime tensors and even bases for tensors that are invariant under the action of any \(\mathrm{SO}(p,q)\), i.e. in arbitrary dimension and for arbitrary signature of the inner product.
 -----------------------------------------------------------------------------
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE RankNTypes #-}
@@ -49,9 +49,9 @@ Eta(..), Epsilon(..), Var(..),
 -- ** Forest types
 AnsatzForestEpsilon(..), AnsatzForestEta(..),
 -- ** Conversions of AnsatzForests
--- *** List of Branches 
+-- *** List of Branches
 flattenForest, flattenForestEpsilon, forestEtaList, forestEpsList, forestEtaListLatex, forestEpsListLatex,
--- *** ASCII drawing 
+-- *** ASCII drawing
 drawAnsatzEta, drawAnsatzEpsilon,
 -- ** Utility functions
 -- *** Modifying Variables
@@ -59,21 +59,21 @@ getForestLabels, getForestLabelsEpsilon,
 removeVarsEta, removeVarsEps,
 relabelAnsatzForest, relabelAnsatzForestEpsilon,
 mapVars, mapVarsEpsilon,
--- *** Ansatz Rank 
+-- *** Ansatz Rank
 ansatzRank, ansatzRankEpsilon,
 -- *** Saving and Loading
 encodeAnsatzForestEta, encodeAnsatzForestEpsilon,
 decodeAnsatzForestEta, decodeAnsatzForestEpsilon,
--- * Construction of Ansatz Bases 
+-- * Construction of Ansatz Bases
 -- ** The Fast Way
--- | The following functions construct the basis of Lorentz invariant tensors of given rank and symmetry by using an algorithm that is optimized towards 
--- fast computation times. This is achieved at the cost of memory swelling of intermediate results. 
+-- | The following functions construct the basis of Lorentz invariant tensors of given rank and symmetry by using an algorithm that is optimized towards
+-- fast computation times. This is achieved at the cost of memory swelling of intermediate results.
 --
--- The output of each of the following functions is given by a triplet that consists of @('AnsatzForestEta', 'AnsatzForestEpsilon', 'Tensor' 'AnsVarR')@. 
--- The @'Tensor'@ is obtained by explicitly providing the the components of the ansätze with individual ansätze given by individual variables of type @'AnsVar'@. 
+-- The output of each of the following functions is given by a triplet that consists of @('AnsatzForestEta', 'AnsatzForestEpsilon', 'Tensor' 'AnsVarR')@.
+-- The @'Tensor'@ is obtained by explicitly providing the the components of the ansätze with individual ansätze given by individual variables of type @'AnsVar'@.
 --
 mkAnsatzTensorFastSym, mkAnsatzTensorFast, mkAnsatzTensorFastAbs,
-mkAnsatzTensorFastSym', mkAnsatzTensorFast', 
+mkAnsatzTensorFastSym', mkAnsatzTensorFast',
 -- ** The Memory Optimized Way
 -- The following functions essentially compute the same results as their __Fast__ counterparts, with the only distinction being that they employ a slightly different
 -- algorithm that avoids the problem of intermediate memory swelling and thus yields improved memory usage. All this is achieved at the cost of slightly higher computation times compared to the __Fast__ functions.
@@ -84,17 +84,17 @@ mkAnsatzTensorEigSym', mkAnsatzTensorEig',
 Symmetry(..),
 -- ** Evaluation Lists
 -- *** Area Metric
--- | The following provides an example of evaluation lists. 
+-- | The following provides an example of evaluation lists.
 areaList4, areaList6, areaList8, areaList10_1, areaList10_2, areaList12, areaList14_1, areaList14_2,
 -- *** Metric
--- | In the documentation of the following further provided exemplary evaluation lists index labels \(A, B, C, ...\) also refers to indices of type @'Ind9'@. 
+-- | In the documentation of the following further provided exemplary evaluation lists index labels \(A, B, C, ...\) also refers to indices of type @'Ind9'@.
 metricList2, metricList4_1, metricList4_2, metricList6_1, metricList6_2, metricList6_3, metricList8_1, metricList8_2,
 -- ** Symmetry Lists
--- *** Area Metric 
--- | The following are examples of symmetry lists. 
+-- *** Area Metric
+-- | The following are examples of symmetry lists.
 symList4, symList6, symList8, symList10_1, symList10_2, symList12, symList14_1, symList14_2,
 -- *** Metric
--- | The following are examples of symmetry lists. 
+-- | The following are examples of symmetry lists.
 metricsymList2, metricsymList4_1, metricsymList4_2, metricsymList6_1, metricsymList6_2, metricsymList6_3, metricsymList8_1, metricsymList8_2
 ) where
 
@@ -621,7 +621,7 @@ drawEpsilonTree eps EmptyForest = []
 -- > `---- (2,6)
 -- >    |
 -- >    `---- (4,5) * (2) * x[2]
--- > 
+-- >
 -- > (1,4)
 -- > |
 -- > +---- (2,3)
@@ -635,7 +635,7 @@ drawEpsilonTree eps EmptyForest = []
 -- > `---- (2,6)
 -- >    |
 -- >    `---- (3,5) * (-2) * x[2]
--- > 
+-- >
 -- > (1,5)
 -- > |
 -- > +---- (2,3)
@@ -645,7 +645,7 @@ drawEpsilonTree eps EmptyForest = []
 -- > `---- (2,4)
 -- >    |
 -- >    `---- (3,6) * (2) * x[2]
--- > 
+-- >
 -- > (1,6)
 -- > |
 -- > +---- (2,3)
@@ -673,8 +673,8 @@ drawAnsatzEpsilon m
 
 --get one representative for each Var Label
 
--- | Return one representative, i.e. one individual product for each of the basis ansätze in an @'AnsatzForestEta'@. The function thus returns the contained individual ansätze without 
--- their explicit symmetrization. 
+-- | Return one representative, i.e. one individual product for each of the basis ansätze in an @'AnsatzForestEta'@. The function thus returns the contained individual ansätze without
+-- their explicit symmetrization.
 forestEtaList :: AnsatzForestEta -> [[Eta]]
 forestEtaList f = map fst fList''
         where
@@ -682,8 +682,8 @@ forestEtaList f = map fst fList''
             fList' = sortBy (\(e1, Var x1 y1 ) (e2, Var x2 y2) -> compare y1 y2) fList
             fList'' = nubBy (\(e1, Var x1 y1 ) (e2, Var x2 y2) -> if x1 == 0 || x2 == 0 then error "zeros!!" else y1 == y2) fList'
 
--- | Return one representative, i.e. one individual product for each of the basis ansätze in an @'AnsatzForestEpsilon'@. The function thus returns the contained individual ansätze without 
--- their explicit symmetrization. 
+-- | Return one representative, i.e. one individual product for each of the basis ansätze in an @'AnsatzForestEpsilon'@. The function thus returns the contained individual ansätze without
+-- their explicit symmetrization.
 forestEpsList :: AnsatzForestEpsilon -> [(Epsilon,[Eta])]
 forestEpsList f = map (\(a,b,c) -> (a,b)) fList''
         where
@@ -698,7 +698,7 @@ mkEtasLatex inds (Eta i j) = "\\eta^{" ++ etaI : etaJ : "}"
         where
             (etaI,etaJ) = (inds !! (i-1), inds !! (j-1)  )
 
--- | Outputs the @'forestEtaList'@ in \( \LaTeX \) format. The @'String'@ argument is used to label the individual indices. 
+-- | Outputs the @'forestEtaList'@ in \( \LaTeX \) format. The @'String'@ argument is used to label the individual indices.
 forestEtaListLatex :: AnsatzForestEta -> String -> Char -> String
 forestEtaListLatex f inds var =  tail $ concat etaL''
         where
@@ -711,7 +711,7 @@ mkEpsLatex inds (Epsilon i j k l) =  "\\epsilon^{" ++ epsi : epsj : epsk : epsl 
         where
             (epsi, epsj, epsk, epsl) = (inds !! (i-1), inds !! (j-1), inds !! (k-1), inds !! (l-1))
 
--- | Outputs the @'forestEpsList'@ in \( \LaTeX \) format. The @'String'@ argument is used to label the individual indices. 
+-- | Outputs the @'forestEpsList'@ in \( \LaTeX \) format. The @'String'@ argument is used to label the individual indices.
 forestEpsListLatex :: AnsatzForestEpsilon -> String -> Char -> String
 forestEpsListLatex f inds var = tail $ concat epsL''
         where
@@ -1387,7 +1387,7 @@ mkEvalMap :: Int -> [Int] -> I.IntMap Int
 mkEvalMap i = I.fromList . zip [1..i]
 
 mkEvalMaps :: [[Int]] -> [I.IntMap Int]
-mkEvalMaps l = let s = length (head l) in map (mkEvalMap s) l  
+mkEvalMaps l = let s = length (head l) in map (mkEvalMap s) l
 
 mkEvalMapsInds :: forall (n :: Nat). SingI n => [[Int]] -> [(I.IntMap Int, IndTupleST n 0)]
 mkEvalMapsInds l = let s = length (head l) in map (\x -> (mkEvalMap s x, (fromList $ map toEnum x, Empty))) l
@@ -1395,8 +1395,8 @@ mkEvalMapsInds l = let s = length (head l) in map (\x -> (mkEvalMap s x, (fromLi
 mkAllEvalMaps :: forall (n :: Nat). SingI n => Symmetry -> [[Int]] -> ([I.IntMap Int], [I.IntMap Int], [(I.IntMap Int, IndTupleST n 0)], [(I.IntMap Int, IndTupleST n 0)])
 mkAllEvalMaps sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
         where
-            evalLEta = filter isEtaList l 
-            evalLEps = filter isEpsilonList l 
+            evalLEta = filter isEtaList l
+            evalLEps = filter isEpsilonList l
             evalLEtaRed = filter (isLorentzEval sym) evalLEta
             evalLEpsRed = filter (isLorentzEval sym) evalLEps
             evalMEtaRed = mkEvalMaps evalLEtaRed
@@ -1408,8 +1408,8 @@ mkAllEvalMaps sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
 mkAllEvalMapsAbs :: Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> ([I.IntMap Int], [I.IntMap Int], [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])], [(I.IntMap Int, Int, [IndTupleAbs n1 0 n2 0 n3 0])])
 mkAllEvalMapsAbs sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
         where
-            (headList,_,_) = head l 
-            ord = length headList   
+            (headList,_,_) = head l
+            ord = length headList
             evalLEta = filter (\(x,_,_) -> isEtaList x) l
             evalLEps = filter (\(x,_,_) -> isEpsilonList x) l
             evalLEtaRed = map (\(a,_,_) -> a) $ filter (\(x,_,_) -> isLorentzEval sym x) evalLEta
@@ -1423,7 +1423,7 @@ mkAllEvalMapsAbs sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
 mkAnsatzTensorEigSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEigSym ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
             (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
             tens = evalToTensSym symmetries evalMEtaInds evalMEpsInds ansEta ansEps
 
@@ -1431,7 +1431,7 @@ mkAnsatzTensorEigSym ord symmetries evalL = (ansEta, ansEps, tens)
 mkAnsatzTensorEig :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEig ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
             (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
             tens = evalToTens evalMEtaInds evalMEpsInds ansEta ansEps
 
@@ -1439,7 +1439,7 @@ mkAnsatzTensorEig ord symmetries evalL = (ansEta, ansEps, tens)
 mkAnsatzTensorEigAbs :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 AnsVarR)
 mkAnsatzTensorEigAbs ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMapsAbs symmetries evalL 
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMapsAbs symmetries evalL
             (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
             tens = evalToTensAbs evalMEtaInds evalMEpsInds ansEta ansEps
 
@@ -1512,33 +1512,33 @@ mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed = (ansEtaRed, ansEpsRed)
 mkAnsatzTensorFastSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFastSym ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
             (ansEta, ansEps) = mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed
             tens = evalToTensSym symmetries evalMEtaInds evalMEpsInds ansEta ansEps
 
 --and without explicit symmetrization in tens
 
--- | This function provides the same functionality as @'mkAnsatzTensorFast'@ but without explicit symmetrization of the result. In other words from each symmetrization sum only the first 
--- summand is returned. This is advantageous as for large expressions explicit symmetrization might be expensive and further is sometime simply not needed as the result might for instance be contracted against 
--- a symmetric object, which thus enforces the symmetry, in further steps of the computation. 
+-- | This function provides the same functionality as @'mkAnsatzTensorFast'@ but without explicit symmetrization of the result. In other words from each symmetrization sum only the first
+-- summand is returned. This is advantageous as for large expressions explicit symmetrization might be expensive and further is sometime simply not needed as the result might for instance be contracted against
+-- a symmetric object, which thus enforces the symmetry, in further steps of the computation.
 mkAnsatzTensorFast :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFast ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL 
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
             (ansEta, ansEps) = mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed
             tens = evalToTens evalMEtaInds evalMEpsInds ansEta ansEps
 
 --eval to abstract tensor
 
--- | This function provides the same functionality as @'mkAnsatzTensorFast'@ but returns the result as tensor of type @'ATens' 'AnsVarR'@. This is achieved by explicitly providing not only 
--- the list of individual index combinations but also their representation using more abstract index types as input. The input list consists of triplets where the first element 
+-- | This function provides the same functionality as @'mkAnsatzTensorFast'@ but returns the result as tensor of type @'ATens' 'AnsVarR'@. This is achieved by explicitly providing not only
+-- the list of individual index combinations but also their representation using more abstract index types as input. The input list consists of triplets where the first element
 -- as before labels the independent index combinations, the second element labels the corresponding multiplicity under the present symmetry. The multiplicity simply encodes how many different combinations of spacetime indices
--- correspond to the same abstract index tuple. The last element of the input triplets labels the individual abstract index combinations that then correspond to the provided spacetime indices. If some of the initial symmetries 
--- are still present when using abstract indices this last element might consists of more then one index combination. The appropriate value that is retrieved from the two ansatz forests is then written to each of the provided index combinations. 
+-- correspond to the same abstract index tuple. The last element of the input triplets labels the individual abstract index combinations that then correspond to the provided spacetime indices. If some of the initial symmetries
+-- are still present when using abstract indices this last element might consists of more then one index combination. The appropriate value that is retrieved from the two ansatz forests is then written to each of the provided index combinations.
 mkAnsatzTensorFastAbs :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 AnsVarR)
 mkAnsatzTensorFastAbs ord symmetries evalL = (ansEta, ansEps, tens)
         where
-            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMapsAbs symmetries evalL 
+            (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMapsAbs symmetries evalL
             (ansEta, ansEps) = mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed
             tens = evalToTensAbs evalMEtaInds evalMEpsInds ansEta ansEps
 

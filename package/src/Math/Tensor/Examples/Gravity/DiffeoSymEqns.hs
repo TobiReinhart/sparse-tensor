@@ -6,20 +6,20 @@
 -- Maintainer  :  tobi.reinhart@fau.de, nils.alex@fau.de
 --
 --
--- This module collects several tensorial equations. 
--- These equations arise in the research topic of perturbative constructive gravity and are used there to encode perturbative diffeomorphism invariance. 
+-- This module collects several tensorial equations.
+-- These equations arise in the research topic of perturbative constructive gravity and are used there to encode perturbative diffeomorphism invariance.
 --
 -- Providing further usage examples of the sparse-tensor package the equations included here nicely illustrate the syntax that is used when entering tensors.
--- They also show how the sparse tensor package can be used to manipulate not only tenors but linear tensorial equations. The sparse-tensor package can for instance be used to extract the information that is contained in such a tensorial equation in matrix form. This then obviously allows one 
+-- They also show how the sparse tensor package can be used to manipulate not only tenors but linear tensorial equations. The sparse-tensor package can for instance be used to extract the information that is contained in such a tensorial equation in matrix form. This then obviously allows one
 -- to computate the rank of the linear tensorial equation or even explicitly solve it.
--- 
+--
 --
 -- All equations that are contained in this module are functions that take possibly several tensors of type @'ATens' 'AnsVarR'@ as input. These tensors then represent
--- the individual unknown tensors in the equation. The output that is computed by the functions is also of this type.     
+-- the individual unknown tensors in the equation. The output that is computed by the functions is also of this type.
 --
--- When illustrating how the individual such equations that are included in this module are defined we will use again the same convention as in the "Math.Tensor.Examples.Gravity" module, i.e. we label indices of type @'Ind20'@ by \(A,B,C,D,...\), indices of type 
+-- When illustrating how the individual such equations that are included in this module are defined we will use again the same convention as in the "Math.Tensor.Examples.Gravity" module, i.e. we label indices of type @'Ind20'@ by \(A,B,C,D,...\), indices of type
 -- \(I,J,K,L,...\) and spacetime indices of type @'ind3'@ are labeled by \(a,b,c,d,...\). Hence a general such tensor is displayed as \(T^{A_1...A_m I_1...I_r a_1...a_p}_{B_1...B_n J_1...J_s b_1...b_s} \).
--- Such a tensor then has the type @'ATens' m n r s p q@.   
+-- Such a tensor then has the type @'ATens' m n r s p q@.
 -----------------------------------------------------------------------------
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GADTs #-}
@@ -27,19 +27,19 @@
 module Math.Tensor.Examples.Gravity.DiffeoSymEqns (
 -- * Lorentz Invariance
 -- ** Area Metric
--- | The following equations encode the requirement that the input tensors are Lorentz invariant. They can be used to verify the Lorentz invariant tensors that are obtained by 
+-- | The following equations encode the requirement that the input tensors are Lorentz invariant. They can be used to verify the Lorentz invariant tensors that are obtained by
 -- the "Math.Tensor.LorentzGenerator" module. If the input tensor is Lorentz invariant the functions return a tensor with all values being zero, and thus for instance applying @'tensorRank6''@ to these
 -- returns zero.
 ansatzA, ansatzAI, ansatzAB, ansatzAaBb, ansatzABI, ansatzAIBJ, ansatzABC, ansatzABCI, ansatzABbCc, ansatzAaBbCI, ansatzABICJ,
-ansatzAIBJCK, ansatzABCD, ansatzABCDJ, ansatzABCcDd, 
+ansatzAIBJCK, ansatzABCD, ansatzABCDJ, ansatzABCcDd,
 -- * Perturbative Diffeomorphism Equivariance
 -- ** Area Metric
--- | The following equations can be used with the Lorentz invariant ansätze for the area metric \(G_A = J_A^{abcd}G_{abcd}\) with the symmetries \(G_{abcd} = G_{cdab} = -G_{bacd} \) as input tensors. 
+-- | The following equations can be used with the Lorentz invariant ansätze for the area metric \(G_A = J_A^{abcd}G_{abcd}\) with the symmetries \(G_{abcd} = G_{cdab} = -G_{bacd} \) as input tensors.
 -- In the following documentation these input tensors are labeled as \(a_0,a^{A}, a^{AI}, a^{AB},\) etc. For the definition of the further included tensors see  "Math.Tensor.Examples.Gravity".
 eqn1, eqn3, eqn1A, eqn1AI,  eqn2Aa, eqn3A, eqn1AB, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
 -- ** Metric
 -- | The following equations can be used with the Lorentz invariant ansätze for the a traditional metric metric \(g_I = J_I^{ab}g_{ab}\) as input.
--- In the following documentation these input tensors are labeled as \(a_0,a^{A}, a^{AJ}, a^{AB},\) etc. Care must be taken as for the case of the metric equations all indices that are labeled by \(A,B,C,D,... \) are also of type @'Ind9'@, 
+-- In the following documentation these input tensors are labeled as \(a_0,a^{A}, a^{AJ}, a^{AB},\) etc. Care must be taken as for the case of the metric equations all indices that are labeled by \(A,B,C,D,... \) are also of type @'Ind9'@,
 -- but are distinguished from the indices labeled by \(I,J,K,L,...\) as they describe the metric components and the latter ones describe symmetric spacetime derivative pairs.
 -- For the definition of the further included tensors see  "Math.Tensor.Examples.Gravity".
 eqn1Met, eqn3Met, eqn2AaMet, eqn3AMet, eqn1AMet, eqn1AIMet, eqn1ABMet, eqn1ABIMet, eqn1AaBbMet, eqn2ABbMet, eqn3ABMet

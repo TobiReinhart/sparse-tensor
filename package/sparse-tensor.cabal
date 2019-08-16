@@ -56,4 +56,5 @@ library
                        Math.Tensor.LorentzGenerator
                        Math.Tensor.Examples.Gravity
                        Math.Tensor.Examples.Gravity.Schwarzschild
+                       Math.Tensor.Examples.Gravity.SchwarzschildSymbolic
                        Math.Tensor.Examples.Gravity.DiffeoSymEqns

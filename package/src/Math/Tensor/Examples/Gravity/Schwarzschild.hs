@@ -24,7 +24,6 @@ einstein
 where
 
 import Math.Tensor
-import Math.Tensor.Examples.Gravity
 
 import Numeric.AD.Internal.Forward (Forward(..))
 

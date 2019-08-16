@@ -1,6 +1,6 @@
 name:                sparse-tensor
 version:             0.1.0.0
-synopsis:            typesafe tensor algebra and related functions
+synopsis:            typesafe tensor algebra library 
 description:
     .
     This package is intended to be used as a general purpose tensor algebra library.

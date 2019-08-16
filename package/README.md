@@ -40,20 +40,20 @@ as this causes a type error at **compile time**.
 ## Predefined tensors
 The package comes with pre-defined tensor types. Basic tensors of these types for applications in mathematical physics are exported by `Math.Tensor.Examples.Gravity`:
 ```haskell
->>> sequence_ $ map print $ toListT2' delta3  -- print assocs of spacetime delta
+>>> sequence_ $ fmap print $ toListT2' delta3  -- print assocs of spacetime delta
 (([0],[0]),SField (1 % 1))
 (([1],[1]),SField (1 % 1))
 (([2],[2]),SField (1 % 1))
 (([3],[3]),SField (1 % 1))
 
->>> sequence_ $ map print $ toListT2' eta     -- print assocs of Minkowski metric
+>>> sequence_ $ fmap print $ toListT2' eta     -- print assocs of Minkowski metric
 (([],[0,0]),SField ((-1) % 1))
 (([],[1,1]),SField (1 % 1))
 (([],[2,2]),SField (1 % 1))
 (([],[3,3]),SField (1 % 1))
 
 >>> let t = invEta &* epsilon
->>> contrATens1 (0,0) $ contrATens1 (1,1) t   -- contraction of inverse Minkowski metric with epsilon
+>>> contrATens1 (0,0) $ contrATens1 (1,1) t   -- contraction of inverse eta with epsilon
 ZeroTensor
 ```
 
@@ -75,7 +75,7 @@ The package can also handle **symbolic** tensor values. All manipulations, inclu
 >>> let g  = schwarzschildS
 >>> let g' = schwarzschildS'
 >>> let gamma = christoffelS g g'
->>> let comps = toListT2 gamma     -- get list of components
+>>> let comps = toListT2 gamma     -- get assocs
 >>> print $ snd $ comps !! 1       -- component gamma^t_tr
 SSymbolic "(1 % 2)*((1/(1 - rs/r))*(diff(1 - rs / r, r)))"
 ```

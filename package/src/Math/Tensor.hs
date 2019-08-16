@@ -61,7 +61,7 @@ module Math.Tensor (
 -- converting them to such it is advantageous when also these lists contain the additional length information in their type.
 IndList(..),
 --
-singletonInd, (+>), fromList, fromListMaybe,
+singletonInd, (+>), fromList, fromListUnsafe,
 headInd, tailInd, sortInd, updateInd,
 -- ** The Tensor Type
 --
@@ -346,22 +346,20 @@ import Control.Applicative (liftA2)
 import Data.Ratio ((%), numerator, denominator)
 import Data.List (nubBy, sortOn, intersect)
 import Data.Maybe (mapMaybe, fromMaybe)
+import Data.Proxy
+import Data.Type.Equality
 import qualified Data.IntMap.Strict as I
 import qualified Data.Map.Strict as M
 import Numeric.Natural (Natural(..))
 import qualified Numeric.AD.Rank1.Forward as AD
 import GHC.TypeLits
+import GHC.TypeNats (SomeNat(..))
 import GHC.Generics (Generic(..))
 import Control.DeepSeq (rnf, NFData(..))
 import Data.Serialize (encodeLazy, decodeLazy, Serialize(..))
-import Data.Singletons (SingI(..), Proxy(..))
-import Data.Singletons.Decide
-import Data.Singletons.Prelude.Enum
-import Data.Singletons.TypeLits
 import Unsafe.Coerce (unsafeCoerce)
 import qualified Data.ByteString.Lazy as BS (ByteString(..))
 import Codec.Compression.GZip (compress, decompress)
-import Data.Either (either)
 
 --for Linear Algebra subroutines
 
@@ -378,7 +376,7 @@ infixr 5 +>
 
 -- | Infix synonym for @'Append'@.
 
-(+>) :: (Enum a) => Int -> IndList (n-1) a -> IndList n a
+(+>) :: Enum a => Int -> IndList (n-1) a -> IndList n a
 (+>) i = Append (toEnum i)
 
 -- | Construct an @'IndList'@ that only contains a single value.
@@ -393,41 +391,44 @@ data IsZero (n :: Nat) where
     NonZero :: (1 <= n) => IsZero n
 deriving instance Show (IsZero n)
 
-isZero :: forall (n :: Nat). SNat n -> IsZero n
-isZero n = case n %~ SNat @0
-             of Proved Refl -> Zero
-                Disproved _ -> unsafeCoerce (NonZero @1)
+isZero :: forall n. KnownNat n => Proxy n -> IsZero n
+isZero _ = case sameNat (Proxy @n) (Proxy @0)
+                        of Nothing   -> unsafeCoerce (NonZero @1)
+                           Just Refl -> Zero
 
-fromList' :: forall (n :: Nat). SNat n -> forall (a :: *). [a] -> Maybe (IndList n a)
-fromList' n xs = case isZero n
-                  of Zero    -> case xs
-                                  of [] -> Just Empty
-                                     _  -> Nothing
-                     NonZero -> case xs
-                                  of []    -> Nothing
-                                     x:xs' -> case fromList' (sPred n) xs'
-                                                of Just v  -> Just (x `Append` v)
-                                                   Nothing -> Nothing
+fromList' :: forall n. KnownNat n => Proxy n -> forall (a :: *). [a] -> Maybe (IndList n a)
+fromList' (n :: Proxy n') xs = case isZero n
+                               of Zero    -> case xs
+                                               of [] -> Just Empty
+                                                  _  -> Nothing
+                                  NonZero -> case xs
+                                               of []    -> Nothing
+                                                  x:xs' -> case fromList' (undefined :: (Proxy (n' - 1))) xs'
+                                                             of Just v  -> Just (x `Append` v)
+                                                                Nothing -> Nothing
 
--- | Construction of a legth typed @'IndList'@ from an untyped list.
+-- | Construction of a length typed @'IndList'@ from an untyped list.
 
-fromList :: forall (n :: Nat). SingI n => forall (a :: *). [a] -> IndList n a
-fromList = \case
-               Just v  -> v
-               Nothing -> undefined
-            . fromList' sing
+fromList :: forall n.KnownNat n => forall (a :: *). [a] -> Maybe (IndList n a)
+fromList = fromList' (undefined :: Proxy n)
 
--- | Construction from untyped lists returning a @'Maybe'@ value.
+-- | Construction of a length typed @'IndList'@ (partial function).
 
-fromListMaybe :: forall (n :: Nat). SingI n => forall (a :: *). [a] -> Maybe (IndList n a)
-fromListMaybe = fromList' sing
+fromListUnsafe :: forall n.KnownNat n => forall (a :: *). [a] -> IndList n a
+fromListUnsafe xs = case fromList xs of
+                      Nothing -> error errorString
+                      Just l  -> l
+  where
+    nVal = natVal (undefined :: Proxy n)
+    len = length xs
+    errorString = "Could not construct IndList " ++ show nVal ++ " from " ++ show len ++ " elements."
 
 --Instances of the length typed lists.
 
 instance (KnownNat n, Generic a) => Generic (IndList n a) where
     type Rep (IndList n a) = Rep [a]
 
-    to r = fromList $ to r
+    to r = fromListUnsafe $ to r
     from = from . toList
 
 deriving instance (KnownNat n, Generic a, Serialize a) => Serialize (IndList n a)
@@ -520,13 +521,13 @@ example: perm = [1, 2, 0] -> "C is put on 0th pos. A on 1st and B on 2nd"
          => [C, A, B]
 --}
 
-resortInd :: (SingI n, Ord a) => [Int] -> IndList n a -> IndList n a
+resortInd :: (KnownNat n, Ord a) => [Int] -> IndList n a -> IndList n a
 resortInd perm indList = newindList
     where
         l' = toList indList
         l'' = if length l' == length perm then zip perm l' else error "permutation has wrong length"
         lReSorted = sortOn fst l''
-        newindList = fromList $ map snd lReSorted
+        newindList = fromListUnsafe $ map snd lReSorted
 
 --Index type class
 
@@ -592,7 +593,7 @@ class TAdd a where
     subS a b = a `addS` negateS b
 
 -- | Newtype wrapper that is used for representing scalar values.
-newtype SField a = SField a deriving (Show, Eq, Ord)
+newtype SField a = SField a deriving (Show, Eq, Ord, Generic, Serialize)
 
 instance Functor SField where
     fmap f (SField a) = SField $ f a
@@ -612,7 +613,7 @@ instance Num a => Num (SField a) where
 
 -- | Newtype wrapper for symbolic values.
 --   Note that this version does not yet support simplification of symbolic values.
-newtype SSymbolic = SSymbolic String deriving (Show, Eq, Ord)
+newtype SSymbolic = SSymbolic String deriving (Show, Eq, Ord, Generic, Serialize)
 
 instance Num SSymbolic where
     SSymbolic s1 + SSymbolic s2 = SSymbolic $ "(" ++ s1 ++ ")+(" ++ s2 ++ ")"
@@ -705,7 +706,7 @@ instance (TIndex k, Prod v v') => Prod (Tensor n k v) (Tensor n' k v') where
 -- @'AnsVar'@ values describes a linear equation system. Using the functions @'toMatListT1'@, ... this equation system can
 -- then be transformed into a matrix with columns labeling the individual @'AnsVar'@s.
 
-newtype AnsVar a = AnsVar (I.IntMap a) deriving Show
+newtype AnsVar a = AnsVar (I.IntMap a) deriving (Show, Generic, Serialize)
 
 type AnsVarR = AnsVar (SField Rational)
 
@@ -879,36 +880,45 @@ data TensorRep k v = ScalarR v | TensorR Natural (TMap k (TensorRep k v)) | Zero
 
 --convert between typesafe and non typesafe tensors
 
+{-
 lemma :: forall n m. (n-1 :~: m) -> (m+1 :~: n)
 lemma _ = unsafeCoerce (Refl @n)
+-}
 
 toRep :: forall n k v. KnownNat n => Tensor n k v -> TensorRep k v
 toRep (Scalar v) = ScalarR v
 toRep (Tensor m) = -- case isZero (SNat @n)  n == 0 is not possible, because types
                    -- of Zero -> undefined
                    -- NonZero ->
-                        case lemma @n Refl
-                        of Refl ->
+                        --case lemma @n Refl
+                        --of Refl ->
                             let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
                             in TensorR r $ mapTMap (\(t :: Tensor (n-1) k v) -> toRep t) m
 toRep ZeroTensor = let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
                 in ZeroR r
 
-fromRep :: forall n k v. KnownNat n => TensorRep k v -> Tensor n k v
-fromRep (ScalarR v) = case isZero (SNat @n)
-                        of Zero    -> Scalar v
-                           NonZero -> undefined
-fromRep (TensorR r m) = case someNatVal (fromIntegral r)
-                        of Just l  -> case l
-                                        of SomeNat (_ :: Proxy x) -> case isZero (SNat @x)
-                                                                        of NonZero -> case sameNat (Proxy @x) (Proxy @n)
-                                                                                        of Nothing   -> undefined
-                                                                                           Just Refl -> Tensor (mapTMap (\t -> fromRep t :: Tensor (x-1) k v) m)
-                                                                           Zero    -> undefined
-                           Nothing -> undefined
+fromRep :: forall n k v. KnownNat n => TensorRep k v -> Maybe (Tensor n k v)
+fromRep (ScalarR v) = case isZero (Proxy @n)
+                        of Zero    -> Just (Scalar v)
+                           NonZero -> Nothing
+fromRep (TensorR r m) = case someNatVal (fromIntegral r) of
+  Nothing -> Nothing
+  Just l  -> case l of
+    SomeNat (x' :: Proxy x) ->
+     case isZero x' of
+       Zero    -> Nothing
+       NonZero -> case sameNat x' (Proxy @n) of
+         Nothing   -> Nothing
+         Just Refl -> let tMap'   = mapTMap (\t -> fromRep t :: Maybe (Tensor (x-1) k v)) m
+                          tMap''  = filterTMap (\t -> case t of Nothing -> False
+                                                                _       -> True) tMap'
+                          tMap''' = mapTMap (\(Just t) -> t) tMap''
+                      in case tMap''' of
+                        [] -> Nothing
+                        _  -> Just $ Tensor tMap'''
 fromRep (ZeroR r) = case someNatVal (fromIntegral r)
-                    of Just l  -> ZeroTensor
-                       Nothing -> undefined
+                    of Just l  -> Just ZeroTensor
+                       Nothing -> Nothing
 
 --instances for the tensor data type
 
@@ -920,7 +930,10 @@ instance (NFData k, NFData v) => NFData (Tensor n k v) where
 instance KnownNat n => Generic (Tensor n k v) where
     type Rep (Tensor n k v) = Rep (TensorRep k v)
     from = from . toRep
-    to   = fromRep . to
+    to   = \case
+              Nothing -> error "Could not reconstruct tensor from representation."
+              Just t  -> t
+           . fromRep . to
 
 deriving instance (KnownNat n, Ord k, Serialize k, Serialize v) => Serialize (Tensor n k v)
 
@@ -1002,15 +1015,15 @@ fromListT [] = ZeroTensor
 
 -- | Same functionality as @'fromListT'@ but the indices of the various values are specified by usual list. This is certainly more flexible
 -- however all at the cost of reduced type safety compared to @'fromListT'@.
-fromListT' :: forall n k v b. (TIndex k, TAdd v, SingI n) => [([k],v)] -> Tensor n k v
+fromListT' :: forall n k v b. (TIndex k, TAdd v, KnownNat n) => [([k],v)] -> Tensor n k v
 fromListT' l = fromListT indList
         where
-            indList = map (\(x,y) -> (fromList x, y)) l
+            indList = map (\(x,y) -> (fromListUnsafe x, y)) l
 
 fromListT1 :: (TIndex k1, TAdd v) => [(IndTuple1 n1 k1, v)] -> AbsTensor1 n1 k1 v
 fromListT1 = fromListT
 
-fromListT1' :: forall n1 k1 v b. (SingI n1, TIndex k1, TAdd v) => [([k1],v)] -> AbsTensor1 n1 k1 v
+fromListT1' :: forall n1 k1 v b. (KnownNat n1, TIndex k1, TAdd v) => [([k1],v)] -> AbsTensor1 n1 k1 v
 fromListT1' = fromListT'
 
 fromListT2 :: (TIndex k1, TAdd v) => [(IndTuple2 n1 n2 k1, v)] -> AbsTensor2 n1 n2 k1 v
@@ -1018,70 +1031,70 @@ fromListT2 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens2 l
 
-fromListT2' :: forall n1 n2 k1 v b. (SingI n1, SingI n2, TIndex k1, TAdd v) => [(([k1],[k1]),v)] -> AbsTensor2 n1 n2 k1 v
+fromListT2' :: forall n1 n2 k1 v b. (KnownNat n1, KnownNat n2, TIndex k1, TAdd v) => [(([k1],[k1]),v)] -> AbsTensor2 n1 n2 k1 v
 fromListT2' l = fromListT2 indList
         where
-            indList = map (\((x1,x2),y) -> ((fromList x1, fromList x2),y)) l
+            indList = map (\((x1,x2),y) -> ((fromListUnsafe x1, fromListUnsafe x2),y)) l
 
 fromListT3 :: (TIndex k1, TIndex k2, TAdd v) => [(IndTuple3 n1 n2 n3 k1 k2, v)] -> AbsTensor3 n1 n2 n3 k1 k2 v
 fromListT3 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens3 l
 
-fromListT3' :: forall n1 n2 n3 k1 k2 v b. (SingI n1, SingI n2, SingI n3, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2]),v)] -> AbsTensor3 n1 n2 n3 k1 k2 v
+fromListT3' :: forall n1 n2 n3 k1 k2 v b. (KnownNat n1, KnownNat n2, KnownNat n3, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2]),v)] -> AbsTensor3 n1 n2 n3 k1 k2 v
 fromListT3' l = fromListT3 indList
         where
-            indList = map (\((x1,x2,x3),y) -> ((fromList x1, fromList x2, fromList x3),y)) l
+            indList = map (\((x1,x2,x3),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3),y)) l
 
 fromListT4 :: (TIndex k1, TIndex k2, TAdd v) => [(IndTuple4 n1 n2 n3 n4 k1 k2, v)] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
 fromListT4 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens4 l
 
-fromListT4' :: forall n1 n2 n3 n4 k1 k2 v b. (SingI n1, SingI n2, SingI n3, SingI n4, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2],[k2]),v)] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+fromListT4' :: forall n1 n2 n3 n4 k1 k2 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2],[k2]),v)] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
 fromListT4' l = fromListT4 indList
         where
-            indList = map (\((x1,x2,x3,x4),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4),y)) l
+            indList = map (\((x1,x2,x3,x4),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4),y)) l
 
 fromListT5 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(IndTuple5 n1 n2 n3 n4 n5 k1 k2 k3, v)] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
 fromListT5 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens5 l
 
-fromListT5' :: forall n1 n2 n3 n4 n5 k1 k2 k3 v b. (SingI n1, SingI n2, SingI n3, SingI n4, SingI n5,  TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3]),v)] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+fromListT5' :: forall n1 n2 n3 n4 n5 k1 k2 k3 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5,  TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3]),v)] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
 fromListT5' l = fromListT5 indList
         where
-            indList = map (\((x1,x2,x3,x4,x5),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4, fromList x5),y)) l
+            indList = map (\((x1,x2,x3,x4,x5),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4, fromListUnsafe x5),y)) l
 
 fromListT6 :: (TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(IndTuple6 n1 n2 n3 n4 n5 n6 k1 k2 k3, v)] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
 fromListT6 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens6 l
 
-fromListT6' :: forall n1 n2 n3 n4 n5 n6 k1 k2 k3 v b. (SingI n1, SingI n2, SingI n3, SingI n4, SingI n5, SingI n6, TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3]),v)] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+fromListT6' :: forall n1 n2 n3 n4 n5 n6 k1 k2 k3 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3]),v)] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
 fromListT6' l = fromListT6 indList
         where
-            indList = map (\((x1,x2,x3,x4,x5,x6),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4, fromList x5, fromList x6),y)) l
+            indList = map (\((x1,x2,x3,x4,x5,x6),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4, fromListUnsafe x5, fromListUnsafe x6),y)) l
 
 fromListT7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(IndTuple7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4, v)] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
 fromListT7 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens7 l
 
-fromListT7' :: forall n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v b. (SingI n1, SingI n2, SingI n3, SingI n4, SingI n5, SingI n6, SingI n7, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4]),v)] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+fromListT7' :: forall n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4]),v)] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
 fromListT7' l = fromListT7 indList
         where
-            indList = map (\((x1,x2,x3,x4,x5,x6,x7),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4, fromList x5, fromList x6, fromList x7),y)) l
+            indList = map (\((x1,x2,x3,x4,x5,x6,x7),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4, fromListUnsafe x5, fromListUnsafe x6, fromListUnsafe x7),y)) l
 
 fromListT8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(IndTuple8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4, v)] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
 fromListT8 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens8 l
 
-fromListT8' :: forall n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v b. (SingI n1, SingI n2, SingI n3, SingI n4, SingI n5, SingI n6, SingI n7, SingI n8, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4],[k4]),v)] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+fromListT8' :: forall n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4],[k4]),v)] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
 fromListT8' l = fromListT8 indList
         where
-            indList = map (\((x1,x2,x3,x4,x5,x6,x7,x8),y) -> ((fromList x1, fromList x2, fromList x3, fromList x4, fromList x5, fromList x6, fromList x7, fromList x8),y)) l
+            indList = map (\((x1,x2,x3,x4,x5,x6,x7,x8),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4, fromListUnsafe x5, fromListUnsafe x6, fromListUnsafe x7, fromListUnsafe x8),y)) l
 
 
 --helper function for tensor addition: adding one indices value pair to the tree structure of a given tensor
@@ -1150,8 +1163,8 @@ encodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => Tensor n k v ->
 encodeTensor = compress . encodeLazy
 
 -- | Utility function to decompress and de-serialize a @'Data.ByteString.Lazy.ByteString'@ into a @'Tensor'@, making use of the @'Serialize'@ instance.
-decodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => BS.ByteString -> Tensor n k v
-decodeTensor bs = either error id $ decodeLazy $ decompress bs
+decodeTensor :: (KnownNat n, Ord k, Serialize k, Serialize v) => BS.ByteString -> Either String (Tensor n k v)
+decodeTensor bs = decodeLazy $ decompress bs
 
 
 -- | The function computes partial derivatives of spacetime tensors of type @'STTens'@ with @'CFun'@ values.

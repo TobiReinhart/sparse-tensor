@@ -110,7 +110,6 @@ import Codec.Compression.GZip (compress, decompress)
 import Data.Either (either)
 import Data.Tuple (swap)
 import GHC.TypeLits
-import Data.Singletons (SingI(..))
 
 --LinearAlgebra subroutines
 
@@ -1389,10 +1388,10 @@ mkEvalMap i = I.fromList . zip [1..i]
 mkEvalMaps :: [[Int]] -> [I.IntMap Int]
 mkEvalMaps l = let s = length (head l) in map (mkEvalMap s) l
 
-mkEvalMapsInds :: forall (n :: Nat). SingI n => [[Int]] -> [(I.IntMap Int, IndTupleST n 0)]
-mkEvalMapsInds l = let s = length (head l) in map (\x -> (mkEvalMap s x, (fromList $ map toEnum x, Empty))) l
+mkEvalMapsInds :: forall (n :: Nat). KnownNat n => [[Int]] -> [(I.IntMap Int, IndTupleST n 0)]
+mkEvalMapsInds l = let s = length (head l) in map (\x -> (mkEvalMap s x, (fromListUnsafe $ map toEnum x, Empty))) l
 
-mkAllEvalMaps :: forall (n :: Nat). SingI n => Symmetry -> [[Int]] -> ([I.IntMap Int], [I.IntMap Int], [(I.IntMap Int, IndTupleST n 0)], [(I.IntMap Int, IndTupleST n 0)])
+mkAllEvalMaps :: forall (n :: Nat). KnownNat n => Symmetry -> [[Int]] -> ([I.IntMap Int], [I.IntMap Int], [(I.IntMap Int, IndTupleST n 0)], [(I.IntMap Int, IndTupleST n 0)])
 mkAllEvalMaps sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
         where
             evalLEta = filter isEtaList l
@@ -1420,7 +1419,7 @@ mkAllEvalMapsAbs sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
             evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEps
 
 -- | The function is similar to @'mkAnsatzTensorFastSym'@ yet it uses an algorithm that prioritizes memory usage over fast computation times.
-mkAnsatzTensorEigSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorEigSym :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEigSym ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
@@ -1428,7 +1427,7 @@ mkAnsatzTensorEigSym ord symmetries evalL = (ansEta, ansEps, tens)
             tens = evalToTensSym symmetries evalMEtaInds evalMEpsInds ansEta ansEps
 
 -- | The function is similar to @'mkAnsatzTensorFast'@ yet it uses an algorithm that prioritizes memory usage over fast computation times.
-mkAnsatzTensorEig :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorEig :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEig ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
@@ -1509,7 +1508,7 @@ mkAnsatzFast ord symmetries evalMEtaRed evalMEpsRed = (ansEtaRed, ansEpsRed)
 -- The additional argument of type @[['Int']]@ is used to provide the information of all (by means of the symmetry at hand) independent components of the ansätze.
 -- Explicit examples how this information can be computed are provided by the functions for @'areaList4'@, ... and also by @'metricList2'@, ... .
 -- The output is given as spacetime tensor @'STTens'@ and is explicitly symmetrized.
-mkAnsatzTensorFastSym :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorFastSym :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFastSym ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
@@ -1521,7 +1520,7 @@ mkAnsatzTensorFastSym ord symmetries evalL = (ansEta, ansEps, tens)
 -- | This function provides the same functionality as @'mkAnsatzTensorFast'@ but without explicit symmetrization of the result. In other words from each symmetrization sum only the first
 -- summand is returned. This is advantageous as for large expressions explicit symmetrization might be expensive and further is sometime simply not needed as the result might for instance be contracted against
 -- a symmetric object, which thus enforces the symmetry, in further steps of the computation.
-mkAnsatzTensorFast :: forall (n :: Nat). SingI n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorFast :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> [[Int]]-> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFast ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
@@ -1720,14 +1719,14 @@ allList ord (syms,aSyms,_,_,_) =  allList' ord syms aSyms [] []
 --use the above functions to construct ansätze without providing eval lists by hand
 
 -- | The function is similar to @'mkAnsatzTensorFastSym''@ yet it uses an algorithm that prioritizes memory usage over fast computation times.
-mkAnsatzTensorEigSym' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorEigSym' :: forall (n :: Nat). KnownNat n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEigSym' ord symmetries = mkAnsatzTensorEigSym ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 
 -- | Provides the same functionality as @'mkAnsatzTensorFastSym'@ with the difference that the list of independent index combinations is automatically computed form the present symmetry.
 -- Note that this yields slightly higher computation costs.
-mkAnsatzTensorFastSym' :: forall (n :: Nat). SingI n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorFastSym' :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFastSym' ord symmetries = mkAnsatzTensorFastSym ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
@@ -1735,14 +1734,14 @@ mkAnsatzTensorFastSym' ord symmetries = mkAnsatzTensorFastSym ord symmetries eva
 --and without explicit symmetrization
 
 -- | The function is similar to @'mkAnsatzTensorFast''@ yet it uses an algorithm that prioritizes memory usage over fast computation times.
-mkAnsatzTensorEig' :: forall (n :: Nat). SingI n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorEig' :: forall (n :: Nat). KnownNat n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorEig' ord symmetries = mkAnsatzTensorEig ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 
 -- | Provides the same functionality as @'mkAnsatzTensorFast'@ with the difference that the list of independent index combinations is automatically computed form the present symmetry.
 -- Note that this yields slightly higher computation costs.
-mkAnsatzTensorFast' :: forall (n :: Nat). SingI n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorFast' :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
 mkAnsatzTensorFast' ord symmetries = mkAnsatzTensorFast ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries

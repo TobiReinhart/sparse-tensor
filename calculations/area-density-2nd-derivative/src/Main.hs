@@ -28,6 +28,24 @@ main = do
 
   putStr $ unlines $ map (\x -> "-- > " ++ x) $ lines $ drawAnsatzEpsilon eps6
 
-  print $ tensorRank2' ans14_1
+  print $ tensorRank6' ans10_1
 
   print $ evalSec (einstein (2 :: Double)) [3, 3, 3, 3]
+
+  let bs = encodeTensor ans4
+  print bs
+
+  let t' = decodeTensor bs :: Either String (STTens 0 1 (SField Double))
+  print t'
+
+  let t'' = decodeTensor bs :: Either String (ATens 1 0 0 0 0 0 AnsVarR)
+  print t''
+
+  let il = fromList [1,2,3,4,5] :: Maybe (IndList 5 Int)
+  print il
+
+  let il' = fromList [1,2,3,4,5] :: Maybe (IndList 7 Int)
+  print il'
+
+  let il'' = fromList [1,2,3,4,5] :: Maybe (IndList 1 Int)
+  print il''

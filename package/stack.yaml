@@ -1,4 +1,4 @@
-resolver: lts-12.26
+resolver: nightly-2019-08-16
 
 extra-deps:
 - eigen-3.3.4.1

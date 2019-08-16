@@ -8,6 +8,8 @@ where
 import Math.Tensor
 import Math.Tensor.Examples.Gravity
 
+import Numeric.AD.Internal.Forward (Forward(..))
+
 schwarzschild :: Floating a => a -> STTens 0 2 (CFun [a] a)
 schwarzschild rs = fromListT2
     [
@@ -33,11 +35,11 @@ schwarzschild' rs = fromListT2
 half :: Fractional a => SField a
 half = SField $ 1/2
 
-christoffel :: forall a.Floating a => STTens 1 2 (CFun [a] a)
-christoffel = gamma
+christoffel :: forall a.Floating a => a -> STTens 1 2 (CFun [a] a)
+christoffel rs = gamma
     where
-        g = schwarzschild 1
-        g' = schwarzschild' 1 :: STTens 2 0 (CFun [a] a)
+        g = schwarzschild (Lift rs)
+        g' = schwarzschild' rs :: STTens 2 0 (CFun [a] a)
         del_g = partial g :: STTens 0 3 (CFun [a] a)
         g'_del_g = g' &* del_g
         t1 = contrATens1 (0, 0) g'_del_g
@@ -47,11 +49,11 @@ christoffel = gamma
         h = half :: SField a
         gamma = h &. s
 
-ricci :: forall a.Floating a => STTens 0 2 (CFun [a] a)
-ricci = (term1 &- term2) &+ (term3 &- term4)
+ricci :: forall a.Floating a => a -> STTens 0 2 (CFun [a] a)
+ricci rs = (term1 &- term2) &+ (term3 &- term4)
     where
-        gamma1 = christoffel
-        gamma2 = christoffel
+        gamma1 = christoffel (Lift rs)
+        gamma2 = christoffel rs
         del_gamma = partial gamma1 :: STTens 1 3 (CFun [a] a)
         gamma_gamma = contrATens1 (1,1) $ gamma2 &* gamma2 :: STTens 1 3 (CFun [a] a)
         term1 = contrATens1 (0,0) del_gamma
@@ -59,11 +61,11 @@ ricci = (term1 &- term2) &+ (term3 &- term4)
         term3 = contrATens1 (0,0) gamma_gamma
         term4 = contrATens1 (0,1) gamma_gamma
 
-einstein :: forall a.Floating a => STTens 0 2 (CFun [a] a)
-einstein = r_ab &- (h &. r &* g)
+einstein :: forall a.Floating a => a -> STTens 0 2 (CFun [a] a)
+einstein rs = r_ab &- (h &. r &* g)
     where
-        r_ab = ricci :: STTens 0 2 (CFun [a] a)
-        g = schwarzschild 1 :: STTens 0 2 (CFun [a] a)
-        g' = schwarzschild' 1 :: STTens 2 0 (CFun [a] a)
+        r_ab = ricci rs :: STTens 0 2 (CFun [a] a)
+        g = schwarzschild rs :: STTens 0 2 (CFun [a] a)
+        g' = schwarzschild' rs :: STTens 2 0 (CFun [a] a)
         r = contrATens1 (0,0) $ contrATens1 (1,1) $ g' &* r_ab
         h = half :: SField a

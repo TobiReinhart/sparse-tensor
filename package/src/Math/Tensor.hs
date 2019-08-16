@@ -121,7 +121,7 @@ shiftLabels1, shiftLabels2, shiftLabels3, shiftLabels4, shiftLabels5, shiftLabel
 --
 -- *** Functions as Values
 --
-CFun(..),
+CFun(..), evalSec,
 --
 -- ** Construction of Tensor
 -- | @'Tensor'@s can most easily be constructed from key value list where the keys are tuples of either @'IndList'@s or simply traditional lists that encode the values of the 
@@ -609,6 +609,24 @@ instance Num a => Num (SField a) where
 
 -- tensor type must be instance of both.
 
+class Epsilon a where
+    nearZero :: a -> Bool
+
+instance Epsilon Double where
+    nearZero d = abs d < 1e-12
+
+instance Epsilon Float where
+    nearZero d = abs d < 1e-5
+
+instance Epsilon Rational where
+    nearZero r = r == 0
+
+instance Epsilon Int where
+    nearZero i = i == 0
+
+instance Epsilon Integer where
+    nearZero i = i == 0
+
 instance (Num a, Eq a) => TAdd (SField a) where
     addS (SField a) (SField b) = SField $ a + b
     negateS (SField a) = SField $ negate a
@@ -735,6 +753,15 @@ instance Num b => Prod (SField b) (CFun a b) where
     type TProd (SField b) (CFun a b) = CFun a b
     prod (SField s) (CFun f) = CFun $ (*s) . f
 
+-- | evaluate a tensor section, i.e. a @'CFun'@-valued @'STTens'@, at given spacetime point
+evalSec :: (Num b, Eq b, Epsilon b) => STTens n1 n2 (CFun a b) -> a -> STTens n1 n2 (SField b)
+evalSec tens p = tens'
+    where
+        tList = toListT2 tens
+        tList' = fmap (fmap (\(CFun f) -> f p)) tList
+        tList'' = filter (\(_, v) -> not $ nearZero v) tList'
+        tList''' = fmap (fmap SField) tList''
+        tens' = fromListT2 tList'''
 
 -- compute gradient as [[a] -> a] instead of [a] -> [a]
 myGrad :: Num a => [Int] -> ([AD.Forward a] -> AD.Forward a) -> [(Int, [a] -> a)]
@@ -1023,7 +1050,7 @@ fromListT8' l = fromListT8 indList
 --helper function for tensor addition: adding one indices value pair to the tree structure of a given tensor
 
 insertOrAdd :: (TIndex k, TAdd v) => (IndList n k, v) -> Tensor n k v -> Tensor n k v
-insertOrAdd (Empty, a) (Scalar b) = Scalar (addS a b)
+insertOrAdd (Empty, a) (Scalar b) = Scalar $ a `addS` b
 insertOrAdd (Append x xs, a) (Tensor m) = Tensor $ insertWithTMap (\_ o -> insertOrAdd (xs, a) o) x indTens m
             where
                 indTens = mkTens (xs, a)
@@ -1037,7 +1064,7 @@ infixr 6 &+
 -- In particular this function can also be used for adding tensors that themselves contain tensors as values. 
 
 (&+) :: (TIndex k, TAdd v) => Tensor n k v -> Tensor n k v -> Tensor n k v
-(&+) (Scalar a) (Scalar b) = Scalar $ addS a b
+(&+) (Scalar a) (Scalar b) = Scalar $ a `addS` b
 (&+) (Tensor m1) (Tensor m2) = Tensor $ addTMaps (&+) m1 m2
 (&+) t1 ZeroTensor = t1
 (&+) ZeroTensor t2 = t2

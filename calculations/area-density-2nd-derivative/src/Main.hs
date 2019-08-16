@@ -4,6 +4,7 @@ import Math.Tensor
 import Math.Tensor.LorentzGenerator
 import Math.Tensor.Examples.Gravity
 import Math.Tensor.Examples.Gravity.DiffeoSymEqns
+import Math.Tensor.Examples.Gravity.Schwarzschild
 
 import Data.Ratio
 
@@ -25,8 +26,8 @@ main = do
   let zeroT = fromListT6' [(([],[],[],[],[],[]),AnsVar $I.fromList [(1,0)] )] :: ATens 0 0 0 0 0 0 (AnsVarR)
 
 
-  putStr $ unlines $ map (\x -> "-- > " ++ x) $ lines $ drawAnsatzEpsilon eps6    
+  putStr $ unlines $ map (\x -> "-- > " ++ x) $ lines $ drawAnsatzEpsilon eps6
 
-  
- 
+  print $ tensorRank2' ans14_1
 
+  print $ evalSec (einstein (2 :: Double)) [3, 3, 3, 3]

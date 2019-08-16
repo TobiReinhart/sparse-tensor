@@ -1,6 +1,6 @@
 # The `sparse-tensor` Package
 
-sparse-tensor is a Haskell tensor algebra library. It defines the usual tensor algebra functions such as
+`sparse-tensor` is a Haskell tensor algebra library. It defines the usual tensor algebra functions such as
 
 - addition
 ```haskell

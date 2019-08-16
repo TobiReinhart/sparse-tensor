@@ -32,7 +32,7 @@ delta3A,
 eta, invEta, etaA, invEtaA, etaAbs,
 -- ** Levi-Civita Symbol
 epsilon, epsilonInv, epsilonA, epsilonInvA,
--- ** Generators of the Lorentz Group \( \mathrm{SO}(3,1)\)
+-- ** Generators of the Lorentz Group
 -- | The following six tensors are a choice of generators of the Lorentz group \( \mathrm{SO}(3,1)\), i.e. they constitute a basis of the
 -- corresponding Lie algebra \( \mathrm{so}(3,1)\).
 --

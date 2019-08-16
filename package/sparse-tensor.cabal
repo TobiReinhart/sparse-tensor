@@ -10,17 +10,6 @@ description:
     The implemented tensor data type is capable of being used with an arbitrary number of general abstract indices and can incorporate values
     of any type that allow for a meaningful addition, scaling, and multiplication. The package is thus very flexible and can easily be customised
     at wish.
-    .
-    This package performs best when the values a given tensor provides are explicitly needed. In particular all incorporated functions are
-    implemented such that they explicitly manipulate the values of the given tensors. This allows for fast evaluation of the individual values from given tensors.
-    .
-    In order to improve memory usage, the tensors in this package employ a sparse storage paradigm. In other words, one may define a tensor by only
-    providing its non-zero values explicitly. All remaining values are taken to be zero.
-    .
-    Furthermore this package also provides the functionality of fully automatically computing all linear independent expressions with given rank and symmetries
-    that can be composed by using the Minkowski metric and the totally antisymmetric tensor. In order words, the package includes functions that
-    construct a basis of the space of Lorentz invariant tensors of given symmetry and rank. With slight modifications the therefore implemented algorithms can
-    also be used for the computation of invariant tensor bases of any other special orthogonal group @SO(p,q)@.
 homepage:            https://github.com/TobiReinhart/sparse-tensor#readme
 license:             MIT
 license-file:        LICENSE

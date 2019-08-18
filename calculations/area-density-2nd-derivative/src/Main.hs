@@ -28,7 +28,8 @@ main = do
 
   putStr $ unlines $ map (\x -> "-- > " ++ x) $ lines $ drawAnsatzEpsilon eps6
 
-  print $ tensorRank6' ans10_1
+  print $ tensorRank6' ans14_2
+  print $ tensorRank2' ans14_1
 
   print $ evalSec (einstein (2 :: Double)) [3, 3, 3, 3]
 

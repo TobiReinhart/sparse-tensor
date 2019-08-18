@@ -31,14 +31,12 @@
 
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
@@ -85,7 +83,7 @@ STTens, ATens,
 --
 -- ** Index Type Class
 --
-TIndex(..),
+TIndex,
 --
 Ind3(..), Ind9(..), Ind20(..),
 --
@@ -343,14 +341,12 @@ partial, partialSymbolic
 
 import Data.Foldable (toList)
 import Control.Applicative (liftA2)
-import Data.Ratio ((%), numerator, denominator)
-import Data.List (nubBy, sortOn, intersect)
+import Data.List (sortOn, intersect)
 import Data.Maybe (mapMaybe, fromMaybe)
 import Data.Proxy
 import Data.Type.Equality
 import qualified Data.IntMap.Strict as I
-import qualified Data.Map.Strict as M
-import Numeric.Natural (Natural(..))
+import Numeric.Natural (Natural)
 import qualified Numeric.AD.Rank1.Forward as AD
 import GHC.TypeLits
 import GHC.TypeNats (SomeNat(..))
@@ -358,13 +354,15 @@ import GHC.Generics (Generic(..))
 import Control.DeepSeq (rnf, NFData(..))
 import Data.Serialize (encodeLazy, decodeLazy, Serialize(..))
 import Unsafe.Coerce (unsafeCoerce)
-import qualified Data.ByteString.Lazy as BS (ByteString(..))
+import qualified Data.ByteString.Lazy as BS (ByteString)
 import Codec.Compression.GZip (compress, decompress)
+import qualified Numeric.LinearAlgebra.Data as HM
+import Numeric.LinearAlgebra (rank)
 
 --for Linear Algebra subroutines
 
-import qualified Data.Eigen.SparseMatrix as Sparse
-import qualified Data.Eigen.LA as Sol
+--import qualified Data.Eigen.SparseMatrix as Sparse
+--import qualified Data.Eigen.LA as Sol
 
 --Length typed lists for the tensor indices.
 
@@ -415,9 +413,7 @@ fromList = fromList' (undefined :: Proxy n)
 -- | Construction of a length typed @'IndList'@ (partial function).
 
 fromListUnsafe :: forall n.KnownNat n => forall (a :: *). [a] -> IndList n a
-fromListUnsafe xs = case fromList xs of
-                      Nothing -> error errorString
-                      Just l  -> l
+fromListUnsafe xs = fromMaybe (error errorString) (fromList xs)
   where
     nVal = natVal (undefined :: Proxy n)
     len = length xs
@@ -444,11 +440,11 @@ deriving instance (Ord a) => Ord (IndList n a)
 deriving instance (Show a) => Show (IndList n a)
 
 instance Functor (IndList n) where
-    fmap f Empty = Empty
+    fmap _ Empty = Empty
     fmap f (Append x xs) = Append (f x) (fmap f xs)
 
 instance Foldable (IndList n) where
-    foldr f y Empty = y
+    foldr _ y Empty = y
     foldr f y (Append x xs) = f x (foldr f y xs)
 
 --list operations on length typed lists
@@ -465,35 +461,30 @@ sortInd :: (Ord a, Eq a) => IndList n a -> IndList n a
 sortInd Empty = Empty
 sortInd (Append x xs) = insertSorted x $ sortInd xs
 
-toListInd :: IndList n a -> [a]
-toListInd = toList
-
-combineInds :: IndList n a -> IndList m a -> IndList (n+m) a
-combineInds Empty l = l
-combineInds (Append x xs) l = Append x $ combineInds xs l
-
 -- | An implementation of the usual head function from "Data.List" for @'IndList'@s. The function returns the first element of the @'IndList'@.
 
 headInd :: IndList n a -> a
-headInd (Append x xs) = x
+headInd Empty = error "head of empty IndList"
+headInd (Append x _) = x
 
 -- | An implementation of the usual tail function from "Data.List" for @'IndList'@s. The function removes the first element of the @'IndList'@.
 
 tailInd :: IndList n a -> IndList (n-1) a
-tailInd (Append x xs) = xs
+tailInd Empty = error "tail of empty IndList"
+tailInd (Append _ xs) = xs
 
 -- | An implementation of the usual @(!!)@ function from "Data.List" for @'IndList'@s. The function returns the list element that is specified by the provided integer value.
 --  Indices start from zero.
 
 indexInd :: Int -> IndList n a -> a
-indexInd 0 (Append x xs) = x
-indexInd i (Append x xs) = indexInd (i-1) xs
+indexInd 0 (Append x _) = x
+indexInd i (Append _ xs) = indexInd (i-1) xs
 indexInd _ _ = error "Index is too large!"
 
 -- | The function replaces the element at index/position specified by its first argument with the element that is specified by its second argument.
 
 updateInd :: Int -> a -> IndList n a -> IndList n a
-updateInd 0 s (Append x xs) = Append s xs
+updateInd 0 s (Append _ xs) = Append s xs
 updateInd i s (Append x xs) = Append x $ updateInd (i-1) s xs
 updateInd _ _  _ = error "Index is too large!"
 
@@ -505,12 +496,14 @@ swapHead i (Append x xs) = Append val newL
     where
         val = indexInd (i-1) xs
         newL = updateInd (i-1) x xs
+swapHead _ Empty = error "cannot swap head of empty list"
 
 removeContractionInd :: (Eq a) => Int -> a -> (IndList n a, c) -> Maybe (IndList (n-1) a,c)
 removeContractionInd 0 ind1 (Append x xs, t)
         | ind1 == x = Just (xs,t)
         | otherwise = Nothing
 removeContractionInd i ind1 (Append x xs,t) = (\(m,n) -> (Append x m, n)) <$> removeContractionInd (i-1) ind1 (xs,t)
+removeContractionInd _ _ (Empty, _) = error "cannot remove index from empty index list"
 
 {--
 resort Inds in IndList according to the permutation given by [Int], length of [Int] must be n
@@ -811,13 +804,9 @@ myGrad is f = map (\i -> (i, (!!i) . g)) is
 --  All future functions maintain this order when acting on a valid, i.e. ordered @'TMap'@s.
 type TMap k v = [(k,v)]
 
---check if the list is sorted
-isValidTMap :: (Ord k, Eq v) => TMap k v -> Bool
-isValidTMap l = l == sortOn fst l
-
 --insert a new key value pair in the list, if already present the function (v -> v -> v) determines the new value at the ind
 insertWithTMap :: (Ord k) => (v -> v -> v) -> k -> v -> TMap k v -> TMap k v
-insertWithTMap f key val [] = [(key,val)]
+insertWithTMap _ key val [] = [(key,val)]
 insertWithTMap f key val ((k1,v1):xs)
         | key < k1 = (key,val) : ((k1,v1):xs)
         | key == k1 = (k1,f val v1) : xs
@@ -825,8 +814,8 @@ insertWithTMap f key val ((k1,v1):xs)
 
 --combine two sorted lists with combiner function
 addTMaps :: (Ord k) => (v -> v -> v) -> TMap k v -> TMap k v -> TMap k v
-addTMaps f m1 [] = m1
-addTMaps f [] m2 = m2
+addTMaps _ m1 [] = m1
+addTMaps _ [] m2 = m2
 addTMaps f ((k1,v1):xs) ((k2,v2):ys)
         | k1 < k2 = (k1,v1) : addTMaps f xs ((k2,v2):ys)
         | k2 < k1 = (k2,v2) : addTMaps f ((k1,v1):xs) ys
@@ -910,14 +899,14 @@ fromRep (TensorR r m) = case someNatVal (fromIntegral r) of
        NonZero -> case sameNat x' (Proxy @n) of
          Nothing   -> Nothing
          Just Refl -> let tMap'   = mapTMap (\t -> fromRep t :: Maybe (Tensor (x-1) k v)) m
-                          tMap''  = filterTMap (\t -> case t of Nothing -> False
-                                                                _       -> True) tMap'
+                          tMap''  = filterTMap (\case Nothing -> False
+                                                      _       -> True) tMap'
                           tMap''' = mapTMap (\(Just t) -> t) tMap''
                       in case tMap''' of
                         [] -> Nothing
                         _  -> Just $ Tensor tMap'''
 fromRep (ZeroR r) = case someNatVal (fromIntegral r)
-                    of Just l  -> Just ZeroTensor
+                    of Just _  -> Just ZeroTensor
                        Nothing -> Nothing
 
 --instances for the tensor data type
@@ -940,15 +929,15 @@ deriving instance (KnownNat n, Ord k, Serialize k, Serialize v) => Serialize (Te
 instance Functor (Tensor n k) where
     fmap f (Scalar x) = Scalar (f x)
     fmap f (Tensor m) = Tensor (mapTMap (fmap f) m)
-    fmap f ZeroTensor = ZeroTensor
+    fmap _ ZeroTensor = ZeroTensor
 
 deriving instance (Show a, Show k) => Show (Tensor n k a)
 
 deriving instance (Eq a, Eq k) => Eq (Tensor n k a)
 
-getTensorMap :: Tensor (n+1) k v -> TMap k (Tensor n k v)
+getTensorMap :: forall n k v.(1 <= n) => Tensor n k v -> TMap k (Tensor (n-1) k v)
 getTensorMap (Tensor m) = m
-
+getTensorMap ZeroTensor = []
 
 toMatListT1' :: (TIndex k1, TAdd a) => AbsTensor1 n1 k1 (AnsVar a) -> [((Int,Int),a)]
 toMatListT1' = collectMatList . toMatList1'
@@ -974,28 +963,28 @@ toMatListT7' = collectMatList . toMatList7'
 toMatListT8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar a) -> [((Int,Int),a)]
 toMatListT8' = collectMatList . toMatList8'
 
-toEMatrixT1' :: (TIndex k1, Real a) => AbsTensor1 n1 k1 (AnsVar (SField a)) -> Sparse.SparseMatrixXd
+toEMatrixT1' :: (TIndex k1, Real a) => AbsTensor1 n1 k1 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT1' = assocsToSparse . toMatListT1'
 
-toEMatrixT2' :: (TIndex k1, Real a) => AbsTensor2 n1 n2 k1 (AnsVar (SField a)) -> Sparse.SparseMatrixXd
+toEMatrixT2' :: (TIndex k1, Real a) => AbsTensor2 n1 n2 k1 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT2' = assocsToSparse . toMatListT2'
 
-toEMatrixT3' :: (TIndex k1, TIndex k2, Real a) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (SField a)) -> Sparse.SparseMatrixXd
+toEMatrixT3' :: (TIndex k1, TIndex k2, Real a) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT3' = assocsToSparse . toMatListT3'
 
-toEMatrixT4' :: (TIndex k1, TIndex k2, Real a) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (SField a)) -> Sparse.SparseMatrixXd
+toEMatrixT4' :: (TIndex k1, TIndex k2, Real a) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT4' = assocsToSparse . toMatListT4'
 
-toEMatrixT5' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (SField a)) -> Sparse.SparseMatrixXd
+toEMatrixT5' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT5' = assocsToSparse . toMatListT5'
 
-toEMatrixT6' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (SField a)) -> Sparse.SparseMatrixXd
+toEMatrixT6' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT6' = assocsToSparse . toMatListT6'
 
-toEMatrixT7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (SField a)) -> Sparse.SparseMatrixXd
+toEMatrixT7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT7' = assocsToSparse . toMatListT7'
 
-toEMatrixT8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (SField a)) -> Sparse.SparseMatrixXd
+toEMatrixT8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT8' = assocsToSparse . toMatListT8'
 
 
@@ -1015,7 +1004,7 @@ fromListT [] = ZeroTensor
 
 -- | Same functionality as @'fromListT'@ but the indices of the various values are specified by usual list. This is certainly more flexible
 -- however all at the cost of reduced type safety compared to @'fromListT'@.
-fromListT' :: forall n k v b. (TIndex k, TAdd v, KnownNat n) => [([k],v)] -> Tensor n k v
+fromListT' :: forall n k v. (TIndex k, TAdd v, KnownNat n) => [([k],v)] -> Tensor n k v
 fromListT' l = fromListT indList
         where
             indList = map (\(x,y) -> (fromListUnsafe x, y)) l
@@ -1023,7 +1012,7 @@ fromListT' l = fromListT indList
 fromListT1 :: (TIndex k1, TAdd v) => [(IndTuple1 n1 k1, v)] -> AbsTensor1 n1 k1 v
 fromListT1 = fromListT
 
-fromListT1' :: forall n1 k1 v b. (KnownNat n1, TIndex k1, TAdd v) => [([k1],v)] -> AbsTensor1 n1 k1 v
+fromListT1' :: forall n1 k1 v. (KnownNat n1, TIndex k1, TAdd v) => [([k1],v)] -> AbsTensor1 n1 k1 v
 fromListT1' = fromListT'
 
 fromListT2 :: (TIndex k1, TAdd v) => [(IndTuple2 n1 n2 k1, v)] -> AbsTensor2 n1 n2 k1 v
@@ -1031,7 +1020,7 @@ fromListT2 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens2 l
 
-fromListT2' :: forall n1 n2 k1 v b. (KnownNat n1, KnownNat n2, TIndex k1, TAdd v) => [(([k1],[k1]),v)] -> AbsTensor2 n1 n2 k1 v
+fromListT2' :: forall n1 n2 k1 v. (KnownNat n1, KnownNat n2, TIndex k1, TAdd v) => [(([k1],[k1]),v)] -> AbsTensor2 n1 n2 k1 v
 fromListT2' l = fromListT2 indList
         where
             indList = map (\((x1,x2),y) -> ((fromListUnsafe x1, fromListUnsafe x2),y)) l
@@ -1041,7 +1030,7 @@ fromListT3 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens3 l
 
-fromListT3' :: forall n1 n2 n3 k1 k2 v b. (KnownNat n1, KnownNat n2, KnownNat n3, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2]),v)] -> AbsTensor3 n1 n2 n3 k1 k2 v
+fromListT3' :: forall n1 n2 n3 k1 k2 v. (KnownNat n1, KnownNat n2, KnownNat n3, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2]),v)] -> AbsTensor3 n1 n2 n3 k1 k2 v
 fromListT3' l = fromListT3 indList
         where
             indList = map (\((x1,x2,x3),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3),y)) l
@@ -1051,7 +1040,7 @@ fromListT4 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens4 l
 
-fromListT4' :: forall n1 n2 n3 n4 k1 k2 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2],[k2]),v)] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
+fromListT4' :: forall n1 n2 n3 n4 k1 k2 v. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, TIndex k1, TIndex k2, TAdd v) => [(([k1],[k1],[k2],[k2]),v)] -> AbsTensor4 n1 n2 n3 n4 k1 k2 v
 fromListT4' l = fromListT4 indList
         where
             indList = map (\((x1,x2,x3,x4),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4),y)) l
@@ -1061,7 +1050,7 @@ fromListT5 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens5 l
 
-fromListT5' :: forall n1 n2 n3 n4 n5 k1 k2 k3 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5,  TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3]),v)] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
+fromListT5' :: forall n1 n2 n3 n4 n5 k1 k2 k3 v. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5,  TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3]),v)] -> AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v
 fromListT5' l = fromListT5 indList
         where
             indList = map (\((x1,x2,x3,x4,x5),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4, fromListUnsafe x5),y)) l
@@ -1071,7 +1060,7 @@ fromListT6 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens6 l
 
-fromListT6' :: forall n1 n2 n3 n4 n5 n6 k1 k2 k3 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3]),v)] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
+fromListT6' :: forall n1 n2 n3 n4 n5 n6 k1 k2 k3 v. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, TIndex k1, TIndex k2, TIndex k3, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3]),v)] -> AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v
 fromListT6' l = fromListT6 indList
         where
             indList = map (\((x1,x2,x3,x4,x5,x6),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4, fromListUnsafe x5, fromListUnsafe x6),y)) l
@@ -1081,7 +1070,7 @@ fromListT7 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens7 l
 
-fromListT7' :: forall n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4]),v)] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
+fromListT7' :: forall n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4]),v)] -> AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v
 fromListT7' l = fromListT7 indList
         where
             indList = map (\((x1,x2,x3,x4,x5,x6,x7),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4, fromListUnsafe x5, fromListUnsafe x6, fromListUnsafe x7),y)) l
@@ -1091,7 +1080,7 @@ fromListT8 l = foldr (&+) ZeroTensor tensList
     where
         tensList = map mkTens8 l
 
-fromListT8' :: forall n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v b. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4],[k4]),v)] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
+fromListT8' :: forall n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v. (KnownNat n1, KnownNat n2, KnownNat n3, KnownNat n4, KnownNat n5, KnownNat n6, KnownNat n7, KnownNat n8, TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd v) => [(([k1],[k1],[k2],[k2],[k3],[k3],[k4],[k4]),v)] -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v
 fromListT8' l = fromListT8 indList
         where
             indList = map (\((x1,x2,x3,x4,x5,x6,x7,x8),y) -> ((fromListUnsafe x1, fromListUnsafe x2, fromListUnsafe x3, fromListUnsafe x4, fromListUnsafe x5, fromListUnsafe x6, fromListUnsafe x7, fromListUnsafe x8),y)) l
@@ -1101,9 +1090,11 @@ fromListT8' l = fromListT8 indList
 
 insertOrAdd :: (TIndex k, TAdd v) => (IndList n k, v) -> Tensor n k v -> Tensor n k v
 insertOrAdd (Empty, a) (Scalar b) = Scalar $ a `addS` b
+insertOrAdd (_, _)     (Scalar _) = error "cannot add key value pair to scalar"
 insertOrAdd (Append x xs, a) (Tensor m) = Tensor $ insertWithTMap (\_ o -> insertOrAdd (xs, a) o) x indTens m
             where
                 indTens = mkTens (xs, a)
+insertOrAdd (Empty, _) (Tensor _) = error "cannot add value without indices to tensor"
 insertOrAdd inds ZeroTensor = mkTens inds
 
 --addition for tensors
@@ -1118,6 +1109,7 @@ infixl 6 &+
 (&+) (Tensor m1) (Tensor m2) = Tensor $ addTMaps (&+) m1 m2
 (&+) t1 ZeroTensor = t1
 (&+) ZeroTensor t2 = t2
+(&+) _ _ = error "incompatible combination of summands"
 
 -- | Scalar multiplication of an arbitrary @'Tensor'@. Only requirement is that the corresponding values and the scalar type satisfy the
 -- @'Prod'@ constraint.
@@ -1143,6 +1135,7 @@ infixl 6 &-
 (&-) (Tensor m1) (Tensor m2) = Tensor $ addTMaps (&-) m1 m2
 (&-) t1 ZeroTensor = t1
 (&-) ZeroTensor t2 = negateS t2
+(&-) _ _ = error "incompatible combination of summands"
 
 -- | Tensor product of two @'Tensor'@s. In the result for each index type the indices of the first @'Tensor'@ are arranged left of those in the second @'Tensor'@ argument.
 -- The values of the two @'Tensor'@s must satisfy the @'Prod'@ constraint.
@@ -1153,8 +1146,8 @@ infixl 7 &*
 (&*) (Scalar x) (Scalar y) = Scalar $ prod x y
 (&*) (Scalar x) t2 = fmap (prod x) t2
 (&*) (Tensor m) t2 = Tensor $ mapTMap (&* t2) m
-(&*) t1 ZeroTensor = ZeroTensor
-(&*) ZeroTensor t2 = ZeroTensor
+(&*) _ ZeroTensor = ZeroTensor
+(&*) ZeroTensor _ = ZeroTensor
 
 --encode and decode tensors as bytestrings for efficient storing
 
@@ -1294,7 +1287,8 @@ tensorTrans (0, j) t = fromListT l
                 where
                     l = map (\(x,y) -> (swapHead j x, y)) $ toListT t
 tensorTrans (i, j) (Tensor m) = Tensor $ mapTMap (tensorTrans (i-1, j-1)) m
-tensorTrans (i ,j) ZeroTensor = ZeroTensor
+tensorTrans _ ZeroTensor = ZeroTensor
+tensorTrans _ (Scalar _) = error "attempt to transpose using a non-existing index"
 
 -- | > tensorTrans1 = tensorTrans
 tensorTrans1 :: (TIndex k1, TAdd v) => (Int,Int) -> AbsTensor1 n1 k1 v -> AbsTensor1 n1 k1 v
@@ -1413,7 +1407,7 @@ resortTens8 = mapTo7 . resortTens
 
 -- | Evaluate a @'Tensor'@ for a specific value of its first contravariant index type returning the corresponding sub @'Tensor'@.
 -- The additional functions specified below apply the evaluation function @'evalTens'@ to the deeper @'Tensor'@ levels.
-evalTens :: (KnownNat (n+1), TIndex k, TAdd v) => Int -> k -> Tensor (n+1) k v -> Tensor n k v
+evalTens :: (KnownNat n, 1<=n, TIndex k, TAdd v) => Int -> k -> Tensor n k v -> Tensor (n-1) k v
 evalTens ind indVal (Tensor m)
             | ind > size -1 || ind < 0 = error "wrong index to evaluate"
             | ind == 0 = fromMaybe ZeroTensor $ lookup indVal m
@@ -1422,6 +1416,7 @@ evalTens ind indVal (Tensor m)
                 size = length $ fst $ head $ toListT' (Tensor m)
                 l = [1..ind] ++ 0 : [ind+1..size -1]
                 newTens = resortTens l (Tensor m)
+evalTens _ _ ZeroTensor = ZeroTensor
 
 -- | > evalTens1 = evalTens
 evalTens1 :: (KnownNat n1, TIndex k1, TAdd v) => Int -> k1 -> AbsTensor1 (n1+1) k1 v -> AbsTensor1 n1 k1 v
@@ -1523,9 +1518,9 @@ symATens8 = mapTo7 . symTens
 -- | Same functionality as @'symTens'@ but including the \( \frac{1}{2} \) in the result and thus defining a projection.
 -- The following functions apply @'symTensFac'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc.
 --
--- > symTensFac inds t = (SField $ 1%2) &. symTens inds t
+-- > symTensFac inds t = SField (1/2 :: Rational) &. symTens inds t
 symTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => (Int,Int) -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
-symTensFac inds t = (SField $ 1%2) &. symTens inds t
+symTensFac inds t = SField (1/2 :: Rational) &. symTens inds t
 
 -- | > symATensFac1 = symTensFac
 symATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
@@ -1651,9 +1646,9 @@ aSymATens8 = mapTo7 . aSymTens
 -- | Same functionality as @'aSymTens'@ but including the \( \frac{1}{2} \) factors in the result and thus defining a projection.
 -- The following functions apply @'aSymTensFac'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc.
 --
--- > aSymTensFac inds t = (SField $ 1%2)&. aSymTens inds t
+-- > aSymTensFac inds t = SField (1/2 :: Rational) &. aSymTens inds t
 aSymTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => (Int,Int) -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
-aSymTensFac inds t = (SField $ 1%2)&. aSymTens inds t
+aSymTensFac inds t = SField (1/2 :: Rational) &. aSymTens inds t
 
 -- | > aSymATensFac1 = aSymTensFac
 aSymATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
@@ -1779,9 +1774,9 @@ symBlockATens8 = mapTo7 . symBlockTens
 -- | Same functionality as @'symBlockTens'@ but including the usual factors of \( \frac{1}{2} \) in the result and thus defining a projection.
 -- The following functions apply @'symBlockTensFac'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc.
 --
--- > symBlockTensFac inds t = (SField $ 1%2)&. symBlockTens inds t
+-- > symBlockTensFac inds t = SField (1/2 :: Rational) &. symBlockTens inds t
 symBlockTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
-symBlockTensFac inds t = (SField $ 1%2)&. symBlockTens inds t
+symBlockTensFac inds t = SField (1/2 :: Rational) &. symBlockTens inds t
 
 -- | > symBlockATensFac1 = symBlockTensFac
 symBlockATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
@@ -1907,9 +1902,9 @@ aSymBlockATens8 = mapTo7 . aSymBlockTens
 -- | Same functionality as @'aSymBlockTens'@ but including the usual factors of \( \frac{1}{2} \) in the result and thus defining a projection.
 -- The following functions apply @'aSymBlockTensFac'@ to the index types of the deeper leaf levels, i.e. covariant indices of the 1st index type, contravariant indices of the 2nd index type, etc.
 --
--- > aSymBlockTensFac inds t = (SField $ 1%2)&. aSymBlockTens inds t
+-- > aSymBlockTensFac inds t = SField (1/2 :: Rational) &. aSymBlockTens inds t
 aSymBlockTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => ([Int],[Int]) -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
-aSymBlockTensFac inds t = (SField $ 1%2)&. aSymBlockTens inds t
+aSymBlockTensFac inds t = SField (1/2 :: Rational) &. aSymBlockTens inds t
 
 -- | > aSymBlockATensFac1 = aSymBlockTensFac
 aSymBlockATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
@@ -1976,6 +1971,7 @@ getAllSwaps (x:xs) = lNew ++ l' ++ ((:) <$> l <*> l')
             l = zip (repeat x) xs
             lNew = map pure l
             l' = getAllSwaps xs
+getAllSwaps _ = error "cannot get swaps from empty permutations"
 
 getAllBlockSwaps :: [[Int]] -> [[([Int],[Int])]]
 getAllBlockSwaps [x,y] = [[(x,y)]]
@@ -1984,6 +1980,7 @@ getAllBlockSwaps (x:xs) = lNew ++ l' ++ ((:) <$> l <*> l')
             l = zip (repeat x) xs
             lNew = map pure l
             l' = getAllBlockSwaps xs
+getAllBlockSwaps _ = error "cannot get swaps from empty permutations"
 
 factorial :: Int -> Int
 factorial 1 = 1
@@ -2066,7 +2063,7 @@ cyclicSymATens8 = mapTo7 . cyclicSymTens
 cyclicSymTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => [Int] -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 cyclicSymTensFac inds t = fac &. cyclicSymTens inds t
         where
-            fac = SField $ 1 % fromIntegral (factorial $ length inds)
+            fac = SField (1 / fromIntegral (factorial $ length inds) :: Rational)
 
 -- | > cyclicSymATensFac1 = cyclicSymTensFac
 cyclicSymATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
@@ -2133,7 +2130,7 @@ cyclicASymTens :: (TIndex k, TAdd v) => [Int] -> Tensor n k v -> Tensor n k v
 cyclicASymTens inds t = newTens
         where
             swapList = getAllSwaps inds
-            signList = map (\x -> (-1) ^ length x) swapList
+            signList = map (\x -> (-1 :: Integer) ^ length x) swapList
             tensList' = map (foldr tensorTrans t) swapList
             tensList = zipWith (\s v -> if s == -1 then negateS v else v) signList tensList'
             newTens = foldr (&+) t tensList
@@ -2203,7 +2200,7 @@ cyclicASymATens8 = mapTo7 . cyclicASymTens
 cyclicASymTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => [Int] -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 cyclicASymTensFac inds t = fac &. cyclicASymTens inds t
         where
-            fac = SField $ 1 % fromIntegral (factorial $ length inds)
+            fac = SField (1 / fromIntegral (factorial $ length inds) :: Rational)
 
 -- | > cyclicASymATensFac1 = cyclicASymTensFac
 cyclicASymATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
@@ -2338,7 +2335,7 @@ cyclicBlockSymATens8 = mapTo7 . cyclicBlockSymTens
 cyclicBlockSymTensFac :: (TIndex k, TAdd v, Prod (SField Rational) v) => [[Int]] -> Tensor n k v -> Tensor n k (TProd (SField Rational) v)
 cyclicBlockSymTensFac inds t = fac &. cyclicBlockSymTens inds t
         where
-            fac = SField $ 1 % fromIntegral (factorial $ length inds)
+            fac = SField (1 / fromIntegral (factorial $ length inds) :: Rational)
 
 -- | > cyclicBlockSymATensFac1 = cyclicBlockSymTensFac
 cyclicBlockSymATensFac1 :: (TIndex k1, TAdd v, Prod (SField Rational) v) =>
@@ -2407,8 +2404,8 @@ tensorContr (0,j) t = fromListT tensList
         l3 = filter (\(_,y) -> not (null y)) l2
         tensList = map (\(x,y) -> (x, fromListT y)) l3
 tensorContr (i,j) (Tensor m) = Tensor $ mapTMap (tensorContr (i-1,j)) m
-tensorContr inds ZeroTensor = ZeroTensor
-tensorContr inds (Scalar s) = error "cannot contract scalar!"
+tensorContr _ ZeroTensor = ZeroTensor
+tensorContr _ (Scalar _) = error "cannot contract scalar!"
 
 -- | @'contrATens1'@ is a synonym for @'tensorContr'@. It applies the contraction to the 1st index type of a tensor.
 --
@@ -2454,8 +2451,8 @@ type IndTuple8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 = (IndList n1 k1, IndList n2 
 
 --construct a tensor with a single value
 
-mkTens1 :: (IndTuple1 n1 k1, v) -> AbsTensor1 n1 k1 v
-mkTens1 = mkTens
+_mkTens1 :: (IndTuple1 n1 k1, v) -> AbsTensor1 n1 k1 v
+_mkTens1 = mkTens
 
 mkTens2 :: (IndTuple2 n1 n2 k1, v) -> AbsTensor2 n1 n2 k1 v
 mkTens2 ((i1,i2),s) = mkTens (i1,mkTens (i2,s))
@@ -2534,12 +2531,25 @@ toListT8 t = concatMap (\(x,y) -> appendT7 x $ toListT y ) $
              concatMap (\(x,y) -> appendT2 x $ toListT y ) $
              concatMap (\(x,y) -> appendT1 x $ toListT y ) $ toListT t
 
+appendT1 :: a1 -> [(b1, b2)] -> [((a1, b1), b2)]
 appendT1 i = map (\(x,y) -> ((i,x),y))
+
+appendT2 :: (a1, a2) -> [(b1, b2)] -> [((a1, a2, b1), b2)]
 appendT2 (i1,i2) = map (\(x,y) -> ((i1,i2,x),y))
+
+appendT3 :: (a1, a2, a3) -> [(b1, b2)] -> [((a1, a2, a3, b1), b2)]
 appendT3 (i1,i2,i3) = map (\(x,y) -> ((i1,i2,i3,x),y))
+
+appendT4 :: (a1, a2, a3, a4) -> [(b1, b2)] -> [((a1, a2, a3, a4, b1), b2)]
 appendT4 (i1,i2,i3,i4) = map (\(x,y) -> ((i1,i2,i3,i4,x),y))
+
+appendT5 :: (a1, a2, a3, a4, a5) -> [(b1, b2)] -> [((a1, a2, a3, a4, a5, b1), b2)]
 appendT5 (i1,i2,i3,i4,i5) = map (\(x,y) -> ((i1,i2,i3,i4,i5,x),y))
+
+appendT6 :: (a1, a2, a3, a4, a5, a6) -> [(b1, b2)] -> [((a1, a2, a3, a4, a5, a6, b1), b2)]
 appendT6 (i1,i2,i3,i4,i5,i6) = map (\(x,y) -> ((i1,i2,i3,i4,i5,i6,x),y))
+
+appendT7 :: (a1, a2, a3, a4, a5, a6, a7) -> [(b1, b2)] -> [((a1, a2, a3, a4, a5, a6, a7, b1), b2)]
 appendT7 (i1,i2,i3,i4,i5,i6,i7) = map (\(x,y) -> ((i1,i2,i3,i4,i5,i6,i7,x),y))
 
 -- | This function converts a given @'Tensor'@ to a non-typed index tuple list.
@@ -2736,9 +2746,9 @@ toMatList7' t = map snd $ toListShowVar7 t
 toMatList8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar a) -> [[(Int, a)]]
 toMatList8' t = map snd $ toListShowVar8 t
 
-normalize :: [(Int,Rational)] -> ([(Int,Rational)],Rational)
-normalize [] = ([],1)
-normalize ((a,b) : xs) = ((a,1) : map (\(x,y) -> (x,y / b)) xs,b)
+_normalize :: [(Int,Rational)] -> ([(Int,Rational)],Rational)
+_normalize [] = ([],1)
+_normalize ((a,b) : xs) = ((a,1) : map (\(x,y) -> (x,y / b)) xs,b)
 
 data TensList1 k1 v where
     EmptyTList1 :: TensList1 k1 v
@@ -2775,35 +2785,35 @@ data TensList8 k1 k2 k3 k4 v where
 -- | Usual map function for heterogeneous tensor lists.
 
 mapTensList1 :: (forall n1. AbsTensor1 n1 k1 v -> b ) -> TensList1 k1 v -> [b]
-mapTensList1 f EmptyTList1 = []
+mapTensList1 _ EmptyTList1 = []
 mapTensList1 f (AppendTList1 t l) = f t : mapTensList1 f l
 
 mapTensList2 :: (forall n1 n2. AbsTensor2 n1 n2 k1 v -> b ) -> TensList2 k1 v -> [b]
-mapTensList2 f EmptyTList2 = []
+mapTensList2 _ EmptyTList2 = []
 mapTensList2 f (AppendTList2 t l) = f t : mapTensList2 f l
 
 mapTensList3 :: (forall n1 n2 n3. AbsTensor3 n1 n2 n3 k1 k2 v -> b ) -> TensList3 k1 k2 v -> [b]
-mapTensList3 f EmptyTList3 = []
+mapTensList3 _ EmptyTList3 = []
 mapTensList3 f (AppendTList3 t l) = f t : mapTensList3 f l
 
 mapTensList4 :: (forall n1 n2 n3 n4. AbsTensor4 n1 n2 n3 n4 k1 k2 v -> b ) -> TensList4 k1 k2 v -> [b]
-mapTensList4 f EmptyTList4 = []
+mapTensList4 _ EmptyTList4 = []
 mapTensList4 f (AppendTList4 t l) = f t : mapTensList4 f l
 
 mapTensList5 :: (forall n1 n2 n3 n4 n5. AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 v -> b ) -> TensList5 k1 k2 k3 v -> [b]
-mapTensList5 f EmptyTList5 = []
+mapTensList5 _ EmptyTList5 = []
 mapTensList5 f (AppendTList5 t l) = f t : mapTensList5 f l
 
 mapTensList6 :: (forall n1 n2 n3 n4 n5 n6. AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 v -> b ) -> TensList6 k1 k2 k3 v -> [b]
-mapTensList6 f EmptyTList6 = []
+mapTensList6 _ EmptyTList6 = []
 mapTensList6 f (AppendTList6 t l) = f t : mapTensList6 f l
 
 mapTensList7 :: (forall n1 n2 n3 n4 n5 n6 n7. AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 v -> b ) -> TensList7 k1 k2 k3 k4 v -> [b]
-mapTensList7 f EmptyTList7 = []
+mapTensList7 _ EmptyTList7 = []
 mapTensList7 f (AppendTList7 t l) = f t : mapTensList7 f l
 
 mapTensList8 :: (forall n1 n2 n3 n4 n5 n6 n7 n8. AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 v -> b ) -> TensList8 k1 k2 k3 k4 v -> [b]
-mapTensList8 f EmptyTList8 = []
+mapTensList8 _ EmptyTList8 = []
 mapTensList8 f (AppendTList8 t l) = f t : mapTensList8 f l
 
 infixr 5 ...>
@@ -3002,92 +3012,90 @@ dims xs = (rows, cols)
         rows = maximum $ map (fst.fst) xs
         cols = maximum $ map (snd.fst) xs
 
-assocsToSparse :: Real a => [((Int, Int), SField a)] -> Sparse.SparseMatrixXd
-assocsToSparse [] = Sparse.fromList 1 1 [(0,0,0)]
-assocsToSparse assocs = Sparse.fromList rows cols els
+assocsToSparse :: Real a => [((Int, Int), SField a)] -> HM.Matrix Double
+assocsToSparse [] = (1 HM.>< 1) []
+assocsToSparse assocs = HM.assoc (rows, cols) 0 els
     where
         (rows, cols) = dims assocs
-        els          = map (\((x, y), SField z) -> (x-1, y-1, fromRational $ toRational z)) assocs
+        els          = map (\((x, y), SField z) -> ((x-1, y-1), fromRational $ toRational z)) assocs
 
-toEMatrixT1 :: (TIndex k1) => TensList1 k1 (AnsVar (SField Rational)) -> Sparse.SparseMatrixXd
+toEMatrixT1 :: (TIndex k1, Real a) => TensList1 k1 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT1 = assocsToSparse . toMatListT1
 
-toEMatrixT2 :: (TIndex k1) => TensList2 k1 (AnsVar (SField Rational)) -> Sparse.SparseMatrixXd
+toEMatrixT2 :: (TIndex k1, Real a) => TensList2 k1 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT2 = assocsToSparse . toMatListT2
 
-toEMatrixT3 :: (TIndex k1, TIndex k2) => TensList3 k1 k2 (AnsVar (SField Rational)) -> Sparse.SparseMatrixXd
+toEMatrixT3 :: (TIndex k1, TIndex k2, Real a) => TensList3 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT3 = assocsToSparse . toMatListT3
 
-toEMatrixT4 :: (TIndex k1, TIndex k2) => TensList4 k1 k2 (AnsVar (SField Rational)) -> Sparse.SparseMatrixXd
+toEMatrixT4 :: (TIndex k1, TIndex k2, Real a) => TensList4 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT4 = assocsToSparse . toMatListT4
 
-toEMatrixT5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 (AnsVar (SField Rational)) -> Sparse.SparseMatrixXd
+toEMatrixT5 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList5 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT5 = assocsToSparse . toMatListT5
 
-toEMatrixT6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 (AnsVar (SField Rational)) -> Sparse.SparseMatrixXd
+toEMatrixT6 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList6 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT6 = assocsToSparse . toMatListT6
 
-toEMatrixT7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 (AnsVar (SField Rational)) -> Sparse.SparseMatrixXd
+toEMatrixT7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList7 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT7 = assocsToSparse . toMatListT7
 
-toEMatrixT8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 (AnsVar (SField Rational)) -> Sparse.SparseMatrixXd
+toEMatrixT8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList8 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
 toEMatrixT8 = assocsToSparse . toMatListT8
 
 --rank of the tensor can be computed with rank Sol.FullPivLU or Sol.JakobiSVD
 
-tensorRank1' :: (TIndex k1) => AbsTensor1 n1 k1 (AnsVar (SField Rational)) -> Int
-tensorRank1' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT1 (singletonTList1 t)
+tensorRank1' :: (TIndex k1, Real a, Real a) => AbsTensor1 n1 k1 (AnsVar (SField a)) -> Int
+tensorRank1' t = rank $ toEMatrixT1 (singletonTList1 t)
 
-tensorRank1 :: (TIndex k1) => TensList1 k1 (AnsVar (SField Rational)) -> Int
-tensorRank1 t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT1 t
-
-
-tensorRank2' :: (TIndex k1) => AbsTensor2 n1 n2 k1 (AnsVar (SField Rational)) -> Int
-tensorRank2' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT2 (singletonTList2 t)
-
-tensorRank2 :: (TIndex k1) => TensList2 k1 (AnsVar (SField Rational)) -> Int
-tensorRank2 t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT2 t
+tensorRank1 :: (TIndex k1, Real a) => TensList1 k1 (AnsVar (SField a)) -> Int
+tensorRank1 t = rank $ toEMatrixT1 t
 
 
-tensorRank3' :: (TIndex k1, TIndex k2) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (SField Rational)) -> Int
-tensorRank3' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT3 (singletonTList3 t)
+tensorRank2' :: (TIndex k1, Real a) => AbsTensor2 n1 n2 k1 (AnsVar (SField a)) -> Int
+tensorRank2' t = rank $ toEMatrixT2 (singletonTList2 t)
 
-tensorRank3 :: (TIndex k1, TIndex k2) =>  TensList3 k1 k2 (AnsVar (SField Rational)) -> Int
-tensorRank3 t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT3 t
-
-
-tensorRank4' :: (TIndex k1, TIndex k2) =>  AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (SField Rational)) -> Int
-tensorRank4' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT4 (singletonTList4 t)
-
-tensorRank4 :: (TIndex k1, TIndex k2) =>  TensList4 k1 k2 (AnsVar (SField Rational)) -> Int
-tensorRank4 t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT4 t
+tensorRank2 :: (TIndex k1, Real a) => TensList2 k1 (AnsVar (SField a)) -> Int
+tensorRank2 t = rank $ toEMatrixT2 t
 
 
-tensorRank5' :: (TIndex k1, TIndex k2, TIndex k3) =>  AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (SField Rational)) -> Int
-tensorRank5' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT5 (singletonTList5 t)
+tensorRank3' :: (TIndex k1, TIndex k2, Real a) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (SField a)) -> Int
+tensorRank3' t = rank $ toEMatrixT3 (singletonTList3 t)
 
-tensorRank5 :: (TIndex k1, TIndex k2, TIndex k3) => TensList5 k1 k2 k3 (AnsVar (SField Rational)) -> Int
-tensorRank5 t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT5 t
-
-
-tensorRank6' :: (TIndex k1, TIndex k2, TIndex k3) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (SField Rational)) -> Int
-tensorRank6' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT6 (singletonTList6 t)
-
-tensorRank6 :: (TIndex k1, TIndex k2, TIndex k3) => TensList6 k1 k2 k3 (AnsVar (SField Rational)) -> Int
-tensorRank6 t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT6 t
+tensorRank3 :: (TIndex k1, TIndex k2, Real a) =>  TensList3 k1 k2 (AnsVar (SField a)) -> Int
+tensorRank3 t = rank $ toEMatrixT3 t
 
 
-tensorRank7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (SField Rational)) -> Int
-tensorRank7' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT7 (singletonTList7 t)
+tensorRank4' :: (TIndex k1, TIndex k2, Real a) =>  AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (SField a)) -> Int
+tensorRank4' t = rank $ toEMatrixT4 (singletonTList4 t)
 
-tensorRank7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList7 k1 k2 k3 k4 (AnsVar (SField Rational)) -> Int
-tensorRank7 t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT7 t
-
-
-tensorRank8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (SField Rational)) -> Int
-tensorRank8' t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT8 (singletonTList8 t)
-
-tensorRank8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4) => TensList8 k1 k2 k3 k4 (AnsVar (SField Rational)) -> Int
-tensorRank8 t = Sol.rank Sol.FullPivLU $ Sparse.toMatrix $ toEMatrixT8 t
+tensorRank4 :: (TIndex k1, TIndex k2, Real a) =>  TensList4 k1 k2 (AnsVar (SField a)) -> Int
+tensorRank4 t = rank $ toEMatrixT4 t
 
 
+tensorRank5' :: (TIndex k1, TIndex k2, TIndex k3, Real a) =>  AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (SField a)) -> Int
+tensorRank5' t = rank $ toEMatrixT5 (singletonTList5 t)
+
+tensorRank5 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList5 k1 k2 k3 (AnsVar (SField a)) -> Int
+tensorRank5 t = rank $ toEMatrixT5 t
+
+
+tensorRank6' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (SField a)) -> Int
+tensorRank6' t = rank $ toEMatrixT6 (singletonTList6 t)
+
+tensorRank6 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList6 k1 k2 k3 (AnsVar (SField a)) -> Int
+tensorRank6 t = rank $ toEMatrixT6 t
+
+
+tensorRank7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (SField a)) -> Int
+tensorRank7' t = rank $ toEMatrixT7 (singletonTList7 t)
+
+tensorRank7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList7 k1 k2 k3 k4 (AnsVar (SField a)) -> Int
+tensorRank7 t = rank $ toEMatrixT7 t
+
+
+tensorRank8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (SField a)) -> Int
+tensorRank8' t = rank $ toEMatrixT8 (singletonTList8 t)
+
+tensorRank8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList8 k1 k2 k3 k4 (AnsVar (SField a)) -> Int
+tensorRank8 t = rank $ toEMatrixT8 t

@@ -34,8 +34,8 @@ schwarzschild rs = fromListT2
     [
       ((Empty, Ind3 0 `Append` singletonInd (Ind3 0)), CFun $ \(_:r:_) -> r' r ),
       ((Empty, Ind3 1 `Append` singletonInd (Ind3 1)), CFun $ \(_:r:_) -> -1/r' r),
-      ((Empty, Ind3 2 `Append` singletonInd (Ind3 2)), CFun $ \(_:r:_) -> -(r^2)),
-      ((Empty, Ind3 3 `Append` singletonInd (Ind3 3)), CFun $ \(_:r:theta:_) -> -(r*sin theta)^2)
+      ((Empty, Ind3 2 `Append` singletonInd (Ind3 2)), CFun $ \(_:r:_) -> -(r**2)),
+      ((Empty, Ind3 3 `Append` singletonInd (Ind3 3)), CFun $ \(_:r:theta:_) -> -(r*sin theta)**2)
     ]
   where
     r' r = 1 - rs / r
@@ -48,8 +48,8 @@ schwarzschild' rs = fromListT2
     [
       ((Ind3 0 `Append` singletonInd (Ind3 0), Empty), CFun $ \(_:r:_) -> 1/r' r),
       ((Ind3 1 `Append` singletonInd (Ind3 1), Empty), CFun $ \(_:r:_) -> - r' r),
-      ((Ind3 2 `Append` singletonInd (Ind3 2), Empty), CFun $ \(_:r:_) -> -1/(r^2)),
-      ((Ind3 3 `Append` singletonInd (Ind3 3), Empty), CFun $ \(_:r:theta:_) -> -1/(r*sin theta)^2)
+      ((Ind3 2 `Append` singletonInd (Ind3 2), Empty), CFun $ \(_:r:_) -> -1/(r**2)),
+      ((Ind3 3 `Append` singletonInd (Ind3 3), Empty), CFun $ \(_:r:theta:_) -> -1/(r*sin theta)**2)
     ]
   where
     r' r = 1 - rs / r

@@ -77,8 +77,8 @@ mkAnsatzTensorFastSym', mkAnsatzTensorFast',
 -- ** The Memory Optimized Way
 -- The following functions essentially compute the same results as their __Fast__ counterparts, with the only distinction being that they employ a slightly different
 -- algorithm that avoids the problem of intermediate memory swelling and thus yields improved memory usage. All this is achieved at the cost of slightly higher computation times compared to the __Fast__ functions.
-mkAnsatzTensorEigSym, mkAnsatzTensorEig, mkAnsatzTensorEigAbs,
-mkAnsatzTensorEigSym', mkAnsatzTensorEig',
+mkAnsatzTensorIncrementalSym, mkAnsatzTensorIncremental, mkAnsatzTensorIncrementalAbs,
+mkAnsatzTensorIncrementalSym', mkAnsatzTensorIncremental',
 -- * Specifying Additional Data
 -- ** Symmetry Type
 Symmetry,
@@ -100,7 +100,7 @@ metricsymList2, metricsymList4_1, metricsymList4_2, metricsymList6_1, metricsymL
 
 import qualified Data.IntMap.Strict as I
 import qualified Data.Map.Strict as M
-import Data.List (nub, permutations, foldl', (\\), elemIndex, nubBy, sortBy, insert, intersect, union, partition, delete)
+import Data.List (nub, permutations, foldl', (\\), elemIndex, nubBy, sortBy, insert, intersect, union, partition, delete, maximumBy, splitAt)
 import Data.Maybe (fromJust, isNothing, fromMaybe, isJust, mapMaybe)
 import Control.Parallel.Strategies (parListChunk, rdeepseq, runEval, NFData)
 import Data.Serialize (encodeLazy, decodeLazy, Serialize(..))
@@ -113,9 +113,10 @@ import GHC.TypeLits
 
 --LinearAlgebra subroutines
 
-import qualified Data.Eigen.Matrix as Mat
-import qualified Data.Eigen.SparseMatrix as Sparse
-import qualified Data.Eigen.LA as Sol
+import qualified Numeric.LinearAlgebra.Data as HM
+import qualified Numeric.LinearAlgebra as Matrix
+
+import Debug.Trace
 
 import Math.Tensor
 
@@ -1017,35 +1018,34 @@ eval1AnsatzForestEpsilon evalM = M.foldlWithKey' foldF 0
                               in if isNothing nodeVal then b
                                 else  b + (fromJust nodeVal * eval1AnsatzForestEta evalM a)
 
---eval a given 1Var ansatz to a sparse Matrix (a row vector) -> Eigen Indices start at 0 !!
+--eval a given 1Var ansatz to a row vector -> HMatrix Indices start at 0 !!
 
-mkVecList :: (Foldable t, NFData a1, Ord a1, Mat.Elem a1 b, Fractional a1) =>
-             (a2 -> Maybe (Int, Int, a1)) -> [a2] -> t a3 -> Maybe (Sparse.SparseMatrix a1 b)
-mkVecList mkAns dofList evalM = vecList
+mkVecList :: (Foldable t, NFData a1, Real a1) =>
+             (a2 -> Maybe ((Int, Int), a1)) -> [a2] -> t a3 -> Maybe (HM.Matrix Double)
+mkVecList mkAns dofList evalM = if null l
+                                then Nothing
+                                else Just $ HM.assoc (1,n) 0 $ map (fmap (\x -> fromRational $ toRational x / toRational maxVal)) l
     where
             l' = mapMaybe mkAns dofList
             l = runEval $ parListChunk 500 rdeepseq l'
-            lVals = map (\(_,_,z) -> z) l
+            lVals = map (\((_,_),z) -> z) l
             maxVal = maximum lVals
             n = length evalM
-            vecList = let vec = Sparse.fromList 1 n l in
-                      if null l then Nothing else Just $ Sparse.scale (1/maxVal) vec
 
-
-evalAnsatzEtaVecListEig :: [I.IntMap Int] -> AnsatzForestEta -> Maybe Sparse.SparseMatrixXd
-evalAnsatzEtaVecListEig _ EmptyForest = Nothing
-evalAnsatzEtaVecListEig evalM f = mkVecList mkAns dofList evalM
+evalAnsatzEtaVecListIncremental :: [I.IntMap Int] -> AnsatzForestEta -> Maybe (HM.Matrix Double)
+evalAnsatzEtaVecListIncremental _ EmptyForest = Nothing
+evalAnsatzEtaVecListIncremental evalM f = mkVecList mkAns dofList evalM
         where
             dofList = zip [0..] evalM
             mkAns (i,j) = let ansVal = eval1AnsatzForestEta j f
-                          in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)
+                          in if ansVal == 0 then Nothing else Just ((0,i), ansVal)
 
-evalAnsatzEpsilonVecListEig :: [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe Sparse.SparseMatrixXd
-evalAnsatzEpsilonVecListEig evalM f  = if f == M.empty then Nothing else mkVecList mkAns dofList evalM
+evalAnsatzEpsilonVecListIncremental :: [I.IntMap Int] -> AnsatzForestEpsilon -> Maybe (HM.Matrix Double)
+evalAnsatzEpsilonVecListIncremental evalM f  = if f == M.empty then Nothing else mkVecList mkAns dofList evalM
         where
             dofList = zip [0..] evalM
             mkAns (i,j) = let ansVal = eval1AnsatzForestEpsilon j f
-                          in if ansVal == 0 then Nothing else Just (0,i, fromIntegral ansVal)
+                          in if ansVal == 0 then Nothing else Just ((0,i), ansVal)
 
 --eval a given Forest for all inds
 
@@ -1112,71 +1112,63 @@ Now there are two ways how we can proceed in removing the linear dependencies an
 We start with the first way.
 --}
 
-type RankDataEig = (Mat.MatrixXd, Sparse.SparseMatrixXd)
+type RankDataIncremental = (HM.Matrix Double, HM.Matrix Double)
 
-getVarNrEig :: RankDataEig -> Int
-getVarNrEig = Sparse.rows . snd
+getVarNrIncremental :: RankDataIncremental -> Int
+getVarNrIncremental = HM.rows . snd
 
 --check in each step if the new ansatz vector is linear dependant w.r.t. the ansatz vectors obtained previously
 
-checkNumericLinDepEig :: RankDataEig -> Maybe Sparse.SparseMatrixXd -> Maybe RankDataEig
-checkNumericLinDepEig (lastMat, lastFullMat) (Just newVec)
-            | eigenRank < maxRank = Nothing
+checkNumericLinDepIncremental :: RankDataIncremental -> Maybe (HM.Matrix Double) -> Maybe RankDataIncremental
+checkNumericLinDepIncremental (lastMat, lastFullMat) (Just newVec)
+            | rk < maxRank = Nothing
             | otherwise = Just (newMat, newAnsatzMat)
              where
-                newVecTrans = Sparse.transpose newVec
-                scalar = Sparse.toMatrix $ Sparse.mul newVec newVecTrans
-                prodBlock = Sparse.toMatrix $ Sparse.mul lastFullMat newVecTrans
-                prodBlockTrans = Mat.transpose prodBlock
-                newMat = concatBlockMat lastMat prodBlock prodBlockTrans scalar
-                eigenRank = Sol.rank Sol.FullPivLU newMat
-                maxRank = min (Mat.cols newMat) (Mat.rows newMat)
-                newAnsatzMat = Sparse.fromRows $ Sparse.getRows lastFullMat ++ [newVec]
-checkNumericLinDepEig _ Nothing = Nothing
-
---concat Matrices to a block Matrix
-
-concatBlockMat :: Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd -> Mat.MatrixXd
-concatBlockMat a b c d = newMat
-            where
-               newUpper = zipWith (++) (Mat.toList a) (Mat.toList b)
-               newLower = zipWith (++) (Mat.toList c) (Mat.toList d)
-               newMat = Mat.fromList $ newUpper ++ newLower
+                newVecTrans = HM.tr newVec
+                scalar = newVec Matrix.<> newVecTrans
+                prodBlock = lastFullMat Matrix.<> newVecTrans
+                prodBlockTrans = HM.tr prodBlock
+                newMat = HM.fromBlocks [[lastMat,        prodBlock],
+                                        [prodBlockTrans, scalar   ]]
+                rk = Matrix.rank newMat
+                maxRank = min (HM.cols newMat) (HM.rows newMat)
+                newAnsatzMat = lastFullMat HM.=== newVec
+checkNumericLinDepIncremental _ Nothing = Nothing
 
 --in each step add the new AnsatzVector to the forest iff it is lin indep of the previous vectors
 
 {-
 alreadyPresentIO n total rDat
-    = putStrLn $ progress n total ++ " : " ++ "already present, not added, ansatz rank is " ++ show (getVarNrEig rDat)
+    = putStrLn $ progress n total ++ " : " ++ "already present, not added, ansatz rank is " ++ show (getVarNrIncremental rDat)
 notPresentNotAddedIO n total rDat
-    = putStrLn $ progress n total ++ " : " ++ "not present, linearly dependent, not added, ansatz rank is " ++ show (getVarNrEig rDat)
+    = putStrLn $ progress n total ++ " : " ++ "not present, linearly dependent, not added, ansatz rank is " ++ show (getVarNrIncremental rDat)
 notPresentAddedIO n total rDat
-    = putStrLn $ progress n total ++ " : " ++ "not present, linearly independent, added, ansatz rank is " ++ show (getVarNrEig rDat)
+    = putStrLn $ progress n total ++ " : " ++ "not present, linearly independent, added, ansatz rank is " ++ show (getVarNrIncremental rDat)
 progress n total
     = show n ++ " of " ++ show total
 -}
 
-getNewRDat :: [I.IntMap Int] -> AnsatzForestEta -> RankDataEig -> Maybe RankDataEig
+getNewRDat :: [I.IntMap Int] -> AnsatzForestEta -> RankDataIncremental -> Maybe RankDataIncremental
 getNewRDat evalM newAns rDat = newRDat
     where
-                newVec = evalAnsatzEtaVecListEig evalM newAns
-                newRDat = checkNumericLinDepEig rDat newVec
+                newVec = evalAnsatzEtaVecListIncremental evalM newAns
+                newRDat = checkNumericLinDepIncremental rDat newVec
 
-getNewRDatEps :: [I.IntMap Int] -> AnsatzForestEpsilon -> RankDataEig -> Maybe RankDataEig
+getNewRDatEps :: [I.IntMap Int] -> AnsatzForestEpsilon -> RankDataIncremental -> Maybe RankDataIncremental
 getNewRDatEps evalM newAns rDat = newRDat
     where
-                newVec = evalAnsatzEpsilonVecListEig evalM newAns
-                newRDat = checkNumericLinDepEig rDat newVec
+                newVec = evalAnsatzEpsilonVecListIncremental evalM newAns
+                newRDat = checkNumericLinDepIncremental rDat newVec
 
-getNewAns :: Symmetry -> [Eta] -> RankDataEig -> AnsatzForestEta
-getNewAns symList etaList rDat = symAnsatzForestEta symList $ mkForestFromAscList (etaList,Var 1 (getVarNrEig rDat + 1))
+getNewAns :: Symmetry -> [Eta] -> RankDataIncremental -> AnsatzForestEta
+getNewAns symList etaList rDat = symAnsatzForestEta symList $ mkForestFromAscList (etaList,Var 1 (getVarNrIncremental rDat + 1))
 
-getNewAnsEps :: Symmetry -> Epsilon -> [Eta] -> RankDataEig -> AnsatzForestEpsilon
-getNewAnsEps symList epsList etaList rDat = symAnsatzForestEps symList $ mkForestFromAscListEpsilon (epsList,etaList,Var 1 (getVarNrEig rDat + 1))
+getNewAnsEps :: Symmetry -> Epsilon -> [Eta] -> RankDataIncremental -> AnsatzForestEpsilon
+getNewAnsEps symList epsList etaList rDat = symAnsatzForestEps symList $ mkForestFromAscListEpsilon (epsList,etaList,Var 1 (getVarNrIncremental rDat + 1))
 
 {-
-addOrDiscardEtaEigIO :: Symmetry -> Int -> [I.IntMap Int] -> (AnsatzForestEta, RankDataEig) -> (Int, [Eta]) -> IO (AnsatzForestEta, RankDataEig)
-addOrDiscardEtaEigIO symList len evalM (ans,rDat) (num, etaL)
+addOrDiscardEtaIncrementalIO :: Symmetry -> Int -> [I.IntMap Int] -> (AnsatzForestEta, RankDataIncremental) -> (Int, [Eta]) -> IO (AnsatzForestEta, RankDataIncremental)
+addOrDiscardEtaIncrementalIO symList len evalM (ans,rDat) (num, etaL)
             | isElem etaL ans = do
                                     alreadyPresentIO num len rDat
                                     return (ans,rDat)
@@ -1193,8 +1185,8 @@ addOrDiscardEtaEigIO symList len evalM (ans,rDat) (num, etaL)
                 sumAns = addForests ans newAns
 -}
 
-addOrDiscardEtaEig :: Symmetry -> [I.IntMap Int] -> (AnsatzForestEta, RankDataEig) -> [Eta] -> (AnsatzForestEta, RankDataEig)
-addOrDiscardEtaEig symList evalM (ans,rDat) etaL
+addOrDiscardEtaIncremental :: Symmetry -> [I.IntMap Int] -> (AnsatzForestEta, RankDataIncremental) -> [Eta] -> (AnsatzForestEta, RankDataIncremental)
+addOrDiscardEtaIncremental symList evalM (ans,rDat) etaL
             | isElem etaL ans = (ans,rDat)
             | otherwise = case newRDat of
                                Nothing          -> (ans,rDat)
@@ -1206,15 +1198,15 @@ addOrDiscardEtaEig symList evalM (ans,rDat) etaL
 
 
 {-
-addOrDiscardEpsilonEigIO :: Symmetry -> Int -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataEig) -> (Int,(Epsilon,[Eta])) -> IO (AnsatzForestEpsilon, RankDataEig)
-addOrDiscardEpsilonEigIO symList len evalM (ans,rDat) (num,(epsL,etaL))
+addOrDiscardEpsilonIncrementalIO :: Symmetry -> Int -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataIncremental) -> (Int,(Epsilon,[Eta])) -> IO (AnsatzForestEpsilon, RankDataIncremental)
+addOrDiscardEpsilonIncrementalIO symList len evalM (ans,rDat) (num,(epsL,etaL))
             | isElemEpsilon (epsL,etaL) ans = do
                                     alreadyPresentIO num len rDat
                                     return (ans,rDat)
             | otherwise = case newRDat of
                                Nothing          -> do
                                                     notPresentNotAddedIO num len rDat
-                                                    let r = getVarNrEig rDat
+                                                    let r = getVarNrIncremental rDat
 
                                                     return (ans,rDat)
                                Just newRDat'    -> do
@@ -1226,8 +1218,8 @@ addOrDiscardEpsilonEigIO symList len evalM (ans,rDat) (num,(epsL,etaL))
                 sumAns = addForestsEpsilon ans newAns
 -}
 
-addOrDiscardEpsilonEig :: Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataEig) -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataEig)
-addOrDiscardEpsilonEig symList evalM (ans,rDat) (epsL,etaL)
+addOrDiscardEpsilonIncremental :: Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon, RankDataIncremental) -> (Epsilon,[Eta]) -> (AnsatzForestEpsilon, RankDataIncremental)
+addOrDiscardEpsilonIncremental symList evalM (ans,rDat) (epsL,etaL)
             | isElemEpsilon (epsL,etaL) ans = (ans,rDat)
             | otherwise = case newRDat of
                                Nothing          -> (ans,rDat)
@@ -1241,97 +1233,97 @@ addOrDiscardEpsilonEig symList evalM (ans,rDat) (epsL,etaL)
 --construct the RankData from the first nonzero Ansatz
 
 {-
-mk1stRankDataEtaEigIO :: Symmetry -> Int -> [(Int,[Eta])] -> [I.IntMap Int] -> IO (AnsatzForestEta,RankDataEig,[(Int,[Eta])])
-mk1stRankDataEtaEigIO symL numEta etaL evalM =
+mk1stRankDataEtaIncrementalIO :: Symmetry -> Int -> [(Int,[Eta])] -> [I.IntMap Int] -> IO (AnsatzForestEta,RankDataIncremental,[(Int,[Eta])])
+mk1stRankDataEtaIncrementalIO symL numEta etaL evalM =
         do
             putStrLn $ show (fst $ head etaL) ++ " of " ++ show numEta
             let newAns = symAnsatzForestEta symL $ mkForestFromAscList (snd $ head etaL,Var 1 1)
-            let newVec = evalAnsatzEtaVecListEig evalM newAns
+            let newVec = evalAnsatzEtaVecListIncremental evalM newAns
             let restList = tail etaL
             case newVec of
-                                Nothing         -> if null restList then return (EmptyForest ,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEigIO symL numEta restList evalM
+                                Nothing         -> if null restList then return (EmptyForest ,(HM.matrix 0 [], HM.matrix 0 []),[]) else mk1stRankDataEtaIncrementalIO symL numEta restList evalM
                                 Just newVec'    -> return (newAns, (newMat, newVec'), restList)
                                     where
-                                        newVecTrans = Sparse.transpose newVec'
-                                        newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
+                                        newVecTrans = HM.tr newVec'
+                                        newMat = newVec' Matrix.<> newVecTrans
 -}
 
-mk1stRankDataEtaEig :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,RankDataEig,[[Eta]])
-mk1stRankDataEtaEig symL etaL evalM = output
+mk1stRankDataEtaIncremental :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,RankDataIncremental,[[Eta]])
+mk1stRankDataEtaIncremental symL etaL evalM = output
         where
             newAns = symAnsatzForestEta symL $ mkForestFromAscList (head etaL,Var 1 1)
-            newVec = evalAnsatzEtaVecListEig evalM newAns
+            newVec = evalAnsatzEtaVecListIncremental evalM newAns
             restList = tail etaL
             output = case newVec of
-                                Nothing         -> if null restList then (EmptyForest,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEtaEig symL restList evalM
+                                Nothing         -> if null restList then (EmptyForest,(HM.matrix 0 [], HM.matrix 0 []),[]) else mk1stRankDataEtaIncremental symL restList evalM
                                 Just newVec'    -> (newAns, (newMat, newVec'), restList)
                                     where
-                                        newVecTrans = Sparse.transpose newVec'
-                                        newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
+                                        newVecTrans = HM.tr newVec'
+                                        newMat = newVec' Matrix.<> newVecTrans
 
 
-mk1stRankDataEpsilonEig :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankDataEig,[(Epsilon,[Eta])])
-mk1stRankDataEpsilonEig symL epsL evalM = output
+mk1stRankDataEpsilonIncremental :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,RankDataIncremental,[(Epsilon,[Eta])])
+mk1stRankDataEpsilonIncremental symL epsL evalM = output
         where
             newAns = symAnsatzForestEps symL $ mkForestFromAscListEpsilon (fst $ head epsL, snd $ head epsL,Var 1 1)
-            newVec = evalAnsatzEpsilonVecListEig evalM newAns
+            newVec = evalAnsatzEpsilonVecListIncremental evalM newAns
             restList = tail epsL
             output = case newVec of
-                                Nothing         -> if null restList then (M.empty,(Mat.fromList [], Sparse.fromList 0 0 []),[]) else mk1stRankDataEpsilonEig symL restList evalM
+                                Nothing         -> if null restList then (M.empty,(HM.matrix 0 [], HM.matrix 0 []),[]) else mk1stRankDataEpsilonIncremental symL restList evalM
                                 Just newVec'    -> (newAns,(newMat, newVec'), restList)
                                     where
-                                        newVecTrans = Sparse.transpose newVec'
-                                        newMat = Sparse.toMatrix $ Sparse.mul newVec' newVecTrans
+                                        newVecTrans = HM.tr newVec'
+                                        newMat = newVec' Matrix.<> newVecTrans
 
 
 --finally reduce the ansatzList (IO versions print the current status for longer computations will follow with the next versions)
 
 
-reduceAnsatzEtaEig :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
-reduceAnsatzEtaEig symL etaL evalM
-        | null evalM = (EmptyForest, Sparse.fromList 0 0 [])
-        | null etaL = (EmptyForest, Sparse.fromList 0 0 [])
+reduceAnsatzEtaIncremental :: Symmetry -> [[Eta]] -> [I.IntMap Int] -> (AnsatzForestEta, HM.Matrix Double)
+reduceAnsatzEtaIncremental symL etaL evalM
+        | null evalM = (EmptyForest, HM.matrix 0 [])
+        | null etaL = (EmptyForest, HM.matrix 0 [])
         | otherwise = (finalForest, finalMat)
             where
-                (ans1,rDat1,restEtaL) = mk1stRankDataEtaEig symL etaL evalM
-                (finalForest, (_,finalMat)) = foldl' (addOrDiscardEtaEig symL evalM) (ans1,rDat1) restEtaL
+                (ans1,rDat1,restEtaL) = mk1stRankDataEtaIncremental symL etaL evalM
+                (finalForest, (_,finalMat)) = foldl' (addOrDiscardEtaIncremental symL evalM) (ans1,rDat1) restEtaL
 
-reduceAnsatzEpsilonEig :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
-reduceAnsatzEpsilonEig symL epsL evalM
-    | null evalM = (M.empty, Sparse.fromList 0 0 [])
-    | null epsL = (M.empty, Sparse.fromList 0 0 [])
+reduceAnsatzEpsilonIncremental :: Symmetry -> [(Epsilon,[Eta])] -> [I.IntMap Int] -> (AnsatzForestEpsilon, HM.Matrix Double)
+reduceAnsatzEpsilonIncremental symL epsL evalM
+    | null evalM = (M.empty, HM.matrix 0 [])
+    | null epsL = (M.empty, HM.matrix 0 [])
     | otherwise = (finalForest, finalMat)
         where
-            (ans1,rDat1,restEpsL) = mk1stRankDataEpsilonEig symL epsL evalM
-            (finalForest, (_,finalMat)) = foldl' (addOrDiscardEpsilonEig symL evalM) (ans1,rDat1) restEpsL
+            (ans1,rDat1,restEpsL) = mk1stRankDataEpsilonIncremental symL epsL evalM
+            (finalForest, (_,finalMat)) = foldl' (addOrDiscardEpsilonIncremental symL evalM) (ans1,rDat1) restEpsL
 
 --construct a basis ansatz forest
 
-getEtaForestEig :: Int -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta,Sparse.SparseMatrixXd)
-getEtaForestEig _ _ [] = (EmptyForest, Sparse.fromList 0 0 [])
-getEtaForestEig ord sym evalMs
-    | null allEtaLists = (EmptyForest, Sparse.fromList 0 0 [])
-    | otherwise = reduceAnsatzEtaEig sym allEtaLists evalMs
+getEtaForestIncremental :: Int -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEta, HM.Matrix Double)
+getEtaForestIncremental _ _ [] = (EmptyForest, HM.matrix 0 [])
+getEtaForestIncremental ord sym evalMs
+    | null allEtaLists = (EmptyForest, HM.matrix 0 [])
+    | otherwise = reduceAnsatzEtaIncremental sym allEtaLists evalMs
         where
             allInds = getEtaInds [1..ord] sym
             allEtaLists = map mkEtaList allInds
 
-getEpsForestEig :: Int -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon,Sparse.SparseMatrixXd)
-getEpsForestEig _ _ [] = (M.empty, Sparse.fromList 0 0 [])
-getEpsForestEig ord sym evalMs
-    | null allEpsLists = (M.empty, Sparse.fromList 0 0 [])
-    | otherwise =  reduceAnsatzEpsilonEig sym allEpsLists evalMs
+getEpsForestIncremental :: Int -> Symmetry -> [I.IntMap Int] -> (AnsatzForestEpsilon, HM.Matrix Double)
+getEpsForestIncremental _ _ [] = (M.empty, HM.matrix 0 [])
+getEpsForestIncremental ord sym evalMs
+    | null allEpsLists = (M.empty, HM.matrix 0 [])
+    | otherwise =  reduceAnsatzEpsilonIncremental sym allEpsLists evalMs
         where
             allInds = getEpsilonInds [1..ord] sym
             allEpsLists = map mkEpsilonList allInds
 
 --eta and eps forest combined
 
-getFullForestEig :: Int -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon, Sparse.SparseMatrixXd, Sparse.SparseMatrixXd)
-getFullForestEig ord sym evalMEta evalMEps = (etaAns, epsAns, etaMat, epsMat)
+getFullForestIncremental :: Int -> Symmetry -> [I.IntMap Int] -> [I.IntMap Int] -> (AnsatzForestEta, AnsatzForestEpsilon, HM.Matrix Double, HM.Matrix Double)
+getFullForestIncremental ord sym evalMEta evalMEps = (etaAns, epsAns, etaMat, epsMat)
         where
-            (etaAns,etaMat) = getEtaForestEig ord sym evalMEta
-            (epsAns',epsMat) = getEpsForestEig ord sym evalMEps
+            (etaAns,etaMat) = getEtaForestIncremental ord sym evalMEta
+            (epsAns',epsMat) = getEpsForestIncremental ord sym evalMEps
             epsAns = relabelAnsatzForestEpsilon (1 + length (getForestLabels etaAns)) epsAns'
 
 {--
@@ -1423,59 +1415,61 @@ mkAllEvalMapsAbs sym l = (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds)
             evalMEpsInds = map (\(x,y,z) -> (mkEvalMap ord x, y, z)) evalLEps
 
 -- | The function is similar to @'mkAnsatzTensorFastSym'@ yet it uses an algorithm that prioritizes memory usage over fast computation times.
-mkAnsatzTensorEigSym :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
-mkAnsatzTensorEigSym ord symmetries evalL = (ansEta, ansEps, tens)
+mkAnsatzTensorIncrementalSym :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorIncrementalSym ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
-            (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
+            (ansEta, ansEps, _, _) = getFullForestIncremental ord symmetries evalMEtaRed evalMEpsRed
             tens = evalToTensSym symmetries evalMEtaInds evalMEpsInds ansEta ansEps
 
 -- | The function is similar to @'mkAnsatzTensorFast'@ yet it uses an algorithm that prioritizes memory usage over fast computation times.
-mkAnsatzTensorEig :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
-mkAnsatzTensorEig ord symmetries evalL = (ansEta, ansEps, tens)
+mkAnsatzTensorIncremental :: forall (n :: Nat). KnownNat n => Int -> Symmetry -> [[Int]] -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorIncremental ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMaps symmetries evalL
-            (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
+            (ansEta, ansEps, _, _) = getFullForestIncremental ord symmetries evalMEtaRed evalMEpsRed
             tens = evalToTens evalMEtaInds evalMEpsInds ansEta ansEps
 
 -- | The function is similar to @'mkAnsatzTensorFastAbs'@ yet it uses an algorithm that prioritizes memory usage over fast computation times.
-mkAnsatzTensorEigAbs :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 AnsVarR)
-mkAnsatzTensorEigAbs ord symmetries evalL = (ansEta, ansEps, tens)
+mkAnsatzTensorIncrementalAbs :: Int -> Symmetry -> [([Int], Int, [IndTupleAbs n1 0 n2 0 n3 0])] -> (AnsatzForestEta, AnsatzForestEpsilon, ATens n1 0 n2 0 n3 0 AnsVarR)
+mkAnsatzTensorIncrementalAbs ord symmetries evalL = (ansEta, ansEps, tens)
         where
             (evalMEtaRed, evalMEpsRed, evalMEtaInds, evalMEpsInds) = mkAllEvalMapsAbs symmetries evalL
-            (ansEta, ansEps, _, _) = getFullForestEig ord symmetries evalMEtaRed evalMEpsRed
+            (ansEta, ansEps, _, _) = getFullForestIncremental ord symmetries evalMEtaRed evalMEpsRed
             tens = evalToTensAbs evalMEtaInds evalMEpsInds ansEta ansEps
 
 
 --now we start with the second way
 
-assocsToEig :: [[(Int,Int)]] -> Mat.MatrixXd
-assocsToEig l = Sparse.toMatrix $ Sparse.fromList n m l'
+assocsToMat :: [[(Int,Int)]] -> HM.Matrix Double
+assocsToMat l = HM.assoc (m,n) 0 l'
     where
-        l' = concat $ zipWith (\r z -> map (\(x,y) -> (z-1, x-1, fromIntegral y)) r) l [1..]
-        n = maximum (map (\(x,_,_) -> x) l') + 1
-        m = maximum (map (\(_,x,_) -> x) l') + 1
+        l' = concat $ zipWith (\r z -> map (\(x,y) -> ((z-1, x-1), fromIntegral y)) r) l [1..]
+        sparse = M.fromList l'
+        m = maximum (map (\((x,_),_) -> x) l') + 1
+        n = maximum (map (\((_,x),_) -> x) l') + 1
 
 --filter the lin. dependant vars from the Assocs List
-{-
-optimized version, requires custom eigen build
 
-getPivots' :: [[(Int,Int)]]  -> [Int]
-getPivots' l = map (1+) p
-        where
-            mat = assocsToEig l
-            p = Sol.pivots Sol.FullPivLU mat
--}
+permutationToMap :: HM.Matrix Double -> I.IntMap Int
+permutationToMap mat = I.fromList assocList
+    where
+        assocList = map (\(i, r) -> (HM.maxIndex r, i)) $ zip [0..] $ HM.toRows mat
+
+independentColumns :: HM.Matrix Double -> [Int]
+independentColumns mat = pivots
+    where
+        (l,_,p,_) = Matrix.lu mat
+        pMap      = permutationToMap p
+        diag      = Matrix.takeDiag l
+        pivots'   = fmap fst $ filter ((/= 0) . snd) $ zip [0..] $ Matrix.toList diag
+        pivots    = fmap (pMap I.!) pivots'
 
 getPivots :: [[(Int,Int)]]  -> [Int]
-getPivots l = map (1+) p
+getPivots matList = map (1+) pivots
         where
-            mat = assocsToEig l
-            pMatTr = Mat.toList $ Mat.transpose $ Sol.image Sol.FullPivLU mat
-            matTr = Mat.toList $ Mat.transpose mat
-            p = mapMaybe (`elemIndex` matTr) pMatTr
-
-
+            mat       = assocsToMat matList
+            pivots    = independentColumns mat
 
 --reduce linear deps in the ansätze
 
@@ -1726,8 +1720,8 @@ allList ord (syms,aSyms,_,_,_) =  allList' ord syms aSyms [] []
 --use the above functions to construct ansätze without providing eval lists by hand
 
 -- | The function is similar to @'mkAnsatzTensorFastSym''@ yet it uses an algorithm that prioritizes memory usage over fast computation times.
-mkAnsatzTensorEigSym' :: forall (n :: Nat). KnownNat n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
-mkAnsatzTensorEigSym' ord symmetries = mkAnsatzTensorEigSym ord symmetries evalL
+mkAnsatzTensorIncrementalSym' :: forall (n :: Nat). KnownNat n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorIncrementalSym' ord symmetries = mkAnsatzTensorIncrementalSym ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 
@@ -1741,8 +1735,8 @@ mkAnsatzTensorFastSym' ord symmetries = mkAnsatzTensorFastSym ord symmetries eva
 --and without explicit symmetrization
 
 -- | The function is similar to @'mkAnsatzTensorFast''@ yet it uses an algorithm that prioritizes memory usage over fast computation times.
-mkAnsatzTensorEig' :: forall (n :: Nat). KnownNat n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
-mkAnsatzTensorEig' ord symmetries = mkAnsatzTensorEig ord symmetries evalL
+mkAnsatzTensorIncremental' :: forall (n :: Nat). KnownNat n =>  Int -> Symmetry -> (AnsatzForestEta, AnsatzForestEpsilon, STTens n 0 AnsVarR)
+mkAnsatzTensorIncremental' ord symmetries = mkAnsatzTensorIncremental ord symmetries evalL
         where
             evalL = filter (`filterAllSym` symmetries) $ allList ord symmetries
 

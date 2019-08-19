@@ -6,7 +6,7 @@
 -- Maintainer  :  tobi.reinhart@fau.de, nils.alex@fau.de
 --
 --
--- This module provides a variety of @'Tensor'@s that are currently predefined in the sparse.tensor package.
+-- This module provides a variety of @'Tensor'@s that are currently predefined in the sparse-tensor package.
 --
 -- Amongst many standard tensor from differential geometry and classical field theories such as Kronecker deltas \(\delta^a_b \) in multiple different dimensions,
 -- the Levi-Civita symbol \(\epsilon^{abcd} \) and the Minkowski metric \(\eta_{ab}\) and its inverse \(\eta^{ab}\), most included tensors were implemented during

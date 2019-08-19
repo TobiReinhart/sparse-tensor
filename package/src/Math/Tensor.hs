@@ -297,14 +297,14 @@ toListT1', toListT2', toListT3', toListT4', toListT5', toListT6', toListT7', toL
 -- __ Convert a @'Tensor'@ to a sparse matrix assocs list.__
 toMatListT1', toMatListT2', toMatListT3', toMatListT4', toMatListT5', toMatListT6', toMatListT7', toMatListT8',
 --
--- __ Convert a @'Tensor'@ to a sparse "Eigen.SparseMatrix".__
-toEMatrixT1', toEMatrixT2', toEMatrixT3', toEMatrixT4', toEMatrixT5', toEMatrixT6', toEMatrixT7', toEMatrixT8',
+-- __ Convert a @'Tensor'@ to a "HM.Matrix".__
+toMatrixT1', toMatrixT2', toMatrixT3', toMatrixT4', toMatrixT5', toMatrixT6', toMatrixT7', toMatrixT8',
 --
 -- | __ Convert all @'Tensors'@ of a heterogeneous tensor List to a combined sparse matrix assocs list.__
 toMatListT1, toMatListT2, toMatListT3, toMatListT4, toMatListT5, toMatListT6, toMatListT7, toMatListT8,
 --
--- | __ Convert all @'Tensors'@ of a heterogeneous tensor List to a combined sparse "Eigen.SparseMatrix".__
-toEMatrixT1, toEMatrixT2, toEMatrixT3, toEMatrixT4, toEMatrixT5, toEMatrixT6, toEMatrixT7, toEMatrixT8,
+-- | __ Convert all @'Tensors'@ of a heterogeneous tensor List to a combined "HM.Matrix".__
+toMatrixT1, toMatrixT2, toMatrixT3, toMatrixT4, toMatrixT5, toMatrixT6, toMatrixT7, toMatrixT8,
 --
 -- ** Tensor utility functions
 --
@@ -322,7 +322,7 @@ evalTens1, evalTens2, evalTens3, evalTens4, evalTens5, evalTens6, evalTens7, eva
 --
 -- *** Rank Computations
 -- | Compute the rank of a tensor of @'AnsVarR'@ values. The tensor is converted to a matrix with columns labeling the individual variables that occur in 'ansVarR'
--- and rows labeling the independent tensor components. The rank is then computed using 'Eigen' subroutines. These functions is for instance useful
+-- and rows labeling the independent tensor components. The rank is then computed using 'hmatrix' subroutines. These functions is for instance useful
 -- when determining the rank of tensorial equations.
 --
 -- __ Compute the rank of a single @'Tensor'@.__
@@ -356,13 +356,10 @@ import Data.Serialize (encodeLazy, decodeLazy, Serialize(..))
 import Unsafe.Coerce (unsafeCoerce)
 import qualified Data.ByteString.Lazy as BS (ByteString)
 import Codec.Compression.GZip (compress, decompress)
-import qualified Numeric.LinearAlgebra.Data as HM
-import Numeric.LinearAlgebra (rank)
 
 --for Linear Algebra subroutines
-
---import qualified Data.Eigen.SparseMatrix as Sparse
---import qualified Data.Eigen.LA as Sol
+import qualified Numeric.LinearAlgebra.Data as HM
+import Numeric.LinearAlgebra (rank)
 
 --Length typed lists for the tensor indices.
 
@@ -963,29 +960,29 @@ toMatListT7' = collectMatList . toMatList7'
 toMatListT8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, TAdd a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar a) -> [((Int,Int),a)]
 toMatListT8' = collectMatList . toMatList8'
 
-toEMatrixT1' :: (TIndex k1, Real a) => AbsTensor1 n1 k1 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT1' = assocsToSparse . toMatListT1'
+toMatrixT1' :: (TIndex k1, Real a) => AbsTensor1 n1 k1 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT1' = assocsToMatrix . toMatListT1'
 
-toEMatrixT2' :: (TIndex k1, Real a) => AbsTensor2 n1 n2 k1 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT2' = assocsToSparse . toMatListT2'
+toMatrixT2' :: (TIndex k1, Real a) => AbsTensor2 n1 n2 k1 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT2' = assocsToMatrix . toMatListT2'
 
-toEMatrixT3' :: (TIndex k1, TIndex k2, Real a) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT3' = assocsToSparse . toMatListT3'
+toMatrixT3' :: (TIndex k1, TIndex k2, Real a) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT3' = assocsToMatrix . toMatListT3'
 
-toEMatrixT4' :: (TIndex k1, TIndex k2, Real a) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT4' = assocsToSparse . toMatListT4'
+toMatrixT4' :: (TIndex k1, TIndex k2, Real a) => AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT4' = assocsToMatrix . toMatListT4'
 
-toEMatrixT5' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT5' = assocsToSparse . toMatListT5'
+toMatrixT5' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT5' = assocsToMatrix . toMatListT5'
 
-toEMatrixT6' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT6' = assocsToSparse . toMatListT6'
+toMatrixT6' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT6' = assocsToMatrix . toMatListT6'
 
-toEMatrixT7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT7' = assocsToSparse . toMatListT7'
+toMatrixT7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT7' = assocsToMatrix . toMatListT7'
 
-toEMatrixT8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT8' = assocsToSparse . toMatListT8'
+toMatrixT8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT8' = assocsToMatrix . toMatListT8'
 
 
 
@@ -3004,7 +3001,7 @@ toMatListT8 t = collectMatList matList
         matList = concat $ mapTensList8 toMatList8' t
 
 
---convert to Eigen format for using LA subroutines
+--convert to hmatrix format for using LA subroutines
 
 dims :: [((Int, Int), a)] -> (Int, Int)
 dims xs = (rows, cols)
@@ -3012,90 +3009,90 @@ dims xs = (rows, cols)
         rows = maximum $ map (fst.fst) xs
         cols = maximum $ map (snd.fst) xs
 
-assocsToSparse :: Real a => [((Int, Int), SField a)] -> HM.Matrix Double
-assocsToSparse [] = (1 HM.>< 1) []
-assocsToSparse assocs = HM.assoc (rows, cols) 0 els
+assocsToMatrix :: Real a => [((Int, Int), SField a)] -> HM.Matrix Double
+assocsToMatrix [] = (1 HM.>< 1) [0]
+assocsToMatrix assocs = HM.assoc (rows, cols) 0 els
     where
         (rows, cols) = dims assocs
         els          = map (\((x, y), SField z) -> ((x-1, y-1), fromRational $ toRational z)) assocs
 
-toEMatrixT1 :: (TIndex k1, Real a) => TensList1 k1 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT1 = assocsToSparse . toMatListT1
+toMatrixT1 :: (TIndex k1, Real a) => TensList1 k1 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT1 = assocsToMatrix . toMatListT1
 
-toEMatrixT2 :: (TIndex k1, Real a) => TensList2 k1 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT2 = assocsToSparse . toMatListT2
+toMatrixT2 :: (TIndex k1, Real a) => TensList2 k1 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT2 = assocsToMatrix . toMatListT2
 
-toEMatrixT3 :: (TIndex k1, TIndex k2, Real a) => TensList3 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT3 = assocsToSparse . toMatListT3
+toMatrixT3 :: (TIndex k1, TIndex k2, Real a) => TensList3 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT3 = assocsToMatrix . toMatListT3
 
-toEMatrixT4 :: (TIndex k1, TIndex k2, Real a) => TensList4 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT4 = assocsToSparse . toMatListT4
+toMatrixT4 :: (TIndex k1, TIndex k2, Real a) => TensList4 k1 k2 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT4 = assocsToMatrix . toMatListT4
 
-toEMatrixT5 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList5 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT5 = assocsToSparse . toMatListT5
+toMatrixT5 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList5 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT5 = assocsToMatrix . toMatListT5
 
-toEMatrixT6 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList6 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT6 = assocsToSparse . toMatListT6
+toMatrixT6 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList6 k1 k2 k3 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT6 = assocsToMatrix . toMatListT6
 
-toEMatrixT7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList7 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT7 = assocsToSparse . toMatListT7
+toMatrixT7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList7 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT7 = assocsToMatrix . toMatListT7
 
-toEMatrixT8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList8 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
-toEMatrixT8 = assocsToSparse . toMatListT8
+toMatrixT8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList8 k1 k2 k3 k4 (AnsVar (SField a)) -> HM.Matrix Double
+toMatrixT8 = assocsToMatrix . toMatListT8
 
 --rank of the tensor can be computed with rank Sol.FullPivLU or Sol.JakobiSVD
 
 tensorRank1' :: (TIndex k1, Real a, Real a) => AbsTensor1 n1 k1 (AnsVar (SField a)) -> Int
-tensorRank1' t = rank $ toEMatrixT1 (singletonTList1 t)
+tensorRank1' t = rank $ toMatrixT1 (singletonTList1 t)
 
 tensorRank1 :: (TIndex k1, Real a) => TensList1 k1 (AnsVar (SField a)) -> Int
-tensorRank1 t = rank $ toEMatrixT1 t
+tensorRank1 t = rank $ toMatrixT1 t
 
 
 tensorRank2' :: (TIndex k1, Real a) => AbsTensor2 n1 n2 k1 (AnsVar (SField a)) -> Int
-tensorRank2' t = rank $ toEMatrixT2 (singletonTList2 t)
+tensorRank2' t = rank $ toMatrixT2 (singletonTList2 t)
 
 tensorRank2 :: (TIndex k1, Real a) => TensList2 k1 (AnsVar (SField a)) -> Int
-tensorRank2 t = rank $ toEMatrixT2 t
+tensorRank2 t = rank $ toMatrixT2 t
 
 
 tensorRank3' :: (TIndex k1, TIndex k2, Real a) => AbsTensor3 n1 n2 n3 k1 k2 (AnsVar (SField a)) -> Int
-tensorRank3' t = rank $ toEMatrixT3 (singletonTList3 t)
+tensorRank3' t = rank $ toMatrixT3 (singletonTList3 t)
 
 tensorRank3 :: (TIndex k1, TIndex k2, Real a) =>  TensList3 k1 k2 (AnsVar (SField a)) -> Int
-tensorRank3 t = rank $ toEMatrixT3 t
+tensorRank3 t = rank $ toMatrixT3 t
 
 
 tensorRank4' :: (TIndex k1, TIndex k2, Real a) =>  AbsTensor4 n1 n2 n3 n4 k1 k2 (AnsVar (SField a)) -> Int
-tensorRank4' t = rank $ toEMatrixT4 (singletonTList4 t)
+tensorRank4' t = rank $ toMatrixT4 (singletonTList4 t)
 
 tensorRank4 :: (TIndex k1, TIndex k2, Real a) =>  TensList4 k1 k2 (AnsVar (SField a)) -> Int
-tensorRank4 t = rank $ toEMatrixT4 t
+tensorRank4 t = rank $ toMatrixT4 t
 
 
 tensorRank5' :: (TIndex k1, TIndex k2, TIndex k3, Real a) =>  AbsTensor5 n1 n2 n3 n4 n5 k1 k2 k3 (AnsVar (SField a)) -> Int
-tensorRank5' t = rank $ toEMatrixT5 (singletonTList5 t)
+tensorRank5' t = rank $ toMatrixT5 (singletonTList5 t)
 
 tensorRank5 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList5 k1 k2 k3 (AnsVar (SField a)) -> Int
-tensorRank5 t = rank $ toEMatrixT5 t
+tensorRank5 t = rank $ toMatrixT5 t
 
 
 tensorRank6' :: (TIndex k1, TIndex k2, TIndex k3, Real a) => AbsTensor6 n1 n2 n3 n4 n5 n6 k1 k2 k3 (AnsVar (SField a)) -> Int
-tensorRank6' t = rank $ toEMatrixT6 (singletonTList6 t)
+tensorRank6' t = rank $ toMatrixT6 (singletonTList6 t)
 
 tensorRank6 :: (TIndex k1, TIndex k2, TIndex k3, Real a) => TensList6 k1 k2 k3 (AnsVar (SField a)) -> Int
-tensorRank6 t = rank $ toEMatrixT6 t
+tensorRank6 t = rank $ toMatrixT6 t
 
 
 tensorRank7' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor7 n1 n2 n3 n4 n5 n6 n7 k1 k2 k3 k4 (AnsVar (SField a)) -> Int
-tensorRank7' t = rank $ toEMatrixT7 (singletonTList7 t)
+tensorRank7' t = rank $ toMatrixT7 (singletonTList7 t)
 
 tensorRank7 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList7 k1 k2 k3 k4 (AnsVar (SField a)) -> Int
-tensorRank7 t = rank $ toEMatrixT7 t
+tensorRank7 t = rank $ toMatrixT7 t
 
 
 tensorRank8' :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar (SField a)) -> Int
-tensorRank8' t = rank $ toEMatrixT8 (singletonTList8 t)
+tensorRank8' t = rank $ toMatrixT8 (singletonTList8 t)
 
 tensorRank8 :: (TIndex k1, TIndex k2, TIndex k3, TIndex k4, Real a) => TensList8 k1 k2 k3 k4 (AnsVar (SField a)) -> Int
-tensorRank8 t = rank $ toEMatrixT8 t
+tensorRank8 t = rank $ toMatrixT8 t

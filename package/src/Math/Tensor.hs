@@ -349,7 +349,6 @@ import qualified Data.IntMap.Strict as I
 import Numeric.Natural (Natural)
 import qualified Numeric.AD.Rank1.Forward as AD
 import GHC.TypeLits
-import GHC.TypeNats (SomeNat(..))
 import GHC.Generics (Generic(..))
 import Control.DeepSeq (rnf, NFData(..))
 import Data.Serialize (encodeLazy, decodeLazy, Serialize(..))
@@ -866,20 +865,11 @@ data TensorRep k v = ScalarR v | TensorR Natural (TMap k (TensorRep k v)) | Zero
 
 --convert between typesafe and non typesafe tensors
 
-{-
-lemma :: forall n m. (n-1 :~: m) -> (m+1 :~: n)
-lemma _ = unsafeCoerce (Refl @n)
--}
-
 toRep :: forall n k v. KnownNat n => Tensor n k v -> TensorRep k v
 toRep (Scalar v) = ScalarR v
-toRep (Tensor m) = -- case isZero (SNat @n)  n == 0 is not possible, because types
-                   -- of Zero -> undefined
-                   -- NonZero ->
-                        --case lemma @n Refl
-                        --of Refl ->
-                            let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
-                            in TensorR r $ mapTMap (\(t :: Tensor (n-1) k v) -> toRep t) m
+toRep (Tensor m) = case isZero (Proxy @n) of
+                     NonZero -> let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
+                                in TensorR r $ mapTMap (\(t :: Tensor (n-1) k v) -> toRep t) m
 toRep ZeroTensor = let r = fromIntegral $ GHC.TypeLits.natVal (Proxy @n)
                 in ZeroR r
 
@@ -1091,7 +1081,6 @@ insertOrAdd (_, _)     (Scalar _) = error "cannot add key value pair to scalar"
 insertOrAdd (Append x xs, a) (Tensor m) = Tensor $ insertWithTMap (\_ o -> insertOrAdd (xs, a) o) x indTens m
             where
                 indTens = mkTens (xs, a)
-insertOrAdd (Empty, _) (Tensor _) = error "cannot add value without indices to tensor"
 insertOrAdd inds ZeroTensor = mkTens inds
 
 --addition for tensors

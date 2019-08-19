@@ -5,4 +5,6 @@ ghc:
   - "8.4"
   - "8.6"
 before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y libblas-dev liblapack-dev
   - cd package

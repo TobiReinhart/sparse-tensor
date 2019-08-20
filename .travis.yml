@@ -13,7 +13,7 @@ matrix:
   - env: GHCVER=8.6.5 STACK_YAML=stack.yaml SOLVER=lts-14.1
     addons:
       apt:
-        source:
+        sources:
         - hvr-ghc
         packages:
         - libblas-dev
@@ -22,7 +22,7 @@ matrix:
   - env: GHCVER=8.4.4 STACK_YAML=stack.yaml SOLVER=lts-12.26
     addons:
       apt:
-        source:
+        sources:
         - hvr-ghc
         packages:
         - libblas-dev

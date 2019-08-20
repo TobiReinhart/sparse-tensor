@@ -1,4 +1,4 @@
-language: haskell
+language: minimal
 
 dist: bionic
 
@@ -10,22 +10,31 @@ cache:
 
 matrix:
   include:
-  - env: GHCVER=8.6.5 STACK_YAML=stack.yaml
+  - env: GHCVER=8.6.5 STACK_YAML=stack.yaml SOLVER=lts-14.1
     addons:
       apt:
         packages:
         - libblas-dev
         - liblapack-dev
         - ghc-8.6.5
+  include:
+  - env: GHCVER=8.4.4 STACK_YAML=stack.yaml SOLVER=lts-12.26
+    addons:
+      apt:
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.4.4
 
 before_install:
   - mkdir -p ~/.local/bin
   - export PATH=$HOME/.local/bin:$PATH
   - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
   - export PATH=/opt/ghc/$GHCVER/bin:$PATH
+  - cd package
+  - echo "resolver: ${}" > stack.yaml
 
 install:
-  - cd package
   - stack build
 
 script:

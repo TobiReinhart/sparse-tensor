@@ -10,6 +10,15 @@ cache:
 
 matrix:
   include:
+  - env: GHCVER=head STACK_YAML=stack.yaml SOLVER=nightly-2019-08-20
+    addons:
+      apt:
+        sources:
+          - sourceline: 'ppa:hvr/ghc'
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-head
   - env: GHCVER=8.6.5 STACK_YAML=stack.yaml SOLVER=lts-14.1
     addons:
       apt:
@@ -28,6 +37,33 @@ matrix:
         - libblas-dev
         - liblapack-dev
         - ghc-8.4.4
+  - env: GHCVER=8.2.2 STACK_YAML=stack.yaml SOLVER=lts-11.22
+    addons:
+      apt:
+        sources:
+        - sourceline: 'ppa:hvr/ghc'
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.2.2
+  - env: GHCVER=8.0.2 STACK_YAML=stack.yaml SOLVER=lts-9.21
+    addons:
+      apt:
+        sources:
+        - sourceline: 'ppa:hvr/ghc'
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.0.2
+  - env: GHCVER=8.0.1 STACK_YAML=stack.yaml SOLVER=lts-7.0
+    addons:
+      apt:
+        sources:
+        - sourceline: 'ppa:hvr/ghc'
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.0.1
 
 before_install:
   - mkdir -p ~/.local/bin

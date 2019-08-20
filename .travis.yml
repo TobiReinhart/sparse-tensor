@@ -37,7 +37,7 @@ before_install:
   - cd package
 
 install:
-  - stack --resolver=$SOLVER skip-ghc-check build
+  - stack --resolver=$SOLVER build
 
 script:
   - stack --resolver=$SOLVER --no-terminal test

@@ -126,6 +126,22 @@ gaussianST = gaussian' 0 0
 
 
 -- | Gaussian elimination as pure function. Involves a copy of the input matrix.
+--
+-- @
+-- &#x3BB; let mat = (3 >< 4) [1, 1, -2, 0, 0, 2, -6, -4, 3, 0, 3, 1]
+-- &#x3BB; mat
+-- (3><4)
+-- (3><4)
+--  [ 1.0, 1.0, -2.0,  0.0
+--  , 0.0, 2.0, -6.0, -4.0
+--  , 3.0, 0.0,  3.0,  1.0 ]
+-- &#x3BB; gaussian mat
+-- (3><4)
+--  [ 3.0, 0.0,  3.0,                1.0
+--  , 0.0, 2.0, -6.0,               -4.0
+--  , 0.0, 0.0,  0.0, 1.6666666666666667 ]
+-- @
+--
 
 gaussian :: Matrix Double -> Matrix Double
 gaussian mat = runST $ do
@@ -135,6 +151,19 @@ gaussian mat = runST $ do
 
 -- | Returns the indices of a maximal linearly independent subset of the columns
 --   in the matrix.
+--
+-- @
+-- &#x3BB; let mat = (3 >< 4) [1, 1, -2, 0, 0, 2, -6, -4, 3, 0, 3, 1]
+-- &#x3BB; mat
+-- (3><4)
+-- (3><4)
+--  [ 1.0, 1.0, -2.0,  0.0
+--  , 0.0, 2.0, -6.0, -4.0
+--  , 3.0, 0.0,  3.0,  1.0 ]
+-- &#x3BB; independentColumns mat
+-- [0,1,3]
+-- @
+--
 
 independentColumns :: Matrix Double -> [Int]
 independentColumns mat = pivotsU mat'
@@ -143,6 +172,22 @@ independentColumns mat = pivotsU mat'
 
 -- | Returns a sub matrix containing a maximal linearly independent subset of
 --   the columns in the matrix.
+--
+-- @
+-- &#x3BB; let mat = (3 >< 4) [1, 1, -2, 0, 0, 2, -6, -4, 3, 0, 3, 1]
+-- &#x3BB; mat
+-- (3><4)
+-- (3><4)
+--  [ 1.0, 1.0, -2.0,  0.0
+--  , 0.0, 2.0, -6.0, -4.0
+--  , 3.0, 0.0,  3.0,  1.0 ]
+-- &#x3BB; independentColumnsMat mat
+-- (3><3)
+--  [ 1.0, 1.0,  0.0
+--  , 0.0, 2.0, -4.0
+--  , 3.0, 0.0,  1.0 ]
+-- @
+--
 
 independentColumnsMat :: Matrix Double -> Matrix Double
 independentColumnsMat mat =

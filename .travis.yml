@@ -34,10 +34,13 @@ before_install:
   - export PATH=$HOME/.local/bin:$PATH
   - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
   - export PATH=/opt/ghc/$GHCVER/bin:$PATH
+  - stack config set system-ghc --global true
+  - stack config set resolver $SOLVER
+  - stack config set skip-ghc-check true
   - cd package
 
 install:
-  - stack --resolver=$SOLVER build
+  - stack --no-terminal build
 
 script:
-  - stack --resolver=$SOLVER --no-terminal test
+  - stack --no-terminal test

@@ -35,10 +35,9 @@ before_install:
   - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
   - export PATH=/opt/ghc/$GHCVER/bin:$PATH
   - cd package
-  - echo "resolver: $SOLVER" > stack.yaml
 
 install:
-  - stack build
+  - stack --resolver=$SOLVER skip-ghc-check build
 
 script:
-  - stack --no-terminal --skip-ghc-check test
+  - stack --resolver=$SOLVER --no-terminal test

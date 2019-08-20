@@ -116,6 +116,8 @@ import GHC.TypeLits
 import qualified Numeric.LinearAlgebra.Data as HM
 import qualified Numeric.LinearAlgebra as Matrix
 
+import Math.Tensor.Internal.LinearAlgebra (independentColumns)
+
 import Debug.Trace
 
 import Math.Tensor
@@ -1450,20 +1452,6 @@ assocsToMat l = HM.assoc (m,n) 0 l'
         n = maximum (map (\((_,x),_) -> x) l') + 1
 
 --filter the lin. dependant vars from the Assocs List
-
-permutationToMap :: HM.Matrix Double -> I.IntMap Int
-permutationToMap mat = I.fromList assocList
-    where
-        assocList = map (\(i, r) -> (HM.maxIndex r, i)) $ zip [0..] $ HM.toRows mat
-
-independentColumns :: HM.Matrix Double -> [Int]
-independentColumns mat = pivots
-    where
-        (l,_,p,_) = Matrix.lu mat
-        pMap      = permutationToMap p
-        diag      = Matrix.takeDiag l
-        pivots'   = fmap fst $ filter ((/= 0) . snd) $ zip [0..] $ Matrix.toList diag
-        pivots    = fmap (pMap I.!) pivots'
 
 getPivots :: [[(Int,Int)]]  -> [Int]
 getPivots matList = map (1+) pivots

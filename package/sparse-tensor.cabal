@@ -48,3 +48,15 @@ library
                        Math.Tensor.Examples.Gravity.Schwarzschild
                        Math.Tensor.Examples.Gravity.SchwarzschildSymbolic
                        Math.Tensor.Examples.Gravity.DiffeoSymEqns
+                       Math.Tensor.Internal.LinearAlgebra
+
+test-suite test-sparse-tensor
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  default-language:    Haskell2010
+  main-is:             TestMain.hs
+  other-modules:       LinearAlgebra
+  build-depends:       base                       >= 4.9 && < 5,
+                       hmatrix                    >= 0.16.1 && < 0.21,
+                       QuickCheck                 >= 2.8.2 && < 2.14,
+                       sparse-tensor

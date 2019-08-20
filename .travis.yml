@@ -14,7 +14,7 @@ matrix:
     addons:
       apt:
         sources:
-        - hvr-ghc
+          - sourceline: 'ppa:hvr/ghc'
         packages:
         - libblas-dev
         - liblapack-dev
@@ -23,7 +23,7 @@ matrix:
     addons:
       apt:
         sources:
-        - hvr-ghc
+        - sourceline: 'ppa:hvr/ghc'
         packages:
         - libblas-dev
         - liblapack-dev

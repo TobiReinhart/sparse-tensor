@@ -1,10 +1,27 @@
 language: haskell
-ghc:
-  - "8.0"
-  - "8.2"
-  - "8.4"
-  - "8.6"
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.stack
+
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y libblas-dev liblapack-dev
+  - mkdir -p ~/.local/bin
+  - export PATH=$HOME/.local/bin:$PATH
+  - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+  - export PATH=/opt/ghc/$GHCVER/bin:$PATH
   - cd package
+
+matrix:
+  include:
+  - env: GHCVER=8.6.5 STACK_YAML=stack.yaml
+    addons:
+      apt:
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.6.5
+
+script:
+  - stack --no-terminal --skip-ghc-check test

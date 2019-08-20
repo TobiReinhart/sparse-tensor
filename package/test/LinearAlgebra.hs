@@ -16,8 +16,8 @@ import Math.Tensor.Internal.LinearAlgebra (independentColumnsMat)
 data SmallInt = S0 | S1 deriving (Show, Ord, Eq, Enum, Bounded)
 
 fromSmall :: Num a => SmallInt -> a
-fromSmall S0 = fromIntegral 0
-fromSmall S1 = fromIntegral 1
+fromSmall S0 = 0
+fromSmall S1 = 1
 
 instance Arbitrary SmallInt where
     arbitrary = elements [S0, S1]

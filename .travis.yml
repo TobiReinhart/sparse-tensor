@@ -10,7 +10,7 @@ cache:
 
 matrix:
   include:
-  - env: GHCVER=8.6.5 STACK_YAML=stack.yaml SOLVER=lts-14.1
+  - env: GHCVER=8.6.5 STACK_YAML=stack.yaml SOLVER='resolver: lts-14.1'
     addons:
       apt:
         sources:
@@ -19,7 +19,7 @@ matrix:
         - libblas-dev
         - liblapack-dev
         - ghc-8.6.5
-  - env: GHCVER=8.4.4 STACK_YAML=stack.yaml SOLVER=lts-12.26
+  - env: GHCVER=8.4.4 STACK_YAML=stack.yaml SOLVER='resolver: lts-12.26'
     addons:
       apt:
         sources:
@@ -35,7 +35,7 @@ before_install:
   - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
   - export PATH=/opt/ghc/$GHCVER/bin:$PATH
   - cd package
-  - echo "resolver: ${SOLVER}" > stack.yaml
+  - echo ${SOLVER} > stack.yaml
 
 install:
   - stack build

@@ -9,19 +9,13 @@
 -----------------------------------------------------------------------------
 module Math.Tensor.Internal.LinearAlgebra (
 -- * Gaussian Elimination
--- ** In the ST Monad
 gaussianST,
--- ** Pure
 gaussian,
 -- * Linearly Independent Columns
--- ** Indices of Independent Colums
 independentColumns,
--- ** Submatrix of Independent Columns
 independentColumnsMat,
--- * Helper Functions
--- ** Pivots of Upper Triangular Matrix
+-- * Pivots
 pivotsU,
--- ** Next Pivot for Elimination Step
 findPivotMax)
 
 where
@@ -35,6 +29,20 @@ import Data.List (maximumBy)
 import Control.Monad
 import Control.Monad.ST
 
+-- | Returns the pivot columns of an upper triangular matrix.
+--
+-- @
+-- λ let mat = (3 >< 4) [1, 0, 2, -3, 0, 0, 1, 0, 0, 0, 0, 0]
+-- λ mat
+-- (3><4)
+--  [ 1.0, 0.0, 2.0, -3.0
+--  , 0.0, 0.0, 1.0,  0.0
+--  , 0.0, 0.0, 0.0,  0.0 ]
+-- λ pivotsU mat
+-- [0,2]
+-- @
+--
+
 pivotsU :: Matrix Double -> [Int]
 pivotsU mat = go (0,0)
   where
@@ -43,8 +51,13 @@ pivotsU mat = go (0,0)
           Nothing       -> []
           Just (i', j') -> j' : go (i'+1, j'+1)
 
+
+-- naive check for numerical zero
+
 eps :: Double -> Bool
 eps = (< 1e-12) . abs
+
+-- find next pivot in upper triangular matrix
 
 findPivot :: Matrix Double -> (Int, Int) -> Maybe (Int, Int)
 findPivot mat (i, j)
@@ -60,6 +73,8 @@ findPivot mat (i, j)
         n = cols mat
         col = mat ¿ [j]
         nonZeros = filter (\(i', _) -> i' >= i) $ find (not . eps) col
+
+-- | Find pivot element below position (i, j) with greatest absolute value.
 
 findPivotMax :: Matrix Double -> Int -> Int -> Maybe (Int, Int)
 findPivotMax mat i j
@@ -79,6 +94,8 @@ findPivotMax mat i j
                                         `compare`
                                         abs (col `atIndex` jx))
                              nonZeros
+
+-- gaussian elimination of sub matrix below position (i, j)
 
 gaussian' :: Int -> Int -> STMatrix s Double -> ST s ()
 gaussian' i j mat = do
@@ -102,8 +119,13 @@ gaussian' i j mat = do
                              op   = AXPY frac i r (FromCol p)
                          in  rowOper op mat
 
+-- | Gaussian elimination perfomed in-place in the @'ST'@ monad.
+
 gaussianST :: STMatrix s Double -> ST s ()
 gaussianST = gaussian' 0 0
+
+
+-- | Gaussian elimination as pure function. Involves a copy of the input matrix.
 
 gaussian :: Matrix Double -> Matrix Double
 gaussian mat = runST $ do
@@ -111,10 +133,16 @@ gaussian mat = runST $ do
     gaussianST m
     freezeMatrix m
 
+-- | Returns the indices of a maximal linearly independent subset of the columns
+--   in the matrix.
+
 independentColumns :: Matrix Double -> [Int]
 independentColumns mat = pivotsU mat'
     where
         mat' = gaussian mat
+
+-- | Returns a sub matrix containing a maximal linearly independent subset of
+--   the columns in the matrix.
 
 independentColumnsMat :: Matrix Double -> Matrix Double
 independentColumnsMat mat =

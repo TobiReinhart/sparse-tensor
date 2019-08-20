@@ -5,9 +5,8 @@
 module LinearAlgebra (props_LinearAlgebra) where
 
 import Test.QuickCheck
-import Test.QuickCheck.Arbitrary
-import Test.QuickCheck.Gen
-import Test.QuickCheck.Modifiers
+--import Test.QuickCheck.Arbitrary
+--import Test.QuickCheck.Modifiers
 
 import System.Exit
 
@@ -39,30 +38,26 @@ instance Arbitrary a => Arbitrary (MatrixData a) where
       xs <- vector (m'*n')
       return $ MatrixData m n xs
 
-smallValues :: MatrixData SmallInt -> Bool
-smallValues (MatrixData (Positive rows) (Positive cols) xs) =
+prop_smallValues :: MatrixData SmallInt -> Bool
+prop_smallValues (MatrixData (Positive rows) (Positive cols) xs) =
     rank mat' == rank mat
   where
     mat  = (rows Matrix.>< cols) $ map fromSmall xs
     mat' = independentColumnsMat mat
 
-ints :: MatrixData Int -> Bool
-ints (MatrixData (Positive rows) (Positive cols) xs) =
+prop_ints :: MatrixData Int -> Bool
+prop_ints (MatrixData (Positive rows) (Positive cols) xs) =
     rank mat' == rank mat
   where
     mat  = (rows Matrix.>< cols) $ map fromIntegral xs
     mat' = independentColumnsMat mat
 
-doubles :: MatrixData Double -> Bool
-doubles (MatrixData (Positive rows) (Positive cols) xs) =
+prop_doubles :: MatrixData Double -> Bool
+prop_doubles (MatrixData (Positive rows) (Positive cols) xs) =
     rank mat' == rank mat
   where
     mat  = (rows Matrix.>< cols) xs
     mat' = independentColumnsMat mat
-
-prop_linIndepColsSmall  = withMaxSuccess 1000 smallValues
-prop_linIndepColsInt    = withMaxSuccess 1000 ints
-prop_linIndepColsDouble = withMaxSuccess 1000 doubles
 
 return []
 props_LinearAlgebra = \case

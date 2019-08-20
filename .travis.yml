@@ -55,15 +55,8 @@ matrix:
         - libblas-dev
         - liblapack-dev
         - ghc-8.0.2
-  - env: GHCVER=8.0.1 STACK_YAML=stack.yaml SOLVER=lts-7.0
-    addons:
-      apt:
-        sources:
-        - sourceline: 'ppa:hvr/ghc'
-        packages:
-        - libblas-dev
-        - liblapack-dev
-        - ghc-8.0.1
+  allow-failures:
+  - env: GHCVER=8.8.1 STACK_YAML=stack.yaml SOLVER=nightly-2019-08-20
 
 before_install:
   - mkdir -p ~/.local/bin

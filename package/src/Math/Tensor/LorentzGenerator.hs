@@ -118,8 +118,6 @@ import qualified Numeric.LinearAlgebra as Matrix
 
 import Math.Tensor.Internal.LinearAlgebra (independentColumns)
 
-import Debug.Trace
-
 import Math.Tensor
 
 {--

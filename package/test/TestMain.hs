@@ -4,5 +4,5 @@ import Test.QuickCheck
 
 import LinearAlgebra
 
-main :: IO Bool
+main :: IO ()
 main = props_LinearAlgebra

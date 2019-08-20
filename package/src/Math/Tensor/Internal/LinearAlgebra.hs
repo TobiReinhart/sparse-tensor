@@ -1,6 +1,28 @@
-module Math.Tensor.Internal.LinearAlgebra
-
-(independentColumnsMat, independentColumns)
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Math.Tensor.Internal.LinearAlgebra
+-- Copyright   :  (c) 2019 Tobias Reinhart and Nils Alex
+-- License     :  MIT
+-- Maintainer  :  tobi.reinhart@fau.de, nils.alex@fau.de
+--
+-- Gaussian elimination algorithm based on hmatrix.
+-----------------------------------------------------------------------------
+module Math.Tensor.Internal.LinearAlgebra (
+-- * Gaussian Elimination
+-- ** In the ST Monad
+gaussianST,
+-- ** Pure
+gaussian,
+-- * Linearly Independent Columns
+-- ** Indices of Independent Colums
+independentColumns,
+-- ** Submatrix of Independent Columns
+independentColumnsMat,
+-- * Helper Functions
+-- ** Pivots of Upper Triangular Matrix
+pivotsU,
+-- ** Next Pivot for Elimination Step
+findPivotMax)
 
 where
 
@@ -13,15 +35,16 @@ import Data.List (maximumBy)
 import Control.Monad
 import Control.Monad.ST
 
-import Debug.Trace
-
-pivots :: Matrix Double -> [Int]
-pivots mat = go (0,0)
+pivotsU :: Matrix Double -> [Int]
+pivotsU mat = go (0,0)
   where
     go (i,j)
       = case findPivot mat (i,j) of
           Nothing       -> []
           Just (i', j') -> j' : go (i'+1, j'+1)
+
+eps :: Double -> Bool
+eps = (< 1e-12) . abs
 
 findPivot :: Matrix Double -> (Int, Int) -> Maybe (Int, Int)
 findPivot mat (i, j)
@@ -36,7 +59,7 @@ findPivot mat (i, j)
         m = rows mat
         n = cols mat
         col = mat ¿ [j]
-        nonZeros = filter (\(i', _) -> i' >= i) $ find (not . (==0)) col
+        nonZeros = filter (\(i', _) -> i' >= i) $ find (not . eps) col
 
 findPivotMax :: Matrix Double -> Int -> Int -> Maybe (Int, Int)
 findPivotMax mat i j
@@ -51,10 +74,10 @@ findPivotMax mat i j
         m = rows mat
         n = cols mat
         col = mat ¿ [j]
-        nonZeros = filter (\(i', _) -> i' >= i) $ find (not . (==0)) col
-        (pi, pj) = maximumBy (\ix jx -> (abs $ col `atIndex` ix)
+        nonZeros = filter (\(i', _) -> i' >= i) $ find (not . eps) col
+        (pi, pj) = maximumBy (\ix jx -> abs (col `atIndex` ix)
                                         `compare`
-                                        (abs $ col `atIndex` jx))
+                                        abs (col `atIndex` jx))
                              nonZeros
 
 gaussian' :: Int -> Int -> STMatrix s Double -> ST s ()
@@ -67,29 +90,34 @@ gaussian' i j mat = do
         Just (r, p) -> do
                           rowOper (SWAP i r (FromCol j)) mat
                           pv <- liftSTMatrix (`atIndex` (i, p)) mat
-                          sequence_ $ map (reduce pv p) [i+1 .. m-1]
+                          mapM_ (reduce pv p) [i+1 .. m-1]
                           gaussian' (i+1) (p+1) mat
   where
     reduce pv p r = do
                       rv <- liftSTMatrix (`atIndex` (r, p)) mat
-                      if rv == 0
+                      if eps rv
                         then return ()
                         else
                          let frac = -rv / pv
                              op   = AXPY frac i r (FromCol p)
                          in  rowOper op mat
 
-gaussian :: STMatrix s Double -> ST s ()
-gaussian = gaussian' 0 0
+gaussianST :: STMatrix s Double -> ST s ()
+gaussianST = gaussian' 0 0
+
+gaussian :: Matrix Double -> Matrix Double
+gaussian mat = runST $ do
+    m <- thawMatrix mat
+    gaussianST m
+    freezeMatrix m
 
 independentColumns :: Matrix Double -> [Int]
-independentColumns mat = runST $ do
-    m <- thawMatrix mat
-    gaussian m
-    liftSTMatrix pivots m
+independentColumns mat = pivotsU mat'
+    where
+        mat' = gaussian mat
 
 independentColumnsMat :: Matrix Double -> Matrix Double
 independentColumnsMat mat =
   case independentColumns mat of
-    [] -> (rows mat >< 1) $ repeat $ fromIntegral 0
+    [] -> (rows mat >< 1) $ repeat 0
     cs -> mat ¿ cs

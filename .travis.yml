@@ -1,17 +1,8 @@
-language: haskell
-
 sudo: false
 
 cache:
   directories:
     - $HOME/.stack
-
-before_install:
-  - mkdir -p ~/.local/bin
-  - export PATH=$HOME/.local/bin:$PATH
-  - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-  - export PATH=/opt/ghc/$GHCVER/bin:$PATH
-  - cd package
 
 matrix:
   include:
@@ -22,6 +13,16 @@ matrix:
         - libblas-dev
         - liblapack-dev
         - ghc-8.6.5
+
+before_install:
+  - mkdir -p ~/.local/bin
+  - export PATH=$HOME/.local/bin:$PATH
+  - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+  - export PATH=/opt/ghc/$GHCVER/bin:$PATH
+
+install:
+  - cd package
+  - stack build
 
 script:
   - stack --no-terminal --skip-ghc-check test

@@ -1,12 +1,9 @@
 {-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE LambdaCase #-}
 
 module LinearAlgebra (props_LinearAlgebra) where
 
 import Test.QuickCheck
---import Test.QuickCheck.Arbitrary
---import Test.QuickCheck.Modifiers
 
 import System.Exit
 
@@ -63,4 +60,4 @@ return []
 props_LinearAlgebra = \case
                         True  -> return ()
                         False -> exitFailure
-                      =<< $quickCheckAll
+                      =<< $forAllProperties (quickCheckWithResult stdArgs)

@@ -32,13 +32,13 @@ import Control.Monad.ST
 -- | Returns the pivot columns of an upper triangular matrix.
 --
 -- @
--- λ let mat = (3 >< 4) [1, 0, 2, -3, 0, 0, 1, 0, 0, 0, 0, 0]
--- λ mat
+-- &#x3BB; let mat = (3 >< 4) [1, 0, 2, -3, 0, 0, 1, 0, 0, 0, 0, 0]
+-- &#x3BB; mat
 -- (3><4)
 --  [ 1.0, 0.0, 2.0, -3.0
 --  , 0.0, 0.0, 1.0,  0.0
 --  , 0.0, 0.0, 0.0,  0.0 ]
--- λ pivotsU mat
+-- &#x3BB; pivotsU mat
 -- [0,2]
 -- @
 --

@@ -20,7 +20,7 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
-- sparse-tensor == 0.1.0.0
+- sparse-tensor == 0.2.0.0
 - containers >= 0.5.7 && < 0.7
 
 executables:

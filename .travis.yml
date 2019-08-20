@@ -1,3 +1,7 @@
+language: haskell
+
+dist: bionic
+
 sudo: false
 
 cache:

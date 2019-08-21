@@ -6,6 +6,8 @@ module LinearAlgebra (linearAlgebraTest) where
 import Test.QuickCheck
 import Test.Tasty.QuickCheck
 
+import Test.Tasty
+
 import System.Exit
 
 import Numeric.LinearAlgebra (rank)
@@ -57,9 +59,8 @@ prop_doubles (MatrixData (Positive rows) (Positive cols) xs) =
     mat  = (rows Matrix.>< cols) xs
     mat' = independentColumnsMat mat
 
-linearAlgebraTest = testProperties "LinearAlgebraTest"
-                     [
-                      ("prop_smallValues", property prop_smallValues),
-                      ("prop_ints", property prop_ints),
-                      ("prop_doubles", property prop_doubles)
-                     ]
+testCase1 = testProperty "prop_smallValues" prop_smallValues
+testCase2 = testProperty "prop_ints" prop_ints
+testCase3 = testProperty "prop_doubles" prop_doubles
+
+linearAlgebraTest = testGroup "LinearAlgebraTest" [testCase1, testCase2, testCase3]

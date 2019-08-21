@@ -59,4 +59,4 @@ test-suite test-sparse-tensor
   build-depends:       base                       >= 4.9 && < 5,
                        hmatrix                    >= 0.16.1 && < 0.21,
                        QuickCheck                 >= 2.8.2 && < 2.14,
-                       sparse-tensor
+                       sparse-tensor              == 0.2.0.0

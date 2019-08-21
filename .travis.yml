@@ -55,7 +55,7 @@ matrix:
         - libblas-dev
         - liblapack-dev
         - ghc-8.0.2
-  allow-failures:
+  allow_failures:
   - env: GHCVER=8.8.1 SOLVER=nightly-2019-08-20
 
 before_install:

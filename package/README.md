@@ -1,5 +1,7 @@
 # The `sparse-tensor` Package
 
+[![Build Status](https://travis-ci.org/nilsalex/sparse-tensor.svg?branch=master)](https://travis-ci.org/nilsalex/sparse-tensor)
+
 `sparse-tensor` is a Haskell tensor algebra library. It defines the usual tensor algebra functions such as
 
 - addition

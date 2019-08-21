@@ -10,7 +10,7 @@ cache:
 
 matrix:
   include:
-  - env: GHCVER=8.8.1 STACK_YAML=stack.yaml SOLVER=nightly-2019-08-20
+  - env: GHCVER=8.8.1 SOLVER=nightly-2019-08-20
     addons:
       apt:
         sources:
@@ -19,7 +19,7 @@ matrix:
         - libblas-dev
         - liblapack-dev
         - ghc-8.8.1
-  - env: GHCVER=8.6.5 STACK_YAML=stack.yaml SOLVER=lts-14.1
+  - env: GHCVER=8.6.5 SOLVER=lts-14.1
     addons:
       apt:
         sources:
@@ -28,7 +28,7 @@ matrix:
         - libblas-dev
         - liblapack-dev
         - ghc-8.6.5
-  - env: GHCVER=8.4.4 STACK_YAML=stack.yaml SOLVER=lts-12.26
+  - env: GHCVER=8.4.4 SOLVER=lts-12.26
     addons:
       apt:
         sources:
@@ -37,7 +37,7 @@ matrix:
         - libblas-dev
         - liblapack-dev
         - ghc-8.4.4
-  - env: GHCVER=8.2.2 STACK_YAML=stack.yaml SOLVER=lts-11.22
+  - env: GHCVER=8.2.2 SOLVER=lts-11.22
     addons:
       apt:
         sources:
@@ -46,7 +46,7 @@ matrix:
         - libblas-dev
         - liblapack-dev
         - ghc-8.2.2
-  - env: GHCVER=8.0.2 STACK_YAML=stack.yaml SOLVER=lts-9.21
+  - env: GHCVER=8.0.2 SOLVER=lts-9.21
     addons:
       apt:
         sources:
@@ -56,7 +56,7 @@ matrix:
         - liblapack-dev
         - ghc-8.0.2
   allow-failures:
-  - env: GHCVER=8.8.1 STACK_YAML=stack.yaml SOLVER=nightly-2019-08-20
+  - env: GHCVER=8.8.1 SOLVER=nightly-2019-08-20
 
 before_install:
   - mkdir -p ~/.local/bin

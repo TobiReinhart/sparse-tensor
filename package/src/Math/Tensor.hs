@@ -695,7 +695,7 @@ instance (TIndex k, Prod v v') => Prod (Tensor n k v) (Tensor n' k v') where
 -- @'AnsVar'@ values describes a linear equation system. Using the functions @'toMatListT1'@, ... this equation system can
 -- then be transformed into a matrix with columns labeling the individual @'AnsVar'@s.
 
-newtype AnsVar a = AnsVar (I.IntMap a) deriving (Show, Generic, Serialize)
+newtype AnsVar a = AnsVar (I.IntMap a) deriving (Show, Eq, Generic, Serialize)
 
 type AnsVarR = AnsVar (SField Rational)
 

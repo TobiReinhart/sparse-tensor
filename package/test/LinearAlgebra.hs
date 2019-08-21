@@ -1,9 +1,10 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE LambdaCase #-}
 
-module LinearAlgebra (props_LinearAlgebra) where
+module LinearAlgebra (linearAlgebraTest) where
 
 import Test.QuickCheck
+import Test.Tasty.QuickCheck
 
 import System.Exit
 
@@ -57,7 +58,4 @@ prop_doubles (MatrixData (Positive rows) (Positive cols) xs) =
     mat' = independentColumnsMat mat
 
 return []
-props_LinearAlgebra = \case
-                        True  -> return ()
-                        False -> exitFailure
-                      =<< $forAllProperties (quickCheckWithResult stdArgs)
+linearAlgebraTest = testProperties "LinearAlgebraTest" $allProperties

@@ -95,7 +95,8 @@ metricList2, metricList4_1, metricList4_2, metricList6_1, metricList6_2, metricL
 symList4, symList6, symList8, symList10_1, symList10_2, symList12, symList14_1, symList14_2,
 -- *** Metric
 -- | The following are examples of symmetry lists.
-metricsymList2, metricsymList4_1, metricsymList4_2, metricsymList6_1, metricsymList6_2, metricsymList6_3, metricsymList8_1, metricsymList8_2
+metricsymList2, metricsymList4_1, metricsymList4_2, metricsymList6_1, metricsymList6_2, metricsymList6_3, metricsymList8_1, metricsymList8_2,
+symList16_1, areaList16_1
 ) where
 
 import qualified Data.IntMap.Strict as I

@@ -1,6 +1,19 @@
 module Main (main) where
 
+import Ansatz
+import IndList
 import LinearAlgebra
+import Serialization
+
+import Test.Tasty
+
+test = testGroup "sparse-tensor tests"
+        [
+          indListTest,
+          linearAlgebraTest,
+          ansatzTest,
+          serializationTest
+        ]
 
 main :: IO ()
-main = props_LinearAlgebra
+main = defaultMain test

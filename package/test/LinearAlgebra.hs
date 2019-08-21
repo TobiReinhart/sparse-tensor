@@ -57,5 +57,9 @@ prop_doubles (MatrixData (Positive rows) (Positive cols) xs) =
     mat  = (rows Matrix.>< cols) xs
     mat' = independentColumnsMat mat
 
-return []
-linearAlgebraTest = testProperties "LinearAlgebraTest" $allProperties
+linearAlgebraTest = testProperties "LinearAlgebraTest"
+                     [
+                      ("prop_smallValues", property prop_smallValues),
+                      ("prop_ints", property prop_ints),
+                      ("prop_doubles", property prop_doubles)
+                     ]

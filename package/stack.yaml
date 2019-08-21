@@ -1,1 +1,6 @@
 resolver: lts-14.1
+
+build:
+  haddock-arguments:
+    haddock-args:
+    - --optghc=-fdefer-type-errors

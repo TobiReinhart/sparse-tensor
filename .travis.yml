@@ -1,0 +1,74 @@
+language: minimal
+
+dist: bionic
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.stack
+
+matrix:
+  include:
+  - env: GHCVER=8.8.1 SOLVER=nightly-2019-08-20
+    addons:
+      apt:
+        sources:
+          - sourceline: 'ppa:hvr/ghc'
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.8.1
+  - env: GHCVER=8.6.5 SOLVER=lts-14.1
+    addons:
+      apt:
+        sources:
+          - sourceline: 'ppa:hvr/ghc'
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.6.5
+  - env: GHCVER=8.4.4 SOLVER=lts-12.26
+    addons:
+      apt:
+        sources:
+        - sourceline: 'ppa:hvr/ghc'
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.4.4
+  - env: GHCVER=8.2.2 SOLVER=lts-11.22
+    addons:
+      apt:
+        sources:
+        - sourceline: 'ppa:hvr/ghc'
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.2.2
+  - env: GHCVER=8.0.2 SOLVER=lts-9.21
+    addons:
+      apt:
+        sources:
+        - sourceline: 'ppa:hvr/ghc'
+        packages:
+        - libblas-dev
+        - liblapack-dev
+        - ghc-8.0.2
+  allow_failures:
+  - env: GHCVER=8.8.1 SOLVER=nightly-2019-08-20
+
+before_install:
+  - mkdir -p ~/.local/bin
+  - export PATH=$HOME/.local/bin:$PATH
+  - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+  - export PATH=/opt/ghc/$GHCVER/bin:$PATH
+  - cd package
+  - stack config set resolver $SOLVER
+  - stack config set system-ghc --global true
+
+install:
+  - stack --no-terminal --skip-ghc-check build
+
+script:
+  - stack --no-terminal --skip-ghc-check test

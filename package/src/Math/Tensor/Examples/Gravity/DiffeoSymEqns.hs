@@ -10,7 +10,7 @@
 -- These equations arise in the research topic of perturbative constructive gravity and are used there to encode perturbative diffeomorphism invariance.
 --
 -- Providing further usage examples of the sparse-tensor package the equations included here nicely illustrate the syntax that is used when entering tensors.
--- They also show how the sparse tensor package can be used to manipulate not only tenors but linear tensorial equations. The sparse-tensor package can for instance be used to extract the information that is contained in such a tensorial equation in matrix form. This then obviously allows one
+-- They also show how the sparse-tensor package can be used to manipulate not only tenors but linear tensorial equations. The sparse-tensor package can for instance be used to extract the information that is contained in such a tensorial equation in matrix form. This then obviously allows one
 -- to computate the rank of the linear tensorial equation or even explicitly solve it.
 --
 --

@@ -1,0 +1,2 @@
+package sparse-tensor
+  haddock-options: --optghc=-fdefer-type-errors

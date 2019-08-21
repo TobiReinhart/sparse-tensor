@@ -1,4 +1,6 @@
-resolver: lts-12.26
+resolver: lts-14.1
 
-extra-deps:
-- eigen-3.3.4.1
+build:
+  haddock-arguments:
+    haddock-args:
+    - --optghc=-fdefer-type-errors

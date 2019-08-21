@@ -1,5 +1,5 @@
 name:                sparse-tensor
-version:             0.2.0.0
+version:             0.2
 synopsis:            typesafe tensor algebra library
 description:
     .

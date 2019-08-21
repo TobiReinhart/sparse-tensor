@@ -109,14 +109,14 @@ gaussian' m n i j mat = do
   where
     reduce pv p r = do
                       rv <- readMatrix mat r p
-                      if abs rv < eps -- * pv
+                      if abs rv < eps
                         then return ()
                         else
                          let frac = -rv / pv
                              op   = AXPY frac i r (FromCol p)
                          in do
                              rowOper op mat
-                             mapM_ (\j' -> modifyMatrix mat r j' (\x -> if abs x < eps {- * pv -} then 0 else x)) [p..n-1]
+                             mapM_ (\j' -> modifyMatrix mat r j' (\x -> if abs x < eps then 0 else x)) [p..n-1]
 
 -- | Gaussian elimination perfomed in-place in the @'ST'@ monad.
 

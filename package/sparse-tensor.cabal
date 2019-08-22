@@ -18,7 +18,7 @@ maintainer:          tobi.reinhart@fau.de, nils.alex@fau.de
 copyright:           2019 Tobias Reinhart and Nils Alex
 category:            Data, Math, Algebra
 build-type:          Custom
-cabal-version:       >=1.24
+cabal-version:       1.24
 extra-source-files:
     README.md
     CHANGELOG.md

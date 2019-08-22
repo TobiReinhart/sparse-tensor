@@ -16,7 +16,7 @@ independentColumns,
 independentColumnsMat,
 -- * Pivots
 pivotsU,
-findPivotMax)
+findPivotMaxST)
 
 where
 
@@ -47,82 +47,81 @@ pivotsU :: Matrix Double -> [Int]
 pivotsU mat = go (0,0)
   where
     go (i,j)
-      = case findPivot mat (i,j) of
+      = case findPivot mat e (i,j) of
           Nothing       -> []
           Just (i', j') -> j' : go (i'+1, j'+1)
+    maxAbs = maximum $ map (maximum . map abs) $ toLists mat
+    e = eps * maxAbs
 
 
--- naive check for numerical zero
-
-eps :: Double -> Bool
-eps = (< 1e-12) . abs
+eps :: Double
+eps = 1e-12
 
 -- find next pivot in upper triangular matrix
 
-findPivot :: Matrix Double -> (Int, Int) -> Maybe (Int, Int)
-findPivot mat (i, j)
+findPivot :: Matrix Double -> Double -> (Int, Int) -> Maybe (Int, Int)
+findPivot mat e (i, j)
     | n == j = Nothing
     | m == i = Nothing
     | otherwise = case nonZeros of
                     []          -> if n == j+1
                                    then Nothing
-                                   else findPivot mat (i, j+1)
+                                   else findPivot mat e (i, j+1)
                     (pi, pj):_  -> Just (pi, pj+j)
     where
         m = rows mat
         n = cols mat
         col = mat ¿ [j]
-        nonZeros = filter (\(i', _) -> i' >= i) $ find (not . eps) col
+        nonZeros = filter (\(i', _) -> i' >= i) $ find (not . (< e) . abs) col
 
--- | Find pivot element below position (i, j) with greatest absolute value.
+-- | Find pivot element below position (i, j) with greatest absolute value in the ST monad.
 
-findPivotMax :: Matrix Double -> Int -> Int -> Maybe (Int, Int)
-findPivotMax mat i j
-    | n == j = Nothing
-    | m == i = Nothing
-    | otherwise = case nonZeros of
-                    [] -> if n == j+1
-                          then Nothing
-                          else findPivotMax mat i (j+1)
-                    _  -> Just (pi, pj+j)
-    where
-        m = rows mat
-        n = cols mat
-        col = mat ¿ [j]
-        nonZeros = filter (\(i', _) -> i' >= i) $ find (not . eps) col
-        (pi, pj) = maximumBy (\ix jx -> abs (col `atIndex` ix)
-                                        `compare`
-                                        abs (col `atIndex` jx))
-                             nonZeros
+findPivotMaxST :: Int -> Int -> Int -> Int -> STMatrix s Double -> ST s (Maybe (Int, Int))
+findPivotMaxST m n i j mat
+    | n == j = return Nothing
+    | m == i = return Nothing
+    | otherwise =
+        do
+          col      <- mapM (\i' -> do
+                                    x <- readMatrix mat i' j
+                                    return (i', abs x))
+                      [i..m-1]
+          let nonZeros = filter (not . (<eps) . abs . snd) col
+          let (pi, _) = maximumBy (\(_, x) (_, y) -> x `compare` y) nonZeros
+          case nonZeros of
+            [] -> if n == j+1
+                  then return Nothing
+                  else findPivotMaxST m n i (j+1) mat
+            _  -> return $ Just (pi, j)
 
 -- gaussian elimination of sub matrix below position (i, j)
 
-gaussian' :: Int -> Int -> STMatrix s Double -> ST s ()
-gaussian' i j mat = do
-    m       <- liftSTMatrix rows mat
-    n       <- liftSTMatrix cols mat
-    iPivot' <- liftSTMatrix (\x -> findPivotMax x i j) mat
+gaussian' :: Int -> Int -> Int -> Int -> STMatrix s Double -> ST s ()
+gaussian' m n i j mat = do
+    iPivot' <- findPivotMaxST m n i j mat
     case iPivot' of
         Nothing     -> return ()
         Just (r, p) -> do
                           rowOper (SWAP i r (FromCol j)) mat
-                          pv <- liftSTMatrix (`atIndex` (i, p)) mat
+                          pv <- readMatrix mat i p
                           mapM_ (reduce pv p) [i+1 .. m-1]
-                          gaussian' (i+1) (p+1) mat
+                          gaussian' m n (i+1) (p+1) mat
   where
     reduce pv p r = do
-                      rv <- liftSTMatrix (`atIndex` (r, p)) mat
-                      if eps rv
+                      rv <- readMatrix mat r p
+                      if abs rv < eps
                         then return ()
                         else
                          let frac = -rv / pv
                              op   = AXPY frac i r (FromCol p)
-                         in  rowOper op mat
+                         in do
+                             rowOper op mat
+                             mapM_ (\j' -> modifyMatrix mat r j' (\x -> if abs x < eps then 0 else x)) [p..n-1]
 
 -- | Gaussian elimination perfomed in-place in the @'ST'@ monad.
 
-gaussianST :: STMatrix s Double -> ST s ()
-gaussianST = gaussian' 0 0
+gaussianST :: Int -> Int -> STMatrix s Double -> ST s ()
+gaussianST m n = gaussian' m n 0 0
 
 
 -- | Gaussian elimination as pure function. Involves a copy of the input matrix.
@@ -144,9 +143,12 @@ gaussianST = gaussian' 0 0
 
 gaussian :: Matrix Double -> Matrix Double
 gaussian mat = runST $ do
-    m <- thawMatrix mat
-    gaussianST m
-    freezeMatrix m
+    matST <- thawMatrix mat
+    gaussianST m n matST
+    freezeMatrix matST
+  where
+    m = rows mat
+    n = cols mat
 
 -- | Returns the indices of a maximal linearly independent subset of the columns
 --   in the matrix.

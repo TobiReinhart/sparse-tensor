@@ -387,24 +387,26 @@ deriving instance Show (IsZero n)
 
 isZero :: forall n. KnownNat n => Proxy n -> IsZero n
 isZero _ = case sameNat (Proxy @n) (Proxy @0)
-                        of Nothing   -> unsafeCoerce (NonZero @1)
-                           Just Refl -> Zero
+             of Nothing   -> unsafeCoerce (NonZero @1)
+                Just Refl -> Zero
 
-fromList' :: forall n. KnownNat n => Proxy n -> forall (a :: *). [a] -> Maybe (IndList n a)
-fromList' (n :: Proxy n') xs = case isZero n
-                               of Zero    -> case xs
-                                               of [] -> Just Empty
-                                                  _  -> Nothing
-                                  NonZero -> case xs
-                                               of []    -> Nothing
-                                                  x:xs' -> case fromList' (undefined :: (Proxy (n' - 1))) xs'
-                                                             of Just v  -> Just (x `Append` v)
-                                                                Nothing -> Nothing
+isZero' :: forall n. KnownNat n => IsZero n
+isZero' = case sameNat (Proxy @n) (Proxy @0)
+            of Nothing   -> unsafeCoerce (NonZero @1)
+               Just Refl -> Zero
 
 -- | Construction of a length typed @'IndList'@ from an untyped list.
 
-fromList :: forall n.KnownNat n => forall (a :: *). [a] -> Maybe (IndList n a)
-fromList = fromList' (undefined :: Proxy n)
+fromList :: forall n. KnownNat n => forall (a :: *). [a] -> Maybe (IndList n a)
+fromList xs = case isZero' @n
+                of Zero    -> case xs
+                                of [] -> Just Empty
+                                   _  -> Nothing
+                   NonZero -> case xs
+                                of []    -> Nothing
+                                   x:xs' -> case fromList xs'
+                                              of Just v  -> Just (x `Append` v)
+                                                 Nothing -> Nothing
 
 -- | Construction of a length typed @'IndList'@ (partial function).
 

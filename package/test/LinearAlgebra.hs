@@ -13,7 +13,7 @@ import System.Exit
 import Numeric.LinearAlgebra (rank)
 import qualified Numeric.LinearAlgebra.Data as Matrix
 
-import Math.Tensor.Internal.LinearAlgebra (independentColumnsMat)
+import Math.Tensor.Internal.LinearAlgebra (independentColumns, independentColumnsMat)
 
 data SmallInt = S0 | S1 deriving (Show, Ord, Eq, Enum, Bounded)
 
@@ -59,8 +59,16 @@ prop_doubles (MatrixData (Positive rows) (Positive cols) xs) =
     mat  = (rows Matrix.>< cols) xs
     mat' = independentColumnsMat mat
 
+prop_consec :: Positive Int -> Int -> Bool
+prop_consec (Positive dim') start =
+    independentColumns mat == [0,1]
+  where
+    dim = dim' + 100
+    mat = (dim Matrix.>< dim) $ map fromIntegral [start..]
+
 testCase1 = testProperty "prop_smallValues" prop_smallValues
 testCase2 = testProperty "prop_ints" prop_ints
 testCase3 = testProperty "prop_doubles" prop_doubles
+testCase4 = testProperty "prop_consec" prop_consec
 
-linearAlgebraTest = testGroup "LinearAlgebraTest" [testCase1, testCase2, testCase3]
+linearAlgebraTest = testGroup "LinearAlgebraTest" [testCase1, testCase2, testCase3, testCase4]

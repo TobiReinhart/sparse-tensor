@@ -16,7 +16,7 @@ independentColumns,
 independentColumnsMat,
 -- * Pivots
 pivotsU,
-findPivotMaxST)
+findPivotMax)
 
 where
 
@@ -76,8 +76,8 @@ findPivot mat e (i, j)
 
 -- | Find pivot element below position (i, j) with greatest absolute value in the ST monad.
 
-findPivotMaxST :: Int -> Int -> Int -> Int -> STMatrix s Double -> ST s (Maybe (Int, Int))
-findPivotMaxST m n i j mat
+findPivotMax :: Int -> Int -> Int -> Int -> STMatrix s Double -> ST s (Maybe (Int, Int))
+findPivotMax m n i j mat
     | n == j = return Nothing
     | m == i = return Nothing
     | otherwise =
@@ -91,14 +91,14 @@ findPivotMaxST m n i j mat
           case nonZeros of
             [] -> if n == j+1
                   then return Nothing
-                  else findPivotMaxST m n i (j+1) mat
+                  else findPivotMax m n i (j+1) mat
             _  -> return $ Just (pi, j)
 
 -- gaussian elimination of sub matrix below position (i, j)
 
 gaussian' :: Int -> Int -> Int -> Int -> STMatrix s Double -> ST s ()
 gaussian' m n i j mat = do
-    iPivot' <- findPivotMaxST m n i j mat
+    iPivot' <- findPivotMax m n i j mat
     case iPivot' of
         Nothing     -> return ()
         Just (r, p) -> do

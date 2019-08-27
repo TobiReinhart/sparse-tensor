@@ -1,5 +1,5 @@
 name:                sparse-tensor
-version:             0.2.1
+version:             0.2.1.1
 synopsis:            typesafe tensor algebra library
 description:
     .
@@ -26,7 +26,7 @@ extra-source-files:
 custom-setup
   setup-depends:
     base >= 4.9 && < 5,
-    Cabal >= 1.24 && < 3.0
+    Cabal >= 1.24 && < 3.1
 
 source-repository head
   type:     git
@@ -38,8 +38,8 @@ library
   build-depends:       base                       >= 4.9 && < 5,
                        containers                 >= 0.5 && < 0.7,
                        tf-random                  >= 0.5 && < 0.6,
-                       ghc-typelits-natnormalise  >= 0.5 && < 0.7,
-                       ghc-typelits-knownnat      >= 0.2 && < 0.7,
+                       ghc-typelits-natnormalise  >= 0.5 && < 0.8,
+                       ghc-typelits-knownnat      >= 0.2 && < 0.8,
                        parallel                   >= 3.2 && < 3.3,
                        deepseq                    >= 1.1 && < 1.5,
                        cereal                     >= 0.4 && < 0.6,

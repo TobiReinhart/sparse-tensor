@@ -1120,7 +1120,7 @@ infixl 6 &-
 
 (&-) :: (TIndex k, TAdd v) => Tensor n k v -> Tensor n k v -> Tensor n k v
 (&-) (Scalar a) (Scalar b) = Scalar $ subS a b
-(&-) (Tensor m1) (Tensor m2) = Tensor $ addTMaps (&-) m1 m2
+(&-) t1@(Tensor _) t2@(Tensor _) = t1 &+ (negateTens t2)
 (&-) t1 ZeroTensor = t1
 (&-) ZeroTensor t2 = negateS t2
 (&-) _ _ = error "incompatible combination of summands"

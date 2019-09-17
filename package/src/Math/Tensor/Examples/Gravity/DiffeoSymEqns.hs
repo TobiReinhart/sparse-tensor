@@ -38,7 +38,7 @@ ansatzAIBJCK, ansatzABCD, ansatzABCDJ, ansatzABCcDd,
 -- In the following documentation these input tensors are labeled as \(a_0,a^{A}, a^{AI}, a^{AB},\) etc. For the definition of the further included tensors see  "Math.Tensor.Examples.Gravity".
 eqn1, eqn3, eqn1A, eqn1AI,  eqn2Aa, eqn3A, eqn1AB, eqn1ABI, eqn1AaBb, eqn2ABb, eqn3AB,
 -- ** Metric
--- | The following equations can be used with the Lorentz invariant ansätze for the a traditional metric metric \(g_I = J_I^{ab}g_{ab}\) as input.
+-- | The following equations can be used with the Lorentz invariant ansätze for the a traditional metric \(g_I = J_I^{ab}g_{ab}\) as input.
 -- In the following documentation these input tensors are labeled as \(a_0,a^{A}, a^{AJ}, a^{AB},\) etc. Care must be taken as for the case of the metric equations all indices that are labeled by \(A,B,C,D,... \) are also of type @'Ind9'@,
 -- but are distinguished from the indices labeled by \(I,J,K,L,...\) as they describe the metric components and the latter ones describe symmetric spacetime derivative pairs.
 -- For the definition of the further included tensors see  "Math.Tensor.Examples.Gravity".
@@ -197,7 +197,7 @@ eqn3 ans6 = contrATens2 (0,0) $ contrATens1 (0,0) $ ans6 &* contrATens1 (0,1) (i
 
 --order 1
 
--- | The equation is given by: \( 0 = a^{AI}\left [C_{An}^{Bm}\delta^I _J- 2 \delta^A_B J_I^{pm}I^J_{pn} \right ] + a^{ABJ}C_{An}^{Cm}N_C + a^{BJ} \delta^m_n \).
+-- | The equation is given by: \( 0 = a^{AI}\left [C_{An}^{Bm}\delta^J _I- 2 \delta^B_A J_I^{pm}I^J_{pn} \right ] + a^{ABJ}C_{An}^{Cm}N_C + a^{BJ} \delta^m_n \).
 eqn1AI :: ATens 1 0 1 0 0 0 AnsVarR -> ATens 2 0 1 0 0 0 AnsVarR -> ATens 1 0 1 0 1 1 AnsVarR
 eqn1AI ans6 ans10_2 = block1 &+ block2 &+ block3
         where
@@ -221,7 +221,7 @@ eqn3A ans6 ans10_2 = block1 &+ block2
 
 --order 2
 
--- | The equation is given by: \( 0 = a^{CAI} \left [C_{An}^{Bm}\delta^I _J- 2 \delta^A_B J_I^{pm}I^J_{pn} \right ] + 2 a^{ACBJ} C_{An}^{Dm} N_D + a^{CBJ} \delta ^m _n \).
+-- | The equation is given by: \( 0 = a^{CAI} \left [C_{An}^{Bm}\delta^J _I- 2 \delta^B_A J_I^{pm}I^J_{pn} \right ] + 2 a^{ACBJ} C_{An}^{Dm} N_D + a^{CBJ} \delta ^m _n \).
 eqn1ABI :: ATens 2 0 1 0 0 0 AnsVarR -> ATens 3 0 1 0 0 0 AnsVarR -> ATens 2 0 1 0 1 1 AnsVarR
 eqn1ABI ans10_2 ans14_2 = block1 &+ block2 &+ block3 &+ block4
         where
@@ -246,7 +246,7 @@ eqn2ABb ans10_1 ans10_2 ans14_1 = block1 &+ block2 &+ block3
             block2 = symATens5 (0,2) block2'
             block3 = tensorTrans1 (0,1) $ symATens5 (0,2) $ contrATens1 (0,0) $ ans10_1 &* interArea
 
--- | The equation is given by: \( 0 = 2 a^{BqCr} \left [ C_{An}^{Bm} \delta ^q_p - \delta^B_A \delta^m_n \right ] +2 a^{A Bq Cr} C_{An}^{Dm} N_D + 2 a^{BqCr} \delta^m_n \).
+-- | The equation is given by: \( 0 = 2 a^{ApCr} \left [ C_{An}^{Bm} \delta ^q_p - \delta^B_A \delta^m_p \delta^q_n \right ] +2 a^{A Bq Cr} C_{An}^{Dm} N_D + 2 a^{BqCr} \delta^m_n \).
 eqn1AaBb :: ATens 2 0 0 0 2 0 AnsVarR -> ATens 3 0 0 0 2 0 AnsVarR -> ATens 2 0 0 0 3 1 AnsVarR
 eqn1AaBb ans10_1 ans14_1 = block1 &+ block2 &+ block3 &+ block4
         where
@@ -407,7 +407,7 @@ eqn3Met ans4 = contrATens2 (0,0) $ contrATens2 (1,0) $ ans4 &* contrATens2 (0,2)
 
 --order 1
 
--- | The equation is given by: \( 0 = a^{AI}\left [K_{An}^{Bm}\delta^I _J- 2 \delta^A_B J_I^{pm}I^J_{pn} \right ] + a^{ABJ}K_{An}^{Cm}\eta_C + a^{BJ} \delta^m_n \).
+-- | The equation is given by: \( 0 = a^{AI}\left [K_{An}^{Bm}\delta^J _I- 2 \delta^B_A J_I^{pm}I^J_{pn} \right ] + a^{ABJ}K_{An}^{Cm}\eta_C + a^{BJ} \delta^m_n \).
 eqn1AIMet :: ATens 0 0 2 0 0 0 AnsVarR -> ATens 0 0 3 0 0 0 AnsVarR -> ATens 0 0 2 0 1 1 AnsVarR
 eqn1AIMet ans4 ans6 = block1 &+ block2 &+ block3
         where
@@ -431,7 +431,7 @@ eqn3AMet ans4 ans6 = block1 &+ block2
 
 --order 2
 
--- | The equation is given by: \( 0 = a^{CAI} \left [K_{An}^{Bm}\delta^I _J- 2 \delta^A_B J_I^{pm}I^J_{pn} \right ] + 2 a^{ACBJ} K_{An}^{Dm} \eta_D + a^{CBJ} \delta ^m _n \).
+-- | The equation is given by: \( 0 = a^{CAI} \left [K_{An}^{Bm}\delta^J _I- 2 \delta^B_A J_I^{pm}I^J_{pn} \right ] + 2 a^{ACBJ} K_{An}^{Dm} \eta_D + a^{CBJ} \delta ^m _n \).
 eqn1ABIMet :: ATens 0 0 3 0 0 0 AnsVarR -> ATens 0 0 4 0 0 0 AnsVarR -> ATens 0 0 3 0 1 1 AnsVarR
 eqn1ABIMet ans6 ans8 = block1 &+ block2 &+ block3  &+ block4
         where
@@ -456,7 +456,7 @@ eqn2ABbMet ans6_1 ans6_2 ans8 = block1 &+ block2 &+ block3
             block2 = symATens5 (0,2) block2'
             block3 = tensorTrans3 (0,1) $ symATens5 (0,2) $ contrATens2 (0,0) $ ans6_1 &* interMetric
 
--- | The equation is given by: \( 0 = 2 a^{BqCr} \left [ K_{An}^{Bm} \delta ^q_p - \delta^B_A \delta^m_n \right ] +2 a^{A Bq Cr} K_{An}^{Dm} \eta_D + 2 a^{BqCr} \delta^m_n \).
+-- | The equation is given by: \( 0 = 2 a^{ApCr} \left [ K_{An}^{Bm} \delta ^q_p - \delta^B_A \delta^m_n \right ] +2 a^{A Bq Cr} K_{An}^{Dm} \eta_D + 2 a^{BqCr} \delta^m_n \).
 eqn1AaBbMet :: ATens 0 0 2 0 2 0 AnsVarR -> ATens 0 0 3 0 2 0 AnsVarR -> ATens 0 0 2 0 3 1 AnsVarR
 eqn1AaBbMet ans6 ans8 = block1 &+ block2 &+ block3 &+ block4
         where

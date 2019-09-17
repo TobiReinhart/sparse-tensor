@@ -595,8 +595,8 @@ instance Applicative SField where
 
 instance Num a => Num (SField a) where
     (+) = liftA2 (+)
-    (-) = liftA2 (+)
-    (*) = liftA2 (+)
+    (-) = liftA2 (-)
+    (*) = liftA2 (*)
     negate = fmap negate
     abs = fmap abs
     signum = fmap signum
@@ -738,7 +738,7 @@ shiftLabels8 :: Int -> AbsTensor8 n1 n2 n3 n4 n5 n6 n7 n8 k1 k2 k3 k4 (AnsVar a)
 shiftLabels8 s = mapTo8 (shiftVarLabels s)
 
 instance TAdd a => TAdd (AnsVar a) where
-    addS (AnsVar v1) (AnsVar v2) = AnsVar $ I.unionWith addS v1 v2
+    addS (AnsVar v1) (AnsVar v2) = AnsVar $ I.filter (not . scaleZero) $ I.unionWith addS v1 v2
     negateS (AnsVar v1) = AnsVar $ I.map negateS v1
     scaleZero (AnsVar v) = I.null v
 

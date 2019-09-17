@@ -315,14 +315,14 @@ flatInter = contrATens1 (0,1) $ interArea &* flatArea
 flatInterMetric :: ATens 0 0 0 1 1 1 (SField Rational)
 flatInterMetric = contrATens2 (0,1) $ interMetric &* etaAbs
 
--- | Is given by: \(  C_{An}^{Bm} \delta_p^q - \delta_A^B \delta_m^n \)
+-- | Is given by: \(  C_{An}^{Bm} \delta_p^q - \delta_A^B \delta_p^m \delta_n^q \)
 interEqn2 :: ATens 1 1 0 0 2 2 (SField Rational)
 interEqn2 = int1 &- int2
         where
             int1 = interArea &* delta3A
             int2 = tensorTrans6 (0,1) (delta3A &* delta3A) &* delta20
 
--- | Is given by: \(  K_{In}^{Jm} \delta_p^q - \delta_I^J \delta_m^n \)
+-- | Is given by: \(  K_{In}^{Jm} \delta_p^q - \delta_I^J \delta_p^m \delta_n^q \)
 interEqn2Metric :: ATens 0 0 1 1 2 2 (SField Rational)
 interEqn2Metric = int1 &- int2
         where
